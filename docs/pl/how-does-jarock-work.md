@@ -2,12 +2,14 @@
 
 ## Proste wyjaśnienie serwera
 
-**Aktualna wersja:** `0.0.2-alpha`  
-**Minecraft:** Java Edition `26.2`  
-**Loader:** Fabric  
+**Aktualna wersja:** `0.0.4-alpha`
+**Minecraft:** Java Edition `26.2`
+**Loader:** Fabric
 **Główna platforma:** Windows 10/11
 
 Ten dokument wyjaśnia, co dzieje się po pobraniu Jarock.
+
+> **Uwaga dotycząca utrzymania:** launcher wyszukuje teraz zgodne 64-bitowe środowisko Java 25+, zamiast ufać tylko pierwszemu `java.exe` w `PATH`. Używa `scripts/java-runtime.ps1`, zapisuje wybrany plik wykonywalny w `server/java-path.txt` i sprawdza go przed uruchomieniem. Java 8 może pozostać zainstalowana.
 
 ## 1. W skrócie
 

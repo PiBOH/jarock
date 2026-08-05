@@ -2,12 +2,14 @@
 
 ## 서버 작동 방식 쉽게 이해하기
 
-**현재 버전:** `0.0.2-alpha`  
-**Minecraft:** Java Edition `26.2`  
-**로더:** Fabric  
+**현재 버전:** `0.0.4-alpha`
+**Minecraft:** Java Edition `26.2`
+**로더:** Fabric
 **주요 플랫폼:** Windows 10/11
 
 이 문서는 Jarock을 다운로드한 뒤 실제로 어떤 일이 일어나는지 설명합니다.
+
+> **유지 관리 참고:** 실행기는 `PATH`의 첫 번째 `java.exe`만 사용하지 않고 호환되는 64비트 Java 25 이상 런타임을 검색합니다. `scripts/java-runtime.ps1`을 사용하고 선택한 실행 파일을 `server/java-path.txt`에 저장하며 시작 전에 다시 확인합니다. Java 8은 설치된 상태로 둘 수 있습니다.
 
 ## 1. 요약
 

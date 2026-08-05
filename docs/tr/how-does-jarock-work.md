@@ -2,12 +2,14 @@
 
 ## Sunucunun basit açıklaması
 
-**Mevcut sürüm:** `0.0.2-alpha`  
-**Minecraft:** Java Edition `26.2`  
-**Yükleyici:** Fabric  
+**Mevcut sürüm:** `0.0.4-alpha`
+**Minecraft:** Java Edition `26.2`
+**Yükleyici:** Fabric
 **Ana platform:** Windows 10/11
 
 Bu belge, Jarock indirildikten sonra ne olduğunu açıklar.
+
+> **Bakım notu:** başlatıcı artık `PATH` içindeki yalnızca ilk `java.exe` dosyasına güvenmek yerine uyumlu bir 64 bit Java 25+ çalışma zamanı arar. `scripts/java-runtime.ps1` kullanılır, seçilen çalıştırılabilir dosya `server/java-path.txt` içine kaydedilir ve başlatmadan önce doğrulanır. Java 8 yüklü kalabilir.
 
 ## 1. Kısaca
 

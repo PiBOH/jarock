@@ -2,10 +2,10 @@
 
 ## A plain-English explanation of the server
 
-**Current project version:** `0.0.2-alpha`  
-**Minecraft target:** Java Edition `26.2`  
-**Default loader:** Fabric  
-**Main platform:** Windows 10/11  
+**Current project version:** `0.0.4-alpha`
+**Minecraft target:** Java Edition `26.2`
+**Default loader:** Fabric
+**Main platform:** Windows 10/11
 **Canonical language:** English
 
 This document explains what happens after someone downloads the Jarock repository. It describes the real files and scripts in this repository, not an imaginary installer.
@@ -43,6 +43,8 @@ Important tracked files include:
 ```text
 start-server.bat
 scripts/bootstrap-fabric.ps1
+scripts/java-runtime.ps1
+scripts/run-server.ps1
 scripts/configure-geyser.ps1
 scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
@@ -91,11 +93,13 @@ Next, the batch file runs:
 scripts\configure-geyser.ps1
 ```
 
-Finally, it enters the generated `server/` directory with a quoted path and starts:
+Finally, it enters the generated `server/` directory with a quoted path and runs `scripts/run-server.ps1`. That helper reads the locally generated `server/java-path.txt`, validates that the selected executable is still Java 25 or newer, and starts:
 
 ```text
-java -Xms4G -Xmx4G -jar fabric-server-launch.jar nogui
+<selected-java.exe> -Xms4G -Xmx4G -jar fabric-server-launch.jar nogui
 ```
+
+The selected path may point to a Java installation under `C:\Program Files\...`; it is quoted and is not replaced by an older Java 8 entry on `PATH`.
 
 When Java exits, the batch file reports the exit code. If it is not zero, it tells the user to inspect:
 
@@ -152,13 +156,16 @@ No script can make an unavailable drive, a read-only folder, a denied permission
 
 ### Step 3: check Java
 
-The script requires the `java` command and reads the output of:
+The script does not trust only the first `java.exe` on `PATH`. `scripts/java-runtime.ps1` checks, in order, a configured `JAVA_HOME`, every `java.exe` returned by `Get-Command java.exe -All`, common 64-bit Windows installation roots and standard Java registry entries. Each candidate is tested with `java -version` and must be Java 25 or newer and 64-bit.
+
+The chosen absolute executable is printed, for example:
 
 ```text
-java -version
+Selected Java executable: C:\Program Files\Eclipse Adoptium\jdk-25...\bin\java.exe
+Selected Java version: 25... (25, 64-bit=True)
 ```
 
-The configured Minecraft 26.2 setup requires Java 25 or newer according to the current project configuration. If Java is missing or too old, the bootstrap stops and explains how to install Java and reopen the terminal.
+It is saved locally in `server/java-path.txt`, which is ignored by Git. This means Java 8 may remain installed or appear first on `PATH` without blocking the server. If no compatible candidate exists, the bootstrap prints the candidates it could inspect and explains that the user should install Java 25+ or set `JAVA_HOME` to the correct JDK folder.
 
 ### Step 4: load the mod manifest
 
@@ -192,7 +199,7 @@ If the file is altered, incomplete or replaced by a proxy/error page, the script
 If `server/fabric-server-launch.jar` is missing, the script executes the Fabric installer inside the generated server directory:
 
 ```text
-java -jar fabric-installer-1.1.2.jar server -mcversion 26.2 -loader 0.19.3 -downloadMinecraft
+<selected-java.exe> -jar fabric-installer-1.1.2.jar server -mcversion 26.2 -loader 0.19.3 -downloadMinecraft
 ```
 
 The installer creates the Fabric launcher, Minecraft server files and libraries. If the installer returns a non-zero exit code, the bootstrap stops with a suggested fix instead of starting a partial installation.

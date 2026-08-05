@@ -15,6 +15,15 @@ $MinecraftVersion = '26.2'
 $FabricLoaderVersion = '0.19.3'
 $JavaMinimum = 25
 $LongPathThreshold = 220
+$JavaRuntimeScript = Join-Path $PSScriptRoot 'java-runtime.ps1'
+if (-not (Test-Path -LiteralPath $JavaRuntimeScript -PathType Leaf)) {
+    Write-Host 'ERROR: The Java runtime helper is missing.' -ForegroundColor Red
+    Write-Host 'Suggested fix: restore scripts/java-runtime.ps1 from the repository and run start-server.bat again.' -ForegroundColor Yellow
+    exit 1
+}
+. $JavaRuntimeScript
+$SelectedJava = $null
+$JavaPathFile = Join-Path $ServerDir 'java-path.txt'
 
 function Write-Step([string]$Message) {
     Write-Host "`n==> $Message" -ForegroundColor Cyan
@@ -32,29 +41,26 @@ function Stop-WithGuidance([string]$Message, [string]$Action) {
     exit 1
 }
 
-function Assert-Command([string]$CommandName) {
-    if (-not (Get-Command $CommandName -ErrorAction SilentlyContinue)) {
-        Stop-WithGuidance "Required command '$CommandName' was not found." "Install 64-bit Java $JavaMinimum, add it to PATH, reopen Command Prompt, and run start-server.bat again."
+function Select-JavaRuntime {
+    $Result = Find-CompatibleJava -MinimumMajor $JavaMinimum
+    if ($null -eq $Result.Selected) {
+        $InspectedText = 'No usable Java executable was found.'
+        if ($Result.Inspected.Count -gt 0) {
+            $InspectedText = (($Result.Inspected | ForEach-Object { "$($_.Path) -> Java $($_.Major), 64-bit=$($_.Is64Bit)" }) -join '; ')
+        }
+        Stop-WithGuidance "No compatible 64-bit Java $JavaMinimum+ runtime was found. $InspectedText" "Install a 64-bit Java $JavaMinimum (or newer) runtime, then set JAVA_HOME to its JDK folder or remove the old Java 8 entry from PATH. Close and reopen this window, then run start-server.bat again."
     }
-}
 
-function Assert-JavaVersion {
+    $script:SelectedJava = $Result.Selected
+    Write-Host "Selected Java executable: $($SelectedJava.Path)" -ForegroundColor Green
+    Write-Host "Selected Java version: $($SelectedJava.Version) ($($SelectedJava.Major), 64-bit=$($SelectedJava.Is64Bit))" -ForegroundColor Green
+
     try {
-        $VersionText = (& java -version 2>&1 | Out-String)
-        Write-Host $VersionText.Trim()
-        $Match = [regex]::Match($VersionText, 'version "(?<major>\d+)')
-        if (-not $Match.Success) {
-            Stop-WithGuidance 'Could not determine the Java version.' 'Run java -version manually. Reinstall a 64-bit Java runtime if the command is missing or malformed.'
-        }
-        $Major = [int]$Match.Groups['major'].Value
-        if ($Major -lt $JavaMinimum) {
-            Stop-WithGuidance "Java $JavaMinimum or newer is required for Minecraft $MinecraftVersion; detected Java $Major." "Install Java $JavaMinimum 64-bit, ensure it is first on PATH, reopen the terminal, and try again."
-        }
+        [IO.File]::WriteAllText($JavaPathFile, $SelectedJava.Path, (New-Object Text.UTF8Encoding($false)))
     }
     catch {
-        Stop-WithGuidance $_.Exception.Message 'Install or repair the 64-bit Java runtime, then reopen the terminal and try again.'
-    }
-}
+        Stop-WithGuidance "Could not save the selected Java path to '$JavaPathFile'. $($_.Exception.Message)" 'Check that the server folder is writable and run start-server.bat again.'
+    }    }
 
 function Get-Sha512([string]$Path) {
     try {
@@ -66,7 +72,7 @@ function Get-Sha512([string]$Path) {
 }
 
 function Download-AndVerify([string]$Url, [string]$Path, [string]$ExpectedSha512) {
-    $Headers = @{ 'User-Agent' = 'Jarock-Fabric-Bootstrap/0.0.2-alpha (https://github.com/PiBOH/jarock)' }
+    $Headers = @{ 'User-Agent' = 'Jarock-Fabric-Bootstrap/0.0.4-alpha (https://github.com/PiBOH/jarock)' }
     try {
         if (-not (Test-Path -LiteralPath $Path)) {
             Write-Host "Downloading $([IO.Path]::GetFileName($Path)) ..."
@@ -146,10 +152,9 @@ try {
     Ensure-LongPathsIfNeeded
 
     Write-Step 'Checking prerequisites'
-    Assert-Command 'java'
-    Assert-JavaVersion
-
     New-Item -ItemType Directory -Force -Path $ServerDir, $ModsDir | Out-Null
+    Select-JavaRuntime
+
     if (-not (Test-Path -LiteralPath $ManifestPath)) {
         Stop-WithGuidance "Missing mod manifest: $ManifestPath" 'Download the complete repository again; do not remove server/mods-manifest.ps1.'
     }
@@ -165,7 +170,7 @@ try {
         Write-Step "Installing Fabric Server for Minecraft $MinecraftVersion (Loader $FabricLoaderVersion)"
         Push-Location $ServerDir
         try {
-            & java -jar $FabricInstaller server -mcversion $MinecraftVersion -loader $FabricLoaderVersion -downloadMinecraft
+            & $SelectedJava.Path -jar $FabricInstaller server -mcversion $MinecraftVersion -loader $FabricLoaderVersion -downloadMinecraft
             if ($LASTEXITCODE -ne 0) {
                 Stop-WithGuidance "Fabric installer exited with code $LASTEXITCODE." 'Check the Fabric installer log, confirm Java 25 is selected, verify Internet access, and run start-server.bat again.'
             }

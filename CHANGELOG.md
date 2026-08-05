@@ -12,6 +12,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Complete the public-release checklist in `TODO.md`.
 - Keep all localized documentation synchronized with the English canonical documentation.
 
+## [0.0.4-alpha] - 2026-08-05
+
+### Added
+
+- Added `CONTRIBUTING.md` with English maintenance, validation and release guidelines.
+- Added Java runtime discovery that searches `JAVA_HOME`, all `PATH` candidates, common Windows installation folders and Java registry entries.
+
+### Fixed
+
+- Prevented Java 8 earlier on `PATH` from blocking a separately installed compatible Java runtime.
+- The bootstrap now selects and reports an absolute 64-bit Java 25+ executable and the server launcher reuses that exact executable.
+
 ## [0.0.3-alpha] - 2026-08-05
 
 ### Added
@@ -65,7 +77,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/v0.0.3-alpha...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/v0.0.4-alpha...HEAD
+[0.0.4-alpha]: https://github.com/PiBOH/jarock/compare/v0.0.3-alpha...v0.0.4-alpha
 [0.0.3-alpha]: https://github.com/PiBOH/jarock/compare/v0.0.2-alpha...v0.0.3-alpha
 [0.0.2-alpha]: https://github.com/PiBOH/jarock/compare/v0.0.1-alpha...v0.0.2-alpha
 [0.0.1-alpha]: https://github.com/PiBOH/jarock/releases/tag/v0.0.1-alpha

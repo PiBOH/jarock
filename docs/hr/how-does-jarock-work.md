@@ -2,12 +2,14 @@
 
 ## Jednostavno objašnjenje poslužitelja
 
-**Trenutna verzija:** `0.0.2-alpha`  
-**Minecraft:** Java Edition `26.2`  
-**Učitavač:** Fabric  
+**Trenutna verzija:** `0.0.4-alpha`
+**Minecraft:** Java Edition `26.2`
+**Učitavač:** Fabric
 **Glavna platforma:** Windows 10/11
 
 Ovaj dokument objašnjava što se događa nakon preuzimanja Jarocka.
+
+> **Napomena za održavanje:** Pokretač sada traži kompatibilni 64-bitni Java 25+ umjesto da vjeruje samo prvom `java.exe` u varijabli `PATH`. Koristi `scripts/java-runtime.ps1`, sprema odabranu izvršnu datoteku u `server/java-path.txt` i provjerava je prije pokretanja. Java 8 može ostati instalirana.
 
 ## 1. Sažetak
 

@@ -2,12 +2,14 @@
 
 ## Vienkāršs servera skaidrojums
 
-**Pašreizējā versija:** `0.0.2-alpha`  
-**Minecraft:** Java Edition `26.2`  
-**Ielādētājs:** Fabric  
+**Pašreizējā versija:** `0.0.4-alpha`
+**Minecraft:** Java Edition `26.2`
+**Ielādētājs:** Fabric
 **Galvenā platforma:** Windows 10/11
 
 Šis dokuments izskaidro, kas notiek pēc Jarock lejupielādes.
+
+> **Uzturēšanas piezīme:** palaidējs tagad meklē saderīgu 64 bitu Java 25+ vidi, nevis paļaujas tikai uz pirmo `java.exe` failu `PATH`. Tas izmanto `scripts/java-runtime.ps1`, saglabā izvēlēto izpildāmo failu `server/java-path.txt` un pārbauda to pirms palaišanas. Java 8 var palikt instalēta.
 
 ## 1. Īsumā
 

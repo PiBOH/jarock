@@ -2,12 +2,14 @@
 
 ## Explicação simples do servidor
 
-**Versão atual:** `0.0.2-alpha`  
-**Minecraft:** Java Edition `26.2`  
-**Loader:** Fabric  
+**Versão atual:** `0.0.4-alpha`
+**Minecraft:** Java Edition `26.2`
+**Loader:** Fabric
 **Plataforma principal:** Windows 10/11
 
 Este documento explica o que acontece depois de baixar o Jarock.
+
+> **Nota de manutenção:** o iniciador agora procura um runtime Java 25+ compatível de 64 bits em vez de confiar apenas no primeiro `java.exe` do `PATH`. Usa `scripts/java-runtime.ps1`, guarda o executável selecionado em `server/java-path.txt` e valida-o antes de iniciar. O Java 8 pode continuar instalado.
 
 ## 1. Resumo
 

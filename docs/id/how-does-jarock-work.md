@@ -2,12 +2,14 @@
 
 ## Penjelasan sederhana tentang server
 
-**Versi saat ini:** `0.0.2-alpha`  
-**Minecraft:** Java Edition `26.2`  
-**Loader:** Fabric  
+**Versi saat ini:** `0.0.4-alpha`
+**Minecraft:** Java Edition `26.2`
+**Loader:** Fabric
 **Platform utama:** Windows 10/11
 
 Dokumen ini menjelaskan apa yang terjadi setelah Jarock diunduh.
+
+> **Catatan pemeliharaan:** Peluncur sekarang mencari runtime Java 25+ 64-bit yang kompatibel, bukan hanya mempercayai `java.exe` pertama di `PATH`. Peluncur menggunakan `scripts/java-runtime.ps1`, menyimpan executable yang dipilih di `server/java-path.txt`, dan memvalidasinya sebelum memulai. Java 8 boleh tetap terpasang.
 
 ## 1. Ringkasan
 

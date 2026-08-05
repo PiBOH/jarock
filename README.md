@@ -39,7 +39,7 @@ Neither Fabric nor NeoForge automatically runs Bukkit/Spigot/Paper plugins. If t
 
 The bootstrap calculates its root from the location of the repository, so it does not depend on a fixed drive or folder. It supports spaces, Unicode names and ordinary deeply nested paths. If the Windows path is long enough to risk the legacy 260-character limit, it checks `LongPathsEnabled` and requests administrator permission to enable it; the script prints whether the change succeeded. It cannot bypass folders for which Windows denies access, unavailable drives, network shares that do not support long paths, or legacy applications that are not long-path-aware. The bootstrap downloads generated runtime files into `server/`, which is ignored by Git. It does **not** open router ports, change firewall rules, configure port forwarding, or expose the server publicly. Configure those items manually only after completing [TODO.md](TODO.md).
 
-The default stack contains Fabric mods only. It does not install or run arbitrary Bukkit/Spigot/Paper plugins. Add a Fabric-native mod only after verifying Minecraft 26.2 compatibility and its server-side support. If a failure occurs, the launcher prints an actionable suggested fix; inspect `server/logs/latest.log` and `server/crash-reports/` when the Java process exits with an error.
+The default stack contains Fabric mods only. It does not install or run arbitrary Bukkit/Spigot/Paper plugins. Add a Fabric-native mod only after verifying Minecraft 26.2 compatibility and its server-side support. The bootstrap does not blindly use the first Java on `PATH`: it searches for a 64-bit Java 25+ runtime, reports the selected executable, saves it in the ignored local file `server/java-path.txt`, and reuses that exact path. Therefore an older Java 8 installation can remain on the computer without blocking Jarock. If a failure occurs, the launcher prints an actionable suggested fix; inspect `server/logs/latest.log` and `server/crash-reports/` when the Java process exits with an error.
 
 ## Guides
 
@@ -50,6 +50,7 @@ The default stack contains Fabric mods only. It does not install or run arbitrar
 - [How Jarock works — English](docs/en/how-does-jarock-work.md)
 - [How Jarock works — all translations](docs/README.md)
 - [Documentation and translation roadmap](docs/README.md)
+- [Project maintenance and contribution guidelines](CONTRIBUTING.md)
 
 The guides explain installation from zero, Java and Bedrock networking, Geyser/Floodgate authentication, optimization and redstone mods, backups, security, troubleshooting and the limitations of client-side mods. See [TODO.md](TODO.md) for the work that remains before public access.
 

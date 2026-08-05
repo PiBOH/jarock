@@ -2,12 +2,14 @@
 
 ## Jednoduché vysvětlení serveru
 
-**Aktuální verze:** `0.0.2-alpha`  
-**Minecraft:** Java Edition `26.2`  
-**Loader:** Fabric  
+**Aktuální verze:** `0.0.4-alpha`
+**Minecraft:** Java Edition `26.2`
+**Loader:** Fabric
 **Hlavní platforma:** Windows 10/11
 
 Tento dokument vysvětluje, co se stane po stažení Jarocku.
+
+> **Poznámka k údržbě:** Spouštěč nyní vyhledává kompatibilní 64bitové Java 25+ místo toho, aby důvěřoval pouze prvnímu `java.exe` v `PATH`. Používá `scripts/java-runtime.ps1`, uloží vybraný spustitelný soubor do `server/java-path.txt` a před spuštěním ho ověří. Java 8 může zůstat nainstalovaná.
 
 ## 1. Stručně
 

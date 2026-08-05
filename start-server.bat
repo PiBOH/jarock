@@ -68,7 +68,7 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
-java -Xms4G -Xmx4G -jar fabric-server-launch.jar nogui
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\run-server.ps1" -ServerDirectory "%ROOT%\server"
 set "EXIT_CODE=%errorlevel%"
 popd
 

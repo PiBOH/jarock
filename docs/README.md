@@ -10,6 +10,8 @@
 
 Each requested locale has a translated `how-does-jarock-work.md` document. The English file is the full canonical explanation; localized files preserve all critical technical steps and literals, while some are concise translations rather than line-by-line copies. The technical literals inside code blocks and inline code are intentionally kept unchanged.
 
+> **Runtime-maintenance notice:** the Java-selection behavior in `docs/en/how-does-jarock-work.md` is the authoritative current description. The launcher uses `scripts/java-runtime.ps1` to find a 64-bit Java 25+ runtime even when Java 8 appears first on `PATH`, saves the selected executable in the ignored `server/java-path.txt`, and `scripts/run-server.ps1` validates it before starting. Localized guides are concise and must be synchronized with this notice whenever their Java-start section is updated.
+
 | Language | Locale | How Jarock works |
 |---|---|---|
 | Afrikaans | `af` | [Read](af/how-does-jarock-work.md) |

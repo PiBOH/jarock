@@ -2,9 +2,9 @@
 
 ## Spiegazione semplice del server
 
-**Versione attuale:** `0.0.2-alpha`  
-**Minecraft:** Java Edition `26.2`  
-**Loader:** Fabric  
+**Versione attuale:** `0.0.4-alpha`
+**Minecraft:** Java Edition `26.2`
+**Loader:** Fabric
 **Piattaforma principale:** Windows 10/11
 
 Questo documento spiega cosa succede dopo aver scaricato Jarock.
@@ -35,6 +35,8 @@ Il repository contiene script, template e manifest; non contiene il mondo né i 
 ```text
 start-server.bat
 scripts/bootstrap-fabric.ps1
+scripts/java-runtime.ps1
+scripts/run-server.ps1
 scripts/configure-geyser.ps1
 scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
@@ -51,10 +53,10 @@ Il runtime viene creato in `server/`. Mondi, log, librerie, chiavi private e lis
 
 Il file salva la cartella in cui si trova e non usa un percorso fisso come `C:\MinecraftServer`. Per questo può essere spostato su un'altra unità e può contenere spazi, Unicode e `!`.
 
-Esegue `scripts\bootstrap-fabric.ps1`, controlla `server/fabric-server-launch.jar`, verifica `server/eula.txt` e richiede esattamente `eula=true`. Poi esegue `scripts\configure-geyser.ps1` e avvia:
+Esegue `scripts\bootstrap-fabric.ps1`, controlla `server/fabric-server-launch.jar`, verifica `server/eula.txt`, quindi esegue `scripts\configure-geyser.ps1`. Il bootstrap cerca Java 25+ a 64 bit in `JAVA_HOME`, in tutte le occorrenze di `PATH`, nelle cartelle standard e nel registro; salva il percorso scelto in `server\java-path.txt`. `scripts\run-server.ps1` verifica nuovamente quel percorso e avvia l'eseguibile selezionato, non necessariamente il vecchio Java 8 del `PATH`:
 
 ```text
-java -Xms4G -Xmx4G -jar fabric-server-launch.jar nogui
+<selected-java.exe> -Xms4G -Xmx4G -jar fabric-server-launch.jar nogui
 ```
 
 Se Java termina con un codice diverso da zero, consultare:
@@ -74,7 +76,7 @@ HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled
 
 Se non vale `1`, può chiedere privilegi amministrativi ed eseguire `scripts\enable-long-paths.ps1`. Il cambiamento è globale per la macchina e può richiedere un riavvio.
 
-Controlla quindi `java -version`, carica `server\mods-manifest.ps1`, installa Fabric 26.2 con Loader `0.19.3`, scarica le mod in `server\mods\` e verifica ogni SHA-512. I file esistenti vengono verificati e le configurazioni locali non vengono sovrascritte.
+Controlla quindi i candidati Java con `java -version`, richiedendo Java 25+ a 64 bit, carica `server\mods-manifest.ps1`, installa Fabric 26.2 con Loader `0.19.3`, scarica le mod in `server\mods\` e verifica ogni SHA-512. I file esistenti vengono verificati e le configurazioni locali non vengono sovrascritte. Java 8 può restare installato senza bloccare il progetto.
 
 La configurazione predefinita include Fabric API, Geyser-Fabric, Floodgate-Fabric, Lithium, FerriteCore, Krypton, ServerCore e Fabric Carpet. Non installa plugin Bukkit/Spigot/Paper.
 

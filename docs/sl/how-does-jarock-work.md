@@ -2,12 +2,14 @@
 
 ## Preprosta razlaga strežnika
 
-**Trenutna različica:** `0.0.2-alpha`  
-**Minecraft:** Java Edition `26.2`  
-**Nalagalnik:** Fabric  
+**Trenutna različica:** `0.0.4-alpha`
+**Minecraft:** Java Edition `26.2`
+**Nalagalnik:** Fabric
 **Glavna platforma:** Windows 10/11
 
 Ta dokument razloži, kaj se zgodi po prenosu Jarocka.
+
+> **Opomba za vzdrževanje:** zaganjalnik zdaj poišče združljiv 64-bitni Java 25+ namesto zaupanja samo prvemu `java.exe` v `PATH`. Uporabi `scripts/java-runtime.ps1`, izbrano izvedljivo datoteko shrani v `server/java-path.txt` in jo preveri pred zagonom. Java 8 lahko ostane nameščena.
 
 ## 1. Na kratko
 

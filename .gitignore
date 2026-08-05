@@ -26,6 +26,7 @@
 **/user_jvm_args.txt
 **/run.bat
 **/run.sh
+**/java-path.txt
 
 # Runtime secrets and local configuration
 **/key.pem

@@ -2,12 +2,14 @@
 
 ## サーバーの仕組みを簡単に説明
 
-**現在のバージョン:** `0.0.2-alpha`  
-**Minecraft:** Java Edition `26.2`  
-**ローダー:** Fabric  
+**現在のバージョン:** `0.0.4-alpha`
+**Minecraft:** Java Edition `26.2`
+**ローダー:** Fabric
 **主なプラットフォーム:** Windows 10/11
 
 このドキュメントでは、Jarock をダウンロードした後に実際に何が起きるかを説明します。
+
+> **メンテナンスメモ:** ランチャーは `PATH` の最初の `java.exe` だけに依存せず、互換性のある 64 ビット Java 25 以降を探します。`scripts/java-runtime.ps1` を使用し、選択した実行ファイルを `server/java-path.txt` に保存して起動前に検証します。Java 8 はインストールしたままでも構いません。
 
 ## 1. 概要
 
