@@ -36,7 +36,11 @@ Non installare un vecchio Mohist, Magma o Arclight soltanto perché contiene la 
 
 ---
 
-## 2. Installare NeoForge
+## 2. Java e parametri di avvio
+
+Nel repository Fabric il file `parameter-manager.bat` configura RAM e modalità di avvio. Non usarlo come installer NeoForge: NeoForge è un'architettura separata e va installato con la procedura ufficiale qui sotto. La scoperta Java del progetto usa `scripts/java-runtime.ps1`; il percorso selezionato viene salvato localmente in `server/java-path.txt`.
+
+## 3. Installare NeoForge
 
 1. Crea una cartella semplice, per esempio `C:\MinecraftServer`.
 2. Apri il sito ufficiale: <https://neoforged.net/>.
@@ -56,7 +60,7 @@ Apri `user_jvm_args.txt` e segui i commenti presenti per impostare la RAM. Parti
 
 ---
 
-## 3. Primo avvio e EULA
+## 4. Primo avvio e EULA
 
 1. Fai doppio clic su `run.bat`.
 2. Il primo avvio si fermerà creando `eula.txt`.
@@ -84,7 +88,7 @@ stop
 
 ---
 
-## 4. Installare le mod NeoForge
+## 5. Installare le mod NeoForge
 
 Dopo il primo avvio comparirà la cartella:
 
@@ -107,7 +111,7 @@ Aggiungi una mod alla volta, avvia `run.bat`, controlla `logs/latest.log` e prov
 
 ---
 
-## 5. Installare Geyser-NeoForge
+## 6. Installare Geyser-NeoForge
 
 La documentazione ufficiale Geyser indica **Geyser-NeoForge** per server NeoForge Minecraft 26.2:
 
@@ -140,7 +144,7 @@ Mantieni l'indentazione YAML. Se l'hosting assegna una porta diversa, usa quella
 
 ---
 
-## 6. Installare Floodgate-NeoForge
+## 7. Installare Floodgate-NeoForge
 
 Floodgate è opzionale, ma permette agli utenti Bedrock autenticati di entrare senza possedere Minecraft Java.
 
@@ -164,7 +168,7 @@ Il file privato `key.pem` è una credenziale: non caricarlo su GitHub, non invia
 
 ---
 
-## 7. Porte e rete
+## 8. Porte e rete
 
 | Edizione | Porta predefinita | Protocollo |
 |---|---:|---|
@@ -191,7 +195,7 @@ geyser connectiontest your.public.address 19132
 
 ---
 
-## 8. Impostazioni sicure
+## 9. Impostazioni sicure
 
 In `server.properties` mantieni:
 
@@ -214,7 +218,7 @@ Per Bedrock usa il nome esatto Floodgate mostrato dalla console. Può esserci un
 
 ---
 
-## 9. Limiti per i giocatori Bedrock
+## 10. Limiti per i giocatori Bedrock
 
 Geyser traduce il protocollo Java/Bedrock, ma non installa le mod NeoForge sul dispositivo Bedrock. Non sono automaticamente disponibili:
 
@@ -228,7 +232,7 @@ Le mod server-side che conservano blocchi, oggetti ed entità vanilla hanno più
 
 ---
 
-## 10. Plugin Bukkit
+## 11. Plugin Bukkit
 
 Su un NeoForge normale i plugin Bukkit non si caricano: NeoForge carica mod NeoForge.
 
@@ -242,7 +246,7 @@ Non usare un ibrido casuale in produzione.
 
 ---
 
-## 11. Backup e problemi comuni
+## 12. Backup e problemi comuni
 
 Prima di aggiornare NeoForge, Geyser, Floodgate o una mod:
 

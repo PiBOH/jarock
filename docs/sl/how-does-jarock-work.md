@@ -2,7 +2,6 @@
 
 ## Preprosta razlaga strežnika
 
-**Trenutna različica:** `0.0.4-alpha`
 **Minecraft:** Java Edition `26.2`
 **Nalagalnik:** Fabric
 **Glavna platforma:** Windows 10/11

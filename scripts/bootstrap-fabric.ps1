@@ -15,6 +15,8 @@ $MinecraftVersion = '26.2'
 $FabricLoaderVersion = '0.19.3'
 $JavaMinimum = 25
 $LongPathThreshold = 220
+$ProjectVersionPath = Join-Path $Root 'version.txt'
+$ProjectVersion = if (Test-Path -LiteralPath $ProjectVersionPath -PathType Leaf) { (Get-Content -LiteralPath $ProjectVersionPath -Raw).Trim() } else { 'unknown' }
 $JavaRuntimeScript = Join-Path $PSScriptRoot 'java-runtime.ps1'
 if (-not (Test-Path -LiteralPath $JavaRuntimeScript -PathType Leaf)) {
     Write-Host 'ERROR: The Java runtime helper is missing.' -ForegroundColor Red
@@ -60,7 +62,8 @@ function Select-JavaRuntime {
     }
     catch {
         Stop-WithGuidance "Could not save the selected Java path to '$JavaPathFile'. $($_.Exception.Message)" 'Check that the server folder is writable and run start-server.bat again.'
-    }    }
+    }
+}
 
 function Get-Sha512([string]$Path) {
     try {
@@ -72,7 +75,7 @@ function Get-Sha512([string]$Path) {
 }
 
 function Download-AndVerify([string]$Url, [string]$Path, [string]$ExpectedSha512) {
-    $Headers = @{ 'User-Agent' = 'Jarock-Fabric-Bootstrap/0.0.4-alpha (https://github.com/PiBOH/jarock)' }
+    $Headers = @{ 'User-Agent' = "Jarock-Fabric-Bootstrap/$ProjectVersion (https://github.com/PiBOH/jarock)" }
     try {
         if (-not (Test-Path -LiteralPath $Path)) {
             Write-Host "Downloading $([IO.Path]::GetFileName($Path)) ..."

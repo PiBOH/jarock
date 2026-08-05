@@ -27,6 +27,7 @@
 **/run.bat
 **/run.sh
 **/java-path.txt
+/server-launch-settings.ini
 
 # Runtime secrets and local configuration
 **/key.pem

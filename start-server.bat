@@ -1,5 +1,5 @@
 @echo off
-setlocal EnableExtensions
+setlocal EnableExtensions DisableDelayedExpansion
 set "ROOT=%~dp0"
 if "%ROOT:~-1%"=="\" set "ROOT=%ROOT:~0,-1%"
 
@@ -9,6 +9,16 @@ if errorlevel 1 (
     echo Suggested fix: restore Windows PowerShell 5.1 or install PowerShell 7, then run this file again.
     pause
     exit /b 1
+)
+
+if not exist "%ROOT%\server-launch-settings.ini" (
+    if not exist "%ROOT%\server-launch-settings.ini.template" (
+        echo ERROR: The launch-settings template is missing.
+        echo Suggested fix: restore server-launch-settings.ini.template from the repository.
+        pause
+        exit /b 1
+    )
+    copy /y "%ROOT%\server-launch-settings.ini.template" "%ROOT%\server-launch-settings.ini" >nul
 )
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\bootstrap-fabric.ps1"

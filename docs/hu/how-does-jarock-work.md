@@ -2,7 +2,6 @@
 
 ## A szerver egyszerű magyarázata
 
-**Jelenlegi verzió:** `0.0.4-alpha`
 **Minecraft:** Java Edition `26.2`
 **Betöltő:** Fabric
 **Fő platform:** Windows 10/11

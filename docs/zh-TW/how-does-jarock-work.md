@@ -2,7 +2,6 @@
 
 ## 伺服器運作方式簡介
 
-**目前版本：** `0.0.4-alpha`
 **Minecraft：** Java Edition `26.2`
 **載入器：** Fabric
 **主要平台：** Windows 10/11

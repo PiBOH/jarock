@@ -2,7 +2,6 @@
 
 ## Eenvoudige uitleg van de server
 
-**Huidige versie:** `0.0.4-alpha`
 **Minecraft:** Java Edition `26.2`
 **Loader:** Fabric
 **Hoofdplatform:** Windows 10/11

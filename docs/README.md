@@ -2,61 +2,70 @@
 
 ## Canonical English guides
 
-- [Minecraft Java 26.2 Fabric Server — installation guide](en/server-guide.md)
-- [Minecraft Java 26.2 NeoForge fallback](en/neoforge-fallback.md)
+- [Minecraft Java Fabric Server — installation guide](en/server-guide.md)
+- [Minecraft Java NeoForge fallback](en/neoforge-fallback.md)
 - [How does Jarock work?](en/how-does-jarock-work.md)
 
-## Available translations
+The canonical English guides are the source of truth for the technical procedure. The current project version is stored only in the root `version.txt` file.
 
-Each requested locale has a translated `how-does-jarock-work.md` document. The English file is the full canonical explanation; localized files preserve all critical technical steps and literals, while some are concise translations rather than line-by-line copies. The technical literals inside code blocks and inline code are intentionally kept unchanged.
+## Runtime and launch configuration
 
-> **Runtime-maintenance notice:** the Java-selection behavior in `docs/en/how-does-jarock-work.md` is the authoritative current description. The launcher uses `scripts/java-runtime.ps1` to find a 64-bit Java 25+ runtime even when Java 8 appears first on `PATH`, saves the selected executable in the ignored `server/java-path.txt`, and `scripts/run-server.ps1` validates it before starting. Localized guides are concise and must be synchronized with this notice whenever their Java-start section is updated.
+- `parameter-manager.bat` configures RAM, GUI/console mode, a conservative GC profile and user-scoped Java environment setup.
+- `server-launch-settings.ini.template` is the tracked safe default.
+- `server-launch-settings.ini` is local and ignored by Git.
+- `scripts/java-runtime.ps1` finds a compatible 64-bit Java runtime even when Java 8 appears first on `PATH`.
+- `scripts/configure-java-environment.ps1` updates only the current user's `JAVA_HOME` and `PATH`, preserving unrelated entries.
 
-| Language | Locale | How Jarock works |
-|---|---|---|
-| Afrikaans | `af` | [Read](af/how-does-jarock-work.md) |
-| Arabic | `ar` | [Read](ar/how-does-jarock-work.md) |
-| Catalan | `ca` | [Read](ca/how-does-jarock-work.md) |
-| Chinese (Simplified) | `zh-CN` | [Read](zh-CN/how-does-jarock-work.md) |
-| Chinese (Traditional) | `zh-TW` | [Read](zh-TW/how-does-jarock-work.md) |
-| Croatian | `hr` | [Read](hr/how-does-jarock-work.md) |
-| Czech | `cs` | [Read](cs/how-does-jarock-work.md) |
-| Dutch | `nl` | [Read](nl/how-does-jarock-work.md) |
-| Farsi / Persian | `fa` | [Read](fa/how-does-jarock-work.md) |
-| French | `fr` | [Read](fr/how-does-jarock-work.md) |
-| Galician | `gl` | [Read](gl/how-does-jarock-work.md) |
-| German | `de` | [Read](de/how-does-jarock-work.md) |
-| Hebrew | `he` | [Read](he/how-does-jarock-work.md) |
-| Hungarian | `hu` | [Read](hu/how-does-jarock-work.md) |
-| Indonesian | `id` | [Read](id/how-does-jarock-work.md) |
-| Italian | `it` | [Read](it/how-does-jarock-work.md) |
-| Japanese | `ja` | [Read](ja/how-does-jarock-work.md) |
-| Korean | `ko` | [Read](ko/how-does-jarock-work.md) |
-| Latvian | `lv` | [Read](lv/how-does-jarock-work.md) |
-| Malay | `ms` | [Read](ms/how-does-jarock-work.md) |
-| Mongolian | `mn` | [Read](mn/how-does-jarock-work.md) |
-| Polish | `pl` | [Read](pl/how-does-jarock-work.md) |
-| Portuguese | `pt` | [Read](pt/how-does-jarock-work.md) |
-| Romanian | `ro` | [Read](ro/how-does-jarock-work.md) |
-| Russian | `ru` | [Read](ru/how-does-jarock-work.md) |
-| Spanish | `es` | [Read](es/how-does-jarock-work.md) |
-| Swedish | `sv` | [Read](sv/how-does-jarock-work.md) |
-| Slovenian | `sl` | [Read](sl/how-does-jarock-work.md) |
-| Tamil | `ta` | [Read](ta/how-does-jarock-work.md) |
-| Thai | `th` | [Read](th/how-does-jarock-work.md) |
-| Turkish | `tr` | [Read](tr/how-does-jarock-work.md) |
-| Ukrainian | `uk` | [Read](uk/how-does-jarock-work.md) |
+## How Jarock works translations
 
-The English guides are the source of truth for commands, file names, configuration keys, version numbers and URLs. The Fabric guide is the default architecture; the NeoForge guide is the fallback when a required mod is unavailable for Fabric.
+Each requested locale has a concise translated `how-does-jarock-work.md`. The English file is the complete canonical explanation; localized files preserve essential technical steps and literals.
 
-## Existing installation translations
+| Locale | Guide |
+|---|---|
+| `af` | [Afrikaans](af/how-does-jarock-work.md) |
+| `ar` | [Arabic](ar/how-does-jarock-work.md) |
+| `ca` | [Catalan](ca/how-does-jarock-work.md) |
+| `zh-CN` | [Chinese Simplified](zh-CN/how-does-jarock-work.md) |
+| `zh-TW` | [Chinese Traditional](zh-TW/how-does-jarock-work.md) |
+| `hr` | [Croatian](hr/how-does-jarock-work.md) |
+| `cs` | [Czech](cs/how-does-jarock-work.md) |
+| `nl` | [Dutch](nl/how-does-jarock-work.md) |
+| `fa` | [Farsi](fa/how-does-jarock-work.md) |
+| `fr` | [French](fr/how-does-jarock-work.md) |
+| `gl` | [Galician](gl/how-does-jarock-work.md) |
+| `de` | [German](de/how-does-jarock-work.md) |
+| `he` | [Hebrew](he/how-does-jarock-work.md) |
+| `hu` | [Hungarian](hu/how-does-jarock-work.md) |
+| `id` | [Indonesian](id/how-does-jarock-work.md) |
+| `it` | [Italian](it/how-does-jarock-work.md) |
+| `ja` | [Japanese](ja/how-does-jarock-work.md) |
+| `ko` | [Korean](ko/how-does-jarock-work.md) |
+| `lv` | [Latvian](lv/how-does-jarock-work.md) |
+| `ms` | [Malay](ms/how-does-jarock-work.md) |
+| `mn` | [Mongolian](mn/how-does-jarock-work.md) |
+| `pl` | [Polish](pl/how-does-jarock-work.md) |
+| `pt` | [Portuguese](pt/how-does-jarock-work.md) |
+| `ro` | [Romanian](ro/how-does-jarock-work.md) |
+| `ru` | [Russian](ru/how-does-jarock-work.md) |
+| `es` | [Spanish](es/how-does-jarock-work.md) |
+| `sv` | [Swedish](sv/how-does-jarock-work.md) |
+| `sl` | [Slovenian](sl/how-does-jarock-work.md) |
+| `ta` | [Tamil](ta/how-does-jarock-work.md) |
+| `th` | [Thai](th/how-does-jarock-work.md) |
+| `tr` | [Turkish](tr/how-does-jarock-work.md) |
+| `uk` | [Ukrainian](uk/how-does-jarock-work.md) |
 
-- [Italian Fabric installation guide](it/server-guide.md)
-- [Italian NeoForge fallback](it/neoforge-fallback.md)
+## Installation and fallback translations
 
-## Translation requirements
+Every requested locale has both an installation guide and a NeoForge fallback guide. The English files are canonical; localized files are concise summaries; files whose prose remains English are explicitly English fallback summaries and link to the complete English procedure. They do not include a project version; consult root `version.txt`.
 
-- Keep commands, paths, property keys, YAML keys, filenames and URLs unchanged.
-- Keep warnings about authentication, backups, client-only mods, UDP ports, path limitations and version matching.
-- Translate the explanatory prose, not the technical literals.
-- If a translation falls behind the English source, label it as out of date rather than silently changing technical instructions.
+Each local file has the same names:
+
+- `docs/<locale>/server-guide.md`
+- `docs/<locale>/neoforge-fallback.md`
+
+The English guides remain authoritative for detailed network setup, troubleshooting, backup paths, compatibility checks and security warnings. The Italian guides are also detailed translations. Other localized files are concise summaries and are labeled accordingly; keep technical literals, commands, paths, keys and URLs unchanged when improving translations.
+
+## Loader policy
+
+Fabric is the first choice for native optimization and technical mods. NeoForge is the final loader fallback when a required mod is unavailable or unsuitable on Fabric. Forge and NeoForge are distinct loaders; never install a Forge mod on NeoForge unless the mod author explicitly provides compatibility.

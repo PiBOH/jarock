@@ -54,13 +54,13 @@ Cardboard cerca di fornire le API Bukkit/Spigot/Paper su Fabric. Può caricare a
 
 Un hosting Minecraft è spesso più semplice di un PC di casa, perché evita molte impostazioni del router. Verifica che supporti Fabric, Java 25, mod e traffico UDP. Un hosting può assegnare porte diverse da quelle predefinite: in quel caso usa sempre le porte assegnate.
 
-Crea una cartella semplice, per esempio:
+Puoi collocare il repository nella cartella che preferisci. Questo è soltanto un esempio per principianti, non un percorso obbligatorio:
 
 ```text
 C:\MinecraftServer
 ```
 
-Evita `Downloads`, cartelle sincronizzate dal cloud e percorsi con caratteri strani.
+Gli script Jarock calcolano la root dalla posizione di `start-server.bat` e supportano percorsi accessibili con spazi, caratteri Unicode, `!` e normale annidamento. Quando possibile evita `Downloads`, cartelle sincronizzate dal cloud e cartelle protette di Windows, perché possono aggiungere problemi di permessi o blocchi dei file.
 
 ---
 
@@ -91,7 +91,7 @@ Apri <https://fabricmc.net/use/server/> e seleziona:
 2. L'ultima versione stabile di Fabric Loader disponibile per 26.2.
 3. Il server installer/launcher.
 
-Metti il file nella cartella `C:\MinecraftServer`.
+Metti il file nella cartella del repository. `C:\MinecraftServer` è soltanto un esempio.
 
 ### Installer grafico
 
@@ -100,7 +100,7 @@ Se hai scaricato un installer `.jar`:
 1. Fai doppio clic sul file.
 2. Apri la scheda **Server**.
 3. Scegli Minecraft **26.2**.
-4. Scegli `C:\MinecraftServer`.
+4. Scegli la cartella del repository.
 5. Attiva il download del server Minecraft se l'opzione è presente.
 6. Avvia l'installazione.
 
@@ -128,23 +128,23 @@ Il nome esatto può variare. Se il launcher ha un nome diverso, userai quel nome
 
 ---
 
-## 5. Primo avvio e EULA
+## 5. Configurare i parametri e il primo avvio
 
-Crea con Notepad il file `start.bat` nella cartella del server:
+In questo repository non devi creare manualmente `start.bat`. Avvia `parameter-manager.bat` dalla root del progetto. Il menu permette di scegliere:
 
-```bat
-@echo off
-cd /d "%~dp0"
-java -Xms4G -Xmx4G -jar fabric-server-launch.jar nogui
-pause
-```
+- RAM iniziale e massima, per esempio `4G` e `6G`;
+- modalità console `nogui` oppure GUI;
+- profilo GC predefinito o `low-pause`;
+- configurazione automatica dell'ambiente Java dell'utente.
 
-Se il file del launcher ha un nome diverso, sostituiscilo dopo `-jar`. Se il PC ha soltanto 8 GB di RAM, 4 GB è un buon punto di partenza: non assegnare tutta la RAM a Minecraft.
+Le impostazioni vengono salvate in `server-launch-settings.ini`, un file locale ignorato da Git. Il programma controlla che la RAM sia valida, che sia almeno `512M`, che la RAM iniziale non superi quella massima e che non superi la memoria fisica rilevata.
 
-Fai doppio clic su `start.bat`. Il primo avvio si fermerà creando `eula.txt`.
+Dopo aver salvato, scegli **Save and start the server** oppure esegui `start-server.bat`. Jarock trova automaticamente un Java 25 a 64 bit compatibile e usa quel percorso, anche se Java 8 è il primo elemento del `PATH`.
+
+Il primo avvio si fermerà creando `eula.txt`.
 
 1. Chiudi il server.
-2. Apri `eula.txt`.
+2. Apri `server\eula.txt` nella cartella del repository.
 3. Leggi <https://www.minecraft.net/eula>.
 4. Se accetti, cambia:
 
@@ -158,7 +158,7 @@ in:
 eula=true
 ```
 
-5. Salva e avvia nuovamente `start.bat`.
+5. Salva e avvia nuovamente `start-server.bat` oppure usa `parameter-manager.bat`.
 
 Quando il server è completamente avviato, nel log comparirà il messaggio che indica che è pronto. Per fermarlo correttamente, scrivi nella console:
 

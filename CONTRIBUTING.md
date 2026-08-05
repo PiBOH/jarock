@@ -83,10 +83,10 @@ Do not claim that a full server start was tested unless the required Java runtim
 Jarock uses Semantic Versioning in `version.txt`, for example:
 
 ```text
-0.0.4-alpha
+MAJOR.MINOR.PATCH-prerelease
 ```
 
-Use `CHANGELOG.md` according to Keep a Changelog:
+Use `CHANGELOG.md` according to Keep a Changelog. Keep the current project version in `version.txt`; do not duplicate it in general documentation:
 
 - `Added` for new capabilities;
 - `Changed` for changes to existing behavior;

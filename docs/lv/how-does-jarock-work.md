@@ -2,7 +2,6 @@
 
 ## Vienkāršs servera skaidrojums
 
-**Pašreizējā versija:** `0.0.4-alpha`
 **Minecraft:** Java Edition `26.2`
 **Ielādētājs:** Fabric
 **Galvenā platforma:** Windows 10/11

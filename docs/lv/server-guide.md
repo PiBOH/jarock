@@ -1,0 +1,5 @@
+# Fabric servera rokasgrāmata
+
+Instalējiet 64 bitu Java 25, palaidiet `start-server.bat` un ar `parameter-manager.bat` iestatiet RAM un GUI vai `nogui`. Izlasiet `server/eula.txt`, pieņemiet EULA un iestatiet `eula=true`; izmantojiet Fabric, Geyser-Fabric un Floodgate-Fabric un veidojiet dublējumus. Jarock nemaina maršrutētāju, ugunsmūri vai port forwarding.
+
+Skatiet pilno angļu rokasgrāmatu: [../en/server-guide.md](../en/server-guide.md)

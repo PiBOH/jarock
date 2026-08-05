@@ -12,6 +12,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Complete the public-release checklist in `TODO.md`.
 - Keep all localized documentation synchronized with the English canonical documentation.
 
+## [0.0.5-alpha] - 2026-08-05
+
+### Added
+
+- Added `parameter-manager.bat` for safe RAM, GUI/console, GC profile and Java environment configuration.
+- Added persistent local launch settings and user-scoped `JAVA_HOME`/`PATH` automation.
+- Added installation and NeoForge fallback guide summaries for all requested locales, with English fallback summaries explicitly labeled in the documentation index and detailed English/Italian guides retained.
+
+### Changed
+
+- Made Fabric the first-choice ready-to-run server stack and kept NeoForge as the last loader fallback.
+- Changed automatic release tags to use the plain semantic version without a `v` prefix.
+- Removed project-version literals from documentation; `version.txt` is the single source for the current project version.
+
 ## [0.0.4-alpha] - 2026-08-05
 
 ### Added
@@ -41,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added `how-does-jarock-work.md` in English and all requested translations.
-- Documented the actual bootstrap, verification, EULA, Geyser, Floodgate, path and error-handling flow, including the extra restart needed after Geyser generates its configuration.
+- Documented the actual bootstrap, verification, EULA, Geyser, Floodgate, path and error-handling flow.
 
 ### Changed
 
@@ -54,19 +68,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Preserved spaces, Unicode characters and nested repository paths in launcher and PowerShell path handling.
 
-### Planned
-
-- Complete the public-release checklist in `TODO.md`.
-- Keep all localized documentation synchronized with the English canonical documentation.
-
 ## [0.0.1-alpha] - 2026-08-05
 
 ### Added
 
-- Fabric 26.2 server documentation in English and Italian.
+- Fabric server documentation in English and Italian.
 - NeoForge fallback documentation in English and Italian.
 - One-click Windows bootstrap and start entry point.
-- Pinned Fabric 26.2 mod manifest with SHA-512 verification.
+- Pinned Fabric mod manifest with SHA-512 verification.
 - Safe server and Geyser configuration templates.
 - English public-release checklist in `TODO.md`.
 - Semantic version file in `version.txt`.
@@ -77,7 +86,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/v0.0.4-alpha...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.5-alpha...HEAD
+[0.0.5-alpha]: https://github.com/PiBOH/jarock/compare/0.0.4-alpha...0.0.5-alpha
 [0.0.4-alpha]: https://github.com/PiBOH/jarock/compare/v0.0.3-alpha...v0.0.4-alpha
 [0.0.3-alpha]: https://github.com/PiBOH/jarock/compare/v0.0.2-alpha...v0.0.3-alpha
 [0.0.2-alpha]: https://github.com/PiBOH/jarock/compare/v0.0.1-alpha...v0.0.2-alpha

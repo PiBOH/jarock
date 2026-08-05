@@ -2,7 +2,6 @@
 
 ## 服务器工作原理简介
 
-**当前版本：** `0.0.4-alpha`
 **Minecraft：** Java Edition `26.2`
 **加载器：** Fabric
 **主要平台：** Windows 10/11

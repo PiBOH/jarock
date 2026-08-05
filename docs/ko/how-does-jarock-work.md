@@ -2,7 +2,6 @@
 
 ## 서버 작동 방식 쉽게 이해하기
 
-**현재 버전:** `0.0.4-alpha`
 **Minecraft:** Java Edition `26.2`
 **로더:** Fabric
 **주요 플랫폼:** Windows 10/11

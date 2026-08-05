@@ -4,8 +4,7 @@
 
 **Canonical project language:** English  
 **Target:** Minecraft Java Edition 26.2, NeoForge, Java/Bedrock cross-play  
-**Example platform:** Windows 10/11  
-**Last reviewed:** 2026-08-05
+**Example platform:** Windows 10/11
 
 > **Important terminology:** for a modern 26.2 server, use **NeoForge**, not the old/classic Forge workflow. Forge and NeoForge are separate loaders and their mods are not interchangeable. A Forge `.jar` is not automatically a NeoForge `.jar`.
 
@@ -64,6 +63,8 @@ The exact filenames change. Do not rename a mod file unless the project specific
 ---
 
 ## 3. Install Java
+
+When using the Jarock repository, Java discovery is handled by `scripts/java-runtime.ps1`. The selected Java executable is stored locally in `server/java-path.txt`. The Fabric `parameter-manager.bat` is not a NeoForge installer; NeoForge remains a separate last-resort architecture and must be installed with the official NeoForge procedure below.
 
 Install a current 64-bit Java runtime suitable for Minecraft 26.2. For the 26.x line, Java 25 is the expected starting point, but follow the requirement shown by the current NeoForge installer and official Minecraft tooling if it differs.
 

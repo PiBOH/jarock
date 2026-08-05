@@ -2,7 +2,6 @@
 
 ## Eenvoudige verduideliking van die bediener
 
-**Huidige weergawe:** `0.0.4-alpha`
 **Minecraft:** Java Edition `26.2`
 **Laaier:** Fabric
 **Hoofplatform:** Windows 10/11

@@ -5,8 +5,7 @@
 **Canonical project language:** English  
 **Audience:** people who have never created a Minecraft server before  
 **Target platform:** Minecraft Java Edition 26.2 with Fabric, Java and Bedrock cross-play  
-**Primary example:** Windows 10/11  
-**Last reviewed:** 2026-08-05
+**Primary example:** Windows 10/11
 
 > **Important:** Minecraft, Fabric, Geyser, Floodgate and mods are updated independently. Every download must explicitly support **Minecraft 26.2**. Do not install a file merely because its name looks similar.
 
@@ -92,13 +91,13 @@ Do not give all computer memory to Minecraft. If the computer has 8 GB total, st
 
 ### 3.3 Make a clean folder
 
-Create a folder with a simple path, for example:
+Create a folder wherever you want to keep the repository. This is only a beginner-friendly example, not a required location:
 
 ```text
 C:\MinecraftServer
 ```
 
-Avoid putting the server inside `Downloads`, a cloud-sync folder, or a protected Windows system folder. Do not use a path containing unusual characters until the server works.
+The Jarock scripts resolve their root from the location of `start-server.bat` and support accessible paths with spaces, Unicode characters, `!` and ordinary deep nesting. Avoid `Downloads`, cloud-sync folders and protected Windows system folders when possible because they can add unrelated permission or file-locking problems.
 
 ---
 
@@ -129,7 +128,7 @@ You should see Java 25 and a 64-bit runtime. If Windows says that `java` is not 
 2. Select Minecraft **26.2**.
 3. Select the latest stable Fabric Loader offered for 26.2.
 4. Download the server launcher or installer.
-5. Put it in `C:\MinecraftServer`.
+5. Put it in the repository folder. `C:\MinecraftServer` is only an example location.
 6. If the downloaded file has a long name, you may rename it to `fabric-server-launch.jar` for convenience. Do not change its contents or extension.
 
 ### Graphical installer method
@@ -140,7 +139,7 @@ If you downloaded the Fabric installer `.jar`:
 2. Select the **Server** tab.
 3. Select Minecraft **26.2**.
 4. Select the latest stable loader.
-5. Select `C:\MinecraftServer` as the installation directory.
+5. Select the repository folder as the installation directory.
 6. Enable the option to download the Minecraft server if it is shown.
 7. Start the installation.
 
@@ -169,30 +168,11 @@ The names can vary slightly between Fabric releases. That is normal.
 
 ---
 
-## 6. Create the first start script
+## 6. Configure and start Jarock
 
-A start script prevents typing a long command every time.
+For this repository, use `parameter-manager.bat` instead of creating a separate `start.bat`. It safely configures RAM, GUI/console mode, the GC profile and optional user-scoped Java environment setup. The settings are stored locally in `server-launch-settings.ini`.
 
-1. Open Notepad.
-2. Paste this text:
-
-```bat
-@echo off
-cd /d "%~dp0"
-java -Xms4G -Xmx4G -jar fabric-server-launch.jar nogui
-pause
-```
-
-3. Choose **File > Save as**.
-4. Set **Save as type** to **All files**.
-5. Name the file `start.bat`.
-6. Save it in `C:\MinecraftServer`.
-
-`-Xms4G` is the initial memory and `-Xmx4G` is the maximum memory. If the server host has more memory, change both values together, for example to `6G`. Never use more memory than the host can spare.
-
-> If Fabric created a different launcher filename, use that exact filename after `-jar`.
-
-Double-click `start.bat`. The first run normally stops and creates `eula.txt`.
+After saving settings, run `start-server.bat`. It discovers the compatible Java runtime and uses the selected absolute executable.
 
 ---
 
@@ -201,7 +181,7 @@ Double-click `start.bat`. The first run normally stops and creates `eula.txt`.
 The server cannot run until you accept Mojang's EULA.
 
 1. Close the server window.
-2. Open `C:\MinecraftServer\eula.txt` with Notepad.
+2. Open `server\eula.txt` inside the repository folder with Notepad.
 3. Read the official EULA: <https://www.minecraft.net/eula>.
 4. If you agree, change:
 
@@ -216,7 +196,7 @@ eula=true
 ```
 
 5. Save the file.
-6. Run `start.bat` again.
+6. Run `start-server.bat` again.
 
 The first complete start creates `world`, `logs`, `config` and `server.properties`. Wait until the console says that the server is done before trying to connect.
 
@@ -284,7 +264,7 @@ Do not use random re-upload sites. A mod file is normally a `.jar` file. Do not 
 Stop the server. Create this folder if it does not exist:
 
 ```text
-C:\MinecraftServer\mods
+the repository's `server\mods` folder
 ```
 
 Put these files inside it:
@@ -302,14 +282,14 @@ The exact filenames and versions will change. The important checks are:
 - dependencies listed on the download page are installed;
 - there is only one copy of each mod.
 
-Run `start.bat`. Geyser creates its configuration after the first successful start. Stop the server again before editing it.
+Run `start-server.bat`. Geyser creates its configuration after the first successful start. Stop the server again before editing it.
 
 ### 9.3 Configure Floodgate authentication
 
 Open:
 
 ```text
-C:\MinecraftServer\config\Geyser-Fabric\config.yml
+the repository's `server\config\Geyser-Fabric\config.yml` file
 ```
 
 Find `auth-type` and set it to:

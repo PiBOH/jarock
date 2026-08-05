@@ -2,13 +2,12 @@
 
 ## A plain-English explanation of the server
 
-**Current project version:** `0.0.4-alpha`
 **Minecraft target:** Java Edition `26.2`
 **Default loader:** Fabric
 **Main platform:** Windows 10/11
 **Canonical language:** English
 
-This document explains what happens after someone downloads the Jarock repository. It describes the real files and scripts in this repository, not an imaginary installer.
+This document explains what happens after someone downloads the Jarock repository. It describes the real files and scripts in this repository, not an imaginary installer. The current Jarock project version is stored only in the root `version.txt` file.
 
 ---
 
@@ -18,23 +17,57 @@ The user does not manually assemble a Minecraft server from many websites. They 
 
 1. Install a supported 64-bit Java runtime.
 2. Download or clone this repository.
-3. Run `start-server.bat`.
-4. The repository finds its own location.
-5. PowerShell checks Java, the Windows path and the repository files.
-6. If necessary, Windows long-path support is requested.
-7. The bootstrap downloads the pinned Fabric installer and mod files.
-8. Every downloaded file is checked with SHA-512.
-9. Fabric creates the Minecraft server runtime in `server/`.
-10. The first bootstrap creates `server/eula.txt`; the launcher stops so the user can read the EULA.
-11. After the user sets `eula=true`, the first real server run starts Fabric and lets Geyser generate its complete configuration.
-12. When that run is stopped, `configure-geyser.ps1` sets `auth-type: floodgate`.
-13. The next run starts the server with Floodgate fully configured. Geyser translates Bedrock traffic and Floodgate handles Bedrock authentication.
+3. Optionally run `parameter-manager.bat` to choose RAM, GUI/console mode, a GC profile and user-scoped Java environment setup.
+4. Run `start-server.bat`.
+5. The repository finds its own location.
+6. PowerShell checks Java, the Windows path and the repository files.
+7. If necessary, Windows long-path support is requested.
+8. The bootstrap downloads the pinned Fabric installer and mod files.
+9. Every downloaded file is checked with SHA-512.
+10. Fabric creates the Minecraft server runtime in `server/`.
+11. The first bootstrap creates `server/eula.txt`; the launcher stops so the user can read the EULA.
+12. After the user sets `eula=true`, the first real server run starts Fabric and lets Geyser generate its complete configuration.
+13. When that run is stopped, `configure-geyser.ps1` sets `auth-type: floodgate`.
+14. The next run starts the server with Floodgate fully configured.
 
 The router, firewall and port forwarding are **not** configured by Jarock.
 
 ---
 
-## 2. The repository is the launcher, not the generated server
+## 2. The parameter manager
+
+`parameter-manager.bat` is a safe beginner-friendly menu. It stores local settings in `server-launch-settings.ini`, which is ignored by Git.
+
+It can configure:
+
+- `RAM_INITIAL`, for example `4G`;
+- `RAM_MAX`, for example `6G`;
+- `GUI_MODE=gui` or `GUI_MODE=nogui`;
+- `GC_PROFILE=default` or the tested `low-pause` profile;
+- `AUTO_CONFIGURE_JAVA=true` or `false`.
+
+RAM values are validated, must be at least `512M`, and initial RAM cannot exceed maximum RAM. Jarock does not silently give all physical memory to Java. The user should still leave enough memory for Windows, backups and other programs.
+
+The manager never inserts arbitrary text directly into a shell command. Settings are written through typed PowerShell helpers, then `run-server.ps1` validates them again before launch.
+
+---
+
+## 3. Java environment automation
+
+The bootstrap finds Java 25+ itself and stores the selected absolute executable in the ignored local file `server/java-path.txt`. This is the authoritative executable used by the server, so Java 8 can remain installed even if it appears first on `PATH`.
+
+When `AUTO_CONFIGURE_JAVA=true`, Jarock additionally updates only the current user's environment:
+
+- `JAVA_HOME` points to the selected JDK folder;
+- the selected Java `bin` directory is placed first in the user's `PATH`;
+- unrelated user `PATH` entries are preserved;
+- Windows is notified about the environment change.
+
+Jarock does **not** modify machine-wide environment variables, does not require administrator rights for this user-level operation, and does not delete unrelated Java or developer tools. Existing terminals may need to be closed and reopened.
+
+---
+
+## 4. The repository is the launcher, not the generated server
 
 The Git repository contains instructions, scripts, templates and a pinned manifest. It does not commit the generated world or downloaded `.jar` files.
 
@@ -42,11 +75,14 @@ Important tracked files include:
 
 ```text
 start-server.bat
+parameter-manager.bat
 scripts/bootstrap-fabric.ps1
 scripts/java-runtime.ps1
 scripts/run-server.ps1
+scripts/configure-java-environment.ps1
 scripts/configure-geyser.ps1
 scripts/enable-long-paths.ps1
+server-launch-settings.ini.template
 server/mods-manifest.ps1
 server/server.properties.template
 server/eula.txt.template
@@ -55,352 +91,62 @@ CHANGELOG.md
 TODO.md
 ```
 
-The generated runtime is placed below:
-
-```text
-server/
-```
-
-Generated files such as the world, logs, downloaded `.jar` files, libraries, private keys and local player lists are ignored by Git. This keeps the repository small and prevents secrets or changing runtime data from being published.
+The generated runtime is placed below `server/`. Generated files such as the world, logs, downloaded `.jar` files, libraries, private keys, local player lists and `server-launch-settings.ini` are ignored by Git.
 
 ---
 
-## 3. What `start-server.bat` does
+## 5. What `start-server.bat` does
 
-`start-server.bat` is the single Windows entry point.
+`start-server.bat` is the single Windows entry point. It stores the directory in which the batch file lives, runs `bootstrap-fabric.ps1`, checks the Fabric launcher and EULA, runs `configure-geyser.ps1`, and starts `run-server.ps1`.
 
-It first stores the directory in which the batch file lives. It does not assume a drive letter or a path such as `C:\MinecraftServer`. Therefore the repository can be moved to another drive or folder, including a path containing spaces or Unicode characters.
+The launcher uses the settings selected by `parameter-manager.bat`. It validates the selected Java executable again, quotes paths safely, applies the requested RAM and starts either with or without `nogui`.
 
-It then runs:
-
-```text
-scripts\bootstrap-fabric.ps1
-```
-
-If that script fails, the batch file stops and tells the user to read the detailed error and its suggested fix. It does not continue into a broken server.
-
-After bootstrap, the batch file checks that:
-
-- `server/fabric-server-launch.jar` exists;
-- `server/eula.txt` exists;
-- the file contains exactly `eula=true`.
-
-If the EULA has not been accepted, the server is not started. The user receives the official EULA link and the exact file to edit.
-
-Next, the batch file runs:
-
-```text
-scripts\configure-geyser.ps1
-```
-
-Finally, it enters the generated `server/` directory with a quoted path and runs `scripts/run-server.ps1`. That helper reads the locally generated `server/java-path.txt`, validates that the selected executable is still Java 25 or newer, and starts:
-
-```text
-<selected-java.exe> -Xms4G -Xmx4G -jar fabric-server-launch.jar nogui
-```
-
-The selected path may point to a Java installation under `C:\Program Files\...`; it is quoted and is not replaced by an older Java 8 entry on `PATH`.
-
-When Java exits, the batch file reports the exit code. If it is not zero, it tells the user to inspect:
-
-```text
-server\logs\latest.log
-server\crash-reports\
-```
-
-The first meaningful `Caused by:` line usually identifies the problem.
+If bootstrap or launch fails, the batch file stops and tells the user to read the detailed error and its suggested fix. It does not continue into a broken server.
 
 ---
 
-## 4. What `bootstrap-fabric.ps1` does
+## 6. What the bootstrap does
 
-The bootstrap script is deliberately repeatable. Running it again verifies existing files and downloads only files that are missing.
+The bootstrap calculates the repository root from `$PSScriptRoot`, checks Windows long-path support, discovers a compatible 64-bit Java 25+ runtime, loads `server/mods-manifest.ps1`, downloads and verifies Fabric and its pinned server mods, installs the Fabric runtime, and creates local EULA/properties templates without overwriting existing local configuration.
 
-### Step 1: calculate the root
+The default Fabric stack contains Fabric API, Geyser-Fabric, Floodgate-Fabric, Lithium, FerriteCore, Krypton, ServerCore and Fabric Carpet. It does not install arbitrary Bukkit, Spigot or Paper plugins and it does not add client-only content such as Sodium to the server.
 
-The script calculates the repository root from `$PSScriptRoot`. It does not use a hard-coded working directory. Paths are built with PowerShell path functions such as `Join-Path` and are passed as literal paths where possible.
-
-This is why a normal folder such as these can work:
-
-```text
-C:\Users\Alex\Downloads\jarock
-D:\Minecraft Projects\Jarock
-C:\Progetti\Server Minecraft\jarock
-```
-
-The folder still needs to exist, be available, and be writable by the current Windows user.
-
-### Step 2: check long paths
-
-The script estimates whether the repository is deep enough to risk Windows' legacy 260-character limit. If the path is short, it prints that long-path support is not required.
-
-If the path is deep, it checks:
-
-```text
-HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled
-```
-
-If the value is not `1`, Jarock requests administrator permission and runs:
-
-```text
-scripts\enable-long-paths.ps1
-```
-
-That helper attempts to set `LongPathsEnabled` to the DWORD value `1`. It prints that the change is machine-wide and that a reboot may be needed by older applications.
-
-Jarock never changes router settings or firewall rules as part of this operation.
-
-### Important path limitation
-
-No script can make an unavailable drive, a read-only folder, a denied permission, an unsupported network share or a legacy non-long-path-aware application work. Jarock supports arbitrary **accessible Windows repository locations**; it cannot override Windows access restrictions.
-
-### Step 3: check Java
-
-The script does not trust only the first `java.exe` on `PATH`. `scripts/java-runtime.ps1` checks, in order, a configured `JAVA_HOME`, every `java.exe` returned by `Get-Command java.exe -All`, common 64-bit Windows installation roots and standard Java registry entries. Each candidate is tested with `java -version` and must be Java 25 or newer and 64-bit.
-
-The chosen absolute executable is printed, for example:
-
-```text
-Selected Java executable: C:\Program Files\Eclipse Adoptium\jdk-25...\bin\java.exe
-Selected Java version: 25... (25, 64-bit=True)
-```
-
-It is saved locally in `server/java-path.txt`, which is ignored by Git. This means Java 8 may remain installed or appear first on `PATH` without blocking the server. If no compatible candidate exists, the bootstrap prints the candidates it could inspect and explains that the user should install Java 25+ or set `JAVA_HOME` to the correct JDK folder.
-
-### Step 4: load the mod manifest
-
-The script loads:
-
-```text
-server\mods-manifest.ps1
-```
-
-The manifest contains a filename, a download URL, an SHA-512 hash, a purpose and a required flag for each pinned mod. The current default stack contains:
-
-- Fabric API;
-- Geyser-Fabric;
-- Floodgate-Fabric;
-- Lithium;
-- FerriteCore;
-- Krypton;
-- ServerCore;
-- Fabric Carpet.
-
-The repository does not put arbitrary Bukkit, Spigot or Paper plugins in a `plugins/` directory. This is a pure Fabric server and uses Fabric mods.
-
-### Step 5: download and verify Fabric
-
-The script downloads the pinned Fabric installer from the official Fabric Maven URL. It calculates the local SHA-512 hash and compares it with the pinned value.
-
-If the file is altered, incomplete or replaced by a proxy/error page, the script deletes it and reports the failure. The suggested fix is to retry and check Internet access, antivirus and proxy interference.
-
-### Step 6: install the server
-
-If `server/fabric-server-launch.jar` is missing, the script executes the Fabric installer inside the generated server directory:
-
-```text
-<selected-java.exe> -jar fabric-installer-1.1.2.jar server -mcversion 26.2 -loader 0.19.3 -downloadMinecraft
-```
-
-The installer creates the Fabric launcher, Minecraft server files and libraries. If the installer returns a non-zero exit code, the bootstrap stops with a suggested fix instead of starting a partial installation.
-
-### Step 7: download and verify mods
-
-Each entry in `server/mods-manifest.ps1` is downloaded into:
-
-```text
-server\mods\
-```
-
-Each file is hashed with SHA-512. A mismatch removes the invalid file and tells the user to retry or investigate antivirus/proxy interference.
-
-### Step 8: create local templates
-
-The script creates these files only when they do not already exist:
-
-```text
-server\eula.txt
-server\server.properties
-```
-
-It never overwrites a user's existing local configuration.
+If a required Fabric mod is unavailable, the documented final loader fallback is NeoForge. Forge and NeoForge are separate loaders and their mods are not interchangeable.
 
 ---
 
-## 5. Why the first start is two-stage
+## 7. First start and Geyser/Floodgate
 
-Minecraft requires the operator to accept the EULA. Jarock therefore cannot silently accept it.
+The first run creates `server/eula.txt` with `eula=false` and stops. The user reads <https://www.minecraft.net/eula> and changes it to `eula=true` only if they agree.
 
-### First run
-
-The first run normally does this:
-
-1. downloads the runtime and mods;
-2. creates `server/eula.txt` with `eula=false`;
-3. stops before launching the real server.
-
-The user must read <https://www.minecraft.net/eula>. If they agree, they edit:
-
-```text
-server\eula.txt
-```
-
-and change:
-
-```text
-eula=false
-```
-
-to:
-
-```text
-eula=true
-```
-
-### Second run
-
-The second run checks the exact value. If it is `eula=true`, Jarock continues and launches Fabric. During this first real server run, Geyser creates its complete configuration. The server may then be stopped safely with `stop`.
-
-After shutdown, `configure-geyser.ps1` changes the generated Geyser configuration to:
+The next real run lets Geyser create its complete configuration. After a safe shutdown, `configure-geyser.ps1` changes the generated setting to:
 
 ```yaml
 auth-type: floodgate
 ```
 
-Run `start-server.bat` once more so Geyser and Floodgate load the new authentication setting. This is intentional: the project automates installation, but it does not make the legal decision for the server owner.
+Run the launcher once more so Floodgate loads the new setting. The Floodgate private key must never be uploaded or shared.
 
 ---
 
-## 6. What happens to Geyser and Floodgate
+## 8. Paths and safety boundaries
 
-Geyser-Fabric and Floodgate-Fabric are downloaded as Fabric mods.
+Jarock supports repository paths with spaces, Unicode, `!` and ordinary deep nesting when Windows can access and write the folder. It may request `LongPathsEnabled=1` for deep paths and reports the result.
 
-Geyser's complete configuration is generated by Geyser during the first real server start. Jarock does not replace that generated YAML with an incomplete template. Because the helper can only patch a configuration that already exists, Floodgate authentication becomes active on the following server start.
+It cannot bypass unavailable drives, denied permissions, unsupported network shares or legacy applications that do not support long paths.
 
-After Geyser has created:
-
-```text
-server\config\Geyser-Fabric\config.yml
-```
-
-the configuration helper looks for `auth-type` and sets:
-
-```yaml
-auth-type: floodgate
-```
-
-On a later run, the helper sees that the value is already correct and leaves it unchanged.
-
-Geyser uses a Bedrock UDP listener, normally port `19132`. Java normally uses TCP port `25565`. Jarock documents these values but does not open, forward or test them by changing the host network.
-
-The Floodgate private key, commonly `key.pem`, must never be uploaded to GitHub or shared. Generated configuration and secrets are ignored by Git where appropriate.
+Jarock does not open router ports, modify firewall rules, configure port forwarding, publish an IP, accept the EULA, grant operator permissions, upload worlds or install arbitrary plugins.
 
 ---
 
-## 7. What the server mods do
-
-The default server is intentionally mod-based:
-
-- **Fabric API** supplies common Fabric APIs.
-- **Geyser-Fabric** translates Bedrock protocol traffic.
-- **Floodgate-Fabric** handles Bedrock authentication integration.
-- **Lithium** optimizes game logic.
-- **FerriteCore** reduces memory usage.
-- **Krypton** optimizes networking.
-- **ServerCore** provides server performance controls.
-- **Fabric Carpet** provides technical rules and redstone tools.
-
-Client-only mods such as Sodium, Litematica, MiniHUD and Tweakeroo are not part of the server manifest. A client-only mod should not be copied into `server/mods/`.
-
-A normal Fabric server does not run arbitrary Bukkit, Spigot or Paper plugins. If a plugin is required, the architecture must be reconsidered rather than silently copying the plugin into the server folder.
-
----
-
-## 8. What Jarock does not do
-
-Jarock does not:
-
-- open the router;
-- configure port forwarding;
-- change Windows Firewall rules;
-- publish a public IP address;
-- create a hosting account;
-- start a proxy;
-- accept the Minecraft EULA for the user;
-- grant operator permissions automatically;
-- upload worlds or secrets to GitHub;
-- install arbitrary Bukkit plugins.
-
-These omissions are deliberate safety boundaries. The remaining public-release tasks are listed in `TODO.md`.
-
----
-
-## 9. What to do after an error
-
-Jarock is designed to print a suggested fix after failures.
+## 9. After an error
 
 1. Read the `ERROR:` or `WARNING:` line.
 2. Follow the `Suggested fix:` text.
 3. Run `start-server.bat` again.
-4. If Java starts and then stops, inspect:
-
-```text
-server\logs\latest.log
-server\crash-reports\
-```
-
+4. If Java starts and then stops, inspect `server/logs/latest.log` and `server/crash-reports/`.
 5. Look for the first `Caused by:` entry.
-6. Check that the relevant mod is for Fabric and Minecraft `26.2`.
+6. Check that the relevant mod matches Fabric and the target Minecraft release.
 7. Never delete the world before making a backup.
 
-Common causes are missing Java, an old Java version, no write permission, no Internet access, a corrupted download, an unaccepted EULA, a client-only mod on the server or an incompatible mod update.
-
----
-
-## 10. The complete flow in one diagram
-
-```text
-User downloads repository
-          │
-          ▼
-  start-server.bat
-          │
-          ▼
- bootstrap-fabric.ps1
-          │
-          ├── calculate repository root
-          ├── check long-path policy
-          ├── check Java 25+
-          ├── load pinned mod manifest
-          ├── download + verify Fabric installer
-          ├── install Fabric Server 26.2
-          ├── download + verify Fabric mods
-          └── create EULA/properties templates
-          │
-          ▼
- First run stops at eula=false
-          │
-          ▼
- User reads EULA and sets eula=true
-          │
-          ▼
- start-server.bat again
-          │
-          └── java ... fabric-server-launch.jar nogui
-                          │
-                          ├── Geyser generates config.yml
-                          └── server is stopped safely
-                                      │
-                                      ▼
-                         configure-geyser.ps1 sets floodgate
-                                      │
-                                      ▼
-                            start-server.bat once more
-                                      │
-                                      └── java ... fabric-server-launch.jar nogui
-                                                        │
-                          ├── Java players via TCP
-                          └── Bedrock players via Geyser UDP
-```
-
-That is Jarock: a reproducible, verified, local Fabric server bootstrap with clear safety boundaries and actionable errors.
+That is Jarock: a reproducible, verified, local Fabric server bootstrap with configurable safe launch parameters and clear safety boundaries.

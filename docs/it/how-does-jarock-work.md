@@ -2,7 +2,6 @@
 
 ## Spiegazione semplice del server
 
-**Versione attuale:** `0.0.4-alpha`
 **Minecraft:** Java Edition `26.2`
 **Loader:** Fabric
 **Piattaforma principale:** Windows 10/11

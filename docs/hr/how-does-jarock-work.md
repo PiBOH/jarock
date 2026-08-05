@@ -2,7 +2,6 @@
 
 ## Jednostavno objašnjenje poslužitelja
 
-**Trenutna verzija:** `0.0.4-alpha`
 **Minecraft:** Java Edition `26.2`
 **Učitavač:** Fabric
 **Glavna platforma:** Windows 10/11

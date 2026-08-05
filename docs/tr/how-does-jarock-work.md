@@ -2,7 +2,6 @@
 
 ## Sunucunun basit açıklaması
 
-**Mevcut sürüm:** `0.0.4-alpha`
 **Minecraft:** Java Edition `26.2`
 **Yükleyici:** Fabric
 **Ana platform:** Windows 10/11
