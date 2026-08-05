@@ -1,0 +1,392 @@
+# Server Minecraft Java 26.2 con Fabric
+
+## Guida pratica in italiano
+
+Questa è la guida italiana rapida e operativa. La guida tecnica canonica, mantenuta in inglese, è disponibile qui: [English complete guide](../en/server-guide.md).
+
+**Obiettivo:** creare un server Minecraft Java 26.2 con Fabric, mod per ottimizzazione/redstone, accesso Java e Bedrock tramite Geyser e Floodgate.
+
+> Minecraft, Fabric, Geyser, Floodgate e le mod vengono aggiornati separatamente. Scarica soltanto file che indicano esplicitamente **Fabric + Minecraft 26.2**. I nomi e le versioni esatte dei file cambiano nel tempo.
+
+---
+
+## 1. Architettura consigliata
+
+```text
+Giocatori Java ─────────────┐
+                             ├── Fabric Server 26.2 ── mondo
+Giocatori Bedrock ─ Geyser ─┘          │
+                                       ├── Fabric API
+                                       ├── mod performance
+                                       └── Carpet per il gioco tecnico
+```
+
+Componenti:
+
+- **Java 25 a 64 bit:** esegue Minecraft 26.2.
+- **Fabric Server:** carica le mod Fabric.
+- **Fabric API:** dipendenza richiesta da molte mod.
+- **Geyser-Fabric:** traduce il traffico Bedrock in traffico comprensibile dal server Java.
+- **Floodgate-Fabric:** permette agli utenti Bedrock autenticati di entrare senza un account Java a pagamento.
+- **Lithium, FerriteCore, Krypton:** ottimizzazione iniziale consigliata.
+- **Fabric Carpet:** strumenti tecnici, regole e test per redstone.
+- **ServerCore, Carpet Extra e Carpet TIS Addition:** opzionali; installali solo se esiste una build compatibile con 26.2.
+
+### Cosa non installare sul server
+
+- **Sodium** è principalmente una mod grafica client-side: può aiutare un giocatore Java, ma non ottimizza il server.
+- **Litematica, MiniHUD e Tweakeroo** sono normalmente mod client-side.
+- Non copiare sul server una mod che richiede l'installazione obbligatoria anche sul client.
+
+### Perché non Cardboard all'inizio
+
+Cardboard cerca di fornire le API Bukkit/Spigot/Paper su Fabric. Può caricare alcuni plugin, ma la compatibilità non è totale e aggiunge un livello di compatibilità fragile. Per un server professionale basato su mod Fabric, usa mod Fabric native. Valuta Cardboard soltanto se hai un plugin Bukkit indispensabile, dopo aver verificato il ramo 26.2 e aver testato tutto su una copia del mondo.
+
+---
+
+## 2. Cosa serve
+
+- Un PC o un hosting che rimanga acceso mentre le persone giocano.
+- Sistema operativo a 64 bit.
+- Almeno 8 GB di RAM complessiva consigliati per iniziare.
+- SSD e connessione stabile.
+- Spazio libero per mondo, log e backup.
+
+Un hosting Minecraft è spesso più semplice di un PC di casa, perché evita molte impostazioni del router. Verifica che supporti Fabric, Java 25, mod e traffico UDP. Un hosting può assegnare porte diverse da quelle predefinite: in quel caso usa sempre le porte assegnate.
+
+Crea una cartella semplice, per esempio:
+
+```text
+C:\MinecraftServer
+```
+
+Evita `Downloads`, cartelle sincronizzate dal cloud e percorsi con caratteri strani.
+
+---
+
+## 3. Installare Java 25
+
+Installa un runtime **Java 25 a 64 bit** proveniente da un distributore affidabile, per esempio Eclipse Temurin 25, oppure seleziona Java 25 dal pannello del tuo hosting.
+
+1. Apri il menu Start di Windows.
+2. Scrivi `cmd`.
+3. Apri **Prompt dei comandi**.
+4. Esegui:
+
+```bat
+java -version
+```
+
+Devi vedere Java 25 e un runtime a 64 bit. Se compare il messaggio che `java` non è riconosciuto, Java non è installato correttamente o non è presente nel PATH. Reinstalla Java o chiedi all'hosting di selezionare la versione corretta.
+
+Le versioni di Java richieste possono cambiare tra le release Minecraft. Se il launcher o l'installer Fabric ufficiale indica una versione diversa, segui quella indicazione ufficiale.
+
+---
+
+## 4. Installare Fabric Server
+
+Apri <https://fabricmc.net/use/server/> e seleziona:
+
+1. Minecraft **26.2**.
+2. L'ultima versione stabile di Fabric Loader disponibile per 26.2.
+3. Il server installer/launcher.
+
+Metti il file nella cartella `C:\MinecraftServer`.
+
+### Installer grafico
+
+Se hai scaricato un installer `.jar`:
+
+1. Fai doppio clic sul file.
+2. Apri la scheda **Server**.
+3. Scegli Minecraft **26.2**.
+4. Scegli `C:\MinecraftServer`.
+5. Attiva il download del server Minecraft se l'opzione è presente.
+6. Avvia l'installazione.
+
+### Installer dal Prompt dei comandi
+
+Se il doppio clic non funziona:
+
+```bat
+cd /d C:\MinecraftServer
+java -jar fabric-installer-<installer-version>.jar server -downloadMinecraft
+```
+
+Sostituisci `<installer-version>` con il nome reale del file. Non scrivere le parentesi angolari.
+
+Dovresti vedere file simili a:
+
+```text
+C:\MinecraftServer\
+├── fabric-server-launch.jar
+├── server.jar
+└── libraries\
+```
+
+Il nome esatto può variare. Se il launcher ha un nome diverso, userai quel nome nel comando di avvio.
+
+---
+
+## 5. Primo avvio e EULA
+
+Crea con Notepad il file `start.bat` nella cartella del server:
+
+```bat
+@echo off
+cd /d "%~dp0"
+java -Xms4G -Xmx4G -jar fabric-server-launch.jar nogui
+pause
+```
+
+Se il file del launcher ha un nome diverso, sostituiscilo dopo `-jar`. Se il PC ha soltanto 8 GB di RAM, 4 GB è un buon punto di partenza: non assegnare tutta la RAM a Minecraft.
+
+Fai doppio clic su `start.bat`. Il primo avvio si fermerà creando `eula.txt`.
+
+1. Chiudi il server.
+2. Apri `eula.txt`.
+3. Leggi <https://www.minecraft.net/eula>.
+4. Se accetti, cambia:
+
+```text
+eula=false
+```
+
+in:
+
+```text
+eula=true
+```
+
+5. Salva e avvia nuovamente `start.bat`.
+
+Quando il server è completamente avviato, nel log comparirà il messaggio che indica che è pronto. Per fermarlo correttamente, scrivi nella console:
+
+```text
+stop
+```
+
+---
+
+## 6. Impostazioni di base
+
+Ferma il server e apri `server.properties` con Notepad. Come base sicura usa o controlla:
+
+```properties
+motd=My Fabric 26.2 Server
+online-mode=true
+enforce-whitelist=true
+white-list=true
+max-players=20
+view-distance=8
+simulation-distance=6
+server-port=25565
+```
+
+- Lascia **`online-mode=true`**. Non disattivarlo per far funzionare Floodgate.
+- `white-list=true` impedisce l'accesso agli sconosciuti.
+- `25565` è la porta Java TCP predefinita; un hosting potrebbe assegnarne un'altra.
+- `view-distance` e `simulation-distance` possono essere aumentate dopo aver misurato le prestazioni.
+
+Aggiungi un giocatore Java con:
+
+```text
+whitelist add NomeDelGiocatore
+```
+
+Per un giocatore Bedrock, usa il nome esatto mostrato dal server dopo l'installazione di Floodgate. Può essere presente un prefisso, ad esempio un punto. La sintassi può cambiare: consulta sempre le istruzioni attuali di Floodgate.
+
+---
+
+## 7. Installare Fabric API, Geyser e Floodgate
+
+Pagine ufficiali:
+
+- Fabric API: <https://modrinth.com/mod/fabric-api>
+- Download Geyser: <https://geysermc.org/download>
+- Guida Geyser: <https://geysermc.org/wiki/geyser/setup/>
+- Guida Floodgate: <https://geysermc.org/wiki/floodgate/setup/>
+
+Ferma il server e crea:
+
+```text
+C:\MinecraftServer\mods
+```
+
+Inserisci nella cartella soltanto file `.jar` compatibili con **Fabric e Minecraft 26.2**:
+
+```text
+fabric-api-<compatible-version>.jar
+Geyser-Fabric-<compatible-version>.jar
+floodgate-fabric-<compatible-version>.jar
+```
+
+Non scompattare i `.jar` e non usare siti che ricaricano file modificati.
+
+Avvia il server una volta per generare la configurazione. Poi fermalo e apri:
+
+```text
+C:\MinecraftServer\config\Geyser-Fabric\config.yml
+```
+
+Imposta:
+
+```yaml
+auth-type: floodgate
+```
+
+Mantieni la struttura YAML e modifica solo il valore. Riavvia il server e controlla la console.
+
+**Non condividere mai i file `key.pem` di Floodgate.** Non caricarli su GitHub, non inviarli a estranei e non inserirli in un archivio pubblico.
+
+---
+
+## 8. Porte Java e Bedrock
+
+| Edizione | Porta predefinita | Protocollo |
+|---|---:|---|
+| Java | `25565` | TCP |
+| Bedrock tramite Geyser | `19132` | UDP |
+
+La porta Bedrock è UDP: non è la stessa cosa della porta TCP Java.
+
+### Stessa rete domestica
+
+Sul PC server esegui:
+
+```bat
+ipconfig
+```
+
+Cerca un indirizzo IPv4 simile a `192.168.1.25` o `10.0.0.25`.
+
+- Java usa quell'indirizzo e la porta Java.
+- Bedrock usa quell'indirizzo e la porta UDP configurata in Geyser, normalmente `19132`.
+
+Consenti Java e Geyser in Windows Defender Firewall. Per il primo test Bedrock è più semplice usare un secondo dispositivo della stessa rete; la connessione Bedrock dallo stesso PC può richiedere un fix di loopback Windows.
+
+### Accesso da Internet
+
+Hai due possibilità:
+
+1. **Port forwarding:** inoltra la porta Java TCP (normalmente `25565`) e la porta Geyser UDP (normalmente `19132`) verso l'IP locale del PC server. Apri le stesse porte anche nel firewall.
+2. **Tunnel:** usa un servizio che supporti TCP e UDP, come l'opzione `playit.gg` indicata dalla documentazione Geyser. Un tunnel solo TCP, come il normale ngrok, non trasporta Bedrock UDP.
+
+Non condividere la porta UDP Geyser con voice chat, query o altri servizi UDP. Se il tuo hosting fornisce porte diverse, configura quelle porte in `server.properties`, in Geyser e nelle istruzioni date ai giocatori.
+
+Quando disponibile, puoi testare dalla console:
+
+```text
+geyser connectiontest your.public.address 19132
+```
+
+---
+
+## 9. Mod di ottimizzazione e redstone
+
+Controlla sempre nella pagina ufficiale della mod: versione **26.2**, loader **Fabric**, lato **server-side** e dipendenze richieste.
+
+| Mod | Uso | Nota |
+|---|---|---|
+| Lithium | Ottimizzazione della logica di gioco | Buona prima scelta |
+| FerriteCore | Riduzione dell'uso di memoria | Verifica la build 26.2 |
+| Krypton | Ottimizzazione della rete | Testala insieme a Geyser |
+| ServerCore | Controlli aggiuntivi sulle prestazioni | Impostazioni conservative |
+| Fabric Carpet | Regole, diagnostica e strumenti tecnici | Base consigliata per redstone |
+| Carpet Extra | Estensioni di Carpet | Deve corrispondere alla versione di Carpet |
+| Carpet TIS Addition | Strumenti tecnici avanzati | Opzionale, verifica 26.2 |
+
+Installa una mod alla volta:
+
+1. Ferma il server.
+2. Copia il `.jar` in `mods/`.
+3. Avvia il server.
+4. Controlla `logs/latest.log`.
+5. Prova un accesso Java e, se possibile, Bedrock.
+6. Se tutto funziona, passa alla mod successiva.
+
+Non installare vecchie build di Starlight, Phosphor o Noisium senza una pagina ufficiale che confermi il supporto a 26.2. Se non esiste una build compatibile, lasciale fuori.
+
+---
+
+## 10. Backup e aggiornamenti
+
+Prima di aggiornare Minecraft, Fabric, Geyser, Floodgate o una mod:
+
+1. Scrivi `stop` nella console.
+2. Copia almeno `world`, `world_nether`, `world_the_end`, `config`, `mods`, `server.properties` e `whitelist.json`.
+3. Usa un nome con la data, per esempio `backup-2026-08-05-before-update`.
+4. Aggiorna un solo componente alla volta.
+5. Avvia, leggi i log e prova Java e Bedrock.
+6. Conserva il backup finché il nuovo server è stato testato.
+
+Non pubblicare:
+
+```text
+world/
+world_nether/
+world_the_end/
+config/Geyser-Fabric/key.pem
+config/floodgate/key.pem
+logs/
+```
+
+---
+
+## 11. Problemi comuni
+
+### `java` non è riconosciuto
+
+Installa Java 25 a 64 bit e riapri il Prompt dei comandi.
+
+### `UnsupportedClassVersionError`
+
+La versione Java è troppo vecchia. Controlla `java -version` e usa la versione richiesta dagli strumenti ufficiali per Minecraft 26.2.
+
+### Crash all'avvio
+
+Apri `logs/latest.log` e l'ultimo file in `crash-reports/`. Cerca la prima riga `Caused by:`. Le cause comuni sono dipendenze mancanti, mod client-only, file duplicati o versioni sbagliate.
+
+### Java funziona ma Bedrock no
+
+Controlla che Geyser e Floodgate siano caricati, che `auth-type` sia `floodgate`, che la porta UDP sia corretta e aperta nel firewall/router e che nessun altro servizio usi quella porta.
+
+### Bedrock entra e viene espulso
+
+Controlla autenticazione Floodgate, whitelist e console. Non usare `online-mode=false` come soluzione.
+
+### Contenuti Bedrock rotti
+
+Geyser traduce il protocollo; non installa mod Java client-side sul dispositivo Bedrock. Mod con rendering, oggetti o dimensioni personalizzate possono richiedere soluzioni dedicate e test approfonditi.
+
+### Server lento
+
+Non installare dieci mod subito. Controlla CPU, entità, generazione dei chunk, `view-distance` e `simulation-distance`. Parti da Lithium, FerriteCore e Krypton, poi misura.
+
+---
+
+## 12. Checklist finale
+
+- [ ] Java 25 a 64 bit funziona con `java -version`.
+- [ ] Fabric Server è per Minecraft 26.2.
+- [ ] Hai letto e accettato la EULA.
+- [ ] `online-mode=true` è attivo.
+- [ ] La whitelist è attiva prima dei test pubblici.
+- [ ] Fabric API, Geyser-Fabric e Floodgate-Fabric sono compatibili con 26.2.
+- [ ] `auth-type: floodgate` è configurato.
+- [ ] Porta Java TCP e porta Bedrock UDP sono corrette e diverse.
+- [ ] Nessuna mod client-only è nella cartella server `mods/`.
+- [ ] Esiste un backup.
+- [ ] Java riesce a entrare.
+- [ ] Bedrock riesce a entrare.
+- [ ] `logs/latest.log` non mostra errori irrisolti.
+
+## Riferimenti
+
+- <https://fabricmc.net/use/server/>
+- <https://fabricmc.net/2026/06/15/262.html>
+- <https://geysermc.org/wiki/geyser/setup/>
+- <https://geysermc.org/wiki/floodgate/setup/>
+- <https://geysermc.org/download>
+- <https://www.minecraft.net/eula>
+- <https://github.com/CardboardPowered/cardboard>

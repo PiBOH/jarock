@@ -1,0 +1,36 @@
+# Jarock Fabric server template
+# Copy this file to server/server.properties on first setup, then edit the values marked CONFIGURE.
+# This template does not open router or firewall ports.
+
+motd=Jarock Fabric 26.2
+level-name=world
+gamemode=survival
+difficulty=normal
+hardcore=false
+pvp=true
+allow-flight=false
+spawn-monsters=true
+spawn-animals=true
+spawn-npcs=true
+max-players=20
+view-distance=8
+simulation-distance=6
+online-mode=true
+white-list=true
+enforce-whitelist=true
+enforce-secure-profile=true
+prevent-proxy-connections=false
+server-port=25565
+server-ip=
+network-compression-threshold=256
+sync-chunk-writes=true
+max-tick-time=60000
+enable-command-block=false
+enable-query=false
+enable-rcon=false
+resource-pack=
+resource-pack-sha1=
+require-resource-pack=false
+
+# Geyser uses a separate UDP port. Configure it in server/config/Geyser-Fabric/config.yml.
+# The default Bedrock port is 19132. Do not share it with another UDP service.

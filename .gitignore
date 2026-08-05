@@ -1,0 +1,42 @@
+# Generated Minecraft runtime
+/server/*
+!/server/.gitkeep
+!/server/mods-manifest.ps1
+!/server/server.properties.template
+!/server/eula.txt.template
+!/server/README.md
+!/server/config/
+!/server/config/Geyser-Fabric/
+!/server/config/Geyser-Fabric/config.yml.template
+
+# Local bootstrap cache
+/.cache/
+
+# Generated runtime data if a user changes the server directory
+**/world/
+**/world_nether/
+**/world_the_end/
+**/logs/
+**/crash-reports/
+**/libraries/
+**/fabric-server-launch.jar
+**/server.jar
+**/server.properties
+**/eula.txt
+**/user_jvm_args.txt
+**/run.bat
+**/run.sh
+
+# Runtime secrets and local configuration
+**/key.pem
+**/*.pem
+**/ops.json
+**/whitelist.json
+**/banned-players.json
+**/banned-ips.json
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
