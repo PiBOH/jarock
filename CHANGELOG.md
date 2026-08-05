@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Complete the public-release checklist in `TODO.md`.
 - Keep all localized documentation synchronized with the English canonical documentation.
 
+## [0.0.6-alpha] - 2026-08-06
+
+### Fixed
+
+- Fixed PowerShell 5.1 Java discovery when the candidate collection starts empty.
+- Made Java candidate binding explicit and safe for empty lists.
+- Improved the no-compatible-Java remediation message.
+
 ## [0.0.5-alpha] - 2026-08-05
 
 ### Added
@@ -86,7 +94,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.5-alpha...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.6-alpha...HEAD
+[0.0.6-alpha]: https://github.com/PiBOH/jarock/compare/0.0.5-alpha...0.0.6-alpha
 [0.0.5-alpha]: https://github.com/PiBOH/jarock/compare/0.0.4-alpha...0.0.5-alpha
 [0.0.4-alpha]: https://github.com/PiBOH/jarock/compare/v0.0.3-alpha...v0.0.4-alpha
 [0.0.3-alpha]: https://github.com/PiBOH/jarock/compare/v0.0.2-alpha...v0.0.3-alpha

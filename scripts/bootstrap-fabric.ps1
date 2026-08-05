@@ -50,7 +50,7 @@ function Select-JavaRuntime {
         if ($Result.Inspected.Count -gt 0) {
             $InspectedText = (($Result.Inspected | ForEach-Object { "$($_.Path) -> Java $($_.Major), 64-bit=$($_.Is64Bit)" }) -join '; ')
         }
-        Stop-WithGuidance "No compatible 64-bit Java $JavaMinimum+ runtime was found. $InspectedText" "Install a 64-bit Java $JavaMinimum (or newer) runtime, then set JAVA_HOME to its JDK folder or remove the old Java 8 entry from PATH. Close and reopen this window, then run start-server.bat again."
+        Stop-WithGuidance "No compatible 64-bit Java $JavaMinimum+ runtime was found. $InspectedText" "Install a 64-bit Java $JavaMinimum (or newer) runtime, then set JAVA_HOME to its JDK folder. If Java is already installed, close and reopen this window so Windows reloads the environment, then run start-server.bat again."
     }
 
     $script:SelectedJava = $Result.Selected

@@ -55,6 +55,7 @@ function Get-JavaRuntimeInfo {
 function Add-JavaCandidate {
     param(
         [Parameter(Mandatory = $true)]
+        [AllowEmptyCollection()]
         [System.Collections.Generic.List[string]]$Candidates,
         [AllowNull()]
         [string]$Path
@@ -67,7 +68,7 @@ function Add-JavaCandidate {
     try {
         $FullPath = [IO.Path]::GetFullPath($Path)
         if (-not $Candidates.Contains($FullPath)) {
-            $Candidates.Add($FullPath)
+            [void]$Candidates.Add($FullPath)
         }
     }
     catch {
@@ -84,7 +85,7 @@ function Find-CompatibleJava {
     $Candidates = New-Object 'System.Collections.Generic.List[string]'
 
     if (-not [string]::IsNullOrWhiteSpace($env:JAVA_HOME)) {
-        Add-JavaCandidate $Candidates (Join-Path $env:JAVA_HOME 'bin\java.exe')
+        Add-JavaCandidate -Candidates $Candidates -Path (Join-Path $env:JAVA_HOME 'bin\java.exe')
     }
 
     $PathCommands = @(Get-Command java.exe -All -ErrorAction SilentlyContinue)
@@ -93,7 +94,7 @@ function Find-CompatibleJava {
         if ([string]::IsNullOrWhiteSpace($CommandPath)) {
             $CommandPath = $Command.Source
         }
-        Add-JavaCandidate $Candidates $CommandPath
+        Add-JavaCandidate -Candidates $Candidates -Path $CommandPath
     }
 
     $ProgramFilesRoots = @(
@@ -119,7 +120,7 @@ function Find-CompatibleJava {
         }
         $Installations = @(Get-ChildItem -LiteralPath $Root -Directory -ErrorAction SilentlyContinue)
         foreach ($Installation in $Installations) {
-            Add-JavaCandidate $Candidates (Join-Path $Installation.FullName 'bin\java.exe')
+            Add-JavaCandidate -Candidates $Candidates -Path (Join-Path $Installation.FullName 'bin\java.exe')
         }
     }
 
@@ -140,7 +141,7 @@ function Find-CompatibleJava {
             }
             $JavaHomeProperty = $RegistryProperties.PSObject.Properties['JavaHome']
             if ($null -ne $JavaHomeProperty -and -not [string]::IsNullOrWhiteSpace([string]$JavaHomeProperty.Value)) {
-                Add-JavaCandidate $Candidates (Join-Path ([string]$JavaHomeProperty.Value) 'bin\java.exe')
+                Add-JavaCandidate -Candidates $Candidates -Path (Join-Path ([string]$JavaHomeProperty.Value) 'bin\java.exe')
             }
         }
     }
@@ -151,7 +152,7 @@ function Find-CompatibleJava {
         if ($null -eq $Runtime) {
             continue
         }
-        $Inspected.Add($Runtime)
+        [void]$Inspected.Add($Runtime)
         if ($Runtime.Major -ge $MinimumMajor -and $Runtime.Is64Bit) {
             return [pscustomobject]@{
                 Selected = $Runtime
