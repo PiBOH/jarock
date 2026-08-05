@@ -4,7 +4,7 @@ param()
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-$Root = Split-Path -Parent $PSScriptRoot
+$Root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $ServerDir = Join-Path $Root 'server'
 $ModsDir = Join-Path $ServerDir 'mods'
 $ManifestPath = Join-Path $ServerDir 'mods-manifest.ps1'
@@ -14,98 +14,194 @@ $FabricInstallerSha512 = '3cbe7b69498c44d814fc95e71cd9ce9c12c45a9e1dcf01085cb3e9
 $MinecraftVersion = '26.2'
 $FabricLoaderVersion = '0.19.3'
 $JavaMinimum = 25
+$LongPathThreshold = 220
 
 function Write-Step([string]$Message) {
     Write-Host "`n==> $Message" -ForegroundColor Cyan
 }
 
+function Show-ErrorGuidance([string]$Message, [string]$Action) {
+    Write-Host "`nERROR: $Message" -ForegroundColor Red
+    Write-Host 'Suggested fix:' -ForegroundColor Yellow
+    Write-Host "  $Action"
+    Write-Host 'The server was not started. No router, firewall, or port-forwarding changes were made.' -ForegroundColor Yellow
+}
+
+function Stop-WithGuidance([string]$Message, [string]$Action) {
+    Show-ErrorGuidance $Message $Action
+    exit 1
+}
+
 function Assert-Command([string]$CommandName) {
     if (-not (Get-Command $CommandName -ErrorAction SilentlyContinue)) {
-        throw "Required command '$CommandName' was not found. Install Java $JavaMinimum (64-bit), then reopen this window."
+        Stop-WithGuidance "Required command '$CommandName' was not found." "Install 64-bit Java $JavaMinimum, add it to PATH, reopen Command Prompt, and run start-server.bat again."
     }
 }
 
 function Assert-JavaVersion {
-    $VersionText = (& java -version 2>&1 | Out-String)
-    Write-Host $VersionText.Trim()
-    $Match = [regex]::Match($VersionText, 'version "(?<major>\d+)')
-    if (-not $Match.Success) {
-        throw 'Could not determine the Java version from java -version.'
+    try {
+        $VersionText = (& java -version 2>&1 | Out-String)
+        Write-Host $VersionText.Trim()
+        $Match = [regex]::Match($VersionText, 'version "(?<major>\d+)')
+        if (-not $Match.Success) {
+            Stop-WithGuidance 'Could not determine the Java version.' 'Run java -version manually. Reinstall a 64-bit Java runtime if the command is missing or malformed.'
+        }
+        $Major = [int]$Match.Groups['major'].Value
+        if ($Major -lt $JavaMinimum) {
+            Stop-WithGuidance "Java $JavaMinimum or newer is required for Minecraft $MinecraftVersion; detected Java $Major." "Install Java $JavaMinimum 64-bit, ensure it is first on PATH, reopen the terminal, and try again."
+        }
     }
-    $Major = [int]$Match.Groups['major'].Value
-    if ($Major -lt $JavaMinimum) {
-        throw "Java $JavaMinimum or newer is required for this Minecraft 26.2 setup. Detected Java $Major."
+    catch {
+        Stop-WithGuidance $_.Exception.Message 'Install or repair the 64-bit Java runtime, then reopen the terminal and try again.'
     }
 }
 
 function Get-Sha512([string]$Path) {
-    return (Get-FileHash -Algorithm SHA512 -LiteralPath $Path).Hash.ToLowerInvariant()
+    try {
+        return (Get-FileHash -Algorithm SHA512 -LiteralPath $Path).Hash.ToLowerInvariant()
+    }
+    catch {
+        Stop-WithGuidance "Could not read or hash '$Path'." 'Check that the repository folder is writable, that antivirus is not locking the file, and that the path is accessible.'
+    }
 }
 
 function Download-AndVerify([string]$Url, [string]$Path, [string]$ExpectedSha512) {
-    $Headers = @{ 'User-Agent' = 'Jarock-Fabric-Bootstrap/0.0.1-alpha (https://github.com/PiBOH/jarock)' }
-    if (-not (Test-Path -LiteralPath $Path)) {
-        Write-Host "Downloading $([IO.Path]::GetFileName($Path)) ..."
-        Invoke-WebRequest -Uri $Url -OutFile $Path -Headers $Headers -UseBasicParsing
+    $Headers = @{ 'User-Agent' = 'Jarock-Fabric-Bootstrap/0.0.2-alpha (https://github.com/PiBOH/jarock)' }
+    try {
+        if (-not (Test-Path -LiteralPath $Path)) {
+            Write-Host "Downloading $([IO.Path]::GetFileName($Path)) ..."
+            Invoke-WebRequest -Uri $Url -OutFile $Path -Headers $Headers -UseBasicParsing
+        }
+
+        $Actual = Get-Sha512 $Path
+        if ($Actual -ne $ExpectedSha512.ToLowerInvariant()) {
+            Remove-Item -LiteralPath $Path -Force -ErrorAction SilentlyContinue
+            Stop-WithGuidance "SHA-512 verification failed for '$Path'. The invalid file was removed." 'Run the bootstrap again. If it repeats, check antivirus/proxy interference and report the exact filename to the project maintainer.'
+        }
+    }
+    catch {
+        if ($_.Exception.Message -like '*SHA-512 verification failed*') { throw }
+        Stop-WithGuidance "Could not download or verify '$Path'. $($_.Exception.Message)" 'Check Internet access, DNS/proxy settings, disk permissions and free space, then run start-server.bat again.'
+    }
+}
+
+function Get-LongPathsEnabled {
+    try {
+        $Value = (Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'LongPathsEnabled' -ErrorAction SilentlyContinue).LongPathsEnabled
+        return ([int]$Value -eq 1)
+    }
+    catch {
+        return $false
+    }
+}
+
+function Ensure-LongPathsIfNeeded {
+    $LongestExpectedPath = (Join-Path $ServerDir 'mods\fabric-api-0.156.0+26.2.jar').Length
+    if ($Root.Length -lt $LongPathThreshold -and $LongestExpectedPath -lt 260) {
+        Write-Host "Repository path length is safe ($($Root.Length) characters). Windows long-path policy is not required." -ForegroundColor Green
+        return
     }
 
-    $Actual = Get-Sha512 $Path
-    if ($Actual -ne $ExpectedSha512.ToLowerInvariant()) {
-        Remove-Item -LiteralPath $Path -Force
-        throw "SHA-512 verification failed for $Path. The file was removed."
+    Write-Host "This repository is in a deep path ($($Root.Length) characters); Windows long-path support is required." -ForegroundColor Yellow
+    if (Get-LongPathsEnabled) {
+        Write-Host 'Windows long-path support is already enabled (LongPathsEnabled=1).' -ForegroundColor Green
+        return
+    }
+
+    $LongPathScript = Join-Path $PSScriptRoot 'enable-long-paths.ps1'
+    if (-not (Test-Path -LiteralPath $LongPathScript)) {
+        Stop-WithGuidance 'Long-path support is needed but the helper script is missing.' 'Re-download the complete repository, preserving scripts/enable-long-paths.ps1.'
+    }
+
+    Write-Host 'LongPathsEnabled is disabled. Requesting administrator permission to enable it now.' -ForegroundColor Yellow
+    try {
+        $ElevatedArguments = "-NoProfile -ExecutionPolicy Bypass -File `"$LongPathScript`""
+        $Process = Start-Process -FilePath 'powershell.exe' -Verb RunAs -Wait -PassThru -ArgumentList $ElevatedArguments
+        if ($Process.ExitCode -ne 0 -or -not (Get-LongPathsEnabled)) {
+            Stop-WithGuidance 'Windows long-path support could not be enabled.' 'Accept the administrator prompt, or ask an administrator to set HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled to DWORD 1, then reboot if requested.'
+        }
+        Write-Host 'Long-path support was enabled successfully. The change was reported above.' -ForegroundColor Green
+    }
+    catch {
+        Stop-WithGuidance "The administrator elevation request failed. $($_.Exception.Message)" 'Run start-server.bat as Administrator once, or move the repository to a shorter path and try again.'
     }
 }
 
 function Ensure-EulaTemplate {
     $EulaPath = Join-Path $ServerDir 'eula.txt'
     $TemplatePath = Join-Path $ServerDir 'eula.txt.template'
-    if (-not (Test-Path -LiteralPath $EulaPath) -and (Test-Path -LiteralPath $TemplatePath)) {
-        Copy-Item -LiteralPath $TemplatePath -Destination $EulaPath
-    }
-}
-
-Write-Step 'Checking prerequisites'
-Assert-Command 'java'
-Assert-JavaVersion
-
-New-Item -ItemType Directory -Force -Path $ServerDir, $ModsDir | Out-Null
-if (-not (Test-Path -LiteralPath $ManifestPath)) {
-    throw "Missing mod manifest: $ManifestPath"
-}
-. $ManifestPath
-
-Write-Step 'Downloading and verifying the official Fabric installer'
-Download-AndVerify $FabricInstallerUrl $FabricInstaller $FabricInstallerSha512
-
-if (-not (Test-Path -LiteralPath (Join-Path $ServerDir 'fabric-server-launch.jar'))) {
-    Write-Step "Installing Fabric Server for Minecraft $MinecraftVersion (Loader $FabricLoaderVersion)"
-    Push-Location $ServerDir
     try {
-        & java -jar $FabricInstaller server -mcversion $MinecraftVersion -loader $FabricLoaderVersion -downloadMinecraft
-        if ($LASTEXITCODE -ne 0) { throw "Fabric installer exited with code $LASTEXITCODE." }
+        if (-not (Test-Path -LiteralPath $EulaPath) -and (Test-Path -LiteralPath $TemplatePath)) {
+            Copy-Item -LiteralPath $TemplatePath -Destination $EulaPath
+            Write-Host 'Created server/eula.txt from the template.' -ForegroundColor Green
+        }
     }
-    finally {
-        Pop-Location
+    catch {
+        Stop-WithGuidance "Could not create '$EulaPath'. $($_.Exception.Message)" 'Check that the repository folder is writable and that the file is not open in another program.'
     }
 }
 
-Write-Step 'Downloading and verifying pinned server mods'
-foreach ($Mod in $Mods) {
-    $Destination = Join-Path $ModsDir $Mod.Name
-    Download-AndVerify $Mod.Url $Destination $Mod.Sha512
-    Write-Host "Verified $($Mod.Name) [$($Mod.Purpose)]" -ForegroundColor Green
+try {
+    Write-Step 'Checking repository path and Windows long-path support'
+    Ensure-LongPathsIfNeeded
+
+    Write-Step 'Checking prerequisites'
+    Assert-Command 'java'
+    Assert-JavaVersion
+
+    New-Item -ItemType Directory -Force -Path $ServerDir, $ModsDir | Out-Null
+    if (-not (Test-Path -LiteralPath $ManifestPath)) {
+        Stop-WithGuidance "Missing mod manifest: $ManifestPath" 'Download the complete repository again; do not remove server/mods-manifest.ps1.'
+    }
+    . $ManifestPath
+    if (-not $Mods -or $Mods.Count -eq 0) {
+        Stop-WithGuidance 'The mod manifest is empty.' 'Restore server/mods-manifest.ps1 from the repository and try again.'
+    }
+
+    Write-Step 'Downloading and verifying the official Fabric installer'
+    Download-AndVerify $FabricInstallerUrl $FabricInstaller $FabricInstallerSha512
+
+    if (-not (Test-Path -LiteralPath (Join-Path $ServerDir 'fabric-server-launch.jar'))) {
+        Write-Step "Installing Fabric Server for Minecraft $MinecraftVersion (Loader $FabricLoaderVersion)"
+        Push-Location $ServerDir
+        try {
+            & java -jar $FabricInstaller server -mcversion $MinecraftVersion -loader $FabricLoaderVersion -downloadMinecraft
+            if ($LASTEXITCODE -ne 0) {
+                Stop-WithGuidance "Fabric installer exited with code $LASTEXITCODE." 'Check the Fabric installer log, confirm Java 25 is selected, verify Internet access, and run start-server.bat again.'
+            }
+        }
+        finally {
+            Pop-Location
+        }
+    }
+
+    Write-Step 'Downloading and verifying pinned server mods'
+    foreach ($Mod in $Mods) {
+        $Destination = Join-Path $ModsDir $Mod.Name
+        Download-AndVerify $Mod.Url $Destination $Mod.Sha512
+        Write-Host "Verified $($Mod.Name) [$($Mod.Purpose)]" -ForegroundColor Green
+    }
+
+    Ensure-EulaTemplate
+
+    $PropertiesPath = Join-Path $ServerDir 'server.properties'
+    $PropertiesTemplate = Join-Path $ServerDir 'server.properties.template'
+    try {
+        if (-not (Test-Path -LiteralPath $PropertiesPath) -and (Test-Path -LiteralPath $PropertiesTemplate)) {
+            Copy-Item -LiteralPath $PropertiesTemplate -Destination $PropertiesPath
+            Write-Host 'Created server.properties from the safe template.' -ForegroundColor Green
+        }
+    }
+    catch {
+        Stop-WithGuidance "Could not create '$PropertiesPath'. $($_.Exception.Message)" 'Check write permissions and close any editor using server.properties.'
+    }
+
+    Write-Step 'Bootstrap complete'
+    Write-Host 'No router, firewall, port-forwarding, or public-network changes were performed.' -ForegroundColor Yellow
+    Write-Host 'Geyser configuration is generated by the first server start; the start script applies auth-type: floodgate afterward.'
+    Write-Host 'If eula=true is accepted, start-server.bat will launch the server.'
 }
-
-Ensure-EulaTemplate
-
-$PropertiesPath = Join-Path $ServerDir 'server.properties'
-$PropertiesTemplate = Join-Path $ServerDir 'server.properties.template'
-if (-not (Test-Path -LiteralPath $PropertiesPath) -and (Test-Path -LiteralPath $PropertiesTemplate)) {
-    Copy-Item -LiteralPath $PropertiesTemplate -Destination $PropertiesPath
-    Write-Host 'Created server.properties from the safe template.' -ForegroundColor Green
+catch {
+    Show-ErrorGuidance $_.Exception.Message 'Read the specific message above, apply its suggested fix, and run start-server.bat again.'
+    exit 1
 }
-
-Write-Step 'Bootstrap complete'
-Write-Host 'No router, firewall, port-forwarding, or public-network changes were performed.' -ForegroundColor Yellow
-Write-Host 'Geyser configuration is generated by the first server start; the start script applies auth-type: floodgate afterward.'
-Write-Host 'If eula=true is accepted, start-server.bat will launch the server.'

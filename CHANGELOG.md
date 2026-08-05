@@ -12,6 +12,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Complete the public-release checklist in `TODO.md`.
 - Add additional translations from the English canonical documentation.
 
+## [0.0.2-alpha] - 2026-08-05
+
+### Changed
+
+- Made the Windows bootstrap resolve paths from the repository location instead of a fixed folder.
+- Added actionable remediation messages after bootstrap, Geyser, Java and server-process failures.
+- Added long-path detection and an elevated `LongPathsEnabled` helper for deep Windows paths.
+- Kept router, firewall and port-forwarding operations out of the bootstrap.
+
+### Fixed
+
+- Preserved spaces, Unicode characters and nested repository paths in launcher and PowerShell path handling.
+
+### Planned
+
+- Complete the public-release checklist in `TODO.md`.
+- Add additional translations from the English canonical documentation.
+
 ## [0.0.1-alpha] - 2026-08-05
 
 ### Added
@@ -30,5 +48,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/v0.0.1-alpha...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/v0.0.2-alpha...HEAD
+[0.0.2-alpha]: https://github.com/PiBOH/jarock/compare/v0.0.1-alpha...v0.0.2-alpha
 [0.0.1-alpha]: https://github.com/PiBOH/jarock/releases/tag/v0.0.1-alpha

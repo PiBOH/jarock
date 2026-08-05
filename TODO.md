@@ -7,7 +7,7 @@ The repository intentionally does **not** open router ports, modify firewall rul
 ## Required before public access
 
 - [ ] Install a supported 64-bit Java runtime for Minecraft 26.2 and confirm `java -version`.
-- [ ] Download this repository from a trusted source and keep the folder outside cloud-sync directories.
+- [ ] Download this repository from a trusted source. The launcher supports spaces, Unicode names and ordinary deeply nested paths; do not use unavailable drives or folders where Windows denies write access.
 - [ ] Run `start-server.bat` once to bootstrap the pinned Fabric server and mods.
 - [ ] Read the Minecraft EULA at <https://www.minecraft.net/eula> and set the generated `server/eula.txt` to `eula=true` only if you agree.
 - [ ] Review `server/server.properties` and replace the default `motd`, player limit, difficulty and gameplay settings.
@@ -24,6 +24,7 @@ The repository intentionally does **not** open router ports, modify firewall rul
 - [ ] Create and restore a complete backup of the world before inviting players.
 - [ ] Decide where backups will be stored and how often they will run.
 - [ ] Confirm the host has enough CPU, RAM, disk space and uptime for the expected player count.
+- [ ] If the repository path is long, confirm the launcher reported `LongPathsEnabled=1`; reboot Windows if an older application still reports the 260-character limit.
 
 ## Manual network and hosting tasks
 
