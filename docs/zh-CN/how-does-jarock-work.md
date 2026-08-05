@@ -1,0 +1,65 @@
+# Jarock 是如何工作的？
+
+## 服务器工作原理简介
+
+**当前版本：** `0.0.2-alpha`  
+**Minecraft：** Java Edition `26.2`  
+**加载器：** Fabric  
+**主要平台：** Windows 10/11
+
+本文说明下载 Jarock 后服务器实际会做什么。
+
+## 1. 简要流程
+
+用户安装 64 位 Java，下载本 repository，然后运行 `start-server.bat`。程序会自动找到自己的目录，检查 Java 和路径；如果需要，会请求启用 Windows 长路径支持；随后下载固定版本的 Fabric 安装器和 mods，并使用 SHA-512 校验每个文件。
+
+Fabric 会在 `server/` 中创建运行环境。第一次运行会创建 `server/eula.txt`，其中为 `eula=false`，然后停止。用户需要阅读 <https://www.minecraft.net/eula>，同意后将其改为 `eula=true`，再运行一次。Geyser 负责转换 Bedrock 流量，Floodgate 负责 Bedrock 身份验证。
+
+Jarock **不会**配置路由器、防火墙或 port forwarding。
+
+## 2. 文件和目录
+
+repository 中保存脚本、模板和 manifest，不保存世界或生成的 `.jar` 文件：
+
+```text
+start-server.bat
+scripts/bootstrap-fabric.ps1
+scripts/configure-geyser.ps1
+scripts/enable-long-paths.ps1
+server/mods-manifest.ps1
+server/server.properties.template
+server/eula.txt.template
+version.txt
+CHANGELOG.md
+TODO.md
+```
+
+运行时文件会放在 `server/`。世界、logs、库文件、私钥和本地列表会被 Git 忽略。
+
+`start-server.bat` 使用自身所在的位置，不依赖 `C:\MinecraftServer` 这样的固定路径，因此支持包含空格、Unicode、`!` 和多层目录的可访问路径。深路径会检查：
+
+```text
+HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled
+```
+
+必要时会请求管理员权限并运行 `scripts\enable-long-paths.ps1`。这是系统级修改，旧程序可能需要重启 Windows。
+
+## 3. EULA、Geyser 和错误
+
+第一次运行创建 `server/eula.txt` 后停止。阅读 EULA 并将 `eula=false` 改为 `eula=true` 后再次启动。
+
+Geyser 在第一次真正启动服务器时生成完整配置。创建以下文件后：
+
+```text
+server\config\Geyser-Fabric\config.yml
+```
+
+脚本会设置：
+
+```yaml
+auth-type: floodgate
+```
+
+Java 通常使用 TCP `25565`，Bedrock 通常使用 UDP `19132`。Jarock 不会打开或转发这些端口。`key.pem` 是私密文件，绝不能公开。
+
+发生错误后，读取 `ERROR:` 或 `WARNING:`，按照 `Suggested fix:` 操作。如果 Java 退出，检查 `server\logs\latest.log` 和 `server\crash-reports\` 中最早的 `Caused by:`。发布前仍需完成的事项在 `TODO.md` 中。

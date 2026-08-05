@@ -1,0 +1,65 @@
+# Kako deluje Jarock?
+
+## Preprosta razlaga strežnika
+
+**Trenutna različica:** `0.0.2-alpha`  
+**Minecraft:** Java Edition `26.2`  
+**Nalagalnik:** Fabric  
+**Glavna platforma:** Windows 10/11
+
+Ta dokument razloži, kaj se zgodi po prenosu Jarocka.
+
+## 1. Na kratko
+
+Uporabnik namesti 64-bitno Javo, prenese ta repository in zažene `start-server.bat`. Program poišče svojo mapo, preveri Javo in pot, po potrebi zahteva vklop dolgih poti sistema Windows, prenese pripeti Fabric installer in mods ter preveri vsako datoteko s SHA-512.
+
+Fabric ustvari runtime v mapi `server/`. Prvi zagon ustvari `server/eula.txt` z vrednostjo `eula=false` in se ustavi. Uporabnik mora prebrati <https://www.minecraft.net/eula>, ob soglasju nastaviti `eula=true` in zagnati znova. Geyser prevaja promet Bedrock, Floodgate pa upravlja preverjanje pristnosti Bedrock.
+
+Jarock **ne** nastavi routerja, požarnega zidu ali port forwarding.
+
+## 2. Datoteke in potek
+
+Repository vsebuje scripts, predloge in manifest, ne vsebuje pa sveta ali ustvarjenih datotek `.jar`:
+
+```text
+start-server.bat
+scripts/bootstrap-fabric.ps1
+scripts/configure-geyser.ps1
+scripts/enable-long-paths.ps1
+server/mods-manifest.ps1
+server/server.properties.template
+server/eula.txt.template
+version.txt
+CHANGELOG.md
+TODO.md
+```
+
+Runtime se ustvari v `server/`. Git prezre svetove, logs, knjižnice, zasebne ključe in lokalne sezname.
+
+`start-server.bat` uporablja svojo lokacijo namesto stalne poti, kot je `C:\MinecraftServer`, zato podpira dostopne poti s presledki, Unicode, `!` in gnezdenimi mapami. Pri dolgih poteh preveri:
+
+```text
+HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled
+```
+
+Če je potrebno, zahteva skrbniška dovoljenja in zažene `scripts\enable-long-paths.ps1`. Sprememba velja za celoten računalnik, starejši programi pa lahko zahtevajo ponovni zagon sistema Windows.
+
+## 3. EULA, Geyser in napake
+
+Prvi zagon ustvari `server/eula.txt` z `eula=false` in se ustavi. Preberi EULA, spremeni v `eula=true`, če se strinjaš, in zaženi znova.
+
+Geyser ustvari popolno konfiguracijo pri prvem pravem zagonu strežnika. Nato skript v:
+
+```text
+server\config\Geyser-Fabric\config.yml
+```
+
+nastavi:
+
+```yaml
+auth-type: floodgate
+```
+
+Java običajno uporablja TCP `25565`, Bedrock pa UDP `19132`. Jarock ne odpira vrat. `key.pem` je zaseben in ga ni dovoljeno objaviti.
+
+Po napaki preberi `ERROR:` ali `WARNING:` in sledi `Suggested fix:`. Če se Java konča, poišči prvi `Caused by:` v `server\logs\latest.log` ali `server\crash-reports\`. Preostala opravila so v `TODO.md`.

@@ -1,0 +1,65 @@
+# Jarock ทำงานอย่างไร?
+
+## คำอธิบายเซิร์ฟเวอร์แบบเข้าใจง่าย
+
+**เวอร์ชันปัจจุบัน:** `0.0.2-alpha`  
+**Minecraft:** Java Edition `26.2`  
+**Loader:** Fabric  
+**แพลตฟอร์มหลัก:** Windows 10/11
+
+เอกสารนี้อธิบายว่าเกิดอะไรขึ้นหลังจากดาวน์โหลด Jarock
+
+## 1. สรุป
+
+ผู้ใช้ติดตั้ง Java แบบ 64-bit ดาวน์โหลด repository นี้ แล้วเรียกใช้ `start-server.bat` โปรแกรมจะค้นหาโฟลเดอร์ของตัวเอง ตรวจสอบ Java และ path ขอเปิดใช้ long path ของ Windows เมื่อจำเป็น ดาวน์โหลด Fabric installer และ mods ที่กำหนดไว้ แล้วตรวจสอบทุกไฟล์ด้วย SHA-512
+
+Fabric สร้าง runtime ใน `server/` การทำงานครั้งแรกจะสร้าง `server/eula.txt` โดยมีค่า `eula=false` แล้วหยุด ผู้ใช้ต้องอ่าน <https://www.minecraft.net/eula> เปลี่ยนเป็น `eula=true` หากยอมรับ แล้วเรียกใช้อีกครั้ง Geyser แปลงการรับส่งข้อมูล Bedrock และ Floodgate จัดการการยืนยันตัวตน Bedrock
+
+Jarock **ไม่** ตั้งค่า router, firewall หรือ port forwarding
+
+## 2. ไฟล์และลำดับการทำงาน
+
+Repository มี scripts, templates และ manifest แต่ไม่มีโลกหรือไฟล์ `.jar` ที่สร้างขึ้น:
+
+```text
+start-server.bat
+scripts/bootstrap-fabric.ps1
+scripts/configure-geyser.ps1
+scripts/enable-long-paths.ps1
+server/mods-manifest.ps1
+server/server.properties.template
+server/eula.txt.template
+version.txt
+CHANGELOG.md
+TODO.md
+```
+
+Runtime ถูกสร้างใน `server/` โดย Git จะไม่ติดตาม world, logs, libraries, private keys และรายการภายในเครื่อง
+
+`start-server.bat` ใช้ตำแหน่งของตัวเอง ไม่ได้ใช้ path คงที่อย่าง `C:\MinecraftServer` จึงรองรับ path ที่เข้าถึงได้ซึ่งมีช่องว่าง Unicode `!` และโฟลเดอร์ซ้อนกัน สำหรับ path ที่ยาวจะตรวจสอบ:
+
+```text
+HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled
+```
+
+หากจำเป็น จะขอสิทธิ์ administrator และเรียก `scripts\enable-long-paths.ps1` การเปลี่ยนแปลงนี้มีผลทั้งเครื่อง และโปรแกรมรุ่นเก่าอาจต้อง restart Windows
+
+## 3. EULA, Geyser และข้อผิดพลาด
+
+การทำงานครั้งแรกจะสร้าง `server/eula.txt` ด้วย `eula=false` แล้วหยุด อ่าน EULA เปลี่ยนเป็น `eula=true` หากยอมรับ แล้วเรียกใช้อีกครั้ง
+
+Geyser สร้าง configuration แบบสมบูรณ์ในการเริ่มเซิร์ฟเวอร์จริงครั้งแรก หลังจากมีไฟล์นี้:
+
+```text
+server\config\Geyser-Fabric\config.yml
+```
+
+script จะตั้งค่า:
+
+```yaml
+auth-type: floodgate
+```
+
+Java โดยทั่วไปใช้ TCP `25565` และ Bedrock ใช้ UDP `19132` Jarock ไม่เปิด port ใด ๆ `key.pem` เป็นข้อมูลลับและห้ามเผยแพร่
+
+เมื่อเกิดข้อผิดพลาด ให้อ่าน `ERROR:` หรือ `WARNING:` และทำตาม `Suggested fix:` หาก Java ปิดตัว ให้ตรวจสอบ `Caused by:` รายการแรกใน `server\logs\latest.log` หรือ `server\crash-reports\` งานที่เหลืออยู่ใน `TODO.md`

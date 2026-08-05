@@ -1,0 +1,67 @@
+# Hoe werk Jarock?
+
+## Eenvoudige verduideliking van die bediener
+
+**Huidige weergawe:** `0.0.2-alpha`  
+**Minecraft:** Java Edition `26.2`  
+**Laaier:** Fabric  
+**Hoofplatform:** Windows 10/11
+
+Hierdie dokument verduidelik wat gebeur nadat iemand Jarock afgelaai het.
+
+## 1. Kort opsomming
+
+Die gebruiker installeer 64-bis Java, laai hierdie repository af en begin `start-server.bat`. Die program vind sy eie vouer, kontroleer Java en die pad, versoek ondersteuning vir lang Windows-paaie wanneer nodig, laai die vasgespelde Fabric-installeerder en mods af, en kontroleer elke lêer met SHA-512.
+
+Fabric skep die runtime in `server/`. Die eerste lopie skep `server/eula.txt` met `eula=false` en stop. Die gebruiker moet <https://www.minecraft.net/eula> lees, `eula=true` stel indien hy/sy instem, en weer begin. Geyser vertaal Bedrock-verkeer en Floodgate hanteer Bedrock-verifikasie.
+
+Jarock stel **nie** die router, firewall of port forwarding op nie.
+
+## 2. Lêers en vloei
+
+Die repository bevat skrifte, sjablone en ’n manifest, maar nie die wêreld of gegenereerde `.jar`-lêers nie:
+
+```text
+start-server.bat
+scripts/bootstrap-fabric.ps1
+scripts/configure-geyser.ps1
+scripts/enable-long-paths.ps1
+server/mods-manifest.ps1
+server/server.properties.template
+server/eula.txt.template
+version.txt
+CHANGELOG.md
+TODO.md
+```
+
+Die runtime word in `server/` geskep. Wêrelde, logs, biblioteke, private sleutels en plaaslike lyste word deur Git geïgnoreer.
+
+`start-server.bat` gebruik sy eie ligging, nie ’n vaste pad soos `C:\MinecraftServer` nie. Dit ondersteun toeganklike paaie met spasies, Unicode, `!` en geneste vouers. Vir lang paaie kontroleer dit:
+
+```text
+HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled
+```
+
+Indien nodig, vra dit administrateurregte en voer `scripts\enable-long-paths.ps1` uit. Die verandering is masjienwyd en ’n herlaai kan nodig wees.
+
+Daarna word `java -version`, `server\mods-manifest.ps1`, Fabric 26.2 met Loader `0.19.3`, die mods in `server\mods\` en alle SHA-512-hashes nagegaan. Plaaslike konfigurasies word nie oorskryf nie.
+
+## 3. EULA, Geyser en foute
+
+Die eerste lopie skep `server/eula.txt` met `eula=false`. Lees die EULA en verander dit na `eula=true` indien jy instem. Die tweede lopie begin die werklike bediener.
+
+Geyser skep sy volledige konfigurasie tydens die eerste werklike begin. Daarna stel die skrif in:
+
+```text
+server\config\Geyser-Fabric\config.yml
+```
+
+```yaml
+auth-type: floodgate
+```
+
+Java gebruik gewoonlik TCP `25565` en Bedrock UDP `19132`. Jarock maak geen poorte oop nie. `key.pem` is privaat en mag nooit gepubliseer word nie.
+
+Na ’n fout, lees `ERROR:` of `WARNING:` en volg `Suggested fix:`. As Java stop, kyk na die eerste `Caused by:` in `server\logs\latest.log` of `server\crash-reports\`. Algemene oorsake is ontbrekende Java, onvoldoende regte, ’n beskadigde aflaai, ’n onaanvaarde EULA of ’n onversoenbare mod.
+
+Jarock verander nie die router, firewall, port forwarding of openbare IP nie. Die oorblywende take staan in `TODO.md`.

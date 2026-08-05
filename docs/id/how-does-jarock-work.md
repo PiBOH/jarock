@@ -1,0 +1,65 @@
+# Bagaimana Jarock bekerja?
+
+## Penjelasan sederhana tentang server
+
+**Versi saat ini:** `0.0.2-alpha`  
+**Minecraft:** Java Edition `26.2`  
+**Loader:** Fabric  
+**Platform utama:** Windows 10/11
+
+Dokumen ini menjelaskan apa yang terjadi setelah Jarock diunduh.
+
+## 1. Ringkasan
+
+Pengguna memasang Java 64-bit, mengunduh repository ini, lalu menjalankan `start-server.bat`. Program menemukan foldernya sendiri, memeriksa Java dan path, meminta dukungan Windows untuk long path jika diperlukan, mengunduh installer Fabric dan mods yang telah dipatok, lalu memeriksa setiap file dengan SHA-512.
+
+Fabric membuat runtime di `server/`. Pada proses pertama, `server/eula.txt` dibuat dengan `eula=false` lalu proses berhenti. Pengguna harus membaca <https://www.minecraft.net/eula>, mengubahnya menjadi `eula=true` jika setuju, lalu menjalankan kembali. Geyser menerjemahkan lalu lintas Bedrock dan Floodgate menangani autentikasi Bedrock.
+
+Jarock **tidak** mengatur router, firewall, atau port forwarding.
+
+## 2. File dan alur
+
+Repository berisi scripts, template, dan manifest, tetapi tidak berisi dunia atau file `.jar` yang dihasilkan:
+
+```text
+start-server.bat
+scripts/bootstrap-fabric.ps1
+scripts/configure-geyser.ps1
+scripts/enable-long-paths.ps1
+server/mods-manifest.ps1
+server/server.properties.template
+server/eula.txt.template
+version.txt
+CHANGELOG.md
+TODO.md
+```
+
+Runtime dibuat di `server/`. Git mengabaikan world, log, library, private key, dan daftar lokal.
+
+`start-server.bat` menggunakan lokasinya sendiri, bukan path tetap seperti `C:\MinecraftServer`, sehingga mendukung path yang dapat diakses dengan spasi, Unicode, `!`, dan folder bertingkat. Untuk path panjang, program memeriksa:
+
+```text
+HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled
+```
+
+Jika diperlukan, program meminta izin administrator dan menjalankan `scripts\enable-long-paths.ps1`. Perubahan ini berlaku untuk seluruh komputer dan aplikasi lama mungkin memerlukan restart Windows.
+
+## 3. EULA, Geyser, dan kesalahan
+
+Proses pertama membuat `server/eula.txt` dengan `eula=false` lalu berhenti. Baca EULA, ubah menjadi `eula=true` jika setuju, lalu jalankan lagi.
+
+Geyser membuat konfigurasi lengkap saat server benar-benar pertama kali dijalankan. Setelah file ini ada:
+
+```text
+server\config\Geyser-Fabric\config.yml
+```
+
+script menetapkan:
+
+```yaml
+auth-type: floodgate
+```
+
+Java biasanya menggunakan TCP `25565`, sedangkan Bedrock menggunakan UDP `19132`. Jarock tidak membuka port. `key.pem` bersifat rahasia dan tidak boleh dipublikasikan.
+
+Setelah kesalahan, baca `ERROR:` atau `WARNING:` dan ikuti `Suggested fix:`. Jika Java berhenti, cari `Caused by:` pertama di `server\logs\latest.log` atau `server\crash-reports\`. Tugas yang tersisa ada di `TODO.md`.

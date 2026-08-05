@@ -10,9 +10,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned
 
 - Complete the public-release checklist in `TODO.md`.
-- Add additional translations from the English canonical documentation.
+- Keep all localized documentation synchronized with the English canonical documentation.
+
+## [0.0.3-alpha] - 2026-08-05
+
+### Added
+
+- Added the full English `how-does-jarock-work.md` architecture document.
+- Added translated `how-does-jarock-work.md` documents for all requested locales.
+- Added documentation index links for every translation.
+
+### Changed
+
+- Clarified the actual Geyser/Floodgate first-start and restart sequence.
 
 ## [0.0.2-alpha] - 2026-08-05
+
+### Added
+
+- Added `how-does-jarock-work.md` in English and all requested translations.
+- Documented the actual bootstrap, verification, EULA, Geyser, Floodgate, path and error-handling flow, including the extra restart needed after Geyser generates its configuration.
 
 ### Changed
 
@@ -28,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned
 
 - Complete the public-release checklist in `TODO.md`.
-- Add additional translations from the English canonical documentation.
+- Keep all localized documentation synchronized with the English canonical documentation.
 
 ## [0.0.1-alpha] - 2026-08-05
 
@@ -48,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/v0.0.2-alpha...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/v0.0.3-alpha...HEAD
+[0.0.3-alpha]: https://github.com/PiBOH/jarock/compare/v0.0.2-alpha...v0.0.3-alpha
 [0.0.2-alpha]: https://github.com/PiBOH/jarock/compare/v0.0.1-alpha...v0.0.2-alpha
 [0.0.1-alpha]: https://github.com/PiBOH/jarock/releases/tag/v0.0.1-alpha

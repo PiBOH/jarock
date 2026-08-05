@@ -1,0 +1,65 @@
+# Jarock nasıl çalışır?
+
+## Sunucunun basit açıklaması
+
+**Mevcut sürüm:** `0.0.2-alpha`  
+**Minecraft:** Java Edition `26.2`  
+**Yükleyici:** Fabric  
+**Ana platform:** Windows 10/11
+
+Bu belge, Jarock indirildikten sonra ne olduğunu açıklar.
+
+## 1. Kısaca
+
+Kullanıcı 64 bit Java kurar, bu repository'yi indirir ve `start-server.bat` dosyasını çalıştırır. Program kendi klasörünü bulur, Java'yı ve yolu kontrol eder, gerekirse Windows uzun yol desteğini etkinleştirmek için izin ister, sabitlenmiş Fabric installer ve mods dosyalarını indirir ve her dosyayı SHA-512 ile doğrular.
+
+Fabric runtime'ı `server/` içinde oluşturur. İlk çalıştırma `server/eula.txt` dosyasını `eula=false` değeriyle oluşturur ve durur. Kullanıcı <https://www.minecraft.net/eula> adresindeki EULA'yı okumalı, kabul ediyorsa `eula=true` yapmalı ve tekrar çalıştırmalıdır. Geyser Bedrock trafiğini dönüştürür, Floodgate ise Bedrock kimlik doğrulamasını yönetir.
+
+Jarock router, firewall veya port forwarding ayarlarını **yapmaz**.
+
+## 2. Dosyalar ve akış
+
+Repository scripts, şablonlar ve manifest içerir; dünya veya oluşturulan `.jar` dosyalarını içermez:
+
+```text
+start-server.bat
+scripts/bootstrap-fabric.ps1
+scripts/configure-geyser.ps1
+scripts/enable-long-paths.ps1
+server/mods-manifest.ps1
+server/server.properties.template
+server/eula.txt.template
+version.txt
+CHANGELOG.md
+TODO.md
+```
+
+Runtime `server/` içine oluşturulur. Git world, logs, kitaplıklar, özel anahtarlar ve yerel listeleri yok sayar.
+
+`start-server.bat`, `C:\MinecraftServer` gibi sabit bir yol yerine kendi konumunu kullanır. Böylece boşluk, Unicode, `!` ve iç içe klasörler içeren erişilebilir yollar desteklenir. Uzun yollar için şunu kontrol eder:
+
+```text
+HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled
+```
+
+Gerekirse administrator izni ister ve `scripts\enable-long-paths.ps1` dosyasını çalıştırır. Değişiklik tüm makine için geçerlidir ve eski uygulamalar Windows'un yeniden başlatılmasını gerektirebilir.
+
+## 3. EULA, Geyser ve hatalar
+
+İlk çalıştırma `server/eula.txt` dosyasını `eula=false` ile oluşturur ve durur. EULA'yı okuyun, kabul ediyorsanız `eula=true` yapın ve tekrar çalıştırın.
+
+Geyser tam yapılandırmasını ilk gerçek sunucu başlatmasında oluşturur. Dosya oluşturulduktan sonra script şu dosyada:
+
+```text
+server\config\Geyser-Fabric\config.yml
+```
+
+şunu ayarlar:
+
+```yaml
+auth-type: floodgate
+```
+
+Java genellikle TCP `25565`, Bedrock ise UDP `19132` kullanır. Jarock port açmaz. `key.pem` gizlidir ve yayımlanmamalıdır.
+
+Bir hatadan sonra `ERROR:` veya `WARNING:` satırını okuyun ve `Suggested fix:` önerisini uygulayın. Java kapanırsa `server\logs\latest.log` veya `server\crash-reports\` içindeki ilk `Caused by:` satırını bulun. Kalan görevler `TODO.md` içindedir.

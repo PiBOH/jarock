@@ -47,6 +47,8 @@ The default stack contains Fabric mods only. It does not install or run arbitrar
 - [English NeoForge fallback guide](docs/en/neoforge-fallback.md)
 - [Guida italiana Fabric](docs/it/server-guide.md)
 - [Guida italiana NeoForge](docs/it/neoforge-fallback.md)
+- [How Jarock works — English](docs/en/how-does-jarock-work.md)
+- [How Jarock works — all translations](docs/README.md)
 - [Documentation and translation roadmap](docs/README.md)
 
 The guides explain installation from zero, Java and Bedrock networking, Geyser/Floodgate authentication, optimization and redstone mods, backups, security, troubleshooting and the limitations of client-side mods. See [TODO.md](TODO.md) for the work that remains before public access.
