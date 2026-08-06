@@ -2,30 +2,30 @@ name: Deploy website to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
-# Keep only the newest production deployment. A stale Pages deployment can
-# remain queued on GitHub's side and block the next deployment indefinitely.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 concurrency:
-  group: github-pages
+  group: pages
   cancel-in-progress: true
 
 jobs:
   build:
-    name: Build Pages artifact
+    name: Build website artifact
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Validate website entry point
+      - name: Validate static website
         shell: bash
         run: |
           set -euo pipefail
@@ -34,26 +34,23 @@ jobs:
           test -f .website/script.js
           test -f .website/.nojekyll
           test -s .website/icon.png
-          test "$(find .website -type f | wc -l)" -gt 0
-          echo "Website files ready for upload:"
-          find .website -type f -print | sort
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
+          name: github-pages
           path: .website
 
   deploy:
-    name: Deploy Pages artifact
+    name: Deploy website
     needs: build
     runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy Pages artifact
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages
