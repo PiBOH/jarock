@@ -13,6 +13,7 @@ The canonical English guides are the source of truth for the technical procedure
 - `parameter-manager.bat` configures RAM, GUI/console mode, a conservative GC profile and user-scoped Java environment setup.
 - `server-launch-settings.ini.template` is the tracked safe default.
 - `server-launch-settings.ini` is local and ignored by Git.
+- `java-home.txt` is an optional local override for a custom JDK folder and is ignored by Git; `JAROCK_JAVA_HOME` is the advanced equivalent.
 - `scripts/java-runtime.ps1` finds a compatible 64-bit Java 25+ runtime even when Java 8 or Java 21 appears first on `PATH`; if none is available, the launcher lists the detected incompatible candidates and gives a Java 25 installation link.
 - `scripts/configure-java-environment.ps1` updates only the current user's `JAVA_HOME` and `PATH`, preserving unrelated entries.
 

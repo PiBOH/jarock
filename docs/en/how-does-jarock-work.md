@@ -54,7 +54,7 @@ The manager never inserts arbitrary text directly into a shell command. Settings
 
 ## 3. Java environment automation
 
-The bootstrap finds Java 25+ itself and stores the selected absolute executable in the ignored local file `server/java-path.txt`. If it finds only Java 8 or Java 21, it stops and reports those detected candidates with a direct Java 25 installation link. This is the authoritative executable used by the server, so Java 8 can remain installed even if it appears first on `PATH`.
+The bootstrap finds Java 25+ itself and stores the selected absolute executable in the ignored local file `server/java-path.txt`. A custom or unregistered JDK can be selected through the optional ignored root file `java-home.txt` or the advanced `JAROCK_JAVA_HOME` environment variable. Each accepts either the JDK folder or its `bin\java.exe` path; relative paths are resolved from the repository root. If it finds only Java 8 or Java 21, it stops and reports those detected candidates with a direct Java 25 installation link. This is the authoritative executable used by the server, so Java 8 can remain installed even if it appears first on `PATH`.
 
 When `AUTO_CONFIGURE_JAVA=true`, Jarock additionally updates only the current user's environment:
 

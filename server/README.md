@@ -6,7 +6,7 @@ Do not commit the generated runtime to Git. The repository tracks only templates
 
 ## First run
 
-Always use the repository-root `start-server.bat` entry point. Do **not** double-click `server.jar` or run it with the bare `java` command: Windows may associate `.jar` files with an older Java 8/21 installation, causing `UnsupportedClassVersionError`. Jarock validates and selects the compatible absolute Java 25+ executable for you.
+Always use the repository-root `start-server.bat` entry point. Do **not** double-click `server.jar` or run it with the bare `java` command: Windows may associate `.jar` files with an older Java 8/21 installation, causing `UnsupportedClassVersionError`. Jarock validates and selects the compatible absolute Java 25+ executable for you. For a custom JDK folder, put its folder path or `bin\java.exe` path in the ignored root file `java-home.txt`. Relative paths are resolved from the repository root.
 
 1. Run `start-server.bat` once.
 2. The bootstrap downloads Fabric 26.2 and the pinned server mods.

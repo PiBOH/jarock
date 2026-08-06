@@ -28,6 +28,7 @@
 **/run.sh
 **/java-path.txt
 /server-launch-settings.ini
+/java-home.txt
 
 # Runtime secrets and local configuration
 **/key.pem

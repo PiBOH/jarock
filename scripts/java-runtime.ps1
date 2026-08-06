@@ -84,8 +84,44 @@ function Find-CompatibleJava {
 
     $Candidates = New-Object 'System.Collections.Generic.List[string]'
 
-    if (-not [string]::IsNullOrWhiteSpace($env:JAVA_HOME)) {
-        Add-JavaCandidate -Candidates $Candidates -Path (Join-Path $env:JAVA_HOME 'bin\java.exe')
+    $ProjectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+    $JavaHomeFile = Join-Path $ProjectRoot 'java-home.txt'
+    $JavaHomeValues = @()
+    if (-not [string]::IsNullOrWhiteSpace($env:JAROCK_JAVA_HOME)) {
+        $JavaHomeValues += $env:JAROCK_JAVA_HOME
+    }
+    if (Test-Path -LiteralPath $JavaHomeFile -PathType Leaf) {
+        $JavaHomeFileValue = @(
+            Get-Content -LiteralPath $JavaHomeFile -ErrorAction SilentlyContinue |
+                ForEach-Object { $_.Trim() } |
+                Where-Object { $_ -and -not $_.StartsWith('#') } |
+                Select-Object -First 1
+        )
+        if ($JavaHomeFileValue.Count -gt 0) {
+            $JavaHomeValues += [string]$JavaHomeFileValue[0]
+        }
+    }
+    $JavaHomeValues += @(
+        $env:JAVA_HOME,
+        [Environment]::GetEnvironmentVariable('JAVA_HOME', 'User'),
+        [Environment]::GetEnvironmentVariable('JAVA_HOME', 'Machine')
+    )
+    $JavaHomeValues = @($JavaHomeValues | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique)
+    foreach ($JavaHomeValue in $JavaHomeValues) {
+        $ExpandedJavaHome = [Environment]::ExpandEnvironmentVariables([string]$JavaHomeValue).Trim().Trim('"').Trim("'")
+        if ([string]::IsNullOrWhiteSpace($ExpandedJavaHome)) {
+            continue
+        }
+        if (-not [IO.Path]::IsPathRooted($ExpandedJavaHome)) {
+            $ExpandedJavaHome = Join-Path $ProjectRoot $ExpandedJavaHome
+        }
+        if ($ExpandedJavaHome -match '(?i)\.exe$') {
+            Add-JavaCandidate -Candidates $Candidates -Path $ExpandedJavaHome
+        }
+        else {
+            Add-JavaCandidate -Candidates $Candidates -Path (Join-Path $ExpandedJavaHome 'bin\java.exe')
+            Add-JavaCandidate -Candidates $Candidates -Path (Join-Path $ExpandedJavaHome 'java.exe')
+        }
     }
 
     $PathCommands = @(Get-Command java.exe -All -ErrorAction SilentlyContinue)
@@ -95,6 +131,24 @@ function Find-CompatibleJava {
             $CommandPath = $Command.Source
         }
         Add-JavaCandidate -Candidates $Candidates -Path $CommandPath
+    }
+
+    $PersistentPathValues = @(
+        [Environment]::GetEnvironmentVariable('Path', 'User'),
+        [Environment]::GetEnvironmentVariable('Path', 'Machine')
+    ) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    foreach ($PersistentPathValue in $PersistentPathValues) {
+        foreach ($PathEntry in ($PersistentPathValue -split ';')) {
+            $TrimmedPathEntry = [Environment]::ExpandEnvironmentVariables($PathEntry.Trim())
+            if ($TrimmedPathEntry -match '(?i)(java|jdk|jre|temurin|adoptium|adoptopenjdk|corretto|zulu|sapmachine)') {
+                if ($TrimmedPathEntry -match '(?i)\.exe$') {
+                    Add-JavaCandidate -Candidates $Candidates -Path $TrimmedPathEntry
+                }
+                else {
+                    Add-JavaCandidate -Candidates $Candidates -Path (Join-Path $TrimmedPathEntry 'java.exe')
+                }
+            }
+        }
     }
 
     $ProgramFilesRoots = @(
@@ -107,11 +161,15 @@ function Find-CompatibleJava {
         $ProgramRoots += @(
             (Join-Path $ProgramFilesRoot 'Java'),
             (Join-Path $ProgramFilesRoot 'Eclipse Adoptium'),
+            (Join-Path $ProgramFilesRoot 'Adoptium'),
+            (Join-Path $ProgramFilesRoot 'Temurin'),
             (Join-Path $ProgramFilesRoot 'Microsoft'),
             (Join-Path $ProgramFilesRoot 'Amazon Corretto'),
             (Join-Path $ProgramFilesRoot 'Azul Systems'),
             (Join-Path $ProgramFilesRoot 'BellSoft'),
-            (Join-Path $ProgramFilesRoot 'SapMachine')
+            (Join-Path $ProgramFilesRoot 'SapMachine'),
+            (Join-Path $ProgramFilesRoot 'Zulu'),
+            (Join-Path $ProgramFilesRoot 'Oracle')
         )
     }
     foreach ($Root in $ProgramRoots) {
@@ -127,21 +185,46 @@ function Find-CompatibleJava {
     $RegistryRoots = @(
         'HKLM:\SOFTWARE\JavaSoft\JDK',
         'HKLM:\SOFTWARE\WOW6432Node\JavaSoft\JDK',
-        'HKCU:\SOFTWARE\JavaSoft\JDK'
+        'HKCU:\SOFTWARE\JavaSoft\JDK',
+        'HKLM:\SOFTWARE\Eclipse Adoptium',
+        'HKLM:\SOFTWARE\WOW6432Node\Eclipse Adoptium',
+        'HKCU:\SOFTWARE\Eclipse Adoptium',
+        'HKLM:\SOFTWARE\AdoptOpenJDK',
+        'HKLM:\SOFTWARE\WOW6432Node\AdoptOpenJDK',
+        'HKCU:\SOFTWARE\AdoptOpenJDK',
+        'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\java.exe',
+        'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\java.exe',
+        'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\java.exe'
     )
     foreach ($RegistryRoot in $RegistryRoots) {
         if (-not (Test-Path -LiteralPath $RegistryRoot)) {
             continue
         }
-        $RegistryVersions = @(Get-ChildItem -LiteralPath $RegistryRoot -ErrorAction SilentlyContinue)
-        foreach ($RegistryVersion in $RegistryVersions) {
-            $RegistryProperties = Get-ItemProperty -LiteralPath $RegistryVersion.PSPath -ErrorAction SilentlyContinue
+
+        $RegistryKeys = @(
+            Get-Item -LiteralPath $RegistryRoot -ErrorAction SilentlyContinue
+            Get-ChildItem -LiteralPath $RegistryRoot -Recurse -ErrorAction SilentlyContinue
+        )
+        foreach ($RegistryKey in $RegistryKeys) {
+            $RegistryProperties = Get-ItemProperty -LiteralPath $RegistryKey.PSPath -ErrorAction SilentlyContinue
             if ($null -eq $RegistryProperties) {
                 continue
             }
-            $JavaHomeProperty = $RegistryProperties.PSObject.Properties['JavaHome']
-            if ($null -ne $JavaHomeProperty -and -not [string]::IsNullOrWhiteSpace([string]$JavaHomeProperty.Value)) {
-                Add-JavaCandidate -Candidates $Candidates -Path (Join-Path ([string]$JavaHomeProperty.Value) 'bin\java.exe')
+
+            foreach ($PropertyName in @('JavaHome', 'Path', 'InstallationPath', 'Home', '(default)')) {
+                $Property = $RegistryProperties.PSObject.Properties[$PropertyName]
+                if ($null -eq $Property -or [string]::IsNullOrWhiteSpace([string]$Property.Value)) {
+                    continue
+                }
+
+            $PropertyPath = [Environment]::ExpandEnvironmentVariables(([string]$Property.Value).Trim())
+            if ($PropertyPath -match '(?i)\.exe$') {
+                    Add-JavaCandidate -Candidates $Candidates -Path $PropertyPath
+                }
+                else {
+                    Add-JavaCandidate -Candidates $Candidates -Path (Join-Path $PropertyPath 'bin\java.exe')
+                    Add-JavaCandidate -Candidates $Candidates -Path (Join-Path $PropertyPath 'java.exe')
+                }
             }
         }
     }
@@ -157,6 +240,7 @@ function Find-CompatibleJava {
             return [pscustomobject]@{
                 Selected = $Runtime
                 Inspected = @($Inspected.ToArray())
+                Candidates = @($Candidates.ToArray())
             }
         }
     }
@@ -164,5 +248,6 @@ function Find-CompatibleJava {
     return [pscustomobject]@{
         Selected = $null
         Inspected = @($Inspected.ToArray())
+        Candidates = @($Candidates.ToArray())
     }
 }
