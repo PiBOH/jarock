@@ -33,6 +33,7 @@ jobs:
           test -f .website/styles.css
           test -f .website/script.js
           test -f .website/.nojekyll
+          test -s .website/icon.png
           test "$(find .website -type f | wc -l)" -gt 0
           echo "Website files ready for upload:"
           find .website -type f -print | sort
