@@ -16,6 +16,20 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Continue testing Fabric and NeoForge loader selection on clean Windows checkouts.
 - Add an official Forge 26.2 installer and manifest only after the official build is available and verified.
 
+## [0.0.24-beta] - 2026-08-06
+
+### Added
+
+- Added explicit "Set JAVA_HOME variable" installation warning to all Java setup instructions across every supported language.
+
+### Changed
+
+- Updated `README.md`, `prerequisites/README.md`, and all translated `server-guide.md`, `how-does-jarock-work.md`, and `network-and-ports.md` files (31 languages) with the JAVA_HOME checkbox note.
+
+### Removed
+
+- Removed the unused `deploy.yml` CI workflow.
+
 ## [0.0.23-beta] - 2026-08-06
 
 ### Added
@@ -248,7 +262,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.23-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.24-beta...HEAD
+[0.0.24-beta]: https://github.com/PiBOH/jarock/compare/0.0.23-beta...0.0.24-beta
 [0.0.23-beta]: https://github.com/PiBOH/jarock/compare/0.0.22-beta...0.0.23-beta
 [0.0.22-beta]: https://github.com/PiBOH/jarock/compare/0.0.21-beta...0.0.22-beta
 [0.0.21-beta]: https://github.com/PiBOH/jarock/compare/0.0.20-beta...0.0.21-beta
