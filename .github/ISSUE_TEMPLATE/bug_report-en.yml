@@ -1,0 +1,123 @@
+name: 🐛 Bug Report (English)
+description: Something is broken? Help us fix it!
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 🛠️ Bug Report
+        Thank you for reporting! Please fill out the form below with as much detail as possible.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-flight Checklist
+      options:
+        - label: I am using the [latest release](https://github.com/PiBOH/jarock/releases/latest) of Jarock.
+          required: true
+        - label: I have searched existing issues and verified this is not a duplicate.
+          required: true
+        - label: I have read the `ERROR:` and `Suggested fix:` lines printed by the launcher.
+          required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: 📍 Where do you believe the bug is?
+      description: Select the area of Jarock where you encounter the issue.
+      options:
+        - 🚀 start-server.bat (launcher / bootstrap)
+        - ⚙️ parameter-manager.bat (settings editor)
+        - 🧵 Fabric loader / Fabric Installer
+        - 🔨 NeoForge loader / NeoForge Installer
+        - ☕ Java runtime discovery (java-runtime.ps1)
+        - 📦 Mod manifest / mod download (Fabric or NeoForge)
+        - 🧹 clean-server-runtime.bat (cleanup)
+        - 🌐 Cross-play (Geyser / Floodgate)
+        - 📄 Documentation / website
+        - 🏷️ Auto-release workflow
+        - ❓ Other
+    validations:
+      required: true
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: 📉 How frequently does it occur?
+      options:
+        - 🔴 Always (100%)
+        - 🟠 Often (> 50%)
+        - 🟡 Sometimes (< 50%)
+        - 🟢 Rarely (once or twice)
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce-steps
+    attributes:
+      label: 🔄 Steps to reproduce the bug
+      description: Clear, precise steps lead to a faster fix!
+      placeholder: |
+        1. Run start-server.bat from the repository root...
+        2. Choose Fabric as the loader...
+        3. See the error...
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-actual
+    attributes:
+      label: 🆚 Expected behavior vs. Actual behavior
+      description: What should have happened vs. what actually happened.
+      placeholder: |
+        Expected: The server starts and generates the world.
+        Actual: The bootstrap prints an error and the server does not start.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: "---"
+  - type: dropdown
+    id: os-ver
+    attributes:
+      label: 💻 Operating System
+      options:
+        - 🪟 Windows 11
+        - 🪟 Windows 10
+        - 🪟 Windows Server
+        - ❓ Other
+    validations:
+      required: true
+  - type: input
+    id: java-version
+    attributes:
+      label: ☕ Java version in use
+      description: Paste the output of `java -version` or the Java path reported by start-server.bat.
+      placeholder: e.g. OpenJDK 25.0.4 (Eclipse Adoptium), 64-bit
+    validations:
+      required: true
+  - type: dropdown
+    id: loader-type
+    attributes:
+      label: 🧵 Selected loader
+      description: Which loader did you choose in start-server.bat?
+      options:
+        - Fabric
+        - NeoForge
+        - Forge (unavailable — informational only)
+        - None / first-run
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 📄 Logs / Screenshots
+      description: Paste the exact terminal output, `server/logs/latest.log`, crash reports, or drag & drop screenshots here.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: 📎 Additional context
+      description: Anything else that might help? (custom Java path, antivirus, folder path length, etc.)

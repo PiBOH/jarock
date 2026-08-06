@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: ❓ GitHub Discussions (Q&A / Support)
+    url: https://github.com/PiBOH/jarock/discussions/
+    about: Use GitHub Discussions for Q&A, general support, and discussing ideas before opening an issue.
+  - name: 📖 Documentation
+    url: https://piboh.github.io/jarock/
+    about: Read the Jarock website and guides before reporting a problem.

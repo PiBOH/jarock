@@ -1,0 +1,46 @@
+name: 🚀 Richiesta Funzionalità (Italiano)
+description: Hai un'idea o una proposta? Raccontacela!
+title: "[Feat]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 💡 Proposta Funzionalità
+        Aiuta a migliorare Jarock condividendo le tue idee per nuove funzionalità o miglioramenti.
+  - type: dropdown
+    id: category
+    attributes:
+      label: 🏷️ Categoria
+      options:
+        - 🧵 Nuovo loader / supporto piattaforma mod
+        - 📦 Nuova mod / tool da includere nel manifest
+        - ⚙️ Nuovo parametro / impostazione nel parameter-manager
+        - 📄 Miglioramento documentazione / guida
+        - 🌐 Traduzione / nuova lingua
+        - 🌐 Miglioramento cross-play (Geyser / Floodgate)
+        - 🏷️ Miglioramento CI / auto-release
+        - 🔧 Altro
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: 📝 Qual è la tua idea?
+      description: Descrivi la tua proposta in dettaglio. Come dovrebbe funzionare?
+      placeholder: "Vorrei che Jarock supportasse..."
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 🤝 Quale problema risolve o migliora?
+      description: Perché serve questa funzionalità? Quale flusso di lavoro renderebbe più veloce o facile?
+      placeholder: "Al momento è difficile o scomodo..."
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: 🎨 Mockup / Screenshot / Extra
+      description: Trascina qui immagini, schizzi, diagrammi o link se ne hai!
