@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Complete the public-release checklist in `TODO.md`.
 - Keep all localized documentation synchronized with the English canonical documentation.
 
+## [0.0.11-alpha] - 2026-08-06
+
+### Added
+
+- Added the optional `prerequisites/` directory with the recommended Windows x64 Temurin JDK 25.0.4 installer.
+- Added a clearly labeled legacy Java 8 installer for older software only; it is not suitable for the Minecraft 26.2 server.
+- Added Git LFS tracking and SHA-256 documentation for the bundled installers.
+
 ## [0.0.10-alpha] - 2026-08-06
 
 ### Fixed
@@ -126,7 +134,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.10-alpha...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.11-alpha...HEAD
+[0.0.11-alpha]: https://github.com/PiBOH/jarock/compare/0.0.10-alpha...0.0.11-alpha
 [0.0.10-alpha]: https://github.com/PiBOH/jarock/compare/0.0.9-alpha...0.0.10-alpha
 [0.0.9-alpha]: https://github.com/PiBOH/jarock/compare/0.0.8-alpha...0.0.9-alpha
 [0.0.8-alpha]: https://github.com/PiBOH/jarock/compare/0.0.7-alpha...0.0.8-alpha
