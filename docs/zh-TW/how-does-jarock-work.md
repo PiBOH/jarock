@@ -2,7 +2,7 @@
 
 ## 伺服器運作方式簡介
 
-**Minecraft：** Java Edition `26.2`
+**Minecraft：** Java Edition `26.2` (enable "Set JAVA_HOME variable" in the Temurin installer)
 **載入器：** Fabric
 **主要平台：** Windows 10/11
 

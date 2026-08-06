@@ -1,5 +1,5 @@
 # Сүлжээ, галт хана болон чиглүүлэгчийн гарын авлага
 
-64-битийн Java 25 суулгаж, `start-server.bat`-г ажиллуулж, порт нээхээс өмнө `TODO.md`-г дуусгана уу. Тогтмол LAN IP оноож, Windows галт хананд TCP `25565` (Java) болон UDP `19132` (Bedrock)-г нээж, чиглүүлэгч дээр порт дамжуулалтыг тохируулж эсвэл playit.gg шиг UDP нийцтэй туннель ашиглана уу. `online-mode=true` ба `white-list=true` идэвхтэй эсэхийг шалгаж, `key.pem`-г хэзээ ч нийтэд бүү дэлгэ. CGNAT-д туннель ашиглана уу. [Англи гарын авлага](../en/network-and-ports.md)-г үзнэ үү.
+64-битийн Java 25 суулгаж, `start-server. (enable "Set JAVA_HOME variable" in the Temurin installer) (abilita Set JAVA_HOME nell’installer Temurin)bat`-г ажиллуулж, порт нээхээс өмнө `TODO.md`-г дуусгана уу. Тогтмол LAN IP оноож, Windows галт хананд TCP `25565` (Java) болон UDP `19132` (Bedrock)-г нээж, чиглүүлэгч дээр порт дамжуулалтыг тохируулж эсвэл playit.gg шиг UDP нийцтэй туннель ашиглана уу. `online-mode=true` ба `white-list=true` идэвхтэй эсэхийг шалгаж, `key.pem`-г хэзээ ч нийтэд бүү дэлгэ. CGNAT-д туннель ашиглана уу. [Англи гарын авлага](../en/network-and-ports.md)-г үзнэ үү.
 
 > Үргэлж `start-server.bat`-г ашигла; `server.jar` дээр давхар бүү дар.

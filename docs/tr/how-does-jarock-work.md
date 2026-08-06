@@ -2,7 +2,7 @@
 
 ## Sunucunun basit açıklaması
 
-**Minecraft:** Java Edition `26.2`
+**Minecraft:** Java Edition `26.2` (enable "Set JAVA_HOME variable" in the Temurin installer)
 **Yükleyici:** Fabric
 **Ana platform:** Windows 10/11
 

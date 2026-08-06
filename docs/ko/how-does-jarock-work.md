@@ -2,7 +2,7 @@
 
 ## 서버 작동 방식 쉽게 이해하기
 
-**Minecraft:** Java Edition `26.2`
+**Minecraft:** Java Edition `26.2` (enable "Set JAVA_HOME variable" in the Temurin installer)
 **로더:** Fabric
 **주요 플랫폼:** Windows 10/11
 

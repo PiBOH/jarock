@@ -2,7 +2,7 @@
 
 ## Eenvoudige verduideliking van die bediener
 
-**Minecraft:** Java Edition `26.2`
+**Minecraft:** Java Edition `26.2` (enable "Set JAVA_HOME variable" in the Temurin installer)
 **Laaier:** Fabric
 **Hoofplatform:** Windows 10/11
 

@@ -1,6 +1,6 @@
 # מדריך שרת Fabric
 
-התקן Java 25 ‏64-bit, הפעל `start-server.bat` והשתמש ב-`parameter-manager.bat` להגדרת RAM ו-GUI או `nogui`. קרא את `server/eula.txt`, אשר את ה-EULA והגדר `eula=true`; השתמש ב-Fabric, Geyser-Fabric ו-Floodgate-Fabric וצור גיבויים. Jarock אינו משנה נתב, firewall או port forwarding.
+התקן Java 25 ‏64-bit, הפעל `start-server.bat` והשתמש ב-`parameter-manager.bat` להגדרת RAM ו-GUI או `nogui`. (enable "Set JAVA_HOME variable" in the Temurin installer) קרא את `server/eula.txt`, אשר את ה-EULA והגדר `eula=true`; השתמש ב-Fabric, Geyser-Fabric ו-Floodgate-Fabric וצור גיבויים. Jarock אינו משנה נתב, firewall או port forwarding.
 
 קרא את המדריך המלא באנגלית: [../en/server-guide.md](../en/server-guide.md)
 

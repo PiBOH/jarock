@@ -2,7 +2,7 @@
 
 ## Серверийн энгийн тайлбар
 
-**Minecraft:** Java Edition `26.2`
+**Minecraft:** Java Edition `26.2` (enable "Set JAVA_HOME variable" in the Temurin installer)
 **Loader:** Fabric
 **Үндсэн платформ:** Windows 10/11
 
