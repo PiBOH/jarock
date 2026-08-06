@@ -67,8 +67,15 @@ function Select-Loader {
     if ($OpenManager -match '^(?i:y|yes)$') {
         $Manager = Join-Path $Root 'parameter-manager.bat'
         if (-not (Test-Path -LiteralPath $Manager -PathType Leaf)) { Stop-WithGuidance 'parameter-manager.bat is missing.' 'Restore it from the repository and run start-server.bat again.' }
-        & $Manager '/configure-only'
-        if ($LASTEXITCODE -ne 0) { Stop-WithGuidance 'parameter-manager.bat did not finish successfully.' 'Save valid settings, choose Save and exit, then run start-server.bat again.' }
+        Write-Host 'Opening parameter-manager.bat in a separate Windows command window. Save and exit there to continue.' -ForegroundColor Cyan
+        $ManagerCommand = 'call "' + $Manager.Replace('"', '""') + '" /configure-only'
+        try {
+            $ManagerProcess = Start-Process -FilePath $env:ComSpec -ArgumentList @('/d', '/c', $ManagerCommand) -WorkingDirectory $Root -Wait -PassThru -ErrorAction Stop
+        }
+        catch {
+            Stop-WithGuidance "Could not open parameter-manager.bat: $($_.Exception.Message)" 'Open parameter-manager.bat manually from the repository root, choose Save and exit, then run start-server.bat again.'
+        }
+        if ($ManagerProcess.ExitCode -ne 0) { Stop-WithGuidance "parameter-manager.bat did not finish successfully (exit code $($ManagerProcess.ExitCode))." 'Open parameter-manager.bat manually, save valid settings with Save and exit, then run start-server.bat again.' }
         $Values = Read-Settings
         if ($Values.ContainsKey('LOADER_TYPE')) { $Loader = ([string]$Values['LOADER_TYPE']).ToLowerInvariant() }
         if ($Loader -eq 'none') { $Loader = Select-Loader }
