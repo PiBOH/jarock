@@ -1,3 +1,2 @@
 prerequisites/*.msi filter=lfs diff=lfs merge=lfs -text
 prerequisites/*.exe filter=lfs diff=lfs merge=lfs -text
-server/server.jar filter=lfs diff=lfs merge=lfs -text

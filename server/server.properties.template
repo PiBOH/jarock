@@ -1,8 +1,8 @@
-# Jarock Fabric server template
+# Jarock server template for Fabric or NeoForge
 # Copy this file to server/server.properties on first setup, then edit the values marked CONFIGURE.
 # This template does not open router or firewall ports.
 
-motd=Jarock Fabric 26.2
+motd=Jarock Minecraft 26.2 Server
 level-name=world
 gamemode=survival
 difficulty=normal
@@ -32,5 +32,5 @@ resource-pack=
 resource-pack-sha1=
 require-resource-pack=false
 
-# Geyser uses a separate UDP port. Configure it in server/config/Geyser-Fabric/config.yml.
+# Geyser uses a separate UDP port. Configure it in the generated loader-specific Geyser config.
 # The default Bedrock port is 19132. Do not share it with another UDP service.

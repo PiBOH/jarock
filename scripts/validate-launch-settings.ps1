@@ -18,15 +18,20 @@ try {
     foreach ($Line in (Get-Content -LiteralPath $SettingsPath)) {
         if ($Line -match '^\s*([A-Z_]+)=(.*?)\s*$') { $Values[$Matches[1]] = $Matches[2] }
     }
-    foreach ($Name in @('RAM_INITIAL','RAM_MAX','GUI_MODE','AUTO_CONFIGURE_JAVA','ONLINE_MODE','GC_PROFILE')) {
+    foreach ($Name in @('LOADER_TYPE','RAM_INITIAL','RAM_MAX','GUI_MODE','AUTO_CONFIGURE_JAVA','ONLINE_MODE','GC_PROFILE')) {
         if (-not $Values.ContainsKey($Name)) {
             if ($Name -eq 'ONLINE_MODE') {
                 $Values[$Name] = 'true'
                 continue
             }
+            if ($Name -eq 'LOADER_TYPE') {
+                $Values[$Name] = 'none'
+                continue
+            }
             throw "Missing setting: $Name"
         }
     }
+    if ([string]$Values['LOADER_TYPE'] -notin @('none','fabric','forge','neoforge')) { throw 'LOADER_TYPE must be none, fabric, forge or neoforge.' }
     $InitialMb = Get-Megabytes ([string]$Values['RAM_INITIAL'])
     $MaximumMb = Get-Megabytes ([string]$Values['RAM_MAX'])
     if ($InitialMb -lt 512 -or $MaximumMb -lt 512) { throw 'RAM values must be at least 512M.' }

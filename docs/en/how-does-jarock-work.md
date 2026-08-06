@@ -3,7 +3,7 @@
 ## A plain-English explanation of the server
 
 **Minecraft target:** Java Edition `26.2`
-**Default loader:** Fabric
+**Default loader:** Fabric (NeoForge is the fallback; Forge is currently unavailable for the official 26.2 build)
 **Main platform:** Windows 10/11
 **Canonical language:** English
 
@@ -17,16 +17,16 @@ The user does not manually assemble a Minecraft server from many websites. They 
 
 1. Install a supported 64-bit Java 25 runtime.
 2. Download or clone this repository.
-3. Optionally run `parameter-manager.bat` to choose RAM, GUI/console mode, a GC profile and user-scoped Java environment setup.
-4. Run `start-server.bat`.
+3. Optionally run `parameter-manager.bat` to choose the loader, RAM, GUI/console mode, a GC profile and user-scoped Java environment setup.
+4. Run `start-server.bat`; if no loader is configured, Jarock asks whether to use Fabric, Forge or NeoForge and can open the parameter manager.
 5. The repository finds its own location.
 6. PowerShell checks Java, the Windows path and the repository files.
 7. If necessary, Windows long-path support is requested.
-8. The bootstrap downloads the pinned Fabric installer and mod files.
+8. The bootstrap installs the selected loader and downloads its pinned mod files.
 9. Every downloaded file is checked with SHA-512.
-10. Fabric creates the Minecraft server runtime in `server/`.
+10. Fabric creates its runtime and renames its launcher to local `server.jar`; NeoForge creates its official `run.bat` runtime in `server/`.
 11. The first bootstrap creates `server/eula.txt`; the launcher stops so the user can read the EULA.
-12. After the user sets `eula=true`, the first real server run starts Fabric and lets Geyser generate its complete configuration.
+12. After the user sets `eula=true`, the first real server run starts the selected loader and lets Geyser generate its complete configuration.
 13. When that run is stopped, `configure-geyser.ps1` sets `auth-type: floodgate`.
 14. The next run starts the server with Floodgate fully configured.
 
@@ -44,6 +44,7 @@ It can configure:
 - `RAM_MAX`, for example `6G`;
 - `GUI_MODE=gui` or `GUI_MODE=nogui`;
 - `GC_PROFILE=default` or the tested `low-pause` profile;
+- `LOADER_TYPE=none`, `fabric`, `neoforge` or the unavailable `forge` option;
 - `AUTO_CONFIGURE_JAVA=true` or `false`.
 
 RAM values are validated, must be at least `512M`, and initial RAM cannot exceed maximum RAM. Jarock does not silently give all physical memory to Java. The user should still leave enough memory for Windows, backups and other programs.
@@ -76,7 +77,7 @@ Important tracked files include:
 ```text
 start-server.bat
 parameter-manager.bat
-scripts/bootstrap-fabric.ps1
+scripts/bootstrap-server.ps1
 scripts/java-runtime.ps1
 scripts/run-server.ps1
 scripts/configure-java-environment.ps1
@@ -97,7 +98,7 @@ The generated runtime is placed below `server/`. Generated files such as the wor
 
 ## 5. What `start-server.bat` does
 
-`start-server.bat` is the single Windows entry point. It stores the directory in which the batch file lives, runs `bootstrap-fabric.ps1`, checks the Fabric launcher and EULA, runs `configure-geyser.ps1`, and starts `run-server.ps1`.
+`start-server.bat` is the single Windows entry point. It stores the directory in which the batch file lives, creates local launch settings, runs `bootstrap-server.ps1`, asks for Fabric/Forge/NeoForge when no loader is configured, verifies the selected runtime and mods, runs `configure-geyser.ps1`, and starts `run-server.ps1`.
 
 The launcher uses the settings selected by `parameter-manager.bat`. It validates the selected Java executable again, quotes paths safely, applies the requested RAM and starts either with or without `nogui`.
 
@@ -107,7 +108,7 @@ If bootstrap or launch fails, the batch file stops and tells the user to read th
 
 ## 6. What the bootstrap does
 
-The bootstrap calculates the repository root from `$PSScriptRoot`, checks Windows long-path support, discovers a compatible 64-bit Java 25+ runtime, loads `server/mods-manifest.ps1`, downloads and verifies Fabric and its pinned server mods, installs the Fabric runtime, and creates local EULA/properties templates without overwriting existing local configuration.
+The bootstrap calculates the repository root from `$PSScriptRoot`, discovers a compatible 64-bit Java 25+ runtime, installs the selected loader, loads the matching loader-specific manifest, downloads and verifies its pinned server mods, and creates local EULA/properties templates without overwriting existing local configuration. Fabric renames its launcher to the local runtime `server.jar` and keeps the vanilla engine as `vanilla-server.jar`; NeoForge uses its official generated `run.bat` and libraries. Forge is currently rejected with an actionable message because no official 26.2 build is available.
 
 The default Fabric stack contains Fabric API, Geyser-Fabric, Floodgate-Fabric, Lithium, FerriteCore, Krypton, ServerCore and Fabric Carpet. It does not install arbitrary Bukkit, Spigot or Paper plugins and it does not add client-only content such as Sodium to the server.
 
@@ -149,4 +150,4 @@ Jarock does not open router ports, modify firewall rules, configure port forward
 6. Check that the relevant mod matches Fabric and the target Minecraft release.
 7. Never delete the world before making a backup.
 
-That is Jarock: a reproducible, verified, local Fabric server bootstrap with configurable safe launch parameters and clear safety boundaries.
+That is Jarock: a reproducible, verified, local loader-aware server bootstrap with Fabric as the first choice, NeoForge as fallback, configurable safe launch parameters and clear safety boundaries.

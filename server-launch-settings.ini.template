@@ -1,4 +1,7 @@
 # Jarock local launch settings. This file is copied to server-launch-settings.ini.
+# LOADER_TYPE is selected automatically on first start. Use fabric, neoforge or forge.
+# Forge is currently unavailable for the official Minecraft 26.2 build and will show guidance.
+LOADER_TYPE=none
 # RAM values must use a JVM suffix such as G or M and leave at least 1G for Windows and other applications.
 RAM_INITIAL=4G
 RAM_MAX=4G

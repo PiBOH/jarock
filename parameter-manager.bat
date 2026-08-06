@@ -4,6 +4,8 @@ set "ROOT=%~dp0"
 if "%ROOT:~-1%"=="\" set "ROOT=%ROOT:~0,-1%"
 set "SETTINGS=%ROOT%\server-launch-settings.ini"
 set "TEMPLATE=%ROOT%\server-launch-settings.ini.template"
+set "CONFIG_ONLY=false"
+if /i "%~1"=="/configure-only" set "CONFIG_ONLY=true"
 
 where powershell.exe >nul 2>&1
 if errorlevel 1 (
@@ -29,24 +31,50 @@ echo ================================================
 echo Jarock server parameter manager
 echo ================================================
 echo.
-echo 1. Configure RAM
-echo 2. Choose GUI or console mode
-echo 3. Choose garbage-collection profile
-echo 4. Toggle automatic user Java environment setup
-echo 5. Choose online-mode (authentication)
-echo 6. Save and start the server
-echo 7. Save and exit
-echo 8. Reset safe defaults
+echo 1. Choose server mod loader
+echo 2. Configure RAM
+echo 3. Choose GUI or console mode
+echo 4. Choose garbage-collection profile
+echo 5. Toggle automatic user Java environment setup
+echo 6. Choose online-mode (authentication)
+echo 7. Save and start the server
+echo 8. Save and exit
+echo 9. Reset safe defaults
 echo.
-choice /c 12345678 /n /m "Choose an option: "
-if errorlevel 8 goto reset
-if errorlevel 7 goto save_exit
-if errorlevel 6 goto save_start
-if errorlevel 5 goto online_mode_menu
-if errorlevel 4 goto java_toggle
-if errorlevel 3 goto gc_menu
-if errorlevel 2 goto mode_menu
-if errorlevel 1 goto ram_menu
+choice /c 123456789 /n /m "Choose an option: "
+if errorlevel 9 goto reset
+if errorlevel 8 goto save_exit
+if errorlevel 7 goto save_start
+if errorlevel 6 goto online_mode_menu
+if errorlevel 5 goto java_toggle
+if errorlevel 4 goto gc_menu
+if errorlevel 3 goto mode_menu
+if errorlevel 2 goto ram_menu
+if errorlevel 1 goto loader_menu
+goto menu
+
+:loader_menu
+cls
+echo 1. Fabric (recommended first choice)
+echo 2. NeoForge (fallback; official 26.2 beta installer)
+echo 3. Forge (currently unavailable for official Minecraft 26.2)
+echo.
+choice /c 123 /n /m "Choose loader: "
+if errorlevel 3 goto loader_forge
+if errorlevel 2 goto loader_neoforge
+if errorlevel 1 goto loader_fabric
+:loader_forge
+echo Forge is currently unavailable because no official Minecraft 26.2 server build is published for this bootstrap.
+echo Choose Fabric or NeoForge instead.
+pause
+goto menu
+:loader_neoforge
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%SETTINGS%" -Name LOADER_TYPE -Value neoforge
+if errorlevel 1 pause
+goto menu
+:loader_fabric
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%SETTINGS%" -Name LOADER_TYPE -Value fabric
+if errorlevel 1 pause
 goto menu
 
 :ram_menu
@@ -100,7 +128,7 @@ set "NEW_GC=default"
 goto gc_save
 :gc_low_pause
 set "NEW_GC=low-pause"
-gc_save:
+:gc_save
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%SETTINGS%" -Name GC_PROFILE -Value "%NEW_GC%"
 if errorlevel 1 pause
 goto menu
@@ -150,6 +178,10 @@ goto menu
 :save_start
 call :save
 if errorlevel 1 exit /b 1
+if /i "%CONFIG_ONLY%"=="true" (
+    echo Configuration-only mode: returning to the first-run bootstrap.
+    exit /b 0
+)
 pushd "%ROOT%"
 if errorlevel 1 (
     echo ERROR: Could not enter the repository folder before starting the server.
@@ -162,6 +194,7 @@ exit /b %errorlevel%
 
 :save_exit
 call :save
+if /i "%CONFIG_ONLY%"=="true" exit /b %errorlevel%
 pause
 exit /b %errorlevel%
 

@@ -1,6 +1,6 @@
 # Public Release TODO
 
-This checklist describes what must be completed before the Jarock Fabric server is safe to share publicly.
+This checklist describes what must be completed before the Jarock loader-aware server is safe to share publicly. Fabric is the first choice; NeoForge is the fallback; Forge remains unavailable until an official Minecraft 26.2 build is verified.
 
 The repository intentionally does **not** open router ports, modify firewall rules, configure port forwarding, or expose the host to the Internet. Those tasks remain manual and are listed below.
 
@@ -8,7 +8,7 @@ The repository intentionally does **not** open router ports, modify firewall rul
 
 - [ ] Install a supported 64-bit Java runtime for Minecraft 26.2 and confirm `java -version`.
 - [ ] Download this repository from a trusted source. The launcher supports spaces, Unicode names and ordinary deeply nested paths; do not use unavailable drives or folders where Windows denies write access.
-- [ ] Run `start-server.bat` once to bootstrap the pinned Fabric server and mods.
+- [ ] Run `start-server.bat` once, choose Fabric or NeoForge, and confirm the selected loader-specific runtime and mods are installed.
 - [ ] Read the Minecraft EULA at <https://www.minecraft.net/eula> and set the generated `server/eula.txt` to `eula=true` only if you agree.
 - [ ] Review `server/server.properties` and replace the default `motd`, player limit, difficulty and gameplay settings.
 - [ ] Keep `online-mode=true` unless an official proxy architecture explicitly requires a different configuration; never use `false` on a public server without trusted authentication.
@@ -19,7 +19,7 @@ The repository intentionally does **not** open router ports, modify firewall rul
 - [ ] Test a Bedrock connection through Geyser from a second device when possible.
 - [ ] Test Java and Bedrock joining, movement, chat, commands, inventory, death/respawn, portals and server shutdown.
 - [ ] Test the redstone farms and technical mechanics that the community will actually use.
-- [ ] Confirm that every downloaded mod is for Minecraft 26.2, Fabric and the dedicated-server environment.
+- [ ] Confirm that every downloaded mod is for Minecraft 26.2, the selected loader and the dedicated-server environment.
 - [ ] Confirm that no client-only mod was placed in `server/mods/`.
 - [ ] Create and restore a complete backup of the world before inviting players.
 - [ ] Decide where backups will be stored and how often they will run.

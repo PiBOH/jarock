@@ -1,23 +1,25 @@
 # Contributing to Jarock
 
-Thank you for helping maintain Jarock. This project is a beginner-friendly Windows bootstrap for a Minecraft Java 26.2 Fabric server, with optional Java/Bedrock cross-play through Geyser and Floodgate.
+Thank you for helping maintain Jarock. This project is a beginner-friendly Windows bootstrap for a Minecraft Java 26.2 modded server, with Fabric as the first choice, NeoForge as fallback, optional Forge detection, and Java/Bedrock cross-play through Geyser and Floodgate.
 
 ## Project principles
 
-- Keep the default architecture simple and Fabric-native.
+- Keep the default architecture simple and loader-native; Fabric remains the first choice.
 - Do not add router configuration, port forwarding, firewall changes or public-network automation to the bootstrap.
 - Prefer a small, reproducible change over a large collection of optional components.
-- Never commit generated server data, downloaded mod `.jar` files, worlds, logs, credentials or Floodgate private keys. The only runtime binary intentionally versioned is the pinned vanilla `server/server.jar` through Git LFS; stage it only when deliberately updating that pinned server binary.
+- Never commit generated server data, loader runtimes, downloaded mod `.jar` files, worlds, logs, credentials or Floodgate private keys. `server.jar` is a local runtime entry point and is intentionally ignored.
 - Treat commands, paths, configuration keys, URLs, hashes and version numbers as technical literals: change them deliberately and document why.
 - English is the canonical project language. Keep translated documentation synchronized with the English source when documentation changes.
 
 ## Repository layout
 
 - `start-server.bat` — the single Windows entry point.
-- `scripts/bootstrap-fabric.ps1` — path checks, Java discovery, downloads, SHA-512 verification and Fabric setup.
+- `scripts/bootstrap-server.ps1` — loader selection, Java discovery, installer downloads, SHA-512 verification and runtime setup.
+- `scripts/bootstrap-fabric.ps1` — retained Fabric-specific implementation and compatibility reference.
+- `server/mods-manifest.ps1` and `server/mods-manifest-neoforge.ps1` — loader-specific pinned mod manifests.
 - `scripts/java-runtime.ps1` — PowerShell 5.1-compatible Java runtime discovery.
 - `scripts/configure-geyser.ps1` — safe Floodgate authentication configuration after Geyser generates its config.
-- `server/` — tracked vanilla `server.jar`, templates and manifest; generated runtime files and downloaded mods are ignored.
+- `server/` — templates and loader-specific manifests; generated `server.jar`, loader runtimes and downloaded mods are ignored.
 - `docs/en/` — canonical English guides.
 - `docs/<locale>/` — localized guides.
 - `TODO.md` — work required before public release.
@@ -36,7 +38,7 @@ Thank you for helping maintain Jarock. This project is a beginner-friendly Windo
 
 ## Java and bootstrap changes
 
-- The configured Minecraft 26.2 setup requires a supported 64-bit Java 25 or newer runtime unless the official Minecraft/Fabric tooling changes that requirement.
+- The configured Minecraft 26.2 setup requires a supported 64-bit Java 25 or newer runtime unless the selected official loader tooling states otherwise.
 - Java selection must not trust only the first `java.exe` on `PATH`. Check the selected executable and version explicitly.
 - When invoking Java from PowerShell or batch, use the selected absolute executable path and quote it so paths such as `C:\Program Files\...` work.
 - Do not silently change or remove the Java requirement just to make Java 8 start.
@@ -45,8 +47,8 @@ Thank you for helping maintain Jarock. This project is a beginner-friendly Windo
 
 ## Updating mods or Fabric
 
-1. Confirm that the component explicitly supports Minecraft 26.2 and Fabric.
-2. Update `server/mods-manifest.ps1` deliberately.
+1. Confirm that the component explicitly supports Minecraft 26.2 and the selected loader.
+2. Update the matching loader-specific manifest deliberately.
 3. Record the exact URL and SHA-512 hash.
 4. Check dependencies and whether the mod is server-side, client-side or both.
 5. Start with a clean disposable runtime or backup.
@@ -71,7 +73,7 @@ Before opening a pull request or release commit, run the checks available in the
 - `git diff --check` succeeds.
 - Markdown code fences are balanced.
 - Relative Markdown links resolve.
-- No generated runtime files or secrets are staged; `server/server.jar` is the explicit, deliberate exception and must be an LFS pointer.
+- No generated runtime files, `server.jar` or secrets are staged.
 - The bootstrap contains no router, firewall or port-forwarding commands.
 - Version and changelog entries agree.
 - The release workflow's required files changed together when preparing a release.
@@ -102,7 +104,7 @@ For a release-test or release commit:
 4. Use a commit message beginning with `v`, such as `v0.0.12-beta: select compatible Java runtime`. Historical `-alpha` entries remain in the changelog; new prerelease commits should use the current `-beta` channel.
 5. Push to `main` only after validation. The GitHub Actions workflow then validates the version and changelog and creates the prerelease.
 
-`server/server.jar` is intentionally tracked through Git LFS. Do not add other runtime jars, downloaded mods or generated files. Contributors need Git LFS installed and must verify the staged file is an LFS pointer before pushing.
+`server/server.jar` is generated locally and ignored. Do not add it, loader runtimes, downloaded mods or generated files to a commit.
 
 Do not rewrite published history or force-push unless the repository owner explicitly requests it.
 

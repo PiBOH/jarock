@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)] [string]$SettingsPath,
-    [Parameter(Mandatory = $true)] [ValidateSet('GUI_MODE','GC_PROFILE','AUTO_CONFIGURE_JAVA','ONLINE_MODE')] [string]$Name,
+    [Parameter(Mandatory = $true)] [ValidateSet('LOADER_TYPE','GUI_MODE','GC_PROFILE','AUTO_CONFIGURE_JAVA','ONLINE_MODE')] [string]$Name,
     [Parameter(Mandatory = $true)] [string]$Value
 )
 
@@ -10,6 +10,7 @@ Set-StrictMode -Version Latest
 
 try {
     switch ($Name) {
+        'LOADER_TYPE' { if ($Value -notin @('none','fabric','forge','neoforge')) { throw 'LOADER_TYPE must be none, fabric, forge or neoforge.' } }
         'GUI_MODE' { if ($Value -notin @('gui','nogui')) { throw 'GUI_MODE must be gui or nogui.' } }
         'GC_PROFILE' { if ($Value -notin @('default','low-pause')) { throw 'GC_PROFILE must be default or low-pause.' } }
         'AUTO_CONFIGURE_JAVA' { if ($Value -notin @('true','false')) { throw 'AUTO_CONFIGURE_JAVA must be true or false.' } }

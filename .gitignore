@@ -2,13 +2,16 @@
 /server/*
 !/server/.gitkeep
 !/server/mods-manifest.ps1
+!/server/mods-manifest-neoforge.ps1
+!/server/jarock-loader.txt.template
 !/server/server.properties.template
 !/server/eula.txt.template
 !/server/README.md
-!/server/server.jar
 !/server/config/
 !/server/config/Geyser-Fabric/
 !/server/config/Geyser-Fabric/config.yml.template
+!/server/config/Geyser-NeoForge/
+!/server/config/Geyser-NeoForge/config.yml.template
 
 # Local bootstrap cache
 /.cache/
@@ -21,6 +24,9 @@
 **/crash-reports/
 **/libraries/
 **/fabric-server-launch.jar
+**/vanilla-server.jar
+**/neoforge-*-installer.jar
+**/forge-*-installer.jar
 **/server.properties
 **/eula.txt
 **/user_jvm_args.txt

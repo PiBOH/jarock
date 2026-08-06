@@ -13,6 +13,23 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 
 - Complete the public-release checklist in `TODO.md`.
 - Keep all localized documentation synchronized with the English canonical documentation.
+- Continue testing Fabric and NeoForge loader selection on clean Windows checkouts.
+- Add an official Forge 26.2 installer and manifest only after the official build is available and verified.
+
+## [0.0.15-beta] - 2026-08-06
+
+### Added
+
+- Added first-run selection for Fabric, Forge or NeoForge.
+- Added loader-specific NeoForge runtime installation and pinned NeoForge 26.2 mod manifest.
+- Made `server.jar` a generated local loader entry point instead of a tracked vanilla binary.
+- Added optional first-run access to `parameter-manager.bat`.
+
+### Changed
+
+- Fabric copies its loader launcher to `server.jar` and retains the vanilla engine as `vanilla-server.jar`.
+- NeoForge uses its official generated `run.bat`, libraries and JVM arguments.
+- Forge selection now reports the unavailable official Minecraft 26.2 build instead of creating an incompatible runtime.
 
 ## [0.0.14-beta] - 2026-08-06
 
@@ -163,7 +180,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.14-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.15-beta...HEAD
+[0.0.15-beta]: https://github.com/PiBOH/jarock/compare/0.0.14-beta...0.0.15-beta
 [0.0.14-beta]: https://github.com/PiBOH/jarock/compare/0.0.13-beta...0.0.14-beta
 [0.0.13-beta]: https://github.com/PiBOH/jarock/compare/0.0.12-beta...0.0.13-beta
 [0.0.12-beta]: https://github.com/PiBOH/jarock/compare/0.0.11-alpha...0.0.12-beta

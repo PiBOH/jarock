@@ -1,0 +1,10 @@
+# Reference only — do not rename this file to config.yml before Geyser's first start.
+# Geyser generates a complete config.yml on first launch.
+# The bootstrap patches only auth-type after that generated file exists.
+
+bedrock:
+  address: 0.0.0.0
+  port: 19132
+  clone-remote-port: false
+
+auth-type: floodgate

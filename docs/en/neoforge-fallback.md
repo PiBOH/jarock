@@ -64,7 +64,7 @@ The exact filenames change. Do not rename a mod file unless the project specific
 
 ## 3. Install Java
 
-When using the Jarock repository, Java discovery is handled by `scripts/java-runtime.ps1`. The selected Java executable is stored locally in `server/java-path.txt`. The Fabric `parameter-manager.bat` is not a NeoForge installer; NeoForge remains a separate last-resort architecture and must be installed with the official NeoForge procedure below.
+When using the Jarock repository, Java discovery is handled by `scripts/java-runtime.ps1`. The selected Java executable is stored locally in `server/java-path.txt`. The repository now offers NeoForge as a first-run fallback. `parameter-manager.bat` can select NeoForge, and `start-server.bat` runs the official NeoForge installer automatically. NeoForge remains a separate loader and must use its own mods; the official generated `run.bat` is the runtime entry point because modern NeoForge does not provide a portable single loader jar to rename safely.
 
 Install a current 64-bit Java runtime suitable for Minecraft 26.2. For the 26.x line, Java 25 is the expected starting point, but follow the requirement shown by the current NeoForge installer and official Minecraft tooling if it differs.
 
@@ -85,6 +85,8 @@ If the command is not found, install Java from a trustworthy distributor or ask 
 ---
 
 ## 4. Install the NeoForge server
+
+Jarock performs these steps automatically after the user selects NeoForge. For manual recovery or troubleshooting:
 
 1. Create a clean folder such as `C:\MinecraftServer`.
 2. Open the official NeoForge project/download page: <https://neoforged.net/>.

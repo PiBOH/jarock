@@ -1,10 +1,10 @@
-# Minecraft Java 26.2 Fabric Server
+# Minecraft Java 26.2 Modded Server — Fabric first, NeoForge fallback
 
 ## Beginner-friendly installation guide
 
 **Canonical project language:** English  
 **Audience:** people who have never created a Minecraft server before  
-**Target platform:** Minecraft Java Edition 26.2 with Fabric, Java and Bedrock cross-play  
+**Target platform:** Minecraft Java Edition 26.2 with Fabric first, NeoForge fallback, and Java/Bedrock cross-play
 **Primary example:** Windows 10/11
 
 > **Important:** Minecraft, Fabric, Geyser, Floodgate and mods are updated independently. Every download must explicitly support **Minecraft 26.2**. Do not install a file merely because its name looks similar.
@@ -122,7 +122,17 @@ You should see Java 25 and a 64-bit runtime. If Windows says that `java` is not 
 
 ---
 
-## 5. Install Fabric Server
+## 5. Choose and install a server loader
+
+On the first `start-server.bat` run, Jarock asks which loader to use when `LOADER_TYPE=none`. You can choose Fabric, NeoForge or Forge; Forge is currently shown as unavailable because no official Minecraft 26.2 server build has been verified. The prompt can also open `parameter-manager.bat` so you configure RAM, GUI/console mode, GC profile, online-mode and Java environment setup before installation.
+
+**Fabric (recommended):** Jarock downloads the official Fabric installer, installs Minecraft 26.2, renames the generated `fabric-server-launch.jar` to the local runtime entry point `server/server.jar`, and retains the vanilla engine as the ignored local `server/vanilla-server.jar`.
+
+**NeoForge (fallback):** Jarock downloads the official NeoForge 26.2 beta installer, runs `--installServer`, and starts the generated official `run.bat` with its libraries and `user_jvm_args.txt`. Modern NeoForge does not provide a portable single loader jar that can safely be renamed to `server.jar`, so `run.bat` is used for this loader.
+
+After choosing a loader, do not mix its mods with another loader. To change loader, back up the world, run `clean-server-runtime.bat`, then select the new loader.
+
+### Fabric installation details
 
 1. Open the official Fabric server page: <https://fabricmc.net/use/server/>.
 2. Select Minecraft **26.2**.
@@ -131,7 +141,7 @@ You should see Java 25 and a 64-bit runtime. If Windows says that `java` is not 
 5. Put it in the repository folder. `C:\MinecraftServer` is only an example location.
 6. If the downloaded file has a long name, you may rename it to `fabric-server-launch.jar` for convenience. Do not change its contents or extension.
 
-### Graphical installer method
+#### Fabric graphical installer method
 
 If you downloaded the Fabric installer `.jar`:
 
@@ -143,7 +153,7 @@ If you downloaded the Fabric installer `.jar`:
 6. Enable the option to download the Minecraft server if it is shown.
 7. Start the installation.
 
-### Command-line method
+#### Fabric command-line method
 
 If double-clicking does nothing, open Command Prompt in the server folder and run the installer using Java 25. The exact installer filename will be different:
 

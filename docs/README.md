@@ -10,7 +10,7 @@ The canonical English guides are the source of truth for the technical procedure
 
 ## Runtime and launch configuration
 
-- `parameter-manager.bat` configures RAM, GUI/console mode, a conservative GC profile and user-scoped Java environment setup.
+- `parameter-manager.bat` configures the loader, RAM, GUI/console mode, a conservative GC profile, online-mode and user-scoped Java environment setup.
 - `server-launch-settings.ini.template` is the tracked safe default.
 - `server-launch-settings.ini` is local and ignored by Git.
 - `java-home.txt` is an optional local override for a custom JDK folder and is ignored by Git; `JAROCK_JAVA_HOME` is the advanced equivalent.
@@ -69,4 +69,4 @@ The English guides remain authoritative for detailed network setup, troubleshoot
 
 ## Loader policy
 
-Fabric is the first choice for native optimization and technical mods. NeoForge is the final loader fallback when a required mod is unavailable or unsuitable on Fabric. Forge and NeoForge are distinct loaders; never install a Forge mod on NeoForge unless the mod author explicitly provides compatibility.
+Fabric is the first choice for native optimization and technical mods. NeoForge is the final loader fallback when a required mod is unavailable or unsuitable on Fabric. Forge is currently displayed as unavailable until an official Minecraft 26.2 server build is verified. Forge and NeoForge are distinct loaders; never install a Forge mod on NeoForge unless the mod author explicitly provides compatibility.

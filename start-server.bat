@@ -21,7 +21,7 @@ if not exist "%ROOT%\server-launch-settings.ini" (
     copy /y "%ROOT%\server-launch-settings.ini.template" "%ROOT%\server-launch-settings.ini" >nul
 )
 
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\bootstrap-fabric.ps1"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\bootstrap-server.ps1"
 if errorlevel 1 (
     echo.
     echo Bootstrap failed. The detailed error and suggested fix are above.
@@ -29,16 +29,9 @@ if errorlevel 1 (
     exit /b 1
 )
 
-if not exist "%ROOT%\server\fabric-server-launch.jar" (
-    echo ERROR: Fabric server launcher was not created.
-    echo Suggested fix: install 64-bit Java 25, verify write permissions and Internet access, and download the complete repository.
-    pause
-    exit /b 1
-)
-
 if not exist "%ROOT%\server\eula.txt" (
     echo ERROR: server\eula.txt does not exist.
-    echo Suggested fix: run this file again. If it still fails, check that the repository folder is writable.
+    echo Suggested fix: run this file again and check that the repository is writable.
     pause
     exit /b 1
 )
@@ -59,22 +52,21 @@ if errorlevel 1 (
     echo.
     echo ERROR: Geyser configuration could not be updated.
     echo Suggested fix: start the server once so Geyser can generate its config, then run this file again.
-    echo If the config exists, set auth-type: floodgate manually and inspect the error above.
     pause
     exit /b 1
 )
 
 echo.
-echo Starting Jarock Fabric server from:
+echo Starting Jarock server from:
 echo   "%ROOT%\server"
 echo No router or firewall changes are performed by this file.
 echo Type "stop" in the server console to shut it down safely.
-echo Do not double-click server\server.jar directly: Windows may use an older Java 8/21 association.
+echo Do not double-click server\server.jar directly: Windows may use an older Java association.
 echo.
 pushd "%ROOT%\server"
 if errorlevel 1 (
-    echo ERROR: Could not enter the generated server directory.
-    echo Suggested fix: check folder permissions, drive availability, and Windows long-path support.
+    echo ERROR: Could not enter the server directory.
+    echo Suggested fix: check folder permissions, drive availability and Windows long-path support.
     popd
     pause
     exit /b 1
@@ -87,7 +79,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\configur
 if errorlevel 1 (
     echo.
     echo WARNING: Geyser authentication could not be patched after shutdown.
-    echo Suggested fix: open "%ROOT%\server\config\Geyser-Fabric\config.yml" and set auth-type: floodgate, then run this file again.
+    echo Suggested fix: inspect the generated Geyser config and set auth-type: floodgate, then run this file again.
 )
 echo.
 echo Server stopped with exit code %EXIT_CODE%.

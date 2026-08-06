@@ -49,10 +49,12 @@ try {
         '.gitkeep',
         'README.md',
         'mods-manifest.ps1',
-        'server.jar',
+        'mods-manifest-neoforge.ps1',
+        'jarock-loader.txt.template',
         'eula.txt.template',
         'server.properties.template',
-        'config\Geyser-Fabric\config.yml.template'
+        'config\Geyser-Fabric\config.yml.template',
+        'config\Geyser-NeoForge\config.yml.template'
     )
     $PreservedPaths = @{}
     foreach ($RelativePath in $PreservedRelativePaths) {
@@ -64,7 +66,7 @@ try {
     }
 
     Write-Host "Cleaning generated runtime data under: $ServerDirectory" -ForegroundColor Cyan
-    Write-Host 'Preserving only server.jar, repository templates, README, manifest and the tracked config template.' -ForegroundColor Green
+    Write-Host 'Preserving repository templates, README and loader-specific manifests. server.jar is generated locally for the selected loader.' -ForegroundColor Green
     Write-Host 'This removes worlds, player data, logs, generated configs, Floodgate keys, downloaded mods and libraries.' -ForegroundColor Yellow
 
     # Remove every file that is not explicitly part of the repository template.
