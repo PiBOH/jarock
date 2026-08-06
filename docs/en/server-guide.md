@@ -170,7 +170,14 @@ The names can vary slightly between Fabric releases. That is normal. For this re
 
 ## 6. Configure and start Jarock
 
-For this repository, use `parameter-manager.bat` instead of creating a separate `start.bat`. It safely configures RAM, GUI/console mode, the GC profile and optional user-scoped Java environment setup. The settings are stored locally in `server-launch-settings.ini`.
+For this repository, use `parameter-manager.bat` instead of creating a separate `start.bat`. It safely configures RAM, GUI/console mode, the GC profile, online-mode and optional user-scoped Java environment setup. The settings are stored locally in `server-launch-settings.ini`.
+
+The online-mode menu controls `server.properties`:
+
+- `true` is recommended and keeps normal Mojang/Microsoft Java account authentication enabled.
+- `false` is an advanced offline-mode setting. Do not use it on a public server unless a trusted proxy is correctly handling authentication; otherwise players can impersonate names.
+
+The default is `true`. The setting is applied before each server launch without changing unrelated properties.
 
 After saving settings, run `start-server.bat`. It discovers the compatible Java runtime and uses the selected absolute executable.
 
@@ -464,7 +471,7 @@ Use this list in order:
 - [ ] The server folder is outside Downloads and cloud sync.
 - [ ] Fabric Server explicitly targets Minecraft 26.2.
 - [ ] `eula=true` is set only after reading and accepting the EULA.
-- [ ] `online-mode=true` remains enabled.
+- [ ] `online-mode=true` remains enabled, or a trusted proxy architecture has been documented and tested before using `false`.
 - [ ] `white-list=true` is enabled before public testing.
 - [ ] Fabric API is in `mods/`.
 - [ ] Geyser-Fabric explicitly targets 26.2.

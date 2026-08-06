@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)] [string]$SettingsPath,
-    [Parameter(Mandatory = $true)] [ValidateSet('GUI_MODE','GC_PROFILE','AUTO_CONFIGURE_JAVA')] [string]$Name,
+    [Parameter(Mandatory = $true)] [ValidateSet('GUI_MODE','GC_PROFILE','AUTO_CONFIGURE_JAVA','ONLINE_MODE')] [string]$Name,
     [Parameter(Mandatory = $true)] [string]$Value
 )
 
@@ -13,9 +13,16 @@ try {
         'GUI_MODE' { if ($Value -notin @('gui','nogui')) { throw 'GUI_MODE must be gui or nogui.' } }
         'GC_PROFILE' { if ($Value -notin @('default','low-pause')) { throw 'GC_PROFILE must be default or low-pause.' } }
         'AUTO_CONFIGURE_JAVA' { if ($Value -notin @('true','false')) { throw 'AUTO_CONFIGURE_JAVA must be true or false.' } }
+        'ONLINE_MODE' { if ($Value -notin @('true','false')) { throw 'ONLINE_MODE must be true or false.' } }
     }
     $Content = Get-Content -LiteralPath $SettingsPath -Raw
-    $Content = [regex]::Replace($Content, "(?m)^$Name=.*$", "$Name=$Value")
+    $SettingPattern = "(?m)^$Name=.*$"
+    if ($Content -match $SettingPattern) {
+        $Content = [regex]::Replace($Content, $SettingPattern, "$Name=$Value")
+    }
+    else {
+        $Content = $Content.TrimEnd("`r", "`n") + "`r`n$Name=$Value`r`n"
+    }
     Set-Content -LiteralPath $SettingsPath -Value $Content -Encoding UTF8
     exit 0
 }

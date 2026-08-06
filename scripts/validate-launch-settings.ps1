@@ -18,8 +18,14 @@ try {
     foreach ($Line in (Get-Content -LiteralPath $SettingsPath)) {
         if ($Line -match '^\s*([A-Z_]+)=(.*?)\s*$') { $Values[$Matches[1]] = $Matches[2] }
     }
-    foreach ($Name in @('RAM_INITIAL','RAM_MAX','GUI_MODE','AUTO_CONFIGURE_JAVA','GC_PROFILE')) {
-        if (-not $Values.ContainsKey($Name)) { throw "Missing setting: $Name" }
+    foreach ($Name in @('RAM_INITIAL','RAM_MAX','GUI_MODE','AUTO_CONFIGURE_JAVA','ONLINE_MODE','GC_PROFILE')) {
+        if (-not $Values.ContainsKey($Name)) {
+            if ($Name -eq 'ONLINE_MODE') {
+                $Values[$Name] = 'true'
+                continue
+            }
+            throw "Missing setting: $Name"
+        }
     }
     $InitialMb = Get-Megabytes ([string]$Values['RAM_INITIAL'])
     $MaximumMb = Get-Megabytes ([string]$Values['RAM_MAX'])
@@ -37,6 +43,7 @@ try {
     if ([string]$Values['GUI_MODE'] -notin @('gui','nogui')) { throw 'GUI_MODE must be gui or nogui.' }
     if ([string]$Values['GC_PROFILE'] -notin @('default','low-pause')) { throw 'GC_PROFILE must be default or low-pause.' }
     if ([string]$Values['AUTO_CONFIGURE_JAVA'] -notin @('true','false')) { throw 'AUTO_CONFIGURE_JAVA must be true or false.' }
+    if ([string]$Values['ONLINE_MODE'] -notin @('true','false')) { throw 'ONLINE_MODE must be true or false.' }
     Write-Host 'Launch settings are valid.' -ForegroundColor Green
     exit 0
 }

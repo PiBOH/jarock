@@ -11,7 +11,7 @@ The repository intentionally does **not** open router ports, modify firewall rul
 - [ ] Run `start-server.bat` once to bootstrap the pinned Fabric server and mods.
 - [ ] Read the Minecraft EULA at <https://www.minecraft.net/eula> and set the generated `server/eula.txt` to `eula=true` only if you agree.
 - [ ] Review `server/server.properties` and replace the default `motd`, player limit, difficulty and gameplay settings.
-- [ ] Keep `online-mode=true` unless an official proxy architecture explicitly requires a different configuration.
+- [ ] Keep `online-mode=true` unless an official proxy architecture explicitly requires a different configuration; never use `false` on a public server without trusted authentication.
 - [ ] Keep `white-list=true` and add trusted Java players with the server console.
 - [ ] Confirm the Floodgate authentication configuration and protect the generated `key.pem` file.
 - [ ] Set an administrator/operator policy and add only trusted operators.

@@ -33,14 +33,16 @@ echo 1. Configure RAM
 echo 2. Choose GUI or console mode
 echo 3. Choose garbage-collection profile
 echo 4. Toggle automatic user Java environment setup
-echo 5. Save and start the server
-echo 6. Save and exit
-echo 7. Reset safe defaults
+echo 5. Choose online-mode (authentication)
+echo 6. Save and start the server
+echo 7. Save and exit
+echo 8. Reset safe defaults
 echo.
-choice /c 1234567 /n /m "Choose an option: "
-if errorlevel 7 goto reset
-if errorlevel 6 goto save_exit
-if errorlevel 5 goto save_start
+choice /c 12345678 /n /m "Choose an option: "
+if errorlevel 8 goto reset
+if errorlevel 7 goto save_exit
+if errorlevel 6 goto save_start
+if errorlevel 5 goto online_mode_menu
 if errorlevel 4 goto java_toggle
 if errorlevel 3 goto gc_menu
 if errorlevel 2 goto mode_menu
@@ -100,6 +102,27 @@ goto gc_save
 set "NEW_GC=low-pause"
 gc_save:
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%SETTINGS%" -Name GC_PROFILE -Value "%NEW_GC%"
+if errorlevel 1 pause
+goto menu
+
+:online_mode_menu
+cls
+echo 1. online-mode=true (recommended; authenticated Java accounts)
+echo 2. online-mode=false (advanced/offline mode; unsafe for public servers without a trusted proxy)
+echo.
+choice /c 12 /n /m "Choose online-mode: "
+if errorlevel 2 goto online_mode_false
+if errorlevel 1 goto online_mode_true
+:online_mode_true
+set "NEW_ONLINE_MODE=true"
+goto online_mode_save
+:online_mode_false
+set "NEW_ONLINE_MODE=false"
+echo WARNING: online-mode=false disables normal Mojang account authentication.
+echo Do not use it on a public server unless a trusted, correctly configured proxy handles authentication.
+pause
+:online_mode_save
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%SETTINGS%" -Name ONLINE_MODE -Value "%NEW_ONLINE_MODE%"
 if errorlevel 1 pause
 goto menu
 

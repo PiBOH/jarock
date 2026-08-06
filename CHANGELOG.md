@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Complete the public-release checklist in `TODO.md`.
 - Keep all localized documentation synchronized with the English canonical documentation.
 
+## [0.0.12-alpha] - 2026-08-06
+
+### Added
+
+- Added an online-mode option to `parameter-manager.bat`, persisted in local launch settings and applied to `server.properties` before startup.
+- Added explicit warnings and validation for unsafe offline mode.
+
 ## [0.0.11-alpha] - 2026-08-06
 
 ### Added
@@ -134,7 +141,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.11-alpha...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.12-alpha...HEAD
+[0.0.12-alpha]: https://github.com/PiBOH/jarock/compare/0.0.11-alpha...0.0.12-alpha
 [0.0.11-alpha]: https://github.com/PiBOH/jarock/compare/0.0.10-alpha...0.0.11-alpha
 [0.0.10-alpha]: https://github.com/PiBOH/jarock/compare/0.0.9-alpha...0.0.10-alpha
 [0.0.9-alpha]: https://github.com/PiBOH/jarock/compare/0.0.8-alpha...0.0.9-alpha

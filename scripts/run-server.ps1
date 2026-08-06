@@ -27,6 +27,33 @@ function Show-ErrorGuidance([string]$Message, [string]$Action) {
     Write-Host 'No router, firewall, port-forwarding, or public-network changes were performed.' -ForegroundColor Yellow
 }
 
+function Set-ServerOnlineMode([string]$PropertiesPath, [string]$OnlineMode) {
+    if ($OnlineMode -notin @('true', 'false')) {
+        throw "ONLINE_MODE must be true or false, not '$OnlineMode'."
+    }
+    if (-not (Test-Path -LiteralPath $PropertiesPath -PathType Leaf)) {
+        throw "The Minecraft properties file was not found: $PropertiesPath"
+    }
+
+    $Content = Get-Content -LiteralPath $PropertiesPath -Raw
+    $OnlineModePattern = '(?m)^[ \t]*online-mode[ \t]*=[^\r\n]*'
+    if ($Content -match $OnlineModePattern) {
+        $Content = [regex]::Replace($Content, $OnlineModePattern, "online-mode=$OnlineMode")
+    }
+    else {
+        $Content = $Content.TrimEnd([char[]]"`r`n") + "`r`nonline-mode=$OnlineMode`r`n"
+    }
+    [IO.File]::WriteAllText($PropertiesPath, $Content, (New-Object Text.UTF8Encoding($false)))
+
+    if ($OnlineMode -eq 'false') {
+        Write-Host 'WARNING: online-mode=false disables normal Mojang account authentication.' -ForegroundColor Yellow
+        Write-Host 'Use it only with a trusted, correctly configured authentication proxy; it is unsafe for a public server by itself.' -ForegroundColor Yellow
+    }
+    else {
+        Write-Host 'Minecraft online-mode=true is enabled.' -ForegroundColor Green
+    }
+}
+
 function Assert-MemoryValue([string]$Name, [string]$Value) {
     if ($Value -notmatch '^(?<amount>[1-9][0-9]*)(?<unit>[mMgG])$') {
         throw "$Name has an invalid value '$Value'. Use a positive amount followed by M or G, for example 4G."
@@ -46,10 +73,11 @@ try {
     $LauncherPath = Join-Path $ServerDirectory 'fabric-server-launch.jar'
     $RootDirectory = Split-Path -Parent $ServerDirectory
     $SettingsPath = Join-Path $RootDirectory 'server-launch-settings.ini'
+    $PropertiesPath = Join-Path $ServerDirectory 'server.properties'
     $JavaEnvironmentScript = Join-Path (Split-Path -Parent $PSScriptRoot) 'scripts\configure-java-environment.ps1'
+    $Settings = @{}
 
     if (Test-Path -LiteralPath $SettingsPath -PathType Leaf) {
-        $Settings = @{}
         foreach ($Line in (Get-Content -LiteralPath $SettingsPath)) {
             if ($Line -match '^\s*([A-Z_]+)=(.*?)\s*$' -and $Matches[1] -notlike '#*') {
                 $Settings[$Matches[1]] = $Matches[2]
@@ -65,6 +93,9 @@ try {
     }
     if ($GuiMode -notin @('gui', 'nogui')) { throw "GUI_MODE must be gui or nogui, not '$GuiMode'." }
     if ($GcProfile -notin @('default', 'low-pause')) { throw "GC_PROFILE must be default or low-pause, not '$GcProfile'." }
+    $OnlineMode = 'true'
+    if ($Settings.ContainsKey('ONLINE_MODE')) { $OnlineMode = [string]$Settings['ONLINE_MODE'].ToLowerInvariant() }
+    if ($OnlineMode -notin @('true', 'false')) { throw "ONLINE_MODE must be true or false, not '$OnlineMode'." }
 
     $InitialMegabytes = Assert-MemoryValue 'RAM_INITIAL' $InitialMemory
     $MaximumMegabytes = Assert-MemoryValue 'RAM_MAX' $MaximumMemory
@@ -113,8 +144,9 @@ try {
         }
     }
 
+    Set-ServerOnlineMode -PropertiesPath $PropertiesPath -OnlineMode $OnlineMode
     Write-Host "Using Java executable: $($Runtime.Path) (Java $($Runtime.Version), 64-bit=$($Runtime.Is64Bit))" -ForegroundColor Green
-    Write-Host "Memory: initial=$InitialMemory, maximum=$MaximumMemory; mode=$GuiMode; GC profile=$GcProfile" -ForegroundColor Green
+    Write-Host "Memory: initial=$InitialMemory, maximum=$MaximumMemory; mode=$GuiMode; GC profile=$GcProfile; online-mode=$OnlineMode" -ForegroundColor Green
 
     $JavaArguments = @("-Xms$InitialMemory", "-Xmx$MaximumMemory")
     if ($GcProfile -eq 'low-pause') {
