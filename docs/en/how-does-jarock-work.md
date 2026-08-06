@@ -49,7 +49,7 @@ It can configure:
 
 RAM values are validated, must be at least `512M`, and initial RAM cannot exceed maximum RAM. Jarock does not silently give all physical memory to Java. The user should still leave enough memory for Windows, backups and other programs.
 
-The manager never inserts arbitrary text directly into a shell command. Settings are written through typed PowerShell helpers against the temporary copy, then validated and committed only on an explicit save. `run-server.ps1` validates them again before launch. When the manager was opened by first-run bootstrap, Exit without saving returns a non-zero status so the bootstrap stops instead of continuing with partially chosen settings.
+The manager never inserts arbitrary text directly into a shell command. Settings are written through typed PowerShell helpers against the temporary copy, then validated and committed only on an explicit save. `run-server.ps1` validates them again before launch. When the manager was opened by first-run bootstrap, Exit without saving returns the dedicated cancellation status `2`; the bootstrap restores the original loader settings, stops without installing or starting the server, and displays a normal cancellation message rather than an error.
 
 ---
 

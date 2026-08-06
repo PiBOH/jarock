@@ -39,7 +39,7 @@ Neither Fabric nor NeoForge automatically runs Bukkit/Spigot/Paper plugins. If t
 
 1. Install a supported 64-bit Java 25 runtime for Minecraft 26.2. A direct installer link is available in the guide.
 2. Clone or download this repository.
-3. Double-click `start-server.bat` once; if no loader is configured, choose Fabric, Forge or NeoForge. You can optionally open `parameter-manager.bat` during this flow.
+3. Double-click `start-server.bat` once; if no loader is configured, choose Fabric, Forge or NeoForge. You can optionally open `parameter-manager.bat` during this flow. If you choose `Exit without saving`, setup is cancelled cleanly and the server is not started.
 4. The bootstrap installs the selected loader and downloads only the matching pinned mods.
 5. Read the generated `server/eula.txt` and, if you accept the Minecraft EULA, change `eula=false` to `eula=true`.
 6. Double-click `start-server.bat` again.

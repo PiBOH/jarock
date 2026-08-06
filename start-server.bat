@@ -22,11 +22,18 @@ if not exist "%ROOT%\server-launch-settings.ini" (
 )
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\bootstrap-server.ps1"
-if errorlevel 1 (
+set "BOOTSTRAP_EXIT_CODE=%errorlevel%"
+if "%BOOTSTRAP_EXIT_CODE%"=="2" (
+    echo.
+    echo Setup cancelled. No parameter changes were saved and the server was not started.
+    pause
+    exit /b 2
+)
+if not "%BOOTSTRAP_EXIT_CODE%"=="0" (
     echo.
     echo Bootstrap failed. The detailed error and suggested fix are above.
     pause
-    exit /b 1
+    exit /b %BOOTSTRAP_EXIT_CODE%
 )
 
 if not exist "%ROOT%\server\eula.txt" (

@@ -77,6 +77,11 @@ function Select-Loader {
             Set-Content -LiteralPath $SettingsPath -Value $OriginalSettingsContent -Encoding UTF8
             Stop-WithGuidance "Could not open parameter-manager.bat: $($_.Exception.Message)" 'Open parameter-manager.bat manually from the repository root, choose Save and exit, then run start-server.bat again. Exit without saving cancels this first-run setup.'
         }
+        if ($ManagerProcess.ExitCode -eq 2) {
+            Set-Content -LiteralPath $SettingsPath -Value $OriginalSettingsContent -Encoding UTF8
+            Write-Host 'Setup cancelled. No parameter changes were saved and the server was not started.' -ForegroundColor Yellow
+            exit 2
+        }
         if ($ManagerProcess.ExitCode -ne 0) {
             Set-Content -LiteralPath $SettingsPath -Value $OriginalSettingsContent -Encoding UTF8
             Stop-WithGuidance "parameter-manager.bat did not finish successfully (exit code $($ManagerProcess.ExitCode))." 'Open parameter-manager.bat manually, save valid settings with Save and exit, then run start-server.bat again. Do not choose Exit without saving if you want to continue this first-run setup.'
