@@ -1,47 +1,32 @@
 (() => {
-  const menuButton = document.querySelector('.menu-toggle');
-  const navigation = document.querySelector('.top-nav');
-
-  if (menuButton && navigation) {
-    menuButton.addEventListener('click', () => {
-      const isOpen = navigation.classList.toggle('is-open');
-      menuButton.setAttribute('aria-expanded', String(isOpen));
+  const menu = document.querySelector('#primary-nav');
+  const button = document.querySelector('.menu-toggle');
+  if (menu && button) {
+    const close = () => { menu.classList.remove('is-open'); button.setAttribute('aria-expanded', 'false'); };
+    button.addEventListener('click', () => {
+      const open = menu.classList.toggle('is-open');
+      button.setAttribute('aria-expanded', String(open));
     });
-
-    const closeMenu = () => {
-      navigation.classList.remove('is-open');
-      menuButton.setAttribute('aria-expanded', 'false');
-    };
-
-    navigation.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', closeMenu);
-    });
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeMenu();
-    });
-
+    menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', close));
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') close(); });
     document.addEventListener('click', (event) => {
-      if (!navigation.contains(event.target) && !menuButton.contains(event.target)) closeMenu();
+      if (!menu.contains(event.target) && !button.contains(event.target)) close();
     });
   }
 
-  const search = document.querySelector('#toolkit-search');
-  const rows = [...document.querySelectorAll('#toolkit-list tr')];
-  const emptyState = document.querySelector('#empty-state');
-
-  if (search && rows.length && emptyState) {
+  const search = document.querySelector('[data-catalog-search]');
+  const rows = [...document.querySelectorAll('[data-catalog-row]')];
+  const empty = document.querySelector('[data-empty-search]');
+  if (search && rows.length) {
     search.addEventListener('input', () => {
       const query = search.value.trim().toLowerCase();
-      let visibleRows = 0;
-
+      let shown = 0;
       rows.forEach((row) => {
-        const matches = !query || row.dataset.search.includes(query);
-        row.hidden = !matches;
-        if (matches) visibleRows += 1;
+        const match = !query || (row.dataset.search || row.textContent).toLowerCase().includes(query);
+        row.hidden = !match;
+        if (match) shown += 1;
       });
-
-      emptyState.hidden = visibleRows !== 0;
+      if (empty) empty.hidden = shown !== 0;
     });
   }
 })();
