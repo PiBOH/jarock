@@ -29,4 +29,40 @@
       if (empty) empty.hidden = shown !== 0;
     });
   }
+  const changelogBox = document.getElementById('changelog-fetch');
+  if (changelogBox) {
+    const url = 'https://raw.githubusercontent.com/PiBOH/jarock/refs/heads/main/CHANGELOG.md';
+    const fallback = 'https://github.com/PiBOH/jarock/blob/main/CHANGELOG.md';
+    fetch(url)
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+      .then(md => {
+        let lines = md.split('\n');
+        let html = '';
+        let inList = false;
+        for (let line of lines) {
+          let esc = line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          esc = esc.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+          if (/^## /.test(esc)) {
+            if (inList) { html += '</ul>'; inList = false; }
+            html += '<h2>' + esc.slice(3) + '</h2>';
+          } else if (/^### /.test(esc)) {
+            if (inList) { html += '</ul>'; inList = false; }
+            html += '<h3>' + esc.slice(4) + '</h3>';
+          } else if (/^- /.test(esc)) {
+            if (!inList) { html += '<ul>'; inList = true; }
+            html += '<li>' + esc.slice(2) + '</li>';
+          } else if (esc.trim() !== '') {
+            if (inList) { html += '</ul>'; inList = false; }
+            html += '<p>' + esc + '</p>';
+          }
+        }
+        if (inList) html += '</ul>';
+        changelogBox.className = 'download-box';
+        changelogBox.innerHTML = html;
+      })
+      .catch(() => {
+        changelogBox.className = 'notice warning';
+        changelogBox.innerHTML = '<strong>Could not load the changelog.</strong> Verify the link and read it on GitHub: <a href="' + fallback + '">CHANGELOG.md</a>';
+      });
+  }
 })();
