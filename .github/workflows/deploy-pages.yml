@@ -2,44 +2,56 @@ name: Deploy website to GitHub Pages
 
 on:
   push:
-    branches: [main]
-    paths:
-      - '.website/**'
-      - '.github/workflows/deploy-pages.yml'
+    branches:
+      - main
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
+# Keep only one production deployment active at a time. Do not cancel a
+# deployment that has already started, because Pages should finish publishing it.
 concurrency:
-  group: pages
+  group: github-pages
   cancel-in-progress: false
 
 jobs:
   build:
-    name: Build website artifact
+    name: Build Pages artifact
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload static website
+      - name: Validate website entry point
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .website/index.html
+          test -f .website/styles.css
+          test -f .website/script.js
+          test -f .website/.nojekyll
+          test "$(find .website -type f | wc -l)" -gt 0
+          echo "Website files ready for upload:"
+          find .website -type f -print | sort
+
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: .website
 
   deploy:
-    name: Deploy website
+    name: Deploy Pages artifact
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
