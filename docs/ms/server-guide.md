@@ -4,4 +4,6 @@ Pasang Java 25 64-bit, jalankan `start-server.bat` dan gunakan `parameter-manage
 
 Lihat panduan lengkap bahasa Inggeris: [../en/server-guide.md](../en/server-guide.md)
 
+
+> Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Nota teknikal: Sentiasa gunakan `start-server.bat` di akar repositori. Jangan klik dua kali `server.jar`; Windows mungkin menggunakan Java 8 atau Java 21, sedangkan Minecraft 26.2 memerlukan Java 25+ 64-bit. Lihat [panduan bahasa Inggeris lengkap](../en/server-guide.md).**

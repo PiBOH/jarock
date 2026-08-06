@@ -8,6 +8,8 @@
 
 Este documento explica qué ocurre después de descargar Jarock.
 
+
+> Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Nota de mantenimiento:** el lanzador ahora busca un runtime Java 25+ compatible de 64 bits en lugar de confiar solo en el primer `java.exe` de `PATH`. Usa `scripts/java-runtime.ps1`, guarda el ejecutable seleccionado en `server/java-path.txt` y lo valida antes de iniciar. Java 8 puede permanecer instalado.
 
 ## 1. Resumen

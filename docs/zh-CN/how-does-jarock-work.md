@@ -8,6 +8,8 @@
 
 本文说明下载 Jarock 后服务器实际会做什么。
 
+
+> Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **维护说明：** 启动器现在会寻找兼容的 64 位 Java 25+ 运行时，而不是只信任 `PATH` 中第一个 `java.exe`。它使用 `scripts/java-runtime.ps1`，将选中的可执行文件保存到 `server/java-path.txt`，并在启动前再次验证。Java 8 可以继续安装。
 
 ## 1. 简要流程

@@ -4,4 +4,6 @@
 
 קרא את המדריך המלא באנגלית: [../en/server-guide.md](../en/server-guide.md)
 
+
+> Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **הערה טכנית: יש להשתמש תמיד ב־`start-server.bat` שבתיקיית השורש של המאגר. אין ללחוץ פעמיים על `server.jar`; Windows עלול להשתמש ב־Java 8 או Java 21, בעוד Minecraft 26.2 דורש Java 25+ ‏64-bit. ראו את [המדריך המלא באנגלית](../en/server-guide.md).**

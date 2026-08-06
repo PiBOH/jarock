@@ -4,4 +4,6 @@
 
 Tam İngilizce kılavuza bakın: [../en/server-guide.md](../en/server-guide.md)
 
+
+> Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Teknik not: Her zaman repository kökündeki `start-server.bat` dosyasını kullanın. `server.jar` dosyasına çift tıklamayın; Windows Java 8 veya Java 21 kullanabilir, ancak Minecraft 26.2 için 64 bit Java 25+ gerekir. [Tam İngilizce kılavuza](../en/server-guide.md) bakın.**

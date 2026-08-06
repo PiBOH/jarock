@@ -4,4 +4,6 @@ Installeer ondersteunde 64-bis Java 25, voer `start-server.bat` uit en gebruik `
 
 See the [canonical English installation guide](../en/server-guide.md) for the complete procedure. Keep commands, paths, keys and URLs unchanged.
 
+
+> Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Tegniese nota: Gebruik altyd die `start-server.bat` in die wortel van die repository. Moenie op `server.jar` dubbelklik nie; Windows kan Java 8 of Java 21 gebruik, terwyl Minecraft 26.2 64-bis Java 25+ vereis. Sien die [volledige Engelse gids](../en/server-guide.md).**

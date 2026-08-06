@@ -8,6 +8,8 @@
 
 המסמך מסביר מה קורה לאחר הורדת Jarock.
 
+
+> Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **הערת תחזוקה:** מפעיל השרת מחפש כעת סביבת Java 25+ תואמת ב־64 סיביות במקום לסמוך רק על `java.exe` הראשון ב־`PATH`. הוא משתמש ב־`scripts/java-runtime.ps1`, שומר את קובץ ההפעלה שנבחר ב־`server/java-path.txt` ומאמת אותו לפני ההפעלה. ניתן להשאיר את Java 8 מותקנת.
 
 ## 1. בקצרה

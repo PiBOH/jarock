@@ -8,6 +8,8 @@
 
 Ta dokument razloži, kaj se zgodi po prenosu Jarocka.
 
+
+> Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Opomba za vzdrževanje:** zaganjalnik zdaj poišče združljiv 64-bitni Java 25+ namesto zaupanja samo prvemu `java.exe` v `PATH`. Uporabi `scripts/java-runtime.ps1`, izbrano izvedljivo datoteko shrani v `server/java-path.txt` in jo preveri pred zagonom. Java 8 lahko ostane nameščena.
 
 ## 1. Na kratko

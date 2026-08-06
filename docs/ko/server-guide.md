@@ -4,4 +4,6 @@
 
 영어 전체 안내서를 참조하세요: [../en/server-guide.md](../en/server-guide.md)
 
+
+> Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **기술 참고: 항상 저장소 루트의 `start-server.bat`을 사용하세요. `server.jar`를 두 번 클릭하지 마세요. Windows가 Java 8 또는 Java 21을 사용할 수 있지만 Minecraft 26.2에는 64비트 Java 25 이상이 필요합니다. [전체 영어 안내서](../en/server-guide.md)를 참조하세요.**

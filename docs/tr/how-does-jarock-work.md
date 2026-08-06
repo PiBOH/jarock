@@ -8,6 +8,8 @@
 
 Bu belge, Jarock indirildikten sonra ne olduğunu açıklar.
 
+
+> Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Bakım notu:** başlatıcı artık `PATH` içindeki yalnızca ilk `java.exe` dosyasına güvenmek yerine uyumlu bir 64 bit Java 25+ çalışma zamanı arar. `scripts/java-runtime.ps1` kullanılır, seçilen çalıştırılabilir dosya `server/java-path.txt` içine kaydedilir ve başlatmadan önce doğrulanır. Java 8 yüklü kalabilir.
 
 ## 1. Kısaca

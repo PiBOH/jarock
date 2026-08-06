@@ -4,4 +4,6 @@ Zainstaluj 64-bitową Javę 25, uruchom `start-server.bat` i użyj `parameter-ma
 
 Zobacz pełny poradnik po angielsku: [../en/server-guide.md](../en/server-guide.md)
 
+
+> Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Uwaga techniczna: Zawsze używaj pliku `start-server.bat` z katalogu głównego repozytorium. Nie klikaj dwukrotnie `server.jar`; Windows może użyć Javy 8 lub Javy 21, a Minecraft 26.2 wymaga 64-bitowej Javy 25+. Zobacz [pełną instrukcję po angielsku](../en/server-guide.md).**

@@ -8,6 +8,8 @@
 
 Hierdie dokument verduidelik wat gebeur nadat iemand Jarock afgelaai het.
 
+
+> Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Maintenance note:** The launcher now searches for compatible 64-bit Java 25+ instead of trusting only the first `java.exe` in `PATH`. It uses `scripts/java-runtime.ps1`, saves the selected executable in `server/java-path.txt`, and validates it before starting. Java 8 may remain installed.
 
 ## 1. Kort opsomming

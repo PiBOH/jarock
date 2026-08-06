@@ -8,6 +8,8 @@
 
 Dokumen ini menjelaskan apa yang terjadi setelah Jarock diunduh.
 
+
+> Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Catatan pemeliharaan:** Peluncur sekarang mencari runtime Java 25+ 64-bit yang kompatibel, bukan hanya mempercayai `java.exe` pertama di `PATH`. Peluncur menggunakan `scripts/java-runtime.ps1`, menyimpan executable yang dipilih di `server/java-path.txt`, dan memvalidasinya sebelum memulai. Java 8 boleh tetap terpasang.
 
 ## 1. Ringkasan

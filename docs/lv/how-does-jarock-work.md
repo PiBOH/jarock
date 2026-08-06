@@ -8,6 +8,8 @@
 
 Šis dokuments izskaidro, kas notiek pēc Jarock lejupielādes.
 
+
+> Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Uzturēšanas piezīme:** palaidējs tagad meklē saderīgu 64 bitu Java 25+ vidi, nevis paļaujas tikai uz pirmo `java.exe` failu `PATH`. Tas izmanto `scripts/java-runtime.ps1`, saglabā izvēlēto izpildāmo failu `server/java-path.txt` un pārbauda to pirms palaišanas. Java 8 var palikt instalēta.
 
 ## 1. Īsumā
