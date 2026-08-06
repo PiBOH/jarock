@@ -1,87 +1,87 @@
 name: Auto Release
 
 on:
- push:
- branches: [main]
- workflow_dispatch:
- inputs:
- draft:
- description: Create the release as a draft
- required: false
- default: false
- type: boolean
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      draft:
+        description: Create the release as a draft
+        required: false
+        default: false
+        type: boolean
 
 permissions:
- contents: write
+  contents: write
 
 jobs:
- release:
- name: Create GitHub Release
- runs-on: ubuntu-latest
- if: >-
- github.event_name == 'workflow_dispatch' ||
- (github.event_name == 'push' && startsWith(github.event.head_commit.message, 'v'))
- steps:
- - name: Checkout
- uses: actions/checkout@v4
- with:
- fetch-depth: 0
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && startsWith(github.event.head_commit.message, 'v'))
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
- - name: Read and validate version
- id: version
- shell: bash
- run: |
- set -euo pipefail
- if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
- git diff --quiet HEAD^ HEAD -- version.txt && { echo 'version.txt must change in a release commit.' >&2; exit 1; }
- git diff --quiet HEAD^ HEAD -- CHANGELOG.md && { echo 'CHANGELOG.md must change in a release commit.' >&2; exit 1; }
- fi
- VERSION="$(tr -d '\r\n' < version.txt | xargs)"
- if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
- echo "Invalid semantic version in version.txt: $VERSION" >&2
- exit 1
- fi
- TAG="${VERSION}"
- if [[ "${VERSION}" == *-* ]]; then
- PRERELEASE=true
- else
- PRERELEASE=false
- fi
- if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
- echo "Tag ${TAG} already exists on origin; refusing to create a duplicate release." >&2
- exit 1
- fi
- {
- echo "version=$VERSION"
- echo "tag=$TAG"
- echo "prerelease=$PRERELEASE"
- } >> "$GITHUB_OUTPUT"
+      - name: Read and validate version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+            git diff --quiet HEAD^ HEAD -- version.txt && { echo 'version.txt must change in a release commit.' >&2; exit 1; }
+            git diff --quiet HEAD^ HEAD -- CHANGELOG.md && { echo 'CHANGELOG.md must change in a release commit.' >&2; exit 1; }
+          fi
+          VERSION="$(tr -d '\r\n' < version.txt | xargs)"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid semantic version in version.txt: $VERSION" >&2
+            exit 1
+          fi
+          TAG="${VERSION}"
+          if [[ "${VERSION}" == *-* ]]; then
+            PRERELEASE=true
+          else
+            PRERELEASE=false
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "Tag ${TAG} already exists on origin; refusing to create a duplicate release." >&2
+            exit 1
+          fi
+          {
+            echo "version=$VERSION"
+            echo "tag=$TAG"
+            echo "prerelease=$PRERELEASE"
+          } >> "$GITHUB_OUTPUT"
 
- - name: Extract changelog section
- id: changelog
- shell: bash
- env:
- VERSION: ${{ steps.version.outputs.version }}
- run: |
- set -euo pipefail
- awk -v version="$VERSION" '
- BEGIN { in_section=0 }
- $0 ~ "^## \\[" version "\\]" { in_section=1; print; next }
- in_section && $0 ~ /^## \[/ { exit }
- in_section { print }
- ' CHANGELOG.md > release-notes.md
- if [[ ! -s release-notes.md ]]; then
- printf 'See [CHANGELOG.md](https://github.com/%s/blob/main/CHANGELOG.md) for details.\n' "${GITHUB_REPOSITORY}" > release-notes.md
- fi
+      - name: Extract changelog section
+        id: changelog
+        shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          awk -v version="$VERSION" '
+          BEGIN { in_section=0 }
+          $0 ~ "^## \\[" version "\\]" { in_section=1; print; next }
+          in_section && $0 ~ /^## \[/ { exit }
+          in_section { print }
+          ' CHANGELOG.md > release-notes.md
+          if [[ ! -s release-notes.md ]]; then
+            printf 'See [CHANGELOG.md](https://github.com/%s/blob/main/CHANGELOG.md) for details.\n' "${GITHUB_REPOSITORY}" > release-notes.md
+          fi
 
- - name: Create GitHub Release
- uses: softprops/action-gh-release@v2
- with:
- tag_name: ${{ steps.version.outputs.tag }}
- name: Jarock ${{ steps.version.outputs.version }}
- body_path: release-notes.md
- draft: ${{ github.event.inputs.draft || false }}
- prerelease: ${{ steps.version.outputs.prerelease }}
- generate_release_notes: false
- env:
- GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Jarock ${{ steps.version.outputs.version }}
+          body_path: release-notes.md
+          draft: ${{ github.event.inputs.draft || false }}
+          prerelease: ${{ steps.version.outputs.prerelease }}
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
