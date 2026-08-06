@@ -151,6 +151,8 @@ The online-mode menu controls `server.properties`:
 
 The default is `true`. The setting is applied before each server launch without changing unrelated properties.
 
+> **Do not set `online-mode=false` before the first server creation.** The server.properties file may not exist yet, and forcing offline mode before the loader has completed its first installation can interfere with the initial setup. Always let the server start with `online-mode=true` at least once, then change it later if you have a documented and tested reason.
+
 After saving settings, run `start-server.bat`. It discovers the compatible Java runtime and uses the selected absolute executable.
 
 ---

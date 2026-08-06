@@ -48,6 +48,8 @@ TODO.md
 
 Il runtime viene creato in `server/`. Mondi, log, librerie, chiavi private e liste locali sono esclusi da Git.
 
+Non impostare `online-mode=false` prima che il server sia stato avviato almeno una volta. Il primo avvio crea `server.properties`; forzare la modalità offline prima che il file esista può interferire con l'installazione iniziale del loader. Completa sempre il primo avvio con `online-mode=true`.
+
 ## 3. Il flusso di `start-server.bat`
 
 Il file salva la cartella in cui si trova e non usa un percorso fisso come `C:\MinecraftServer`. Per questo può essere spostato su un'altra unità e può contenere spazi, Unicode e `!`.

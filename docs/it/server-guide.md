@@ -147,6 +147,8 @@ server-port=25565
 ```
 
 - Lascia **`online-mode=true`**. Non disattivarlo per far funzionare Floodgate.
+
+> **Non impostare `online-mode=false` prima di aver creato il server per la prima volta.** Il file server.properties potrebbe non esistere ancora, e forzare la modalità offline prima che il loader abbia completato l'installazione iniziale può interferire con il primo avvio. Fai sempre partire il server con `online-mode=true` almeno una volta, poi eventualmente modificalo dopo se hai una ragione documentata e testata.
 - `white-list=true` impedisce l'accesso agli sconosciuti.
 - `25565` è la porta Java TCP predefinita; un hosting potrebbe assegnarne un'altra.
 - `view-distance` e `simulation-distance` possono essere aumentate dopo aver misurato le prestazioni.
