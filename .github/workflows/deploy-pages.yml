@@ -6,11 +6,11 @@ on:
       - main
   workflow_dispatch:
 
-# Keep only one production deployment active at a time. Do not cancel a
-# deployment that has already started, because Pages should finish publishing it.
+# Keep only the newest production deployment. A stale Pages deployment can
+# remain queued on GitHub's side and block the next deployment indefinitely.
 concurrency:
   group: github-pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
