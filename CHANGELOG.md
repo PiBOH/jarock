@@ -16,12 +16,19 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Continue testing Fabric and NeoForge loader selection on clean Windows checkouts.
 - Add an official Forge 26.2 installer and manifest only after the official build is available and verified.
 
+## [0.0.21-beta] - 2026-08-06
+
+### Fixed
+
+- Fabric bootstrap now creates missing `fabric-server-launcher.properties` metadata after the official installer completes.
+- Existing Fabric installations are repaired automatically before launch, with `serverJar=vanilla-server.jar` verified before startup.
+
 ## [0.0.20-beta] - 2026-08-06
 
 ### Fixed
 
 - Fixed the Fabric launcher metadata so `server.jar` loads the vanilla game from `vanilla-server.jar` instead of referring to itself.
-- Existing Fabric installations are repaired automatically before launch; incomplete metadata produces a guided reinstall message.
+- Existing Fabric installations are repaired automatically before launch; missing launcher metadata is recreated locally when the launcher and vanilla game are valid.
 
 ## [0.0.19-beta] - 2026-08-06
 
@@ -40,8 +47,6 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 
 - The parameter manager now edits a temporary settings copy and commits changes only through `Save and exit` or `Save and start`.
 - Cancelling from the first-run manager restores the original loader settings and stops the bootstrap cleanly.
-
-## [0.0.17-beta] - 2026-08-06
 
 ## [0.0.17-beta] - 2026-08-06
 
@@ -224,7 +229,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.20-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.21-beta...HEAD
+[0.0.21-beta]: https://github.com/PiBOH/jarock/compare/0.0.20-beta...0.0.21-beta
 [0.0.20-beta]: https://github.com/PiBOH/jarock/compare/0.0.19-beta...0.0.20-beta
 [0.0.19-beta]: https://github.com/PiBOH/jarock/compare/0.0.18-beta...0.0.19-beta
 [0.0.18-beta]: https://github.com/PiBOH/jarock/compare/0.0.17-beta...0.0.18-beta
