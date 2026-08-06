@@ -7,12 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+The active prerelease channel is now `beta`; new prerelease versions use the `-beta` suffix. Earlier `-alpha` entries are historical.
+
 ### Planned
 
 - Complete the public-release checklist in `TODO.md`.
 - Keep all localized documentation synchronized with the English canonical documentation.
 
-## [0.0.12-alpha] - 2026-08-06
+## [0.0.13-beta] - 2026-08-06
+
+### Changed
+
+- Continued prerelease development on the beta channel.
+- Made `0.0.13-beta` the current version after the channel transition.
+
+## [0.0.12-beta] - 2026-08-06
 
 ### Added
 
@@ -141,8 +150,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.12-alpha...HEAD
-[0.0.12-alpha]: https://github.com/PiBOH/jarock/compare/0.0.11-alpha...0.0.12-alpha
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.13-beta...HEAD
+[0.0.13-beta]: https://github.com/PiBOH/jarock/compare/0.0.12-beta...0.0.13-beta
+[0.0.12-beta]: https://github.com/PiBOH/jarock/compare/0.0.11-alpha...0.0.12-beta
 [0.0.11-alpha]: https://github.com/PiBOH/jarock/compare/0.0.10-alpha...0.0.11-alpha
 [0.0.10-alpha]: https://github.com/PiBOH/jarock/compare/0.0.9-alpha...0.0.10-alpha
 [0.0.9-alpha]: https://github.com/PiBOH/jarock/compare/0.0.8-alpha...0.0.9-alpha

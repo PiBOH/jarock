@@ -86,7 +86,7 @@ Jarock uses Semantic Versioning in `version.txt`, for example:
 MAJOR.MINOR.PATCH-prerelease
 ```
 
-Use `CHANGELOG.md` according to Keep a Changelog. Keep the current project version in `version.txt`; do not duplicate it in general documentation:
+Use `CHANGELOG.md` according to Keep a Changelog. The current prerelease channel is `beta`; use `-beta` for new prerelease versions unless the maintainer explicitly changes the channel. Keep the current project version in `version.txt`; do not duplicate it in general documentation:
 
 - `Added` for new capabilities;
 - `Changed` for changes to existing behavior;
@@ -99,7 +99,7 @@ For a release-test or release commit:
 1. Bump `version.txt` deliberately.
 2. Add the matching dated section to `CHANGELOG.md`.
 3. Ensure the version tag does not already exist.
-4. Use a commit message beginning with `v`, such as `v0.0.4-alpha: select compatible Java runtime`.
+4. Use a commit message beginning with `v`, such as `v0.0.12-beta: select compatible Java runtime`. Historical `-alpha` entries remain in the changelog; new prerelease commits should use the current `-beta` channel.
 5. Push to `main` only after validation. The GitHub Actions workflow then validates the version and changelog and creates the prerelease.
 
 Do not rewrite published history or force-push unless the repository owner explicitly requests it.
