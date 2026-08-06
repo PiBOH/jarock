@@ -58,13 +58,13 @@ Fabric is the default stack and NeoForge is the fallback. Each loader receives o
 - [All installation and fallback translations (including clearly labeled English fallback summaries)](docs/README.md)
 - [Guida italiana Fabric](docs/it/server-guide.md)
 - [Guida italiana NeoForge](docs/it/neoforge-fallback.md)
-- [Configure RAM, GUI, online-mode and safe launch options](parameter-manager.bat)
+- [Configure RAM, GUI, online-mode and safe launch options (including Exit without saving)](parameter-manager.bat)
 - [How Jarock works — English](docs/en/how-does-jarock-work.md)
 - [How Jarock works — all translations](docs/README.md)
 - [Documentation and translation roadmap](docs/README.md)
 - [Project maintenance and contribution guidelines](CONTRIBUTING.md)
 
-The guides explain installation from zero, Java and Bedrock networking, Geyser/Floodgate authentication, optimization and redstone mods, backups, security, troubleshooting and the limitations of client-side mods. The parameter manager can also set Minecraft `online-mode`; keep it `true` by default, and use `false` only with a trusted authentication proxy because offline mode is unsafe on a public server. See [TODO.md](TODO.md) for the work that remains before public access.
+The guides explain installation from zero, Java and Bedrock networking, Geyser/Floodgate authentication, optimization and redstone mods, backups, security, troubleshooting and the limitations of client-side mods. The parameter manager edits a temporary copy and commits settings only through Save and exit or Save and start; Exit without saving leaves the existing settings unchanged. It can also set Minecraft `online-mode`; keep it `true` by default, and use `false` only with a trusted authentication proxy because offline mode is unsafe on a public server. See [TODO.md](TODO.md) for the work that remains before public access.
 
 ## License
 

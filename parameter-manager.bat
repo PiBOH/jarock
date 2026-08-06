@@ -4,6 +4,7 @@ set "ROOT=%~dp0"
 if "%ROOT:~-1%"=="\" set "ROOT=%ROOT:~0,-1%"
 set "SETTINGS=%ROOT%\server-launch-settings.ini"
 set "TEMPLATE=%ROOT%\server-launch-settings.ini.template"
+set "TEMP_SETTINGS=%TEMP%\Jarock-parameter-manager-%RANDOM%-%RANDOM%.ini"
 set "CONFIG_ONLY=false"
 if /i "%~1"=="/configure-only" set "CONFIG_ONLY=true"
 
@@ -15,14 +16,23 @@ if errorlevel 1 (
     exit /b 1
 )
 
-if not exist "%SETTINGS%" (
-    if not exist "%TEMPLATE%" (
-        echo ERROR: The launch-settings template is missing.
-        echo Suggested fix: restore server-launch-settings.ini.template from the repository.
-        pause
-        exit /b 1
-    )
-    copy /y "%TEMPLATE%" "%SETTINGS%" >nul
+if not exist "%SETTINGS%" if not exist "%TEMPLATE%" (
+    echo ERROR: The launch-settings template is missing.
+    echo Suggested fix: restore server-launch-settings.ini.template from the repository.
+    pause
+    exit /b 1
+)
+
+if exist "%SETTINGS%" (
+    copy /y "%SETTINGS%" "%TEMP_SETTINGS%" >nul
+) else (
+    copy /y "%TEMPLATE%" "%TEMP_SETTINGS%" >nul
+)
+if errorlevel 1 (
+    echo ERROR: Could not create a temporary settings copy.
+    echo Suggested fix: check the Windows temporary folder and repository permissions, then run this file again.
+    pause
+    exit /b 1
 )
 
 :menu
@@ -40,8 +50,10 @@ echo 6. Choose online-mode (authentication)
 echo 7. Save and start the server
 echo 8. Save and exit
 echo 9. Reset safe defaults
+echo 0. Exit without saving
 echo.
-choice /c 123456789 /n /m "Choose an option: "
+choice /c 1234567890 /n /m "Choose an option: "
+if errorlevel 10 goto cancel_exit
 if errorlevel 9 goto reset
 if errorlevel 8 goto save_exit
 if errorlevel 7 goto save_start
@@ -69,11 +81,11 @@ echo Choose Fabric or NeoForge instead.
 pause
 goto menu
 :loader_neoforge
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%SETTINGS%" -Name LOADER_TYPE -Value neoforge
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name LOADER_TYPE -Value neoforge
 if errorlevel 1 pause
 goto menu
 :loader_fabric
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%SETTINGS%" -Name LOADER_TYPE -Value fabric
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name LOADER_TYPE -Value fabric
 if errorlevel 1 pause
 goto menu
 
@@ -90,7 +102,7 @@ if not defined NEW_INITIAL set "NEW_INITIAL=%RAM_INITIAL%"
 set "NEW_MAX="
 set /p "NEW_MAX=Maximum RAM [%RAM_MAX%]: "
 if not defined NEW_MAX set "NEW_MAX=%RAM_MAX%"
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-settings.ps1" -SettingsPath "%SETTINGS%" -InitialMemory "%NEW_INITIAL%" -MaximumMemory "%NEW_MAX%"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-settings.ps1" -SettingsPath "%TEMP_SETTINGS%" -InitialMemory "%NEW_INITIAL%" -MaximumMemory "%NEW_MAX%"
 if errorlevel 1 (
     pause
     goto menu
@@ -111,7 +123,7 @@ goto mode_save
 :mode_nogui
 set "NEW_MODE=nogui"
 :mode_save
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%SETTINGS%" -Name GUI_MODE -Value "%NEW_MODE%"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name GUI_MODE -Value "%NEW_MODE%"
 if errorlevel 1 pause
 goto menu
 
@@ -129,7 +141,7 @@ goto gc_save
 :gc_low_pause
 set "NEW_GC=low-pause"
 :gc_save
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%SETTINGS%" -Name GC_PROFILE -Value "%NEW_GC%"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name GC_PROFILE -Value "%NEW_GC%"
 if errorlevel 1 pause
 goto menu
 
@@ -150,7 +162,7 @@ echo WARNING: online-mode=false disables normal Mojang account authentication.
 echo Do not use it on a public server unless a trusted, correctly configured proxy handles authentication.
 pause
 :online_mode_save
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%SETTINGS%" -Name ONLINE_MODE -Value "%NEW_ONLINE_MODE%"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name ONLINE_MODE -Value "%NEW_ONLINE_MODE%"
 if errorlevel 1 pause
 goto menu
 
@@ -164,14 +176,20 @@ if /i "%AUTO_CONFIGURE_JAVA%"=="true" (
     set "NEW_JAVA=true"
     echo Automatic user Java environment setup will be enabled.
 )
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%SETTINGS%" -Name AUTO_CONFIGURE_JAVA -Value "%NEW_JAVA%"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name AUTO_CONFIGURE_JAVA -Value "%NEW_JAVA%"
 if errorlevel 1 pause
 pause
 goto menu
 
 :reset
-copy /y "%TEMPLATE%" "%SETTINGS%" >nul
-echo Safe defaults restored.
+copy /y "%TEMPLATE%" "%TEMP_SETTINGS%" >nul
+if errorlevel 1 (
+    echo ERROR: Could not restore safe defaults in the temporary settings copy.
+    echo Suggested fix: check the template and temporary-folder permissions, then try again.
+    pause
+    goto menu
+)
+echo Safe defaults restored. Choose Save and exit or Save and start to keep them.
 pause
 goto menu
 
@@ -194,21 +212,36 @@ exit /b %errorlevel%
 
 :save_exit
 call :save
-if /i "%CONFIG_ONLY%"=="true" exit /b %errorlevel%
+if errorlevel 1 exit /b 1
+if /i "%CONFIG_ONLY%"=="true" exit /b 0
 pause
-exit /b %errorlevel%
+exit /b 0
+
+:cancel_exit
+del /q "%TEMP_SETTINGS%" >nul 2>&1
+echo No changes were saved. The existing server settings were left unchanged.
+if /i "%CONFIG_ONLY%"=="true" echo First-run configuration was cancelled; run start-server.bat again when ready.
+exit /b 2
 
 :save
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\validate-launch-settings.ps1" -SettingsPath "%SETTINGS%"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\validate-launch-settings.ps1" -SettingsPath "%TEMP_SETTINGS%"
 if errorlevel 1 (
+    pause
+    exit /b 1
+)
+copy /y "%TEMP_SETTINGS%" "%SETTINGS%" >nul
+if errorlevel 1 (
+    echo ERROR: Could not save the settings file.
+    echo Suggested fix: check repository permissions, then choose Save again.
     pause
     exit /b 1
 )
 echo Settings saved:
  type "%SETTINGS%"
+del /q "%TEMP_SETTINGS%" >nul 2>&1
 exit /b 0
 
 :read_value
-for /f "tokens=1,* delims==" %%A in ('findstr /b /c:"%~1=" "%SETTINGS%" 2^>nul') do set "%~1=%%B"
+for /f "tokens=1,* delims==" %%A in ('findstr /b /c:"%~1=" "%TEMP_SETTINGS%" 2^>nul') do set "%~1=%%B"
 if not defined %~1 set "%~1=%~2"
 exit /b 0

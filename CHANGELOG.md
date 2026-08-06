@@ -16,6 +16,19 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Continue testing Fabric and NeoForge loader selection on clean Windows checkouts.
 - Add an official Forge 26.2 installer and manifest only after the official build is available and verified.
 
+## [0.0.18-beta] - 2026-08-06
+
+### Added
+
+- Added `Exit without saving` to `parameter-manager.bat`.
+
+### Changed
+
+- The parameter manager now edits a temporary settings copy and commits changes only through `Save and exit` or `Save and start`.
+- Cancelling from the first-run manager restores the original loader settings and stops the bootstrap cleanly.
+
+## [0.0.17-beta] - 2026-08-06
+
 ## [0.0.17-beta] - 2026-08-06
 
 ### Fixed
@@ -197,7 +210,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.17-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.18-beta...HEAD
+[0.0.18-beta]: https://github.com/PiBOH/jarock/compare/0.0.17-beta...0.0.18-beta
 [0.0.17-beta]: https://github.com/PiBOH/jarock/compare/0.0.16-beta...0.0.17-beta
 [0.0.16-beta]: https://github.com/PiBOH/jarock/compare/0.0.15-beta...0.0.16-beta
 [0.0.15-beta]: https://github.com/PiBOH/jarock/compare/0.0.14-beta...0.0.15-beta

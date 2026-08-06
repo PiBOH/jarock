@@ -36,7 +36,7 @@ The router, firewall and port forwarding are **not** configured by Jarock. Alway
 
 ## 2. The parameter manager
 
-`parameter-manager.bat` is a safe beginner-friendly menu. It stores local settings in `server-launch-settings.ini`, which is ignored by Git.
+`parameter-manager.bat` is a safe beginner-friendly menu. It edits a temporary copy of the settings first and stores changes in `server-launch-settings.ini`, which is ignored by Git, only when the user chooses Save and exit or Save and start. The menu also provides Exit without saving; this deletes the temporary copy and leaves the existing settings unchanged.
 
 It can configure:
 
@@ -49,7 +49,7 @@ It can configure:
 
 RAM values are validated, must be at least `512M`, and initial RAM cannot exceed maximum RAM. Jarock does not silently give all physical memory to Java. The user should still leave enough memory for Windows, backups and other programs.
 
-The manager never inserts arbitrary text directly into a shell command. Settings are written through typed PowerShell helpers, then `run-server.ps1` validates them again before launch.
+The manager never inserts arbitrary text directly into a shell command. Settings are written through typed PowerShell helpers against the temporary copy, then validated and committed only on an explicit save. `run-server.ps1` validates them again before launch. When the manager was opened by first-run bootstrap, Exit without saving returns a non-zero status so the bootstrap stops instead of continuing with partially chosen settings.
 
 ---
 

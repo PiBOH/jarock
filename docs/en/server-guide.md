@@ -180,7 +180,7 @@ The names can vary slightly between Fabric releases. That is normal. For this re
 
 ## 6. Configure and start Jarock
 
-For this repository, use `parameter-manager.bat` instead of creating a separate `start.bat`. It safely configures RAM, GUI/console mode, the GC profile, online-mode and optional user-scoped Java environment setup. The settings are stored locally in `server-launch-settings.ini`.
+For this repository, use `parameter-manager.bat` instead of creating a separate `start.bat`. It safely configures RAM, GUI/console mode, the GC profile, online-mode and optional user-scoped Java environment setup. The manager works on a temporary copy: choose Save and exit or Save and start to commit changes, or choose Exit without saving to discard every change and keep the previous settings. The settings are stored locally in `server-launch-settings.ini`.
 
 The online-mode menu controls `server.properties`:
 
