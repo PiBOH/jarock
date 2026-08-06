@@ -136,49 +136,7 @@ On the first `start-server.bat` run, Jarock asks which loader to use when `LOADE
 
 After choosing a loader, do not mix its mods with another loader. To change loader, back up the world, run `clean-server-runtime.bat`, then select the new loader.
 
-### Fabric installation details
-
-1. Open the official Fabric server page: <https://fabricmc.net/use/server/>.
-2. Select Minecraft **26.2**.
-3. Select the latest stable Fabric Loader offered for 26.2.
-4. Download the server launcher or installer.
-5. Put it in the repository folder. `C:\MinecraftServer` is only an example location.
-6. If the downloaded file has a long name, you may rename it to `fabric-server-launch.jar` for convenience. Do not change its contents or extension.
-
-#### Fabric graphical installer method
-
-If you downloaded the Fabric installer `.jar`:
-
-1. Double-click it.
-2. Select the **Server** tab.
-3. Select Minecraft **26.2**.
-4. Select the latest stable loader.
-5. Select the repository folder as the installation directory.
-6. Enable the option to download the Minecraft server if it is shown.
-7. Start the installation.
-
-#### Fabric command-line method
-
-If double-clicking does nothing, open Command Prompt in the server folder and run the installer using Java 25. The exact installer filename will be different:
-
-```bat
-cd /d C:\MinecraftServer
-java -jar fabric-installer-<installer-version>.jar server -downloadMinecraft
-```
-
-Replace `<installer-version>` with the actual filename. Do not type the angle brackets.
-
-The folder should now contain files similar to:
-
-```text
-C:\MinecraftServer\
-├── fabric-server-launch.jar
-├── server.jar
-├── libraries\
-└── (other generated files)
-```
-
-The names can vary slightly between Fabric releases. That is normal. For this repository, always start the server with the repository-root `start-server.bat`. Do **not** double-click `server.jar` or run `java -jar server.jar`: Windows may use an older Java 8/21 association, while Minecraft 26.2 requires Java 25+, which causes `UnsupportedClassVersionError`.
+> Jarock handles loader installation automatically on the first run. You do not need to visit the Fabric website, download the installer, or run any Java commands. Simply run `start-server.bat`, choose Fabric or NeoForge, and Jarock downloads and installs everything.
 
 ---
 

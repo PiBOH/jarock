@@ -87,46 +87,7 @@ Le versioni di Java richieste possono cambiare tra le release Minecraft. Se il l
 
 ## 4. Installare Fabric Server
 
-Apri <https://fabricmc.net/use/server/> e seleziona:
-
-1. Minecraft **26.2**.
-2. L'ultima versione stabile di Fabric Loader disponibile per 26.2.
-3. Il server installer/launcher.
-
-Metti il file nella cartella del repository. `C:\MinecraftServer` è soltanto un esempio.
-
-### Installer grafico
-
-Se hai scaricato un installer `.jar`:
-
-1. Fai doppio clic sul file.
-2. Apri la scheda **Server**.
-3. Scegli Minecraft **26.2**.
-4. Scegli la cartella del repository.
-5. Attiva il download del server Minecraft se l'opzione è presente.
-6. Avvia l'installazione.
-
-### Installer dal Prompt dei comandi
-
-Se il doppio clic non funziona:
-
-```bat
-cd /d C:\MinecraftServer
-java -jar fabric-installer-<installer-version>.jar server -downloadMinecraft
-```
-
-Sostituisci `<installer-version>` con il nome reale del file. Non scrivere le parentesi angolari.
-
-Dovresti vedere file simili a:
-
-```text
-C:\MinecraftServer\
-├── fabric-server-launch.jar
-├── server.jar
-└── libraries\
-```
-
-Il nome esatto può variare. Se il launcher ha un nome diverso, userai quel nome nel comando di avvio. Per questo repository devi sempre avviare il server con `start-server.bat` nella root. **Non** fare doppio clic su `server.jar` e non eseguire `java -jar server.jar`: Windows potrebbe usare Java 8 o Java 21 associato ai file `.jar`, mentre Minecraft 26.2 richiede Java 25+, causando `UnsupportedClassVersionError`.
+Jarock installa automaticamente il loader al primo avvio. Non devi visitare il sito Fabric, scaricare l'installer o eseguire comandi Java. Avvia semplicemente `start-server.bat`, scegli Fabric o NeoForge, e Jarock scarica e installa tutto ciò che serve.
 
 ---
 
