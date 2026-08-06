@@ -176,9 +176,16 @@ function Find-CompatibleJava {
         if (-not (Test-Path -LiteralPath $Root -PathType Container)) {
             continue
         }
+
+        # Some installations use the vendor folder itself as JAVA_HOME,
+        # for example C:\\Program Files\\Java\\bin\\java.exe.
+        Add-JavaCandidate -Candidates $Candidates -Path (Join-Path $Root 'bin\java.exe')
+        Add-JavaCandidate -Candidates $Candidates -Path (Join-Path $Root 'java.exe')
+
         $Installations = @(Get-ChildItem -LiteralPath $Root -Directory -ErrorAction SilentlyContinue)
         foreach ($Installation in $Installations) {
             Add-JavaCandidate -Candidates $Candidates -Path (Join-Path $Installation.FullName 'bin\java.exe')
+            Add-JavaCandidate -Candidates $Candidates -Path (Join-Path $Installation.FullName 'java.exe')
         }
     }
 

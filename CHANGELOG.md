@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Complete the public-release checklist in `TODO.md`.
 - Keep all localized documentation synchronized with the English canonical documentation.
 
+## [0.0.9-alpha] - 2026-08-06
+
+### Fixed
+
+- Included Java executables directly under vendor roots such as `Java\\bin\\java.exe`.
+- Continued to support both vendor-root and nested JDK installation layouts.
+
 ## [0.0.8-alpha] - 2026-08-06
 
 ### Fixed
@@ -112,7 +119,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.8-alpha...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.9-alpha...HEAD
+[0.0.9-alpha]: https://github.com/PiBOH/jarock/compare/0.0.8-alpha...0.0.9-alpha
 [0.0.8-alpha]: https://github.com/PiBOH/jarock/compare/0.0.7-alpha...0.0.8-alpha
 [0.0.7-alpha]: https://github.com/PiBOH/jarock/compare/0.0.6-alpha...0.0.7-alpha
 [0.0.6-alpha]: https://github.com/PiBOH/jarock/compare/0.0.5-alpha...0.0.6-alpha
