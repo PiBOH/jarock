@@ -12,7 +12,7 @@ Questo documento spiega cosa succede dopo aver scaricato Jarock.
 
 L'utente deve:
 
-1. Installare un runtime Java a 64 bit compatibile.
+1. Installare un JDK Java 25 a 64 bit compatibile.
 2. Scaricare o clonare il repository.
 3. Avviare `start-server.bat`.
 4. Il programma trova automaticamente la propria cartella.
@@ -25,7 +25,7 @@ L'utente deve:
 11. Dopo aver impostato `eula=true`, un nuovo avvio parte normalmente.
 12. Geyser traduce il traffico Bedrock e Floodgate gestisce l'autenticazione Bedrock.
 
-Jarock **non** configura router, firewall o port forwarding.
+Jarock **non** configura router, firewall o port forwarding. Avvia sempre questo repository con `start-server.bat`: non fare doppio clic su `server/server.jar`, perché Windows può associarlo a Java 8 o Java 21 e produrre `UnsupportedClassVersionError`.
 
 ## 2. Repository e runtime
 
@@ -52,7 +52,7 @@ Il runtime viene creato in `server/`. Mondi, log, librerie, chiavi private e lis
 
 Il file salva la cartella in cui si trova e non usa un percorso fisso come `C:\MinecraftServer`. Per questo può essere spostato su un'altra unità e può contenere spazi, Unicode e `!`.
 
-Esegue `scripts\bootstrap-fabric.ps1`, controlla `server/fabric-server-launch.jar`, verifica `server/eula.txt`, quindi esegue `scripts\configure-geyser.ps1`. Il bootstrap cerca Java 25+ a 64 bit in `JAVA_HOME`, in tutte le occorrenze di `PATH`, nelle cartelle standard e nel registro; salva il percorso scelto in `server\java-path.txt`. `scripts\run-server.ps1` verifica nuovamente quel percorso e avvia l'eseguibile selezionato, non necessariamente il vecchio Java 8 del `PATH`:
+Esegue `scripts\bootstrap-fabric.ps1`, controlla `server/fabric-server-launch.jar`, verifica `server/eula.txt`, quindi esegue `scripts\configure-geyser.ps1`. Il bootstrap cerca Java 25+ a 64 bit in `JAVA_HOME`, in tutte le occorrenze di `PATH`, nelle cartelle standard e nel registro; se trova soltanto Java 8 o Java 21, interrompe l'avvio e mostra i candidati rilevati insieme al link diretto per installare Java 25; salva il percorso scelto in `server\java-path.txt`. `scripts\run-server.ps1` verifica nuovamente quel percorso e avvia l'eseguibile selezionato, non necessariamente il vecchio Java 8 del `PATH`:
 
 ```text
 <selected-java.exe> -Xms4G -Xmx4G -jar fabric-server-launch.jar nogui

@@ -124,7 +124,7 @@ C:\MinecraftServer\
 └── libraries\
 ```
 
-Il nome esatto può variare. Se il launcher ha un nome diverso, userai quel nome nel comando di avvio.
+Il nome esatto può variare. Se il launcher ha un nome diverso, userai quel nome nel comando di avvio. Per questo repository devi sempre avviare il server con `start-server.bat` nella root. **Non** fare doppio clic su `server.jar` e non eseguire `java -jar server.jar`: Windows potrebbe usare Java 8 o Java 21 associato ai file `.jar`, mentre Minecraft 26.2 richiede Java 25+, causando `UnsupportedClassVersionError`.
 
 ---
 
@@ -341,7 +341,7 @@ Installa Java 25 a 64 bit e riapri il Prompt dei comandi.
 
 ### `UnsupportedClassVersionError`
 
-La versione Java è troppo vecchia. Controlla `java -version` e usa la versione richiesta dagli strumenti ufficiali per Minecraft 26.2.
+La versione Java è troppo vecchia. Minecraft 26.2 richiede Java 25 o più recente a 64 bit. Non avviare direttamente `server.jar`, perché Windows potrebbe usare Java 8 o Java 21. Installa un JDK Windows x64 Java 25 da <https://adoptium.net/temurin/releases/?version=25&os=windows&arch=x64&package=jdk>, chiudi e riapri il terminale, quindi avvia `start-server.bat` dalla root del repository.
 
 ### Crash all'avvio
 

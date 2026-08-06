@@ -66,3 +66,5 @@ auth-type: floodgate
 Java ихэвчлэн TCP `25565`, Bedrock UDP `19132` ашиглана. Jarock порт нээхгүй. `key.pem` нь нууц бөгөөд нийтэлж болохгүй.
 
 Алдаа гарвал `ERROR:` эсвэл `WARNING:`-г уншиж, `Suggested fix:`-ийг дагана. Java зогсвол `server\logs\latest.log` эсвэл `server\crash-reports\` доторх эхний `Caused by:`-г шалгана. Үлдсэн ажлууд `TODO.md`-д байна.
+
+> **Техникийн тэмдэглэл: Репозиторийн үндсэн хавтас дахь `start-server.bat`-ийг үргэлж ашигла. `server.jar` дээр давхар бүү дар; Windows Java 8 эсвэл Java 21 ашиглаж болох ч Minecraft 26.2-д 64-бит Java 25+ шаардлагатай. [Англи хэл дээрх бүрэн заавар](../en/how-does-jarock-work.md)-ыг үз.**

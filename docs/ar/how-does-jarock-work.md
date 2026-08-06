@@ -66,3 +66,5 @@ auth-type: floodgate
 عادةً تستخدم Java المنفذ TCP `25565` وBedrock المنفذ UDP `19132`. لا يفتح Jarock أي منفذ. الملف `key.pem` سري ولا يجوز نشره.
 
 بعد أي خطأ اقرأ `ERROR:` أو `WARNING:` واتبع `Suggested fix:`. إذا توقف Java، ابحث عن أول `Caused by:` في `server\logs\latest.log` أو `server\crash-reports\`. المهام المتبقية قبل النشر موجودة في `TODO.md`.
+
+> **ملاحظة تقنية: استخدم دائماً `start-server.bat` الموجود في جذر repository. لا تنقر نقراً مزدوجاً على `server.jar`؛ فقد يستخدم Windows Java 8 أو Java 21، بينما يتطلب Minecraft 26.2 إصدار Java 25+ ‏64-bit. راجع [الشرح الإنجليزي الكامل](../en/how-does-jarock-work.md).**

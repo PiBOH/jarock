@@ -164,7 +164,7 @@ C:\MinecraftServer\
 └── (other generated files)
 ```
 
-The names can vary slightly between Fabric releases. That is normal.
+The names can vary slightly between Fabric releases. That is normal. For this repository, always start the server with the repository-root `start-server.bat`. Do **not** double-click `server.jar` or run `java -jar server.jar`: Windows may use an older Java 8/21 association, while Minecraft 26.2 requires Java 25+, which causes `UnsupportedClassVersionError`.
 
 ---
 
@@ -488,7 +488,7 @@ Java is not installed correctly or Windows cannot find it. Install a 64-bit Java
 
 ### `UnsupportedClassVersionError`
 
-The Java runtime is too old for the server. Check `java -version`, make sure the start script uses the intended Java installation, and install the version required by Minecraft 26.2.
+The Java runtime is too old for the server. Minecraft 26.2 requires 64-bit Java 25 or newer. Do not launch `server.jar` directly, because Windows may use Java 8 or Java 21 for `.jar` files. Install a Windows x64 Java 25 JDK from <https://adoptium.net/temurin/releases/?version=25&os=windows&arch=x64&package=jdk>, close and reopen the terminal, and run the repository-root `start-server.bat`.
 
 ### The server says a mod is for the wrong version
 

@@ -64,3 +64,5 @@ auth-type: floodgate
 Java 通常使用 TCP `25565`，Bedrock 通常使用 UDP `19132`。Jarock 不會開啟或轉送這些連接埠。`key.pem` 是私密檔案，絕不能公開。
 
 發生錯誤後，讀取 `ERROR:` 或 `WARNING:` 並依照 `Suggested fix:` 操作。如果 Java 結束，檢查 `server\logs\latest.log` 與 `server\crash-reports\` 中最早的 `Caused by:`。公開前仍需完成的工作在 `TODO.md`。
+
+> **技術說明：請一律使用儲存庫根目錄的 `start-server.bat`。不要雙擊 `server.jar`；Windows 可能使用 Java 8 或 Java 21，而 Minecraft 26.2 需要 64 位元 Java 25+。請參閱[完整英文指南](../en/how-does-jarock-work.md)。**

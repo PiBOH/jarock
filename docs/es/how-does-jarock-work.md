@@ -91,3 +91,5 @@ Lithium optimiza la lógica, FerriteCore la memoria, Krypton la red, ServerCore 
 Después de cualquier error, lee `ERROR:` o `WARNING:` y sigue `Suggested fix:`. Si Java se cierra, busca el primer `Caused by:` en los logs. Las causas comunes son Java ausente, permisos, descargas corruptas, EULA sin aceptar o mods incompatibles.
 
 Jarock no modifica router, firewall, port forwarding, IP pública, permisos de operador ni GitHub. Lo que falta antes de publicar está en `TODO.md`.
+
+> **Nota técnica: Usa siempre `start-server.bat` en la raíz del repositorio. No hagas doble clic en `server.jar`; Windows puede usar Java 8 o Java 21, mientras que Minecraft 26.2 requiere Java 25+ de 64 bits. Consulta la [guía completa en inglés](../en/how-does-jarock-work.md).**

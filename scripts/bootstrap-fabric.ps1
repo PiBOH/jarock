@@ -50,7 +50,9 @@ function Select-JavaRuntime {
         if ($Result.Inspected.Count -gt 0) {
             $InspectedText = (($Result.Inspected | ForEach-Object { "$($_.Path) -> Java $($_.Major), 64-bit=$($_.Is64Bit)" }) -join '; ')
         }
-        Stop-WithGuidance "No compatible 64-bit Java $JavaMinimum+ runtime was found. $InspectedText" "Install a 64-bit Java $JavaMinimum (or newer) runtime, then set JAVA_HOME to its JDK folder. If Java is already installed, close and reopen this window so Windows reloads the environment, then run start-server.bat again."
+        $JavaInstallUrl = 'https://adoptium.net/temurin/releases/?version=25&os=windows&arch=x64&package=jdk'
+        $SuggestedFix = "Install a 64-bit Java $JavaMinimum (or newer) JDK from $JavaInstallUrl. Choose the Windows x64 JDK installer, not Java 8 or Java 21. After installation, close and reopen this window; then run start-server.bat again. Do not double-click server.jar, because Windows may launch it with an older Java associated with .jar files."
+        Stop-WithGuidance "No compatible 64-bit Java $JavaMinimum+ runtime was found. Detected candidates: $InspectedText" $SuggestedFix
     }
 
     $script:SelectedJava = $Result.Selected

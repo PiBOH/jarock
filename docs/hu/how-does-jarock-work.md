@@ -64,3 +64,5 @@ auth-type: floodgate
 A Java általában TCP `25565`, a Bedrock pedig UDP `19132` portot használ. A Jarock nem nyit portokat. A `key.pem` privát fájl, közzétenni tilos.
 
 Hiba után olvasd el az `ERROR:` vagy `WARNING:` sort, és kövesd a `Suggested fix:` javaslatot. Ha a Java leáll, keresd meg az első `Caused by:` sort a `server\logs\latest.log` vagy a `server\crash-reports\` fájlban. A fennmaradó feladatok a `TODO.md` fájlban vannak.
+
+> **Technikai megjegyzés: Mindig a repository gyökerében található `start-server.bat` fájlt használja. Ne kattintson duplán a `server.jar` fájlra; a Windows Java 8-at vagy Java 21-et használhat, miközben a Minecraft 26.2 64 bites Java 25+-t igényel. Lásd a [teljes angol útmutatót](../en/how-does-jarock-work.md).**

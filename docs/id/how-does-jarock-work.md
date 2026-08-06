@@ -64,3 +64,5 @@ auth-type: floodgate
 Java biasanya menggunakan TCP `25565`, sedangkan Bedrock menggunakan UDP `19132`. Jarock tidak membuka port. `key.pem` bersifat rahasia dan tidak boleh dipublikasikan.
 
 Setelah kesalahan, baca `ERROR:` atau `WARNING:` dan ikuti `Suggested fix:`. Jika Java berhenti, cari `Caused by:` pertama di `server\logs\latest.log` atau `server\crash-reports\`. Tugas yang tersisa ada di `TODO.md`.
+
+> **Catatan teknis: Selalu gunakan `start-server.bat` di root repository. Jangan klik ganda `server.jar`; Windows mungkin menggunakan Java 8 atau Java 21, sedangkan Minecraft 26.2 memerlukan Java 25+ 64-bit. Lihat [panduan bahasa Inggris lengkap](../en/how-does-jarock-work.md).**

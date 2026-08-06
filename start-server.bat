@@ -31,7 +31,7 @@ if errorlevel 1 (
 
 if not exist "%ROOT%\server\fabric-server-launch.jar" (
     echo ERROR: Fabric server launcher was not created.
-    echo Suggested fix: verify Java 25, write permissions, Internet access, and that the repository was downloaded completely.
+    echo Suggested fix: install 64-bit Java 25, verify write permissions and Internet access, and download the complete repository.
     pause
     exit /b 1
 )
@@ -69,6 +69,7 @@ echo Starting Jarock Fabric server from:
 echo   "%ROOT%\server"
 echo No router or firewall changes are performed by this file.
 echo Type "stop" in the server console to shut it down safely.
+echo Do not double-click server\server.jar directly: Windows may use an older Java 8/21 association.
 echo.
 pushd "%ROOT%\server"
 if errorlevel 1 (

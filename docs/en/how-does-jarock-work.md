@@ -15,7 +15,7 @@ This document explains what happens after someone downloads the Jarock repositor
 
 The user does not manually assemble a Minecraft server from many websites. They do this:
 
-1. Install a supported 64-bit Java runtime.
+1. Install a supported 64-bit Java 25 runtime.
 2. Download or clone this repository.
 3. Optionally run `parameter-manager.bat` to choose RAM, GUI/console mode, a GC profile and user-scoped Java environment setup.
 4. Run `start-server.bat`.
@@ -30,7 +30,7 @@ The user does not manually assemble a Minecraft server from many websites. They 
 13. When that run is stopped, `configure-geyser.ps1` sets `auth-type: floodgate`.
 14. The next run starts the server with Floodgate fully configured.
 
-The router, firewall and port forwarding are **not** configured by Jarock.
+The router, firewall and port forwarding are **not** configured by Jarock. Always launch this repository with `start-server.bat`; do not double-click `server/server.jar`, because Windows can associate `.jar` files with Java 8 or Java 21 and produce `UnsupportedClassVersionError`.
 
 ---
 
@@ -54,7 +54,7 @@ The manager never inserts arbitrary text directly into a shell command. Settings
 
 ## 3. Java environment automation
 
-The bootstrap finds Java 25+ itself and stores the selected absolute executable in the ignored local file `server/java-path.txt`. This is the authoritative executable used by the server, so Java 8 can remain installed even if it appears first on `PATH`.
+The bootstrap finds Java 25+ itself and stores the selected absolute executable in the ignored local file `server/java-path.txt`. If it finds only Java 8 or Java 21, it stops and reports those detected candidates with a direct Java 25 installation link. This is the authoritative executable used by the server, so Java 8 can remain installed even if it appears first on `PATH`.
 
 When `AUTO_CONFIGURE_JAVA=true`, Jarock additionally updates only the current user's environment:
 

@@ -66,3 +66,5 @@ Java gebruik gewoonlik TCP `25565` en Bedrock UDP `19132`. Jarock maak geen poor
 Na ’n fout, lees `ERROR:` of `WARNING:` en volg `Suggested fix:`. As Java stop, kyk na die eerste `Caused by:` in `server\logs\latest.log` of `server\crash-reports\`. Algemene oorsake is ontbrekende Java, onvoldoende regte, ’n beskadigde aflaai, ’n onaanvaarde EULA of ’n onversoenbare mod.
 
 Jarock verander nie die router, firewall, port forwarding of openbare IP nie. Die oorblywende take staan in `TODO.md`.
+
+> **Tegniese nota: Gebruik altyd die `start-server.bat` in die wortel van die repository. Moenie op `server.jar` dubbelklik nie; Windows kan Java 8 of Java 21 gebruik, terwyl Minecraft 26.2 64-bis Java 25+ vereis. Sien die [volledige Engelse gids](../en/how-does-jarock-work.md).**

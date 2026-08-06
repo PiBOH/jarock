@@ -91,3 +91,5 @@ Java verwendet normalerweise TCP `25565`, Bedrock UDP `19132`. Jarock öffnet di
 Nach jedem Fehler `ERROR:` oder `WARNING:` lesen und `Suggested fix:` befolgen. Wenn Java beendet wird, den ersten `Caused by:`-Eintrag in den Logs suchen. Häufige Ursachen sind fehlendes Java, fehlende Schreibrechte, beschädigte Downloads, nicht akzeptierte EULA oder inkompatible Mods.
 
 Jarock verändert keinen Router, keine Firewall, kein Port Forwarding und keine öffentliche IP. Die offenen Aufgaben stehen in `TODO.md`. Nicht verfügbare Laufwerke, verweigerte Rechte, ungeeignete Netzwerkfreigaben und alte Anwendungen bleiben Windows-Grenzen.
+
+> **Technischer Hinweis: Verwenden Sie immer `start-server.bat` im Stammverzeichnis des Repositorys. Doppelklicken Sie nicht auf `server.jar`; Windows kann Java 8 oder Java 21 verwenden, während Minecraft 26.2 64-Bit-Java 25+ benötigt. Siehe die [vollständige englische Anleitung](../en/how-does-jarock-work.md).**
