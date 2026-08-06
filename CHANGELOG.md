@@ -16,6 +16,16 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Continue testing Fabric and NeoForge loader selection on clean Windows checkouts.
 - Add an official Forge 26.2 installer and manifest only after the official build is available and verified.
 
+## [0.0.16-beta] - 2026-08-06
+
+### Added
+
+- Added an optional loader reset to `clean-server-runtime.bat`; choosing `Y` clears `LOADER_TYPE` so the next start asks for Fabric or NeoForge again.
+
+### Changed
+
+- Kept the default cleanup behavior unchanged when loader reset is declined.
+
 ## [0.0.15-beta] - 2026-08-06
 
 ### Added
@@ -35,7 +45,7 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 
 ### Added
 
-- Added the server-side I’m Fast 1.0.3 Fabric mod for Minecraft 26.2 with pinned SHA-512 verification.
+- Added the server-side I'm Fast 1.0.3 Fabric mod for Minecraft 26.2 with pinned SHA-512 verification.
 - Added `clean-server-runtime.bat` and its PowerShell implementation for safe manual pre-commit cleanup.
 - Added Git LFS tracking for the intentionally versioned vanilla `server/server.jar`.
 
@@ -180,7 +190,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.15-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.16-beta...HEAD
+[0.0.16-beta]: https://github.com/PiBOH/jarock/compare/0.0.15-beta...0.0.16-beta
 [0.0.15-beta]: https://github.com/PiBOH/jarock/compare/0.0.14-beta...0.0.15-beta
 [0.0.14-beta]: https://github.com/PiBOH/jarock/compare/0.0.13-beta...0.0.14-beta
 [0.0.13-beta]: https://github.com/PiBOH/jarock/compare/0.0.12-beta...0.0.13-beta

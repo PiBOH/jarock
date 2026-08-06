@@ -3,6 +3,7 @@ setlocal EnableExtensions DisableDelayedExpansion
 set "ROOT=%~dp0"
 if "%ROOT:~-1%"=="\" set "ROOT=%ROOT:~0,-1%"
 set "SERVER=%ROOT%\server"
+set "RESET_LOADER=false"
 
 where powershell.exe >nul 2>&1
 if errorlevel 1 (
@@ -12,7 +13,24 @@ if errorlevel 1 (
     exit /b 1
 )
 
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\clean-server-runtime.ps1" -ServerDirectory "%SERVER%"
+echo.
+echo Reset the selected loader after cleanup?
+echo Y = next start asks for Fabric or NeoForge again
+echo N = keep the current loader selection
+choice /c YN /n /m "Choose Y or N: "
+if errorlevel 2 (
+    set "RESET_LOADER=false"
+) else if errorlevel 1 (
+    set "RESET_LOADER=true"
+) else (
+    echo No valid choice was received. Keeping the current loader selection.
+)
+
+if /i "%RESET_LOADER%"=="true" (
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\clean-server-runtime.ps1" -ServerDirectory "%SERVER%" -ResetLoader
+) else (
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\clean-server-runtime.ps1" -ServerDirectory "%SERVER%"
+)
 set "EXIT_CODE=%errorlevel%"
 if not "%EXIT_CODE%"=="0" (
     echo.
@@ -22,6 +40,7 @@ if not "%EXIT_CODE%"=="0" (
 )
 
 echo.
-echo Cleanup completed. The server.jar, templates, README and mod manifest were preserved.
+echo Cleanup completed. Repository templates, README and mod manifests were preserved.
+if /i "%RESET_LOADER%"=="true" echo The loader selection was reset; the next start will ask you to choose Fabric or NeoForge again.
 pause
 exit /b 0

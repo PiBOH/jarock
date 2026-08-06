@@ -1,6 +1,6 @@
 # Manual server cleanup
 
-Run `clean-server-runtime.bat` from the repository root whenever you want to remove generated Minecraft runtime data before a commit or push.
+Run `clean-server-runtime.bat` from the repository root whenever you want to remove generated Minecraft runtime data before a commit or push. The script asks whether it should also reset the selected loader.
 
 ## Before running it
 
@@ -31,10 +31,8 @@ The script uses an explicit preservation whitelist and removes every other file 
 
 - `server/mods-manifest-neoforge.ps1`
 - `server/jarock-loader.txt.template`
-- `server/server.jar` — generated locally for the selected loader and not tracked
-- `server/vanilla-server.jar` — local Fabric vanilla engine and not tracked
-- `server/jarock-loader.txt` — local selected-loader marker and not tracked
-- downloaded mod `.jar` files are not tracked
+- generated loader files are **not** preserved: `server/server.jar`, `server/vanilla-server.jar` and `server/jarock-loader.txt` are removed
+- downloaded mod `.jar` files are not tracked and are removed
 - `server/.gitkeep`
 - `server/README.md`
 - `server/mods-manifest.ps1`
@@ -43,6 +41,6 @@ The script uses an explicit preservation whitelist and removes every other file 
 - `server/config/Geyser-Fabric/config.yml.template`
 - `server/config/Geyser-NeoForge/config.yml.template` when present
 
-After cleanup, a new `start-server.bat` run asks for a loader if needed, downloads/regenerates the selected runtime and verifies the matching pinned mod manifest. Fabric and NeoForge include I’m Fast 1.0.3 builds for Minecraft 26.2; Forge is currently unavailable from the official 26.2 source.
+After cleanup, the default `N` choice keeps the current `LOADER_TYPE` setting, so a new `start-server.bat` run downloads/regenerates the same selected runtime and verifies its matching pinned mod manifest. Choose `Y` when you also want to clear the active loader selection: after the cleanup succeeds, the script changes `LOADER_TYPE` to `none`; the local loader marker was already removed by the cleanup, and the next start asks you to choose Fabric or NeoForge again. This reset does not restore the deleted world, mods, libraries or generated configuration. Fabric and NeoForge include I’m Fast 1.0.3 builds for Minecraft 26.2; Forge is currently unavailable from the official 26.2 source.
 
 The cleanup script never changes router settings, firewall rules, port forwarding or public-network configuration. It does not commit or push anything automatically.

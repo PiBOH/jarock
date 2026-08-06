@@ -1,7 +1,9 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
-    [string]$ServerDirectory
+    [string]$ServerDirectory,
+
+    [switch]$ResetLoader
 )
 
 $ErrorActionPreference = 'Stop'
@@ -20,16 +22,37 @@ function Remove-GeneratedPath([string]$Path) {
     }
 }
 
+function Reset-LoaderSelection([string]$SettingsPath) {
+    if (-not (Test-Path -LiteralPath $SettingsPath -PathType Leaf)) {
+        throw "The launch settings file was not found, so the loader selection could not be reset: $SettingsPath"
+    }
+
+    $Content = Get-Content -LiteralPath $SettingsPath -Raw
+    $Pattern = '(?m)^LOADER_TYPE=.*$'
+    if ($Content -match $Pattern) {
+        $Content = [regex]::Replace($Content, $Pattern, 'LOADER_TYPE=none')
+    }
+    else {
+        $Content = $Content.TrimEnd("`r", "`n") + "`r`nLOADER_TYPE=none`r`n"
+    }
+    Set-Content -LiteralPath $SettingsPath -Value $Content -Encoding UTF8
+    Write-Host 'Loader selection reset to none. The next start will ask you to choose Fabric or NeoForge again.' -ForegroundColor Green
+}
+
 try {
     $ServerDirectory = [IO.Path]::GetFullPath($ServerDirectory).TrimEnd('\')
     $RepositoryRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..')).TrimEnd('\')
     $ExpectedServerDirectory = [IO.Path]::GetFullPath((Join-Path $RepositoryRoot 'server')).TrimEnd('\')
+    $SettingsPath = Join-Path $RepositoryRoot 'server-launch-settings.ini'
 
     if ($ServerDirectory -ine $ExpectedServerDirectory) {
         throw "Refusing to clean an unexpected directory: $ServerDirectory"
     }
     if (-not (Test-Path -LiteralPath $ServerDirectory -PathType Container)) {
         throw "The server directory was not found: $ServerDirectory"
+    }
+    if ($ResetLoader -and -not (Test-Path -LiteralPath $SettingsPath -PathType Leaf)) {
+        throw "The launch settings file was not found, so the loader selection could not be reset: $SettingsPath"
     }
 
     try {
@@ -94,8 +117,17 @@ try {
         }
     }
 
+    if ($ResetLoader) {
+        Reset-LoaderSelection $SettingsPath
+    }
+
     Write-Host 'Cleanup finished successfully.' -ForegroundColor Green
-    Write-Host 'The next start-server.bat run will download/regenerate the removed runtime files.' -ForegroundColor Cyan
+    if ($ResetLoader) {
+        Write-Host 'The next start-server.bat run will ask for the loader and download/regenerate the selected runtime.' -ForegroundColor Cyan
+    }
+    else {
+        Write-Host 'The next start-server.bat run will keep the current loader selection and download/regenerate its runtime.' -ForegroundColor Cyan
+    }
     exit 0
 }
 catch {
