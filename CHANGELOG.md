@@ -16,6 +16,19 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Continue testing Fabric and NeoForge loader selection on clean Windows checkouts.
 - Add an official Forge 26.2 installer and manifest only after the official build is available and verified.
 
+## [0.0.23-beta] - 2026-08-06
+
+### Added
+
+- Added interactive issue templates in English and Italian (bug report and feature request).
+- Added a comprehensive network, firewall and router configuration guide (`network-and-ports.md`) in all 31 supported languages.
+
+### Changed
+
+- Removed all website files from `docs/`; the multilingual documentation now lives without a published GitHub Pages site.
+- Deleted the `.website` source folder after confirming `docs/` is the single source for multilingual documentation.
+- Added a network configuration reference from `TODO.md` to the new dedicated guide.
+
 ## [0.0.22-beta] - 2026-08-06
 
 ### Fixed
@@ -235,7 +248,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.22-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.23-beta...HEAD
+[0.0.23-beta]: https://github.com/PiBOH/jarock/compare/0.0.22-beta...0.0.23-beta
 [0.0.22-beta]: https://github.com/PiBOH/jarock/compare/0.0.21-beta...0.0.22-beta
 [0.0.21-beta]: https://github.com/PiBOH/jarock/compare/0.0.20-beta...0.0.21-beta
 [0.0.20-beta]: https://github.com/PiBOH/jarock/compare/0.0.19-beta...0.0.20-beta
