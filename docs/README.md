@@ -1,12 +1,12 @@
 # Documentation
 
-## Canonical English guides
+## English guides
 
 - [Minecraft Java Fabric Server — installation guide](en/server-guide.md)
 - [Minecraft Java NeoForge fallback](en/neoforge-fallback.md)
 - [How does Jarock work?](en/how-does-jarock-work.md)
 
-The canonical English guides are the source of truth for the technical procedure. The current project version is stored only in the root `version.txt` file.
+The English guides are the source of truth for the technical procedure. The current project version is stored only in the root `version.txt` file.
 
 ## Runtime and launch configuration
 
@@ -19,7 +19,7 @@ The canonical English guides are the source of truth for the technical procedure
 
 ## How Jarock works translations
 
-Each requested locale has a concise translated `how-does-jarock-work.md`. The English file is the complete canonical explanation; localized files preserve essential technical steps and literals.
+Each requested locale has a concise translated `how-does-jarock-work.md`. The English file is the complete explanation; localized files preserve essential technical steps and literals.
 
 | Locale | Guide |
 |---|---|
@@ -58,7 +58,7 @@ Each requested locale has a concise translated `how-does-jarock-work.md`. The En
 
 ## Installation and fallback translations
 
-Every requested locale has both an installation guide and a NeoForge fallback guide. The English files are canonical; localized files are concise summaries; files whose prose remains English are explicitly English fallback summaries and link to the complete English procedure. They do not include a project version; consult root `version.txt`.
+Every requested locale has both an installation guide and a NeoForge fallback guide. The English files are ; localized files are concise summaries; files whose prose remains English are explicitly English fallback summaries and link to the complete English procedure. They do not include a project version; consult root `version.txt`.
 
 Each local file has the same names:
 

@@ -9,7 +9,7 @@ Thank you for helping maintain Jarock. This project is a beginner-friendly Windo
 - Prefer a small, reproducible change over a large collection of optional components.
 - Never commit generated server data, loader runtimes, downloaded mod `.jar` files, worlds, logs, credentials or Floodgate private keys. `server.jar` is a local runtime entry point and is intentionally ignored.
 - Treat commands, paths, configuration keys, URLs, hashes and version numbers as technical literals: change them deliberately and document why.
-- English is the canonical project language. Keep translated documentation synchronized with the English source when documentation changes.
+- English is the Project language. Keep translated documentation synchronized with the English source when documentation changes.
 
 ## Repository layout
 
@@ -20,7 +20,7 @@ Thank you for helping maintain Jarock. This project is a beginner-friendly Windo
 - `scripts/java-runtime.ps1` — PowerShell 5.1-compatible Java runtime discovery.
 - `scripts/configure-geyser.ps1` — safe Floodgate authentication configuration after Geyser generates its config.
 - `server/` — templates and loader-specific manifests; generated `server.jar`, loader runtimes and downloaded mods are ignored.
-- `docs/en/` — canonical English guides.
+- `docs/en/` — English guides.
 - `docs/<locale>/` — localized guides.
 - `TODO.md` — work required before public release.
 - `version.txt` — current SemVer version, including its pre-release suffix.
@@ -59,7 +59,7 @@ Never add Sodium, Litematica, MiniHUD, Tweakeroo or another client-only mod to t
 
 ## Documentation and translations
 
-- Write the canonical explanation in English first.
+- Write the explanation in English first.
 - Keep filenames, commands, paths, YAML/properties keys, URLs, hashes and code blocks unchanged when translating.
 - Translate explanatory prose accurately; do not invent compatibility claims.
 - If a translation is incomplete or temporarily behind English, label it clearly in `docs/README.md`.

@@ -14,11 +14,11 @@ Questa è la guida italiana rapida e operativa. La guida tecnica canonica, mante
 
 ```text
 Giocatori Java ─────────────┐
-                             ├── Fabric Server 26.2 ── mondo
-Giocatori Bedrock ─ Geyser ─┘          │
-                                       ├── Fabric API
-                                       ├── mod performance
-                                       └── Carpet per il gioco tecnico
+ ├── Fabric Server 26.2 ── mondo
+Giocatori Bedrock ─ Geyser ─┘ │
+ ├── Fabric API
+ ├── mod performance
+ └── Carpet per il gioco tecnico
 ```
 
 Componenti:

@@ -5,7 +5,7 @@
 **Minecraft target:** Java Edition `26.2`
 **Default loader:** Fabric (NeoForge is the fallback; Forge is currently unavailable for the official 26.2 build)
 **Main platform:** Windows 10/11
-**Canonical language:** English
+** language:** English
 
 This document explains what happens after someone downloads the Jarock repository. It describes the real files and scripts in this repository, not an imaginary installer. The current Jarock project version is stored only in the root `version.txt` file.
 

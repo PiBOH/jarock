@@ -135,9 +135,9 @@ Controlla la porta Bedrock:
 
 ```yaml
 bedrock:
-  address: 0.0.0.0
-  port: 19132
-  clone-remote-port: false
+ address: 0.0.0.0
+ port: 19132
+ clone-remote-port: false
 ```
 
 Mantieni l'indentazione YAML. Se l'hosting assegna una porta diversa, usa quella assegnata.

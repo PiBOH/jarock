@@ -2,8 +2,8 @@
 
 ## Beginner-friendly installation guide
 
-**Canonical project language:** English  
-**Audience:** people who have never created a Minecraft server before  
+**Project language:** English 
+**Audience:** people who have never created a Minecraft server before 
 **Target platform:** Minecraft Java Edition 26.2 with Fabric first, NeoForge fallback, and Java/Bedrock cross-play
 **Primary example:** Windows 10/11
 
@@ -17,11 +17,11 @@ At the end, the server will look like this:
 
 ```text
 Java players ───────────────┐
-                             ├── Fabric Server 26.2 ── world
-Bedrock players ─ Geyser ───┘          │
-                                       ├── Fabric API
-                                       ├── performance mods
-                                       └── Carpet technical tools
+ ├── Fabric Server 26.2 ── world
+Bedrock players ─ Geyser ───┘ │
+ ├── Fabric API
+ ├── performance mods
+ └── Carpet technical tools
 ```
 
 ### Recommended final stack
