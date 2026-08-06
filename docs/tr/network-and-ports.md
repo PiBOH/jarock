@@ -1,0 +1,5 @@
+# Ağ, Güvenlik Duvarı ve Yönlendirici Kılavuzu
+
+64-bit Java 25 kurun, `start-server.bat` dosyasını çalıştırın ve portları açmadan önce `TODO.md`'yi tamamlayın. Sabit bir LAN IP atayın, Windows Güvenlik Duvarı'nda TCP `25565` (Java) ve UDP `19132` (Bedrock) portlarını açın, yönlendiricide port yönlendirme yapılandırın veya playit.gg gibi UDP uyumlu bir tünel kullanın. `online-mode=true` ve `white-list=true`'un etkin olduğundan emin olun ve `key.pem`'i asla yayınlamayın. CGNAT için tünel kullanın. [İngilizce kılavuza](../en/network-and-ports.md) bakın.
+
+> Her zaman `start-server.bat` kullanın; `server.jar`'a çift tıklamayın.
