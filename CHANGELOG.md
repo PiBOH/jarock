@@ -14,6 +14,19 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Complete the public-release checklist in `TODO.md`.
 - Keep all localized documentation synchronized with the English canonical documentation.
 
+## [0.0.14-beta] - 2026-08-06
+
+### Added
+
+- Added the server-side I’m Fast 1.0.3 Fabric mod for Minecraft 26.2 with pinned SHA-512 verification.
+- Added `clean-server-runtime.bat` and its PowerShell implementation for safe manual pre-commit cleanup.
+- Added Git LFS tracking for the intentionally versioned vanilla `server/server.jar`.
+
+### Changed
+
+- Preserved `server.jar` while keeping generated worlds, mods, libraries, configs, logs and credentials out of commits.
+
+
 ## [0.0.13-beta] - 2026-08-06
 
 ### Changed
@@ -150,7 +163,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.13-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.14-beta...HEAD
+[0.0.14-beta]: https://github.com/PiBOH/jarock/compare/0.0.13-beta...0.0.14-beta
 [0.0.13-beta]: https://github.com/PiBOH/jarock/compare/0.0.12-beta...0.0.13-beta
 [0.0.12-beta]: https://github.com/PiBOH/jarock/compare/0.0.11-alpha...0.0.12-beta
 [0.0.11-alpha]: https://github.com/PiBOH/jarock/compare/0.0.10-alpha...0.0.11-alpha

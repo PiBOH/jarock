@@ -59,4 +59,11 @@ $Mods = @(
         Required = $true
         Purpose = 'Technical and redstone tools'
     }
+    [pscustomobject]@{
+        Name = 'imfast-FABRIC-26.2-1.0.3.jar'
+        Url = 'https://cdn.modrinth.com/data/PaUMOeP0/versions/nD5sET2x/imfast-FABRIC-26.2-1.0.3.jar'
+        Sha512 = '664606eb41dbf13385ec82545c30a7b118bd263393325c29a6a6eef6e0a390555c194e0c15df64c18d7f477344c423e518e67b481d5c9171fd5c7fb36795341b'
+        Required = $true
+        Purpose = 'Removes vanilla moved-too-quickly and moved-wrongly speed limits'
+    }
 )

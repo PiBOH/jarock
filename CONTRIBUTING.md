@@ -7,7 +7,7 @@ Thank you for helping maintain Jarock. This project is a beginner-friendly Windo
 - Keep the default architecture simple and Fabric-native.
 - Do not add router configuration, port forwarding, firewall changes or public-network automation to the bootstrap.
 - Prefer a small, reproducible change over a large collection of optional components.
-- Never commit generated server data, downloaded `.jar` files, worlds, logs, credentials or Floodgate private keys.
+- Never commit generated server data, downloaded mod `.jar` files, worlds, logs, credentials or Floodgate private keys. The only runtime binary intentionally versioned is the pinned vanilla `server/server.jar` through Git LFS; stage it only when deliberately updating that pinned server binary.
 - Treat commands, paths, configuration keys, URLs, hashes and version numbers as technical literals: change them deliberately and document why.
 - English is the canonical project language. Keep translated documentation synchronized with the English source when documentation changes.
 
@@ -17,7 +17,7 @@ Thank you for helping maintain Jarock. This project is a beginner-friendly Windo
 - `scripts/bootstrap-fabric.ps1` — path checks, Java discovery, downloads, SHA-512 verification and Fabric setup.
 - `scripts/java-runtime.ps1` — PowerShell 5.1-compatible Java runtime discovery.
 - `scripts/configure-geyser.ps1` — safe Floodgate authentication configuration after Geyser generates its config.
-- `server/` — tracked templates and manifest only; generated runtime files are ignored.
+- `server/` — tracked vanilla `server.jar`, templates and manifest; generated runtime files and downloaded mods are ignored.
 - `docs/en/` — canonical English guides.
 - `docs/<locale>/` — localized guides.
 - `TODO.md` — work required before public release.
@@ -71,7 +71,7 @@ Before opening a pull request or release commit, run the checks available in the
 - `git diff --check` succeeds.
 - Markdown code fences are balanced.
 - Relative Markdown links resolve.
-- No generated runtime files or secrets are staged.
+- No generated runtime files or secrets are staged; `server/server.jar` is the explicit, deliberate exception and must be an LFS pointer.
 - The bootstrap contains no router, firewall or port-forwarding commands.
 - Version and changelog entries agree.
 - The release workflow's required files changed together when preparing a release.
@@ -101,6 +101,8 @@ For a release-test or release commit:
 3. Ensure the version tag does not already exist.
 4. Use a commit message beginning with `v`, such as `v0.0.12-beta: select compatible Java runtime`. Historical `-alpha` entries remain in the changelog; new prerelease commits should use the current `-beta` channel.
 5. Push to `main` only after validation. The GitHub Actions workflow then validates the version and changelog and creates the prerelease.
+
+`server/server.jar` is intentionally tracked through Git LFS. Do not add other runtime jars, downloaded mods or generated files. Contributors need Git LFS installed and must verify the staged file is an LFS pointer before pushing.
 
 Do not rewrite published history or force-push unless the repository owner explicitly requests it.
 
