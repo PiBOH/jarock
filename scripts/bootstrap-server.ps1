@@ -194,7 +194,7 @@ function Set-FabricVanillaJarReference {
         $Content = $Content.TrimEnd("`r", "`n") + "`r`nserverJar=vanilla-server.jar`r`n"
     }
     [IO.File]::WriteAllText($PropertiesPath, $Content, (New-Object Text.UTF8Encoding($false)))
-    $WrittenContent = Get-Content -LiteralPath $PropertiesPath -Raw
+    $WrittenContent = (Get-Content -LiteralPath $PropertiesPath) -join "`n"
     if ($WrittenContent -notmatch '(?m)^serverJar=vanilla-server\.jar[ \t]*$') {
         Stop-WithGuidance 'Fabric launcher metadata could not be repaired: serverJar is not vanilla-server.jar.' 'Run clean-server-runtime.bat, then run start-server.bat again to reinstall Fabric safely.'
     }

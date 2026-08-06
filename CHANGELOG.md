@@ -16,6 +16,12 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Continue testing Fabric and NeoForge loader selection on clean Windows checkouts.
 - Add an official Forge 26.2 installer and manifest only after the official build is available and verified.
 
+## [0.0.22-beta] - 2026-08-06
+
+### Fixed
+
+- Fixed the Fabric metadata verification on Windows by normalizing CRLF file endings before checking `serverJar=vanilla-server.jar`.
+
 ## [0.0.21-beta] - 2026-08-06
 
 ### Fixed
@@ -229,7 +235,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.21-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.22-beta...HEAD
+[0.0.22-beta]: https://github.com/PiBOH/jarock/compare/0.0.21-beta...0.0.22-beta
 [0.0.21-beta]: https://github.com/PiBOH/jarock/compare/0.0.20-beta...0.0.21-beta
 [0.0.20-beta]: https://github.com/PiBOH/jarock/compare/0.0.19-beta...0.0.20-beta
 [0.0.19-beta]: https://github.com/PiBOH/jarock/compare/0.0.18-beta...0.0.19-beta
