@@ -14,8 +14,13 @@ function Get-JavaRuntimeInfo {
         return $null
     }
 
+    $PreviousErrorActionPreference = $ErrorActionPreference
     try {
-        $VersionText = (& $Path -version 2>&1 | Out-String)
+        # Java intentionally writes -version output to stderr. Windows PowerShell 5.1
+        # wraps redirected native stderr lines as ErrorRecord objects; convert each
+        # line to text while temporarily allowing those normal diagnostic records.
+        $ErrorActionPreference = 'Continue'
+        $VersionText = (& $Path -version 2>&1 | ForEach-Object { $_.ToString() } | Out-String)
         $ExitCode = $LASTEXITCODE
         $Match = [regex]::Match($VersionText, 'version "(?<version>[^"]+)"')
         if (-not $Match.Success -or $ExitCode -ne 0) {
@@ -36,9 +41,13 @@ function Get-JavaRuntimeInfo {
             }
         }
 
-        $SettingsText = (& $Path -XshowSettings:properties -version 2>&1 | Out-String)
+        $SettingsText = (& $Path -XshowSettings:properties -version 2>&1 | ForEach-Object { $_.ToString() } | Out-String)
+        $SettingsExitCode = $LASTEXITCODE
         $ArchitectureMatch = [regex]::Match($SettingsText, '(?m)^\s*sun\.arch\.data\.model\s*=\s*(?<bits>\d+)\s*$')
         $Is64Bit = $ArchitectureMatch.Success -and ([int]$ArchitectureMatch.Groups['bits'].Value -eq 64)
+        if ($SettingsExitCode -ne 0) {
+            return $null
+        }
 
         return [pscustomobject]@{
             Path = [IO.Path]::GetFullPath($Path)
@@ -49,6 +58,9 @@ function Get-JavaRuntimeInfo {
     }
     catch {
         return $null
+    }
+    finally {
+        $ErrorActionPreference = $PreviousErrorActionPreference
     }
 }
 
