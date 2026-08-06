@@ -177,6 +177,26 @@ function Test-VanillaServerJar([string]$Path) {
         } finally { $Archive.Dispose() }
     } catch { return $false }
 }
+function Set-FabricVanillaJarReference {
+    $PropertiesPath = Join-Path $ServerDir 'fabric-server-launcher.properties'
+    if (-not (Test-Path -LiteralPath $PropertiesPath -PathType Leaf)) {
+        Stop-WithGuidance 'Fabric launcher metadata is missing: fabric-server-launcher.properties.' 'Run clean-server-runtime.bat, then run start-server.bat again to reinstall Fabric safely.'
+    }
+    $Content = Get-Content -LiteralPath $PropertiesPath -Raw
+    $Pattern = '(?m)^serverJar=.*$'
+    if ($Content -match $Pattern) {
+        $Content = [regex]::Replace($Content, $Pattern, 'serverJar=vanilla-server.jar')
+    }
+    else {
+        $Content = $Content.TrimEnd("`r", "`n") + "`r`nserverJar=vanilla-server.jar`r`n"
+    }
+    [IO.File]::WriteAllText($PropertiesPath, $Content, (New-Object Text.UTF8Encoding($false)))
+    $WrittenContent = Get-Content -LiteralPath $PropertiesPath -Raw
+    if ($WrittenContent -notmatch '(?m)^serverJar=vanilla-server\.jar[ \t]*$') {
+        Stop-WithGuidance 'Fabric launcher metadata could not be repaired: serverJar is not vanilla-server.jar.' 'Run clean-server-runtime.bat, then run start-server.bat again to reinstall Fabric safely.'
+    }
+    Write-Host 'Fabric launcher metadata now points to vanilla-server.jar.' -ForegroundColor Green
+}
 function Test-FabricLauncher([string]$Path) {
     try {
         Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
@@ -193,6 +213,7 @@ function Install-Fabric($Java) {
     $VanillaJar = Join-Path $ServerDir 'server.jar'
     $LocalVanillaJar = Join-Path $ServerDir 'vanilla-server.jar'
     if ((Test-Path -LiteralPath $VanillaJar -PathType Leaf) -and (Test-Path -LiteralPath $LocalVanillaJar -PathType Leaf) -and (Test-FabricLauncher $VanillaJar)) {
+        Set-FabricVanillaJarReference
         Write-Host 'Existing Fabric server.jar launcher and vanilla-server.jar are valid; reusing them.' -ForegroundColor Green
         return
     }
@@ -215,6 +236,7 @@ function Install-Fabric($Java) {
     if (-not (Test-Path -LiteralPath $FabricLauncher -PathType Leaf)) { Stop-WithGuidance 'Fabric did not create fabric-server-launch.jar.' 'Delete only the incomplete Fabric runtime and run start-server.bat again.' }
     if (Test-Path -LiteralPath $VanillaJar -PathType Leaf) { Remove-Item -LiteralPath $VanillaJar -Force }
     Move-Item -LiteralPath $FabricLauncher -Destination $VanillaJar -Force
+    Set-FabricVanillaJarReference
     Write-Host 'Fabric runtime installed. The Fabric launcher was renamed to server.jar; vanilla-server.jar is retained as the local vanilla engine.' -ForegroundColor Green
 }
 function Install-NeoForge($Java) {

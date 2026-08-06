@@ -16,14 +16,19 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Continue testing Fabric and NeoForge loader selection on clean Windows checkouts.
 - Add an official Forge 26.2 installer and manifest only after the official build is available and verified.
 
+## [0.0.20-beta] - 2026-08-06
+
+### Fixed
+
+- Fixed the Fabric launcher metadata so `server.jar` loads the vanilla game from `vanilla-server.jar` instead of referring to itself.
+- Existing Fabric installations are repaired automatically before launch; incomplete metadata produces a guided reinstall message.
+
 ## [0.0.19-beta] - 2026-08-06
 
 ### Fixed
 
 - Handled `Exit without saving` as a clean first-run cancellation instead of reporting it as a bootstrap error.
 - `start-server.bat` now shows a cancellation message and preserves the cancellation exit code without attempting to start the server.
-
-## [0.0.18-beta] - 2026-08-06
 
 ## [0.0.18-beta] - 2026-08-06
 
@@ -219,7 +224,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.19-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.20-beta...HEAD
+[0.0.20-beta]: https://github.com/PiBOH/jarock/compare/0.0.19-beta...0.0.20-beta
 [0.0.19-beta]: https://github.com/PiBOH/jarock/compare/0.0.18-beta...0.0.19-beta
 [0.0.18-beta]: https://github.com/PiBOH/jarock/compare/0.0.17-beta...0.0.18-beta
 [0.0.17-beta]: https://github.com/PiBOH/jarock/compare/0.0.16-beta...0.0.17-beta

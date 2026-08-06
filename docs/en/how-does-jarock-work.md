@@ -30,7 +30,7 @@ The user does not manually assemble a Minecraft server from many websites. They 
 13. When that run is stopped, `configure-geyser.ps1` sets `auth-type: floodgate`.
 14. The next run starts the server with Floodgate fully configured.
 
-The router, firewall and port forwarding are **not** configured by Jarock. Always launch this repository with `start-server.bat`; do not double-click `server/server.jar`, because Windows can associate `.jar` files with Java 8 or Java 21 and produce `UnsupportedClassVersionError`.
+The router, firewall and port forwarding are **not** configured by Jarock. Always launch this repository with `start-server.bat`; it repairs Fabric's launcher metadata before starting. Do not double-click `server/server.jar`, because that bypasses the repair and Windows can associate `.jar` files with Java 8 or Java 21 or leave Fabric looking for the game inside the launcher itself.
 
 ---
 
@@ -108,7 +108,7 @@ If bootstrap or launch fails, the batch file stops and tells the user to read th
 
 ## 6. What the bootstrap does
 
-The bootstrap calculates the repository root from `$PSScriptRoot`, discovers a compatible 64-bit Java 25+ runtime, installs the selected loader, loads the matching loader-specific manifest, downloads and verifies its pinned server mods, and creates local EULA/properties templates without overwriting existing local configuration. Fabric renames its launcher to the local runtime `server.jar` and keeps the vanilla engine as `vanilla-server.jar`; NeoForge uses its official generated `run.bat` and libraries. Forge is currently rejected with an actionable message because no official 26.2 build is available.
+The bootstrap calculates the repository root from `$PSScriptRoot`, discovers a compatible 64-bit Java 25+ runtime, installs the selected loader, loads the matching loader-specific manifest, downloads and verifies its pinned server mods, and creates local EULA/properties templates without overwriting existing local configuration. Fabric renames its launcher to the local runtime `server.jar`, keeps the vanilla engine as `vanilla-server.jar`, and maintains `fabric-server-launcher.properties` with `serverJar=vanilla-server.jar`; this prevents the launcher from trying to load itself as the game. NeoForge uses its official generated `run.bat` and libraries. Forge is currently rejected with an actionable message because no official 26.2 build is available.
 
 The default Fabric stack contains Fabric API, Geyser-Fabric, Floodgate-Fabric, Lithium, FerriteCore, Krypton, ServerCore and Fabric Carpet. It does not install arbitrary Bukkit, Spigot or Paper plugins and it does not add client-only content such as Sodium to the server.
 
