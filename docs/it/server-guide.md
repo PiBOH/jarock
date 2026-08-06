@@ -68,6 +68,8 @@ Gli script Jarock calcolano la root dalla posizione di `start-server.bat` e supp
 
 Installa un runtime **Java 25 a 64 bit** proveniente da un distributore affidabile, per esempio Eclipse Temurin 25, oppure seleziona Java 25 dal pannello del tuo hosting.
 
+**Se usi l'installer Eclipse Temurin (HotSpot JDK):** durante l'installazione, quando compare la schermata "Custom Setup", assicurati che l'opzione **"Set JAVA_HOME variable"** sia attivata. Di solito è un'icona con una X rossa — cliccaci sopra e seleziona **"Will be installed on local hard drive"** così che `JAVA_HOME` venga configurato automaticamente. Senza `JAVA_HOME`, Jarock e il server potrebbero non trovare Java.
+
 1. Apri il menu Start di Windows.
 2. Scrivi `cmd`.
 3. Apri **Prompt dei comandi**.

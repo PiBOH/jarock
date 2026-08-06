@@ -12,7 +12,7 @@ Questo documento spiega cosa succede dopo aver scaricato Jarock.
 
 L'utente deve:
 
-1. Installare un JDK Java 25 a 64 bit compatibile.
+1. Installare un JDK Java 25 a 64 bit compatibile. **Se usi l'installer Eclipse Temurin:** durante l'installazione, attiva l'opzione "Set JAVA_HOME variable" (clicca sull'icona con la X rossa e seleziona "Will be installed on local hard drive"). Senza `JAVA_HOME`, Jarock e il server potrebbero non trovare Java.
 2. Scaricare o clonare il repository.
 3. Avviare `start-server.bat`.
 4. Il programma trova automaticamente la propria cartella.

@@ -105,7 +105,11 @@ The Jarock scripts resolve their root from the location of `start-server.bat` an
 
 For this Minecraft 26.2 guide, install a current **64-bit Java 25** runtime, such as Eclipse Temurin 25 or the Java runtime provided by your hosting panel. Minecraft and Fabric can change runtime requirements between release lines, so always follow the Java requirement shown by the current official Fabric/Minecraft server tooling if it differs.
 
-Download Java only from a trustworthy distributor. After installing it:
+Download Java only from a trustworthy distributor.
+
+**If you are using the Eclipse Temurin installer (HotSpot JDK):** during installation, when the "Custom Setup" screen appears, make sure the **"Set JAVA_HOME variable"** option is enabled. It is often a small icon with a red X by default — click it and select **"Will be installed on local hard drive"** so that `JAVA_HOME` is set automatically. Without `JAVA_HOME`, Jarock and the server may not find Java.
+
+After installing it:
 
 1. Open the Windows Start menu.
 2. Type `cmd`.

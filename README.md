@@ -37,7 +37,7 @@ Neither Fabric nor NeoForge automatically runs Bukkit/Spigot/Paper plugins. If t
 
 ## Quick start
 
-1. Install a supported 64-bit Java 25 runtime for Minecraft 26.2. A direct installer link is available in the guide.
+1. Install a supported 64-bit Java 25 runtime for Minecraft 26.2. A direct installer link is available in the guide. **If you use the Eclipse Temurin installer:** during setup, enable the "Set JAVA_HOME variable" option (click the red X and select "Will be installed on local hard drive"). Without `JAVA_HOME`, Jarock may not find Java.
 2. Clone or download this repository.
 3. Double-click `start-server.bat` once; if no loader is configured, choose Fabric, Forge or NeoForge. You can optionally open `parameter-manager.bat` during this flow. If you choose `Exit without saving`, setup is cancelled cleanly and the server is not started.
 4. The bootstrap installs the selected loader and downloads only the matching pinned mods.

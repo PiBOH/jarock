@@ -6,6 +6,8 @@
 
 ## 1. Before you start
 
+**Java note:** If you install the Eclipse Temurin JDK, enable the **"Set JAVA_HOME variable"** checkbox during setup (click the red X and select "Will be installed on local hard drive"). Without `JAVA_HOME`, Jarock may not find Java.
+
 Complete the items in `TODO.md` before exposing the server publicly:
 
 - [ ] Java and Bedrock joining works on `localhost`.

@@ -8,7 +8,7 @@ This directory contains optional Windows installers for the Java runtime require
 - SHA-256: `6e9d08f214b0b284c2d8a58a980761d976c6588145af9e3c75b22fc2982b6636`
 - Official source: [Eclipse Adoptium Temurin releases](https://adoptium.net/temurin/releases/)
 
-Install the JDK installer, not only a Java Runtime Environment. Jarock requires a 64-bit Java 25 or newer runtime.
+Install the JDK installer, not only a Java Runtime Environment. Jarock requires a 64-bit Java 25 or newer runtime. **During installation, enable the "Set JAVA_HOME variable" option** — it appears as a red X icon in the Custom Setup screen; click it and select "Will be installed on local hard drive". Without `JAVA_HOME`, Jarock may not find Java.
 
 ## Legacy installer
 
