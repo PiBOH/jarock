@@ -12,9 +12,23 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 ### Planned
 
 - Complete the public-release checklist in `TODO.md`.
-- Keep all localized documentation synchronized with the English canonical documentation.
+- Keep all localized documentation synchronized with the English explanation.
 - Continue testing Fabric and NeoForge loader selection on clean Windows checkouts.
 - Add an official Forge 26.2 installer and manifest only after the official build is available and verified.
+
+## [0.0.25-beta] - 2026-08-06
+
+### Fixed
+
+- Fixed the GitHub Pages deployment workflow YAML indentation so `deploy.yml` can be parsed and run manually.
+- Fixed the auto-release workflow YAML indentation so manual releases and `v`-prefixed release commits are recognized.
+
+### Changed
+
+- Reduced the GitHub Pages deployment timeout from 10 minutes to 2 minutes.
+- Improved the website icon display by removing internal white padding and filling the icon square correctly.
+- The website changelog now loads automatically from the repository's raw `CHANGELOG.md` URL and provides a GitHub fallback link when loading fails.
+- Removed unnecessary `canonical` wording from documentation and website text.
 
 ## [0.0.24-beta] - 2026-08-06
 
@@ -262,7 +276,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.24-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.25-beta...HEAD
+[0.0.25-beta]: https://github.com/PiBOH/jarock/compare/0.0.24-beta...0.0.25-beta
 [0.0.24-beta]: https://github.com/PiBOH/jarock/compare/0.0.23-beta...0.0.24-beta
 [0.0.23-beta]: https://github.com/PiBOH/jarock/compare/0.0.22-beta...0.0.23-beta
 [0.0.22-beta]: https://github.com/PiBOH/jarock/compare/0.0.21-beta...0.0.22-beta
