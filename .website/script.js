@@ -65,4 +65,31 @@
         changelogBox.innerHTML = '<strong>Could not load the changelog.</strong> Verify the link and read it on GitHub: <a href="' + fallback + '">CHANGELOG.md</a>';
       });
   }
+
+  const releaseSpans = [...document.querySelectorAll('[data-release-package]')];
+  if (releaseSpans.length) {
+    const apiUrl = 'https://api.github.com/repos/PiBOH/jarock/releases/latest';
+    const releasesFallback = 'https://github.com/PiBOH/jarock/releases';
+    fetch(apiUrl)
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(rel => {
+        const version = rel.tag_name || 'latest';
+        releaseSpans.forEach(span => {
+          const kind = span.dataset.releasePackage; // 'full' or 'lite'
+          const prefix = 'jarock-' + kind;
+          const asset = (rel.assets || []).find(a => a.name.startsWith(prefix) && a.name.endsWith('.zip'));
+          if (asset) {
+            const sizeMb = asset.size ? ' (' + Math.max(1, Math.round(asset.size / 1048576)) + ' MB)' : '';
+            span.innerHTML = '<a class="download-link" href="' + asset.browser_download_url + '">Download ' + (kind === 'full' ? 'Full' : 'Lite') + ' package (' + version + ')' + sizeMb + '</a>';
+          } else {
+            span.innerHTML = '<strong>No release package available yet.</strong> See the <a href="' + releasesFallback + '">releases page</a>.';
+          }
+        });
+      })
+      .catch(() => {
+        releaseSpans.forEach(span => {
+          span.innerHTML = '<strong>Could not load the latest release.</strong> Check the <a href="' + releasesFallback + '">releases page</a>.';
+        });
+      });
+  }
 })();

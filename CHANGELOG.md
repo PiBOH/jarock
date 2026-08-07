@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Marked the parameter-manager and ready-banner verification items as complete in `TODO.md`.
 
+## [0.0.45-beta] - 2026-08-07
+
+### Added
+
+- **Release distribution packages**: the automatic release workflow now builds and attaches two packages to every release — `jarock-full.zip` (stable) / `jarock-full-<version>.zip` (prerelease), the recommended package that bundles the server code, templates, manifests, scripts, launchers, the documentation in all languages **and** the bundled Java installers from `prerequisites/` (real LFS binaries, so a fresh machine can auto-install Java offline); and `jarock-lite.zip` / `jarock-lite-<version>.zip` without the Java installers. The workflows (`.github/`), the website (`.website/`) and version-control metadata (`.gitattributes`, `.gitignore`) are excluded from both packages. The workflow now checks out with Git LFS enabled so the installers are packaged as real files.
+- **Downloads page release buttons**: the website Downloads page now offers "Release package — Full" (recommended) and "Release package — Lite" download buttons that resolve the latest GitHub release through the API (same pattern as the changelog box) and link to the matching zip asset with its version and size, falling back to a message pointing at the releases page when no package asset exists.
+
 ## [0.0.44-beta] - 2026-08-07
 
 ### Fixed

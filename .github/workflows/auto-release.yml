@@ -26,6 +26,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          lfs: true
+
+      - name: Checkout LFS files (prerequisites installers)
+        run: git lfs pull
+        shell: bash
 
       - name: Read and validate version
         id: version
@@ -87,6 +92,52 @@ jobs:
             printf 'See [CHANGELOG.md](https://github.com/%s/blob/main/CHANGELOG.md) for details.\n' "${GITHUB_REPOSITORY}" >> release-notes.md
           fi
 
+      - name: Build release packages
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.version }}"
+          if [[ "${{ steps.version.outputs.prerelease }}" == "true" ]]; then
+            FULL_NAME="jarock-full-${VERSION}.zip"
+            LITE_NAME="jarock-lite-${VERSION}.zip"
+          else
+            FULL_NAME="jarock-full.zip"
+            LITE_NAME="jarock-lite.zip"
+          fi
+          FULL_STAGE="$(mktemp -d)"
+          LITE_STAGE="$(mktemp -d)"
+          # Package the indispensable tracked files only: code, templates, manifests,
+          # scripts, .bat launchers and the documentation in every language. The full
+          # package also bundles the Java installers from prerequisites/ (LFS); the
+          # lite package does not. Workflows (.github), the website (.website) and
+          # version-control metadata (.gitattributes, .gitignore) are excluded.
+          git ls-files -z | while IFS= read -r -d '' f; do
+            case "$f" in
+              .github/*|.website/*|.gitattributes|.gitignore) continue ;;
+            esac
+            mkdir -p "$FULL_STAGE/$(dirname "$f")"
+            cp -p "$f" "$FULL_STAGE/$f"
+            case "$f" in
+              prerequisites/*) continue ;;
+            esac
+            mkdir -p "$LITE_STAGE/$(dirname "$f")"
+            cp -p "$f" "$LITE_STAGE/$f"
+          done
+          python3 - "$FULL_STAGE" "$FULL_NAME" <<'PY'
+          import shutil, sys
+          shutil.make_archive(sys.argv[2][:-4], 'zip', sys.argv[1])
+          PY
+          python3 - "$LITE_STAGE" "$LITE_NAME" <<'PY'
+          import shutil, sys
+          shutil.make_archive(sys.argv[2][:-4], 'zip', sys.argv[1])
+          PY
+          {
+            echo "full_name=$FULL_NAME"
+            echo "lite_name=$LITE_NAME"
+          } >> "$GITHUB_OUTPUT"
+          ls -la "$FULL_NAME" "$LITE_NAME"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -96,5 +147,8 @@ jobs:
           draft: ${{ github.event.inputs.draft || false }}
           prerelease: ${{ steps.version.outputs.prerelease }}
           generate_release_notes: false
+          files: |
+            ${{ steps.package.outputs.full_name }}
+            ${{ steps.package.outputs.lite_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
