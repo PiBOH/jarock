@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.35-beta] - 2026-08-07
+
+### Changed
+
+- Renamed the bundled Temurin JDK installer to `OpenJDK25U-jdk_x64_windows_hotspot.msi` (same file, same SHA-256) and replaced the legacy Java 8 installer with `jre-81-windows-x64.exe` (file version 8.0.5010.8). `prerequisites/README.md` documents the new names and checksums.
+
 ## [0.0.34-beta] - 2026-08-07
 
 ### Changed
@@ -358,7 +364,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.34-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.35-beta...HEAD
+[0.0.35-beta]: https://github.com/PiBOH/jarock/compare/0.0.34-beta...0.0.35-beta
 [0.0.34-beta]: https://github.com/PiBOH/jarock/compare/0.0.33-beta...0.0.34-beta
 [0.0.33-beta]: https://github.com/PiBOH/jarock/compare/0.0.32-beta...0.0.33-beta
 [0.0.32-beta]: https://github.com/PiBOH/jarock/compare/0.0.31-beta...0.0.32-beta

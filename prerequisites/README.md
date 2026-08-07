@@ -4,7 +4,7 @@ This directory contains optional Windows installers for the Java runtime require
 
 ## Recommended installer
 
-- `OpenJDK25U-jdk_x64_windows_hotspot_25.0.4_7.msi` — Eclipse Temurin JDK 25.0.4, Windows x64, recommended for Minecraft 26.2.
+- `OpenJDK25U-jdk_x64_windows_hotspot.msi` — Eclipse Temurin JDK 25.0.4, Windows x64, recommended for Minecraft 26.2.
 - SHA-256: `6e9d08f214b0b284c2d8a58a980761d976c6588145af9e3c75b22fc2982b6636`
 - Official source: [Eclipse Adoptium Temurin releases](https://adoptium.net/temurin/releases/)
 
@@ -12,8 +12,8 @@ Install the JDK installer, not only a Java Runtime Environment. Jarock requires 
 
 ## Legacy installer
 
-- `jre-8u471-windows-x64_JAVA RUNTIME ENVROIMENT.exe` — legacy Java 8 x64 runtime.
-- SHA-256: `083fda16f0d2fb4a3abbca11e135fd916042921fac3f5153289eba6ae6ecd641`
+- `jre-81-windows-x64.exe` — legacy Java 8 x64 runtime (file version 8.0.5010.8).
+- SHA-256: `d99eb213b11b84fed4d0ffbb7595c77c7b952035a9025ed062c2d9c95ea22a8e`
 - Official source: [Oracle Java SE downloads](https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html)
 
 This Java 8 installer is retained only for compatibility with older software. It is **not suitable for the Jarock Minecraft 26.2 server** and should not be used to start the server. Redistribution of this installer must comply with the applicable Oracle license and distribution terms; the maintainer has confirmed those rights for this repository.
