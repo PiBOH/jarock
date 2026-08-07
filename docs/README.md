@@ -5,6 +5,7 @@
 - [Minecraft Java Fabric Server — installation guide](en/server-guide.md)
 - [Minecraft Java NeoForge fallback](en/neoforge-fallback.md)
 - [How does Jarock work?](en/how-does-jarock-work.md)
+- [First run guide](en/first-run.md)
 
 The English guides are the source of truth for the technical procedure. The current project version is stored only in the `scripts/version.txt` file.
 
@@ -56,6 +57,45 @@ Each requested locale has a concise translated `how-does-jarock-work.md`. The En
 | `th` | [Thai](th/how-does-jarock-work.md) |
 | `tr` | [Turkish](tr/how-does-jarock-work.md) |
 | `uk` | [Ukrainian](uk/how-does-jarock-work.md) |
+
+## First-run translations
+
+Every supported locale has a `first-run.md` guide. The English guide is the complete version; localized guides preserve all commands, paths, configuration keys and safety messages. Technical names and launcher output literals remain unchanged where users must match them exactly.
+
+| Locale | Guide |
+|---|---|
+| `af` | [Afrikaans](af/first-run.md) |
+| `ar` | [Arabic](ar/first-run.md) |
+| `ca` | [Catalan](ca/first-run.md) |
+| `zh-CN` | [Chinese Simplified](zh-CN/first-run.md) |
+| `zh-TW` | [Chinese Traditional](zh-TW/first-run.md) |
+| `hr` | [Croatian](hr/first-run.md) |
+| `cs` | [Czech](cs/first-run.md) |
+| `nl` | [Dutch](nl/first-run.md) |
+| `fa` | [Farsi](fa/first-run.md) |
+| `fr` | [French](fr/first-run.md) |
+| `gl` | [Galician](gl/first-run.md) |
+| `de` | [German](de/first-run.md) |
+| `he` | [Hebrew](he/first-run.md) |
+| `hu` | [Hungarian](hu/first-run.md) |
+| `id` | [Indonesian](id/first-run.md) |
+| `it` | [Italian](it/first-run.md) |
+| `ja` | [Japanese](ja/first-run.md) |
+| `ko` | [Korean](ko/first-run.md) |
+| `lv` | [Latvian](lv/first-run.md) |
+| `ms` | [Malay](ms/first-run.md) |
+| `mn` | [Mongolian](mn/first-run.md) |
+| `pl` | [Polish](pl/first-run.md) |
+| `pt` | [Portuguese](pt/first-run.md) |
+| `ro` | [Romanian](ro/first-run.md) |
+| `ru` | [Russian](ru/first-run.md) |
+| `es` | [Spanish](es/first-run.md) |
+| `sv` | [Swedish](sv/first-run.md) |
+| `sl` | [Slovenian](sl/first-run.md) |
+| `ta` | [Tamil](ta/first-run.md) |
+| `th` | [Thai](th/first-run.md) |
+| `tr` | [Turkish](tr/first-run.md) |
+| `uk` | [Ukrainian](uk/first-run.md) |
 
 ## Installation and fallback translations
 

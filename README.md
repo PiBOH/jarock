@@ -57,6 +57,7 @@ Fabric is the default stack and NeoForge is the fallback. Each loader receives o
 ## Guides
 
 - [Complete English Fabric installation guide](docs/en/server-guide.md)
+- [English first-run guide](docs/en/first-run.md)
 - [English NeoForge fallback guide](docs/en/neoforge-fallback.md)
 - [All installation and fallback translations (including clearly labeled English fallback summaries)](docs/README.md)
 - [Guida italiana Fabric](docs/it/server-guide.md)

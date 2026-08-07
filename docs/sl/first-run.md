@@ -1,0 +1,25 @@
+# Prvi zagon Jarocka
+
+## Izbira loaderja
+
+Namestite 64-bitni JDK Java 25 ali novejši, v namestitvenem programu Temurin omogočite JAVA_HOME in znova odprite terminal. Vedno zaženite korenski `start-server.bat` en `scripts/server-launch-settings.ini` in ne odpirajte neposredno `server/server.jar`.
+
+## Namestitev in EULA
+
+Zaženite `start-server.bat` ter izberite Fabric (priporočeno), NeoForge (rezerva) ali Forge (trenutno ni na voljo za Minecraft 26.2). `parameter-manager.bat` nastavlja RAM, GUI/konzolo, GC, `online-mode`, pasico in `AUTO_UPDATE_CHECK`. **Exit without saving** prekliče brez shranjevanja.
+
+## Varna zaustavitev
+
+Jarock samodejno prenese loader in pripete mode. Prvi zagon ustvari `server/eula.txt` in se običajno ustavi. Preberite Minecraft EULA in spremenite `eula=false` v `eula=true` le, če se strinjate. Pred prvim uspešnim zagonom ne uporabljajte `online-mode=false`.
+
+## Varna zaustavitev
+
+Znova zaženite, počakajte na svet, Geyser in Floodgate, vnesite `stop` ter počakajte `CLEAN SHUTDOWN COMPLETE` in `SAFE TO CLOSE`. Pri napaki sledite Suggested fix; pri pomešanih loaderjih naredite varnostno kopijo in zaženite `clean-server-runtime.bat`. Pred javnim dostopom preberite `TODO.md`.
+
+## Varnostna opomba
+
+Prvi zagon dokončajte z `online-mode=true`, da bo običajno preverjanje pristnosti delovalo.
+
+## Varnostna opomba
+
+Za namestitev posodobitve varno ustavite strežnik in zaženite `scripts/update-jarock.bat`.

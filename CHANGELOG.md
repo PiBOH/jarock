@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added the optional `AUTO_UPDATE_CHECK` setting to `parameter-manager.bat`. When enabled, `start-server.bat` performs a read-only GitHub release check and reports compatible updates without installing or modifying files; installation remains an explicit `scripts/update-jarock.bat` action.
 
+## [0.0.51-beta] - 2026-08-07
+
+### Added
+
+- Added a complete `first-run.md` guide in English and every supported documentation locale, covering Java, loader selection, parameter management, EULA acceptance, safe shutdown and troubleshooting.
+
 ### Removed
 
 - Removed the obsolete `scripts/bootstrap-fabric.ps1` legacy bootstrap; `scripts/bootstrap-server.ps1` is now the single maintained loader-aware bootstrap entry point.
@@ -498,7 +504,9 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.49-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.51-beta...HEAD
+[0.0.51-beta]: https://github.com/PiBOH/jarock/compare/0.0.50-beta...0.0.51-beta
+[0.0.50-beta]: https://github.com/PiBOH/jarock/compare/0.0.49-beta...0.0.50-beta
 [0.0.49-beta]: https://github.com/PiBOH/jarock/compare/0.0.48-beta...0.0.49-beta
 [0.0.48-beta]: https://github.com/PiBOH/jarock/compare/0.0.47-beta...0.0.48-beta
 [0.0.47-beta]: https://github.com/PiBOH/jarock/compare/0.0.46-beta...0.0.47-beta
