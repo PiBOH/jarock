@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Marked the parameter-manager and ready-banner verification items as complete in `TODO.md`.
 
+## [0.0.43-beta] - 2026-08-07
+
+### Fixed
+
+- **CI test harness: replaced the async output handlers with synchronous reading.** The harness previously used `Process` `DataReceived` event handlers whose scriptblock callback runs on a thread without a PowerShell runspace, so pwsh terminated with `PSInvalidOperationException: There is no Runspace available to run scripts in this thread`; on the CI runner this surfaced as the cryptic `0xE0434352` process crash that failed `test.yml` (and locally as exit 127). The server phase now reads stdout/stderr line by line on the main thread (15-minute deadline, `stop` sent when the ready banner appears), so every outcome is reported as a normal `FAIL`/`PASS` with a clean exit code.
+- **CI test harness: tolerated non-elevated runs.** Masking and restoring the persistent user/machine environment variables now skip (with a warning) any write that requires elevation, so the harness can run end to end in a non-admin shell. On CI (elevated runner) the full mask still applies.
+- **CI test harness: the bootstrap assertion now prints the child exit code** (`Bootstrap completes successfully (exit code N)`), so a future child crash is instantly diagnosable.
+
 ## [0.0.42-beta] - 2026-08-07
 
 ### Fixed

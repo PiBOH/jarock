@@ -43,11 +43,18 @@ function Strip-JavaEntries([string]$Value) {
     if ([string]::IsNullOrWhiteSpace($Value)) { return '' }
     return (($Value -split ';') | Where-Object { $_ -and $_ -notmatch '(?i)(java|jdk|jre|temurin|adoptium|hostedtoolcache)' }) -join ';'
 }
+function Set-EnvTolerant([string]$Name, [string]$Value, [string]$Scope, [string]$Label) {
+    try { [Environment]::SetEnvironmentVariable($Name, $Value, $Scope) }
+    catch { Write-Host "WARNING: could not $Label at $Scope level: $($_.Exception.Message)" -ForegroundColor Yellow }
+}
 function Mask-Java {
-    [Environment]::SetEnvironmentVariable('JAVA_HOME', $null, 'User')
-    [Environment]::SetEnvironmentVariable('JAVA_HOME', $null, 'Machine')
-    [Environment]::SetEnvironmentVariable('Path', (Strip-JavaEntries $Saved.UserPath), 'User')
-    [Environment]::SetEnvironmentVariable('Path', (Strip-JavaEntries $Saved.MachinePath), 'Machine')
+    # Writing the persistent machine/user environment requires elevation. On CI the
+    # runner is elevated, so the full mask applies; locally without admin the write is
+    # skipped with a warning and the process-level masking below still applies.
+    Set-EnvTolerant 'JAVA_HOME' $null 'User' 'mask JAVA_HOME'
+    Set-EnvTolerant 'JAVA_HOME' $null 'Machine' 'mask JAVA_HOME'
+    Set-EnvTolerant 'Path' (Strip-JavaEntries $Saved.UserPath) 'User' 'mask PATH'
+    Set-EnvTolerant 'Path' (Strip-JavaEntries $Saved.MachinePath) 'Machine' 'mask PATH'
     Remove-Item Env:JAVA_HOME -ErrorAction SilentlyContinue
     Remove-Item Env:JAROCK_JAVA_HOME -ErrorAction SilentlyContinue
     if (Test-Path -LiteralPath $Saved.JavaHomeFile -PathType Leaf) {
@@ -57,10 +64,12 @@ function Mask-Java {
     $env:Path = Strip-JavaEntries $env:Path
 }
 function Restore-Java {
-    [Environment]::SetEnvironmentVariable('JAVA_HOME', $Saved.UserJavaHome, 'User')
-    [Environment]::SetEnvironmentVariable('JAVA_HOME', $Saved.MachineJavaHome, 'Machine')
-    [Environment]::SetEnvironmentVariable('Path', $Saved.UserPath, 'User')
-    [Environment]::SetEnvironmentVariable('Path', $Saved.MachinePath, 'Machine')
+    # Mirror the tolerance of Mask-Java: never let a non-elevated restore failure in
+    # the finally block hide the real test result.
+    Set-EnvTolerant 'JAVA_HOME' $Saved.UserJavaHome 'User' 'restore JAVA_HOME'
+    Set-EnvTolerant 'JAVA_HOME' $Saved.MachineJavaHome 'Machine' 'restore JAVA_HOME'
+    Set-EnvTolerant 'Path' $Saved.UserPath 'User' 'restore PATH'
+    Set-EnvTolerant 'Path' $Saved.MachinePath 'Machine' 'restore PATH'
     if ([string]::IsNullOrWhiteSpace($Saved.ProcessJavaHome)) { Remove-Item Env:JAVA_HOME -ErrorAction SilentlyContinue }
     else { $env:JAVA_HOME = $Saved.ProcessJavaHome }
     if ([string]::IsNullOrWhiteSpace($Saved.JarockJavaHome)) { Remove-Item Env:JAROCK_JAVA_HOME -ErrorAction SilentlyContinue }
@@ -119,7 +128,7 @@ try {
     Write-Host '--- bootstrap output (real, tail) ---'
     $RealOutput | Select-Object -Last 20 | ForEach-Object { Write-Host $_ }
     Write-Host '--------------------------------------'
-    Assert ($RealCode -eq 0) 'Bootstrap completes successfully'
+    Assert ($RealCode -eq 0) "Bootstrap completes successfully (exit code $RealCode)"
     Assert (Test-Path -LiteralPath (Join-Path $Root 'server\java-path.txt') -PathType Leaf) 'Selected Java executable was stored'
 
     # 6. Accept the EULA and boot the real server; stop it automatically after the ready banner.
@@ -139,39 +148,47 @@ try {
     $Psi.RedirectStandardOutput = $true
     $Psi.RedirectStandardError = $true
     $ServerProc = [System.Diagnostics.Process]::Start($Psi)
+    # Read the server output synchronously on the main thread. Do NOT use the async
+    # DataReceived event handlers: their scriptblock callback runs on a thread without a
+    # runspace, so pwsh dies with "There is no Runspace available to run scripts in this
+    # thread" (on CI this surfaces as the cryptic 0xE0434352 process crash).
     $script:ServerStopped = $false
-    $OutputHandler = {
-        param($Sender, $EventArgs)
-        try {
-            if ($null -ne $EventArgs -and -not [string]::IsNullOrEmpty($EventArgs.Data)) {
-                Write-Host $EventArgs.Data
-                if (-not $script:ServerStopped -and ($EventArgs.Data -match 'The Jarock server has finished loading' -or $EventArgs.Data -match 'Done \(\d+\.\d+s\)')) {
+    $TimedOut = $false
+    $OutEof = $false; $ErrEof = $false
+    $OutTask = $ServerProc.StandardOutput.ReadLineAsync()
+    $ErrTask = $ServerProc.StandardError.ReadLineAsync()
+    $Deadline = [DateTime]::UtcNow.AddMinutes(15)
+    while (-not $ServerProc.HasExited -and -not $TimedOut) {
+        $OutReady = $OutTask.Wait(1000)
+        if ($OutReady) {
+            $Line = $OutTask.Result
+            if ($null -ne $Line) {
+                Write-Host $Line
+                if (-not $script:ServerStopped -and ($Line -match 'The Jarock server has finished loading' -or $Line -match 'Done \(\d+\.\d+s\)')) {
                     # Preferred trigger: the ready banner message. Fallback: the vanilla
                     # "Done (...)!" line, in case Geyser does not print its ready line on CI.
                     $script:ServerStopped = $true
-                    try { $Sender.StandardInput.WriteLine('stop') } catch { }
+                    try { $ServerProc.StandardInput.WriteLine('stop') } catch { }
                 }
             }
+            else { $OutEof = $true }
+            if (-not $OutEof) { $OutTask = $ServerProc.StandardOutput.ReadLineAsync() }
         }
-        catch {
-            # Never let an exception inside the async output handler crash the harness:
-            # when a background callback throws, pwsh terminates with 0xE0434352 instead
-            # of reporting a clean failure.
+        $ErrReady = $ErrTask.Wait(0)
+        if ($ErrReady) {
+            $ErrLine = $ErrTask.Result
+            if ($null -ne $ErrLine) { Write-Host $ErrLine }
+            else { $ErrEof = $true }
+            if (-not $ErrEof) { $ErrTask = $ServerProc.StandardError.ReadLineAsync() }
         }
+        if ([DateTime]::UtcNow -gt $Deadline) { $TimedOut = $true }
+        Start-Sleep -Milliseconds 150
     }
-    $ServerProc.add_OutputDataReceived($OutputHandler)
-    $ServerProc.add_ErrorDataReceived($OutputHandler)
-    $ServerProc.BeginOutputReadLine()
-    $ServerProc.BeginErrorReadLine()
-    if (-not $ServerProc.WaitForExit(900000)) {
-        try { $ServerProc.Kill() } catch { }
-        Assert $false 'Server reached the ready banner and stopped within 15 minutes'
-    }
-    else {
-        $ServerExitCode = $ServerProc.ExitCode
-        Assert $script:ServerStopped 'Ready banner appeared (server finished loading)'
-        Assert ($ServerExitCode -eq 0) "Server shut down cleanly (exit code $ServerExitCode)"
-    }
+    if ($TimedOut) { try { $ServerProc.Kill() } catch { } }
+    if (-not $ServerProc.HasExited) { $ServerProc.WaitForExit(30000) | Out-Null }
+    $ServerExitCode = $ServerProc.ExitCode
+    Assert $script:ServerStopped 'Ready banner appeared (server finished loading)'
+    Assert ($ServerExitCode -eq 0) "Server shut down cleanly (exit code $ServerExitCode)"
 
     # 7. Summary.
     Write-Host ''
