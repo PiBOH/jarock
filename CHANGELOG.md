@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Marked the parameter-manager and ready-banner verification items as complete in `TODO.md`.
 
+## [0.0.38-beta] - 2026-08-07
+
+### Fixed
+
+- Corrected the legacy Java 8 installer name in the `0.0.35-beta` changelog entry: it is `jre-8-windows-x64.exe`, not `jre-81-windows-x64.exe`. No file, code or documentation change was required anywhere else, because every reference already used the correct name.
+
 ## [0.0.37-beta] - 2026-08-07
 
 ### Fixed
@@ -31,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Renamed the bundled Temurin JDK installer to `OpenJDK25U-jdk_x64_windows_hotspot.msi` (same file, same SHA-256) and replaced the legacy Java 8 installer with `jre-81-windows-x64.exe` (file version 8.0.5010.8). `prerequisites/README.md` documents the new names and checksums.
+- Renamed the bundled Temurin JDK installer to `OpenJDK25U-jdk_x64_windows_hotspot.msi` (same file, same SHA-256) and replaced the legacy Java 8 installer with `jre-8-windows-x64.exe` (file version 8.0.5010.8). `prerequisites/README.md` documents the new names and checksums.
 
 ## [0.0.34-beta] - 2026-08-07
 
@@ -384,7 +390,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.37-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.38-beta...HEAD
+[0.0.38-beta]: https://github.com/PiBOH/jarock/compare/0.0.37-beta...0.0.38-beta
 [0.0.37-beta]: https://github.com/PiBOH/jarock/compare/0.0.36-beta...0.0.37-beta
 [0.0.36-beta]: https://github.com/PiBOH/jarock/compare/0.0.35-beta...0.0.36-beta
 [0.0.35-beta]: https://github.com/PiBOH/jarock/compare/0.0.34-beta...0.0.35-beta
