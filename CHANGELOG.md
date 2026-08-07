@@ -16,6 +16,22 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Continue testing Fabric and NeoForge loader selection on clean Windows checkouts.
 - Add an official Forge 26.2 installer and manifest only after the official build is available and verified.
 
+## [0.0.27-beta] - 2026-08-07
+
+### Fixed
+
+- Added automatic world-integrity repair in the launch flow: an incomplete world folder (for example a small `level.dat` or missing world generation settings, which makes Minecraft stop with "Overworld settings missing") is moved aside and a fresh world is generated on the next start.
+- Restricted `.gitignore` so runtime-generated configuration files under `server/config/` are no longer accidentally tracked; only the committed templates remain visible to Git.
+
+### Added
+
+- The parameter manager now shows the current settings summary when it opens (loader, RAM, mode, GC profile, Java auto-setup and online-mode), including an explicit warning when `online-mode=false` is active.
+
+### Changed
+
+- Raised the minimum allowed RAM from 512M to 1G across the parameter manager and the launch validation scripts, reducing the risk of interrupted world generation on low initial memory.
+- Added a world-corruption troubleshooting entry to `server-guide.md` in all 31 supported languages.
+
 ## [0.0.26-beta] - 2026-08-06
 
 ### Changed
