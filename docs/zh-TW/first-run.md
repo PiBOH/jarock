@@ -15,3 +15,9 @@ Jarock 會自動下載 loader 與固定版本的 mod。第一次執行會建立 
 ## 安全停止
 
 再次執行並等待 world、Geyser 與 Floodgate 完成載入。輸入 `stop`，等到出現 `CLEAN SHUTDOWN COMPLETE` 和 `SAFE TO CLOSE` 後再關閉視窗。發生錯誤時依照 Suggested fix 操作；若 loader 混用，請備份並執行 `clean-server-runtime.bat`。安裝更新時執行 `scripts/update-jarock.bat`，公開伺服器前閱讀 `TODO.md`。
+
+<!-- jarock-lan-addresses-zh-TW -->
+
+## LAN connection addresses
+
+Technical note: after startup, Jarock prints the local LAN IPv4 address. Java players use server-port over TCP; Bedrock players use Geyser bedrock.port over UDP. If Geyser is absent, Bedrock is unavailable. The addresses are still printed when the ASCII ready banner is disabled. Public access requires separate manual router and firewall configuration.

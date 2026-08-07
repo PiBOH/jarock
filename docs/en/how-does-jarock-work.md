@@ -161,7 +161,7 @@ After confirmation, it downloads the matching `jarock-lite` package (`jarock-lit
 
 The updater does not silently reinstall dependencies. The next `start-server.bat` run verifies the selected loader and existing mod files; it downloads only what is missing or invalid. Never run the updater while Minecraft is running, and never close the window during the update.
 
-That is Jarock: a reproducible, verified, local loader-aware server bootstrap with Fabric as the first choice, NeoForge as fallback, configurable safe launch parameters and clear safety boundaries.
+That is Jarock: a reproducible, verified, local loader-aware server bootstrap with Fabric as the first choice, NeoForge as fallback, configurable safe launch parameters, visible Java/Bedrock LAN addresses after startup and clear safety boundaries. The address message is still printed when `SHOW_READY_BANNER=false`; that setting hides only the ASCII art.
 
 <!-- jarock-safe-shutdown -->
 

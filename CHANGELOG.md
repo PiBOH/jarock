@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Print the configured LAN connection addresses immediately after the ready banner: Java players receive the `server-port` TCP address and Bedrock players receive Geyser's `bedrock.port` UDP address. The launcher does not change router or firewall settings.
+
+## [0.0.59-beta] - 2026-08-07
+
+### Added
+
+- Added a single ready-status message for Fabric and NeoForge that shows the detected LAN IPv4 address, the Java `server-port` over TCP, and the Geyser `bedrock.port` over UDP after the server is ready. When Geyser is absent, Bedrock is clearly reported as unavailable.
+
+### Changed
+
+- The address message remains visible when `Show ready banner` is disabled; only the ASCII-art banner is hidden.
+- Centralized the post-start status output so Fabric and NeoForge use the same behavior and explicitly remind operators that public access requires their own network configuration.
+
+
 - Moved the tracked version file, launch-settings template, updater launcher, and local launch-settings file under `scripts/`. Root launchers now migrate existing root-local settings automatically, while release and CI workflows use the new paths.
 
 ### Changed
@@ -556,7 +570,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.58-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.59-beta...HEAD
+[0.0.59-beta]: https://github.com/PiBOH/jarock/compare/0.0.58-beta...0.0.59-beta
 [0.0.58-beta]: https://github.com/PiBOH/jarock/compare/0.0.57-beta...0.0.58-beta
 [0.0.57-beta]: https://github.com/PiBOH/jarock/compare/0.0.56-beta...0.0.57-beta
 [0.0.56-beta]: https://github.com/PiBOH/jarock/compare/0.0.55-beta...0.0.56-beta

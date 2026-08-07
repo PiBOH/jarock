@@ -40,6 +40,63 @@ function Read-Settings {
     if (Test-Path -LiteralPath $Path -PathType Leaf) { foreach($Line in Get-Content -LiteralPath $Path) { if($Line -match '^\s*([A-Z_]+)=(.*?)\s*$'){$Values[$Matches[1]]=$Matches[2]} } }
     return $Values
 }
+function Get-LanIPv4 {
+    try {
+        $Addresses = @([System.Net.Dns]::GetHostAddresses([System.Net.Dns]::GetHostName()) | Where-Object {
+            $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork -and
+            $_.ToString() -notmatch '^127\.' -and
+            $_.ToString() -notmatch '^169\.254\.'
+        })
+        $Private = @($Addresses | Where-Object {
+            $_.ToString() -match '^(10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)'
+        })
+        if ($Private.Count -gt 0) { return $Private[0].ToString() }
+    } catch { }
+    return '127.0.0.1'
+}
+function Get-ConfiguredServerPort([string]$Path) {
+    if (Test-Path -LiteralPath $Path -PathType Leaf) {
+        $Content = Get-Content -LiteralPath $Path -Raw
+        if ($Content -match '(?m)^\s*server-port\s*=\s*(\d+)\s*(?:#.*)?$') { return $Matches[1] }
+    }
+    return '25565'
+}
+function Get-ConfiguredBedrockPort([string]$ServerDirectory, [string]$Loader) {
+    $DefaultPort = '19132'
+    $ConfigRoot = Join-Path $ServerDirectory 'config'
+    if (-not (Test-Path -LiteralPath $ConfigRoot -PathType Container)) { return $DefaultPort }
+    $Directories = @(Get-ChildItem -LiteralPath $ConfigRoot -Directory -ErrorAction SilentlyContinue | Where-Object {
+        $_.Name -match ('(?i)^Geyser-' + [regex]::Escape($Loader) + '$')
+    })
+    if ($Directories.Count -eq 0) { return $DefaultPort }
+    $ConfigPath = Join-Path $Directories[0].FullName 'config.yml'
+    if (-not (Test-Path -LiteralPath $ConfigPath -PathType Leaf)) { return $DefaultPort }
+    $InBedrock = $false
+    foreach ($ConfigLine in Get-Content -LiteralPath $ConfigPath) {
+        if ($ConfigLine -match '^\s*bedrock:\s*$') { $InBedrock = $true; continue }
+        if ($InBedrock -and $ConfigLine -match '^\S') { $InBedrock = $false }
+        if ($InBedrock -and $ConfigLine -match '^\s+port:\s*(\d+)\s*(?:#.*)?$') { return $Matches[1] }
+    }
+    return $DefaultPort
+}
+function Test-GeyserReadyLine([string]$Line) {
+    return $Line -match '(?i)(geyser\s+help|geyser.*(?:started|avviato|fatto).*udp|geyser.*udp|udp.*geyser)'
+}
+function Show-ReadyStatus([bool]$ShowBanner, [object[]]$ReadyBanner) {
+    Write-Host ''
+    if($ShowBanner -and $ReadyBanner.Count -gt 0){
+        foreach($BannerLine in $ReadyBanner){Write-Host $BannerLine -ForegroundColor Green}
+    }
+    Write-Host 'The Jarock server has finished loading.' -ForegroundColor Green
+    Write-Host "  Java Edition (LAN):    $($script:LanIPv4):$($script:JavaPort)" -ForegroundColor Cyan
+    if($script:GeyserPresent){
+        Write-Host "  Bedrock Edition (LAN): $($script:LanIPv4):$($script:BedrockPort) (UDP)" -ForegroundColor Cyan
+    } else {
+        Write-Host '  Bedrock Edition:       unavailable (Geyser is not installed)' -ForegroundColor Yellow
+    }
+    Write-Host '  Public access requires manual router/firewall or tunnel configuration.' -ForegroundColor DarkGray
+    Write-Host ''
+}
 function Set-NeoForgeJvmArgs([string]$Path,[string]$Xms,[string]$Xmx,[string]$Gc) {
     $Lines=@()
     if(Test-Path -LiteralPath $Path -PathType Leaf){$Lines=@(Get-Content -LiteralPath $Path)}
@@ -108,6 +165,9 @@ try {
     $script:GeyserPresent=$false
     $GeyserJar=Get-ChildItem -LiteralPath (Join-Path $ServerDirectory 'mods') -Filter 'Geyser-*.jar' -ErrorAction SilentlyContinue | Select-Object -First 1
     if($null -ne $GeyserJar){$script:GeyserPresent=$true}
+    $script:LanIPv4 = Get-LanIPv4
+    $script:JavaPort = Get-ConfiguredServerPort $Properties
+    $script:BedrockPort = Get-ConfiguredBedrockPort $ServerDirectory $Loader
     Push-Location -LiteralPath $ServerDirectory
     try {
         if($Loader -eq 'fabric') {
@@ -125,16 +185,13 @@ try {
                     } else { $Line=[string]$_ }
                     Write-Host $Line
                     if($Line -match '(?i)All dimensions are saved'){$script:WorldSaveComplete=$true}
-                    if($ShowBanner -and -not $script:BannerShown -and $script:ReadyBanner.Count -gt 0){
+                    if(-not $script:BannerShown){
                         $ReadyLine=$false
-                        if($script:GeyserPresent){$ReadyLine=$Line -match '(?i)geyser help'}
+                        if($script:GeyserPresent){$ReadyLine=Test-GeyserReadyLine $Line}
                         else{$ReadyLine=$Line -match 'Done \(\d+\.\d+s\)'}
                         if($ReadyLine){
                             $script:BannerShown=$true
-                            Write-Host ''
-                            foreach($BannerLine in $script:ReadyBanner){Write-Host $BannerLine -ForegroundColor Green}
-                            Write-Host 'The Jarock server has finished loading.' -ForegroundColor Green
-                            Write-Host ''
+                            Show-ReadyStatus $ShowBanner $script:ReadyBanner
                         }
                     }
                 }
@@ -155,16 +212,13 @@ try {
                     } else { $Line=[string]$_ }
                     Write-Host $Line
                     if($Line -match '(?i)All dimensions are saved'){$script:WorldSaveComplete=$true}
-                    if($ShowBanner -and -not $script:BannerShown -and $script:ReadyBanner.Count -gt 0){
+                    if(-not $script:BannerShown){
                         $ReadyLine=$false
-                        if($script:GeyserPresent){$ReadyLine=$Line -match '(?i)geyser help'}
+                        if($script:GeyserPresent){$ReadyLine=Test-GeyserReadyLine $Line}
                         else{$ReadyLine=$Line -match 'Done \(\d+\.\d+s\)'}
                         if($ReadyLine){
                             $script:BannerShown=$true
-                            Write-Host ''
-                            foreach($BannerLine in $script:ReadyBanner){Write-Host $BannerLine -ForegroundColor Green}
-                            Write-Host 'The Jarock server has finished loading.' -ForegroundColor Green
-                            Write-Host ''
+                            Show-ReadyStatus $ShowBanner $script:ReadyBanner
                         }
                     }
                 }

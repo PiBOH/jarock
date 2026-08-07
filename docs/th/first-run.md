@@ -15,3 +15,9 @@ Jarock จะดาวน์โหลด loader และ mod ที่กำห
 ## การหยุดอย่างปลอดภัย
 
 เริ่มใหม่และรอให้ world, Geyser และ Floodgate โหลดเสร็จ พิมพ์ `stop` แล้วรอ `CLEAN SHUTDOWN COMPLETE` และ `SAFE TO CLOSE` ก่อนปิดหน้าต่าง หากมีข้อผิดพลาดให้ทำตาม Suggested fix หาก loader ปะปนให้สำรองข้อมูลแล้วเรียก `clean-server-runtime.bat` ติดตั้งการอัปเดตด้วย `scripts/update-jarock.bat` และอ่าน `TODO.md` ก่อนเปิดใช้งานสาธารณะ
+
+<!-- jarock-lan-addresses-th -->
+
+## LAN connection addresses
+
+Technical note: after startup, Jarock prints the local LAN IPv4 address. Java players use server-port over TCP; Bedrock players use Geyser bedrock.port over UDP. If Geyser is absent, Bedrock is unavailable. The addresses are still printed when the ASCII ready banner is disabled. Public access requires separate manual router and firewall configuration.

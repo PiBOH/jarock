@@ -71,7 +71,7 @@ Save the file and run `start-server.bat` again. Do not accept the EULA unless yo
 
 Run `start-server.bat` again. Jarock verifies the loader, Java, templates, mods and Geyser configuration, then starts Minecraft.
 
-The server may create the world during this startup. Let it finish completely. When Geyser is installed, Jarock waits for the final Geyser startup message before showing the optional ready banner.
+The server may create the world during this startup. Let it finish completely. When Geyser is installed, Jarock waits for the final Geyser startup message before showing the optional ready banner. Immediately after the ready message, it prints the LAN address for Java players (`server-port`, TCP) and the LAN address for Bedrock players (Geyser's `bedrock.port`, UDP). If Geyser is not installed, the Bedrock address is reported as unavailable. If `Show ready banner` is disabled, the ASCII art is hidden but these connection addresses are still printed.
 
 If the server reports a world-generation error, do not repeatedly restart it. Stop safely, inspect `server/logs/latest.log` and `server/crash-reports/`, and restore a backup if necessary. Jarock may move clearly incomplete first-run world data aside as `world-corrupt-<timestamp>` so it is not overwritten.
 

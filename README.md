@@ -43,8 +43,9 @@ Neither Fabric nor NeoForge automatically runs Bukkit/Spigot/Paper plugins. If t
 4. The bootstrap installs the selected loader and downloads only the matching pinned mods.
 5. Read the generated `server/eula.txt` and, if you accept the Minecraft EULA, change `eula=false` to `eula=true`.
 6. Double-click `start-server.bat` again.
-7. Type `stop` in the server console to shut it down safely.
-8. **Do not close the window immediately after typing `stop`.** Wait until Minecraft finishes saving and Jarock prints `SAFE TO CLOSE`. If that message does not appear, treat the shutdown as abnormal and inspect the logs before restarting.
+7. When the server finishes loading, Jarock prints the LAN connection addresses: Java uses the configured `server-port` over TCP, and Bedrock uses the configured Geyser UDP port. This address message remains visible even when `Show ready banner` is disabled; only the ASCII art is hidden.
+8. Type `stop` in the server console to shut it down safely.
+9. **Do not close the window immediately after typing `stop`.** Wait until Minecraft finishes saving and Jarock prints `SAFE TO CLOSE`. If that message does not appear, treat the shutdown as abnormal and inspect the logs before restarting.
 
 Always use `start-server.bat` to launch this repository. It repairs Fabric's local launcher metadata before starting. Do not double-click `server/server.jar`: that bypasses the repair and Windows may associate it with Java 8 or Java 21, producing `UnsupportedClassVersionError` or a missing-game error.
 
@@ -68,7 +69,7 @@ Fabric is the default stack and NeoForge is the fallback. Each loader receives o
 - [Documentation and translation roadmap](docs/README.md)
 - [Project maintenance and contribution guidelines](CONTRIBUTING.md)
 
-The guides explain installation from zero, Java and Bedrock networking, Geyser/Floodgate authentication, optimization and redstone mods, backups, security, troubleshooting and the limitations of client-side mods. The parameter manager edits a temporary copy and commits settings only through Save and exit or Save and start; Exit without saving leaves the existing settings unchanged. It can also set Minecraft `online-mode`; keep it `true` by default, and use `false` only with a trusted authentication proxy because offline mode is unsafe on a public server. See [TODO.md](TODO.md) for the work that remains before public access.
+The guides explain installation from zero, Java and Bedrock networking, Geyser/Floodgate authentication, the LAN addresses printed after the ready banner, optimization and redstone mods, backups, security, troubleshooting and the limitations of client-side mods. The parameter manager edits a temporary copy and commits settings only through Save and exit or Save and start; Exit without saving leaves the existing settings unchanged. It can also set Minecraft `online-mode`; keep it `true` by default, and use `false` only with a trusted authentication proxy because offline mode is unsafe on a public server. See [TODO.md](TODO.md) for the work that remains before public access.
 
 ## License
 

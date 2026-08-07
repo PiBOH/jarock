@@ -23,3 +23,9 @@ Jarock loader болон тогтоосон mod-уудыг автоматаар 
 ## Аюулгүй байдлын тэмдэглэл
 
 Шинэчлэлт суулгахын тулд серверийг аюулгүй зогсоогоод `scripts/update-jarock.bat` ажиллуулна уу.
+
+<!-- jarock-lan-addresses-mn -->
+
+## LAN connection addresses
+
+Technical note: after startup, Jarock prints the local LAN IPv4 address. Java players use server-port over TCP; Bedrock players use Geyser bedrock.port over UDP. If Geyser is absent, Bedrock is unavailable. The addresses are still printed when the ASCII ready banner is disabled. Public access requires separate manual router and firewall configuration.

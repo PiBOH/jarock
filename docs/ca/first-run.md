@@ -23,3 +23,9 @@ Si falta Java, instal·la Java 25 de 64 bits i reobre el terminal. Per errors de
 ## Nota de seguretat
 
 Per instal·lar una actualització, atura el servidor amb seguretat i executa `scripts/update-jarock.bat`.
+
+<!-- jarock-lan-addresses-ca -->
+
+## LAN connection addresses
+
+Technical note: after startup, Jarock prints the local LAN IPv4 address. Java players use server-port over TCP; Bedrock players use Geyser bedrock.port over UDP. If Geyser is absent, Bedrock is unavailable. The addresses are still printed when the ASCII ready banner is disabled. Public access requires separate manual router and firewall configuration.

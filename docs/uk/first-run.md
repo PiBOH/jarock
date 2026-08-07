@@ -15,3 +15,9 @@ Jarock автоматично завантажує loader і закріплен�
 ## Безпечна зупинка
 
 Запустіть знову й дочекайтеся завершення завантаження world, Geyser і Floodgate. Введіть `stop` і не закривайте вікно до появи `CLEAN SHUTDOWN COMPLETE` та `SAFE TO CLOSE`. У разі помилки виконайте Suggested fix; якщо loader змішані, створіть резервну копію та запустіть `clean-server-runtime.bat`. Для оновлення запустіть `scripts/update-jarock.bat`, а перед публічним доступом прочитайте `TODO.md`.
+
+<!-- jarock-lan-addresses-uk -->
+
+## LAN connection addresses
+
+Technical note: after startup, Jarock prints the local LAN IPv4 address. Java players use server-port over TCP; Bedrock players use Geyser bedrock.port over UDP. If Geyser is absent, Bedrock is unavailable. The addresses are still printed when the ASCII ready banner is disabled. Public access requires separate manual router and firewall configuration.

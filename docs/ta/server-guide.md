@@ -13,6 +13,14 @@
 > If no compatible Java 25+ is found, start-server.bat launches the bundled Java installers in order: the legacy Java 8 runtime (jre-8-windows-x64.exe) first, then the Eclipse Temurin JDK 25 MSI (OpenJDK25U-jdk_x64_windows_hotspot.msi). Accept each UAC prompt and let the installers finish.
 > **தொழில்நுட்பக் குறிப்பு: களஞ்சியத்தின் root-ல் உள்ள `start-server.bat`-ஐ எப்போதும் பயன்படுத்தவும். `server.jar`-ஐ இருமுறை கிளிக் செய்ய வேண்டாம்; Windows Java 8 அல்லது Java 21-ஐ பயன்படுத்தலாம், ஆனால் Minecraft 26.2-க்கு 64-bit Java 25+ தேவை. [முழு ஆங்கில வழிகாட்டியை](../en/server-guide.md) பார்க்கவும்.**
 
+
+
+<!-- jarock-lan-addresses-ta -->
+
+## LAN connection addresses
+
+Technical note: after startup, Jarock prints the local LAN IPv4 address. Java players use server-port over TCP; Bedrock players use Geyser bedrock.port over UDP. If Geyser is absent, Bedrock is unavailable. The addresses are still printed when the ASCII ready banner is disabled. Public access requires separate manual router and firewall configuration.
+
 <!-- jarock-safe-shutdown -->
 
 ## பாதுகாப்பான நிறுத்தம்

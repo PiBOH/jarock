@@ -23,3 +23,9 @@ Slutför den första körningen med `online-mode=true` så att normal autentiser
 ## Säkerhetsinformation
 
 Stoppa servern säkert och kör `scripts/update-jarock.bat` för att installera en uppdatering.
+
+<!-- jarock-lan-addresses-sv -->
+
+## LAN connection addresses
+
+Technical note: after startup, Jarock prints the local LAN IPv4 address. Java players use server-port over TCP; Bedrock players use Geyser bedrock.port over UDP. If Geyser is absent, Bedrock is unavailable. The addresses are still printed when the ASCII ready banner is disabled. Public access requires separate manual router and firewall configuration.
