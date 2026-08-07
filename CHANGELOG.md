@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Marked the parameter-manager and ready-banner verification items as complete in `TODO.md`.
 
+## [0.0.40-beta] - 2026-08-07
+
+### Fixed
+
+- Hardened the `test.yml` first-run bootstrap test after review: the Java masking now also covers the `java-home.txt` file and the `JAROCK_JAVA_HOME` variable (the two sources the discovery reads first), the harness stops the server on the ready-banner message with the vanilla `Done (...)!` line as a fallback so a slow or failing Geyser on CI cannot cause a spurious timeout, and the workflow skips doc-only pushes (each run pulls roughly 190 MB of Git LFS installers) while remaining available on demand.
+- Raised the workflow job timeout to 45 minutes to leave room for the LFS pull, downloads and first world generation.
+
 ## [0.0.39-beta] - 2026-08-07
 
 ### Added
@@ -398,7 +405,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.39-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.40-beta...HEAD
+[0.0.40-beta]: https://github.com/PiBOH/jarock/compare/0.0.39-beta...0.0.40-beta
 [0.0.39-beta]: https://github.com/PiBOH/jarock/compare/0.0.38-beta...0.0.39-beta
 [0.0.38-beta]: https://github.com/PiBOH/jarock/compare/0.0.37-beta...0.0.38-beta
 [0.0.37-beta]: https://github.com/PiBOH/jarock/compare/0.0.36-beta...0.0.37-beta

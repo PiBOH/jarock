@@ -23,14 +23,21 @@ function Assert([bool]$Condition, [string]$Name) {
     else { $script:Fail++; Write-Host "FAIL: $Name" -ForegroundColor Red }
 }
 
-# Save every Java source so the environment can be restored exactly.
+# Save every Java source so the environment can be restored exactly. The discovery also
+# reads java-home.txt and JAROCK_JAVA_HOME first, so those are masked too. Note that the
+# Program Files and registry scans of java-runtime.ps1 are NOT masked: on the CI runner no
+# JDK 25 lives there (setup-java only uses the toolcache and environment variables), so the
+# "discovery finds nothing" assertion would fail loudly if a future runner image changed.
 $Saved = [ordered]@{
-    ProcessJavaHome = $env:JAVA_HOME
-    ProcessPath      = $env:Path
-    UserJavaHome     = [Environment]::GetEnvironmentVariable('JAVA_HOME', 'User')
-    MachineJavaHome  = [Environment]::GetEnvironmentVariable('JAVA_HOME', 'Machine')
-    UserPath         = [Environment]::GetEnvironmentVariable('Path', 'User')
-    MachinePath      = [Environment]::GetEnvironmentVariable('Path', 'Machine')
+    ProcessJavaHome   = $env:JAVA_HOME
+    ProcessPath       = $env:Path
+    UserJavaHome      = [Environment]::GetEnvironmentVariable('JAVA_HOME', 'User')
+    MachineJavaHome   = [Environment]::GetEnvironmentVariable('JAVA_HOME', 'Machine')
+    UserPath          = [Environment]::GetEnvironmentVariable('Path', 'User')
+    MachinePath       = [Environment]::GetEnvironmentVariable('Path', 'Machine')
+    JarockJavaHome    = $env:JAROCK_JAVA_HOME
+    JavaHomeFile      = Join-Path $Root 'java-home.txt'
+    JavaHomeBackup    = Join-Path $Root 'java-home.txt.jarock-test-backup'
 }
 function Strip-JavaEntries([string]$Value) {
     if ([string]::IsNullOrWhiteSpace($Value)) { return '' }
@@ -42,6 +49,11 @@ function Mask-Java {
     [Environment]::SetEnvironmentVariable('Path', (Strip-JavaEntries $Saved.UserPath), 'User')
     [Environment]::SetEnvironmentVariable('Path', (Strip-JavaEntries $Saved.MachinePath), 'Machine')
     Remove-Item Env:JAVA_HOME -ErrorAction SilentlyContinue
+    Remove-Item Env:JAROCK_JAVA_HOME -ErrorAction SilentlyContinue
+    if (Test-Path -LiteralPath $Saved.JavaHomeFile -PathType Leaf) {
+        if (Test-Path -LiteralPath $Saved.JavaHomeBackup -PathType Leaf) { Remove-Item -LiteralPath $Saved.JavaHomeBackup -Force }
+        Rename-Item -LiteralPath $Saved.JavaHomeFile -NewName ([IO.Path]::GetFileName($Saved.JavaHomeBackup)) -Force
+    }
     $env:Path = Strip-JavaEntries $env:Path
 }
 function Restore-Java {
@@ -51,6 +63,9 @@ function Restore-Java {
     [Environment]::SetEnvironmentVariable('Path', $Saved.MachinePath, 'Machine')
     if ([string]::IsNullOrWhiteSpace($Saved.ProcessJavaHome)) { Remove-Item Env:JAVA_HOME -ErrorAction SilentlyContinue }
     else { $env:JAVA_HOME = $Saved.ProcessJavaHome }
+    if ([string]::IsNullOrWhiteSpace($Saved.JarockJavaHome)) { Remove-Item Env:JAROCK_JAVA_HOME -ErrorAction SilentlyContinue }
+    else { $env:JAROCK_JAVA_HOME = $Saved.JarockJavaHome }
+    if (Test-Path -LiteralPath $Saved.JavaHomeBackup -PathType Leaf) { Move-Item -LiteralPath $Saved.JavaHomeBackup -Destination $Saved.JavaHomeFile -Force }
     $env:Path = $Saved.ProcessPath
 }
 
@@ -129,7 +144,9 @@ try {
         param($Sender, $EventArgs)
         if ($EventArgs.Data) {
             Write-Host $EventArgs.Data
-            if (-not $script:ServerStopped -and $EventArgs.Data -match 'The Jarock server has finished loading') {
+            if (-not $script:ServerStopped -and ($EventArgs.Data -match 'The Jarock server has finished loading' -or $EventArgs.Data -match 'Done \(\d+\.\d+s\)')) {
+                # Preferred trigger: the ready banner message. Fallback: the vanilla
+                # "Done (...)!" line, in case Geyser does not print its ready line on CI.
                 $script:ServerStopped = $true
                 try { $Sender.StandardInput.WriteLine('stop') } catch { }
             }
