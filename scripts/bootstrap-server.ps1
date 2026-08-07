@@ -7,6 +7,7 @@ Set-StrictMode -Version Latest
 $Root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $ServerDir = Join-Path $Root 'server'
 $ModsDir = Join-Path $ServerDir 'mods'
+$ConfigDir = Join-Path $ServerDir 'config'
 $SettingsPath = Join-Path $Root 'server-launch-settings.ini'
 $MinecraftVersion = '26.2'
 $JavaMinimum = 25
@@ -336,7 +337,10 @@ function Get-LatestDedicatedPowerRelease {
     }
 }
 function Install-DedicatedPower {
-    $Marker = Join-Path $ModsDir '.dedicatedpower-version'
+    New-Item -ItemType Directory -Force -Path $ConfigDir | Out-Null
+    # Migrate: remove the marker previously stored inside the mods folder.
+    Remove-Item -LiteralPath (Join-Path $ModsDir '.dedicatedpower-version') -Force -ErrorAction SilentlyContinue
+    $Marker = Join-Path $ConfigDir '.dedicatedpower-version'
     $StoredTag = ''; $StoredHash = ''; $StoredFile = ''
     if (Test-Path -LiteralPath $Marker -PathType Leaf) {
         $MarkerLines = @(Get-Content -LiteralPath $Marker)
