@@ -88,6 +88,7 @@ Write descriptive commits so the history can be read without opening diffs:
 3. Use a conventional prefix when it helps: `feat:`, `fix:`, `docs:`, `ci:`, `website:`, `refactor:`, `chore:`.
 4. A one-line subject is acceptable only for truly trivial commits; otherwise always include the body.
 5. Release commits keep the `v` prefix (for example `v0.0.28-beta`) as the subject and put the release details in the body.
+6. After each user-requested repository change, create a commit and push it to `main` after validation. Prefer a detailed `v`-prefixed subject for code, documentation and maintenance changes. For changes limited exclusively to the website or GitHub workflows, a normal descriptive subject without `v` is acceptable.
 
 ## Versioning, changelog and release commits
 
