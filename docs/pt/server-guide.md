@@ -5,5 +5,7 @@ Instale Java 25 de 64 bits, execute `start-server.bat` e use `parameter-manager.
 Consulte o guia completo em inglês: [../en/server-guide.md](../en/server-guide.md)
 
 
+> Jarock repairs an incomplete world automatically: if the world folder is missing required world-generation data, Jarock moves it aside (for example to server\world-corrupt-<date>) and generates a fresh world on the next start. If the moved folder contains data you need, stop the server and restore it from a backup.
+
 > Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Nota técnica: Use sempre `start-server.bat` na raiz do repositório. Não clique duas vezes em `server.jar`; o Windows pode usar Java 8 ou Java 21, enquanto o Minecraft 26.2 exige Java 25+ de 64 bits. Consulte o [guia completo em inglês](../en/server-guide.md).**

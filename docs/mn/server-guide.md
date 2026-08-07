@@ -5,5 +5,7 @@
 Англи бүрэн гарын авлагыг үз: [../en/server-guide.md](../en/server-guide.md)
 
 
+> Jarock repairs an incomplete world automatically: if the world folder is missing required world-generation data, Jarock moves it aside (for example to server\world-corrupt-<date>) and generates a fresh world on the next start. If the moved folder contains data you need, stop the server and restore it from a backup.
+
 > Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Техникийн тэмдэглэл: Репозиторийн үндсэн хавтас дахь `start-server.bat`-ийг үргэлж ашигла. `server.jar` дээр давхар бүү дар; Windows Java 8 эсвэл Java 21 ашиглаж болох ч Minecraft 26.2-д 64-бит Java 25+ шаардлагатай. [Англи хэл дээрх бүрэн заавар](../en/server-guide.md)-ыг үз.**

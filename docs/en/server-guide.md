@@ -479,6 +479,10 @@ Remove that mod and download a file that explicitly supports Minecraft 26.2 and 
 
 Open `logs/latest.log` and the newest file in `crash-reports/`. Look for the first `Caused by:` line, not only the final line. Common causes are a missing dependency, a client-only mod, duplicate mod files, or a version mismatch.
 
+### The server stops with "Overworld settings missing" or does not load the world
+
+The world folder is incomplete, usually because an earlier startup was interrupted during world generation (for example by a crash, a timeout, or a power loss). Jarock detects this automatically, moves the incomplete folder aside (for example to `server\world-corrupt-20260807-100428`), and generates a fresh world on the next start. If the moved folder contains data you need, stop the server and restore it from a backup. Never re-use a world that Minecraft refuses to load.
+
 ### Java works but Bedrock cannot connect
 
 Check all of these:

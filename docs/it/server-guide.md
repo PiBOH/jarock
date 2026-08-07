@@ -312,6 +312,10 @@ La versione Java è troppo vecchia. Minecraft 26.2 richiede Java 25 o più recen
 
 Apri `logs/latest.log` e l'ultimo file in `crash-reports/`. Cerca la prima riga `Caused by:`. Le cause comuni sono dipendenze mancanti, mod client-only, file duplicati o versioni sbagliate.
 
+### Il server si ferma con "Overworld settings missing" o non carica il mondo
+
+La cartella del mondo è incompleta, di solito perché un avvio precedente è stato interrotto durante la generazione del mondo (per esempio da un crash, un timeout o un calo di corrente). Jarock lo rileva automaticamente: sposta da parte la cartella incompleta, per esempio in `server\world-corrupt-20260807-100428`, e genera un mondo nuovo al prossimo avvio. Se la cartella spostata contiene dati che ti servono, ferma il server e ripristinala da un backup. Non riutilizzare mai un mondo che Minecraft rifiuta di caricare.
+
 ### Java funziona ma Bedrock no
 
 Controlla che Geyser e Floodgate siano caricati, che `auth-type` sia `floodgate`, che la porta UDP sia corretta e aperta nel firewall/router e che nessun altro servizio usi quella porta.

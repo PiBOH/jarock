@@ -8,9 +8,12 @@
 !/server/eula.txt.template
 !/server/README.md
 !/server/config/
+/server/config/*
 !/server/config/Geyser-Fabric/
+/server/config/Geyser-Fabric/*
 !/server/config/Geyser-Fabric/config.yml.template
 !/server/config/Geyser-NeoForge/
+/server/config/Geyser-NeoForge/*
 !/server/config/Geyser-NeoForge/config.yml.template
 
 # Local bootstrap cache
