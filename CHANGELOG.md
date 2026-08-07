@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.30-beta] - 2026-08-07
+
+### Changed
+
+- Narrowed the ready banner to the single word "JAROCK" (ANSI Regular figlet style, 49 columns) so it also fits inside the DedicatedPower server console without wrapping.
+
 ## [0.0.29-beta] - 2026-08-07
 
 ### Added
@@ -322,7 +328,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.29-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.30-beta...HEAD
+[0.0.30-beta]: https://github.com/PiBOH/jarock/compare/0.0.29-beta...0.0.30-beta
 [0.0.29-beta]: https://github.com/PiBOH/jarock/compare/0.0.28-beta...0.0.29-beta
 [0.0.28-beta]: https://github.com/PiBOH/jarock/compare/0.0.27-beta...0.0.28-beta
 [0.0.27-beta]: https://github.com/PiBOH/jarock/compare/0.0.26-beta...0.0.27-beta
