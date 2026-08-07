@@ -98,7 +98,8 @@ In questo repository non devi creare manualmente `start.bat`. Avvia `parameter-m
 - RAM iniziale e massima, per esempio `4G` e `6G`;
 - modalità console `nogui` oppure GUI;
 - profilo GC predefinito o `low-pause`;
-- configurazione automatica dell'ambiente Java dell'utente.
+- configurazione automatica dell'ambiente Java dell'utente;
+- banner di fine caricamento del server: mostra o nasconde l'avviso ASCII-art quando il server ha terminato l'avvio (opzione "Toggle ready banner").
 
 Le impostazioni vengono salvate in `server-launch-settings.ini`, un file locale ignorato da Git. Il programma controlla che la RAM sia valida, che sia almeno `1G`, che la RAM iniziale non superi quella massima e che non superi la memoria fisica rilevata.
 

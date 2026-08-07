@@ -10,7 +10,7 @@ The English guides are the source of truth for the technical procedure. The curr
 
 ## Runtime and launch configuration
 
-- `parameter-manager.bat` configures the loader, RAM, GUI/console mode, a conservative GC profile, online-mode and user-scoped Java environment setup. It edits a temporary copy and includes `Exit without saving` to discard all pending changes.
+- `parameter-manager.bat` configures the loader, RAM, GUI/console mode, a conservative GC profile, online-mode, the ready banner and user-scoped Java environment setup. It edits a temporary copy and includes `Exit without saving` to discard all pending changes.
 - `server-launch-settings.ini.template` is the tracked safe default.
 - `server-launch-settings.ini` is local and ignored by Git.
 - `java-home.txt` is an optional local override for a custom JDK folder and is ignored by Git; `JAROCK_JAVA_HOME` is the advanced equivalent.

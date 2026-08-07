@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.34-beta] - 2026-08-07
+
+### Changed
+
+- Synchronized the ready-banner documentation across all supported languages: the English and Italian detailed guides now mention the "Toggle ready banner" option in their parameter-manager sections, `docs/en/how-does-jarock-work.md` and `docs/README.md` include it in the manager's capabilities list, and all 29 fallback language summaries carry an English note pointing to the full English guide.
+
 ## [0.0.33-beta] - 2026-08-07
 
 ### Added
@@ -352,7 +358,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.33-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.34-beta...HEAD
+[0.0.34-beta]: https://github.com/PiBOH/jarock/compare/0.0.33-beta...0.0.34-beta
 [0.0.33-beta]: https://github.com/PiBOH/jarock/compare/0.0.32-beta...0.0.33-beta
 [0.0.32-beta]: https://github.com/PiBOH/jarock/compare/0.0.31-beta...0.0.32-beta
 [0.0.31-beta]: https://github.com/PiBOH/jarock/compare/0.0.30-beta...0.0.31-beta

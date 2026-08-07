@@ -17,7 +17,7 @@ The user does not manually assemble a Minecraft server from many websites. They 
 
 1. Install a supported 64-bit Java 25 runtime. **If you use the Eclipse Temurin installer:** during setup, make sure the "Set JAVA_HOME variable" option is enabled (click the red X icon and select "Will be installed on local hard drive"). Without `JAVA_HOME`, Jarock and the server may not find Java.
 2. Download or clone this repository.
-3. Optionally run `parameter-manager.bat` to choose the loader, RAM, GUI/console mode, a GC profile and user-scoped Java environment setup.
+3. Optionally run `parameter-manager.bat` to choose the loader, RAM, GUI/console mode, a GC profile, the ready banner and user-scoped Java environment setup.
 4. Run `start-server.bat`; if no loader is configured, Jarock asks whether to use Fabric, Forge or NeoForge and can open the parameter manager.
 5. The repository finds its own location.
 6. PowerShell checks Java, the Windows path and the repository files.

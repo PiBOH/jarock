@@ -128,7 +128,7 @@ You should see Java 25 and a 64-bit runtime. If Windows says that `java` is not 
 
 ## 5. Choose and install a server loader
 
-On the first `start-server.bat` run, Jarock asks which loader to use when `LOADER_TYPE=none`. You can choose Fabric, NeoForge or Forge; Forge is currently shown as unavailable because no official Minecraft 26.2 server build has been verified. The prompt can also open `parameter-manager.bat` so you configure RAM, GUI/console mode, GC profile, online-mode and Java environment setup before installation.
+On the first `start-server.bat` run, Jarock asks which loader to use when `LOADER_TYPE=none`. You can choose Fabric, NeoForge or Forge; Forge is currently shown as unavailable because no official Minecraft 26.2 server build has been verified. The prompt can also open `parameter-manager.bat` so you configure RAM, GUI/console mode, GC profile, online-mode, the ready banner and Java environment setup before installation.
 
 **Fabric (recommended):** Jarock downloads the official Fabric installer, installs Minecraft 26.2, renames the generated `fabric-server-launch.jar` to the local runtime entry point `server/server.jar`, and retains the vanilla engine as the ignored local `server/vanilla-server.jar`.
 
@@ -142,7 +142,7 @@ After choosing a loader, do not mix its mods with another loader. To change load
 
 ## 6. Configure and start Jarock
 
-For this repository, use `parameter-manager.bat` instead of creating a separate `start.bat`. It safely configures RAM, GUI/console mode, the GC profile, online-mode and optional user-scoped Java environment setup. The manager works on a temporary copy: choose Save and exit or Save and start to commit changes, or choose Exit without saving to discard every change and keep the previous settings. The settings are stored locally in `server-launch-settings.ini`.
+For this repository, use `parameter-manager.bat` instead of creating a separate `start.bat`. It safely configures RAM, GUI/console mode, the GC profile, online-mode, the ready banner and optional user-scoped Java environment setup. The manager works on a temporary copy: choose Save and exit or Save and start to commit changes, or choose Exit without saving to discard every change and keep the previous settings. The settings are stored locally in `server-launch-settings.ini`.
 
 The online-mode menu controls `server.properties`:
 
