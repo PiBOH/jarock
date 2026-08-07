@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 The active prerelease channel is now `beta`; new prerelease versions use the `-beta` suffix. Earlier `-alpha` entries are historical.
 
+### Changed
+
+- Documented the maintenance conventions in `CONTRIBUTING.md`: commits now require a detailed body explaining what and why, and `CHANGELOG.md` is updated with every change under `[Unreleased]` instead of only at release time.
+
 ### Planned
 
 - Complete the public-release checklist in `TODO.md`.

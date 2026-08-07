@@ -80,6 +80,16 @@ Before opening a pull request or release commit, run the checks available in the
 
 Do not claim that a full server start was tested unless the required Java runtime, downloads and environment were actually available. If a test cannot run, report the limitation and explain how another maintainer can reproduce it.
 
+## Commit messages
+
+Write descriptive commits so the history can be read without opening diffs:
+
+1. Start with a concise subject line in the imperative mood, ideally under 72 characters, that names the change, for example `fix: auto-repair incomplete world data before server start`.
+2. Add a blank line and then a body that explains what changed and why, the user-facing effect, and anything a reviewer must know. Do not repeat the whole diff; summarize the behavior.
+3. Use a conventional prefix when it helps: `feat:`, `fix:`, `docs:`, `ci:`, `website:`, `refactor:`, `chore:`.
+4. A one-line subject is acceptable only for truly trivial commits; otherwise always include the body.
+5. Release commits keep the `v` prefix (for example `v0.0.28-beta`) as the subject and put the release details in the body.
+
 ## Versioning, changelog and release commits
 
 Jarock uses Semantic Versioning in `version.txt`, for example:
@@ -87,6 +97,8 @@ Jarock uses Semantic Versioning in `version.txt`, for example:
 ```text
 MAJOR.MINOR.PATCH-prerelease
 ```
+
+Update `CHANGELOG.md` with every change, not only at release time: record user-facing changes under `[Unreleased]` in the same commit that introduces them, then fold them into the dated release section when the version is bumped.
 
 Use `CHANGELOG.md` according to Keep a Changelog. The current prerelease channel is `beta`; use `-beta` for new prerelease versions unless the maintainer explicitly changes the channel. Keep the current project version in `version.txt`; do not duplicate it in general documentation:
 
@@ -99,9 +111,9 @@ Use `CHANGELOG.md` according to Keep a Changelog. The current prerelease channel
 For a release-test or release commit:
 
 1. Bump `version.txt` deliberately.
-2. Add the matching dated section to `CHANGELOG.md`.
+2. Move the accumulated `[Unreleased]` entries into the matching dated section of `CHANGELOG.md`.
 3. Ensure the version tag does not already exist.
-4. Use a commit message beginning with `v`, such as `v0.0.12-beta: select compatible Java runtime`. Historical `-alpha` entries remain in the changelog; new prerelease commits should use the current `-beta` channel.
+4. Use a subject beginning with `v`, such as `v0.0.28-beta`, and describe the release in the commit body. Historical `-alpha` entries remain in the changelog; new prerelease commits should use the current `-beta` channel.
 5. Push to `main` only after validation. The GitHub Actions workflow then validates the version and changelog and creates the prerelease.
 
 `server/server.jar` is generated locally and ignored. Do not add it, loader runtimes, downloaded mods or generated files to a commit.
