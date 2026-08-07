@@ -43,7 +43,10 @@ function Strip-JavaEntries([string]$Value) {
     if ([string]::IsNullOrWhiteSpace($Value)) { return '' }
     return (($Value -split ';') | Where-Object { $_ -and $_ -notmatch '(?i)(java|jdk|jre|temurin|adoptium|hostedtoolcache)' }) -join ';'
 }
-function Set-EnvTolerant([string]$Name, [string]$Value, [string]$Scope, [string]$Label) {
+function Set-EnvTolerant([string]$Name, $Value, [string]$Scope, [string]$Label) {
+    # $Value stays untyped so that $null flows through unchanged: with a [string]
+    # coercion, $null becomes '' and SetEnvironmentVariable would WRITE an empty value
+    # to the persistent registry instead of removing the variable.
     try { [Environment]::SetEnvironmentVariable($Name, $Value, $Scope) }
     catch { Write-Host "WARNING: could not $Label at $Scope level: $($_.Exception.Message)" -ForegroundColor Yellow }
 }
@@ -161,7 +164,9 @@ try {
     while (-not $ServerProc.HasExited -and -not $TimedOut) {
         $OutReady = $OutTask.Wait(1000)
         if ($OutReady) {
-            $Line = $OutTask.Result
+            # Guard the Result access: if the child hard-crashes and its pipe faults
+            # instead of EOF, Result throws; treat it as end of stream.
+            try { $Line = $OutTask.Result } catch { $OutEof = $true; $Line = $null }
             if ($null -ne $Line) {
                 Write-Host $Line
                 if (-not $script:ServerStopped -and ($Line -match 'The Jarock server has finished loading' -or $Line -match 'Done \(\d+\.\d+s\)')) {
@@ -176,7 +181,7 @@ try {
         }
         $ErrReady = $ErrTask.Wait(0)
         if ($ErrReady) {
-            $ErrLine = $ErrTask.Result
+            try { $ErrLine = $ErrTask.Result } catch { $ErrEof = $true; $ErrLine = $null }
             if ($null -ne $ErrLine) { Write-Host $ErrLine }
             else { $ErrEof = $true }
             if (-not $ErrEof) { $ErrTask = $ServerProc.StandardError.ReadLineAsync() }

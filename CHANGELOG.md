@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Marked the parameter-manager and ready-banner verification items as complete in `TODO.md`.
 
+## [0.0.44-beta] - 2026-08-07
+
+### Fixed
+
+- **CI test harness: the environment masking/restoring now removes variables instead of writing empty ones.** `Set-EnvTolerant` no longer coerces its value to `[string]`, so the `$null` used to mask or restore an unset `JAVA_HOME`/`Path` flows through unchanged and `[Environment]::SetEnvironmentVariable` deletes the variable, exactly like the original code. Previously the coercion turned `$null` into `''`, which wrote a stray empty `JAVA_HOME=` into the persistent user registry (and HKLM when run elevated, e.g. on CI).
+- **CI test harness: the synchronous reader now tolerates a faulted pipe.** If the child process hard-crashes and its output pipe faults instead of reaching EOF, the `ReadLineAsync` result access is guarded and treated as end of stream, so the harness still reports a clean `FAIL`/`HARNESS ERROR` with exit code 1.
+
 ## [0.0.43-beta] - 2026-08-07
 
 ### Fixed
