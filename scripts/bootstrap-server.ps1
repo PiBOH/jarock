@@ -4,6 +4,15 @@ param()
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
+# PSModulePath hygiene: the Microsoft Store build of PowerShell 7 can prepend its own
+# module folders ahead of the Windows PowerShell 5.1 folders in the process PSModulePath.
+# Windows PowerShell 5.1 then loads incompatible PS7 modules and loses cmdlets such as
+# Get-FileHash. Put the standard 5.1 module folders first so the right modules always load.
+if ($PSVersionTable.PSEdition -eq 'Desktop') {
+    $StandardModulePath = "$env:ProgramFiles\WindowsPowerShell\Modules;$env:SystemRoot\System32\WindowsPowerShell\v1.0\Modules"
+    if ($env:PSModulePath -notlike "$StandardModulePath*") { $env:PSModulePath = "$StandardModulePath;$env:PSModulePath" }
+}
+
 $Root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $ServerDir = Join-Path $Root 'server'
 $ModsDir = Join-Path $ServerDir 'mods'
@@ -162,11 +171,32 @@ function Get-SelectedJava {
     return $Result.Selected
 }
 function Get-Sha512([string]$Path) { return (Get-FileHash -Algorithm SHA512 -LiteralPath $Path).Hash.ToLowerInvariant() }
+function Invoke-RobustDownload([string]$Url, [string]$Path) {
+    # Prefer curl.exe (bundled with Windows 10 1803+ and every GitHub Actions Windows
+    # runner): it follows redirects, retries transient CDN failures and never crashes
+    # the way Windows PowerShell 5.1 Invoke-WebRequest can on certain responses. Fall
+    # back to Invoke-WebRequest only when curl.exe is not available.
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $Path) | Out-Null
+    $Curl = Get-Command curl.exe -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($null -ne $Curl) {
+        for ($Attempt = 1; $Attempt -le 3; $Attempt++) {
+            & $Curl.Source -sS -L --fail --connect-timeout 30 --max-time 600 --retry 3 --retry-delay 2 -A 'Jarock-loader-bootstrap' -o $Path $Url
+            if ($LASTEXITCODE -eq 0) { return }
+            if ($Attempt -lt 3) {
+                Write-Host "Download attempt $Attempt of 3 failed (curl exit code $LASTEXITCODE); retrying ..." -ForegroundColor Yellow
+                Start-Sleep -Seconds 3
+            }
+        }
+        Remove-Item -LiteralPath $Path -Force -ErrorAction SilentlyContinue
+        throw "curl.exe failed downloading $Url (exit code $LASTEXITCODE); the incomplete file was removed."
+    }
+    Invoke-WebRequest -Uri $Url -OutFile $Path -Headers @{ 'User-Agent' = 'Jarock-loader-bootstrap' } -UseBasicParsing
+}
 function Download-AndVerify([string]$Url, [string]$Path, [string]$Hash) {
     try {
         if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
             Write-Host "Downloading $([IO.Path]::GetFileName($Path)) ..."
-            Invoke-WebRequest -Uri $Url -OutFile $Path -Headers @{ 'User-Agent' = 'Jarock-loader-bootstrap' } -UseBasicParsing
+            Invoke-RobustDownload -Url $Url -Path $Path
         }
         if ((Get-Sha512 $Path) -ne $Hash.ToLowerInvariant()) {
             Remove-Item -LiteralPath $Path -Force -ErrorAction SilentlyContinue
@@ -369,7 +399,7 @@ function Install-DedicatedPower {
     if ($NeedDownload) {
         Write-Host "Downloading DedicatedPower $Tag ($($Asset.name)) ..."
         try {
-            Invoke-WebRequest -Uri $Asset.browser_download_url -OutFile $Target -Headers @{ 'User-Agent' = 'Jarock-loader-bootstrap' } -UseBasicParsing
+            Invoke-RobustDownload -Url $Asset.browser_download_url -Path $Target
         }
         catch {
             Remove-Item -LiteralPath $Target -Force -ErrorAction SilentlyContinue

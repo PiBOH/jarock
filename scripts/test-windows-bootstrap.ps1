@@ -142,14 +142,21 @@ try {
     $script:ServerStopped = $false
     $OutputHandler = {
         param($Sender, $EventArgs)
-        if ($EventArgs.Data) {
-            Write-Host $EventArgs.Data
-            if (-not $script:ServerStopped -and ($EventArgs.Data -match 'The Jarock server has finished loading' -or $EventArgs.Data -match 'Done \(\d+\.\d+s\)')) {
-                # Preferred trigger: the ready banner message. Fallback: the vanilla
-                # "Done (...)!" line, in case Geyser does not print its ready line on CI.
-                $script:ServerStopped = $true
-                try { $Sender.StandardInput.WriteLine('stop') } catch { }
+        try {
+            if ($null -ne $EventArgs -and -not [string]::IsNullOrEmpty($EventArgs.Data)) {
+                Write-Host $EventArgs.Data
+                if (-not $script:ServerStopped -and ($EventArgs.Data -match 'The Jarock server has finished loading' -or $EventArgs.Data -match 'Done \(\d+\.\d+s\)')) {
+                    # Preferred trigger: the ready banner message. Fallback: the vanilla
+                    # "Done (...)!" line, in case Geyser does not print its ready line on CI.
+                    $script:ServerStopped = $true
+                    try { $Sender.StandardInput.WriteLine('stop') } catch { }
+                }
             }
+        }
+        catch {
+            # Never let an exception inside the async output handler crash the harness:
+            # when a background callback throws, pwsh terminates with 0xE0434352 instead
+            # of reporting a clean failure.
         }
     }
     $ServerProc.add_OutputDataReceived($OutputHandler)
@@ -171,6 +178,14 @@ try {
     Write-Host "Test summary: $Pass passed, $Fail failed." -ForegroundColor Cyan
     if ($Fail -gt 0) { exit 1 }
     Write-Host 'All tests passed.' -ForegroundColor Green
+}
+catch {
+    # Report any unexpected failure with a clear message and a clean exit code instead of
+    # letting pwsh die with the cryptic 0xE0434352 (unhandled .NET exception) code.
+    Write-Host ''
+    Write-Host "HARNESS ERROR: $($_.Exception.Message)" -ForegroundColor Red
+    if ($_.ScriptStackTrace) { Write-Host $_.ScriptStackTrace -ForegroundColor DarkGray }
+    exit 1
 }
 finally {
     Restore-Java

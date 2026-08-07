@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Marked the parameter-manager and ready-banner verification items as complete in `TODO.md`.
 
+## [0.0.42-beta] - 2026-08-07
+
+### Fixed
+
+- **Download robustness**: `scripts/bootstrap-server.ps1` (and the retained `scripts/bootstrap-fabric.ps1`) now download through `curl.exe` when available (bundled with Windows 10 1803+ and every GitHub Actions Windows runner), with automatic retries on transient failures, falling back to `Invoke-WebRequest` only when `curl.exe` is missing. This prevents the intermittent Windows PowerShell 5.1 download crashes observed on the CI test runner (exit code `0xE0434352`, an unhandled .NET exception) and makes fresh installs more reliable against flaky CDN responses.
+- **PowerShell 5.1 module-path hygiene**: `scripts/bootstrap-server.ps1` and `scripts/bootstrap-fabric.ps1` now put the standard Windows PowerShell 5.1 module folders first in `PSModulePath`. On machines where the Microsoft Store build of PowerShell 7 prepends its own module folders, Windows PowerShell 5.1 can load incompatible PS7 modules and lose cmdlets such as `Get-FileHash`, which broke mod hash verification ("The term 'Get-FileHash' is not recognized"). The bootstrap now always loads the correct modules.
+- **CI test harness hardening**: `scripts/test-windows-bootstrap.ps1` wraps its phases in a top-level error handler and makes the async output handler exception-proof, so an unexpected failure is reported as a clean exit code with visible `FAIL`/`HARNESS ERROR` lines instead of the cryptic `0xE0434352` process crash.
+- **CI workflow**: `test.yml` now uses `actions/setup-java@v5` (v4 is deprecated).
+
 ## [0.0.41-beta] - 2026-08-07
 
 ### Changed
