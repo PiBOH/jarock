@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Jarock first-run guide for setting up a Minecraft server.">
+<title>First run - Jarock</title>
+<link rel="stylesheet" href="../styles.css">
+<link rel="icon" type="image/png" href="../icon.png">
+<meta property="og:image" content="../icon.png">
+<script defer src="../script.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="site-header">
+  <div class="container header-main">
+    <a class="brand" href="../index.html"><span class="brand-mark"><img src="../icon.png" alt="Jarock logo"></span><span><span class="brand-name">Jarock</span><span class="brand-subtitle">Minecraft server toolkit &amp; utilities</span></span></a>
+    <div class="header-meta"><strong>First-run guide</strong>From download to first safe startup</div>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+  </div>
+  <nav class="site-nav" aria-label="Main navigation"><ul class="container nav-list" id="primary-nav"><li><a href="../index.html">Main Page</a></li><li><a href="../tools.html">Tools</a></li><li><a href="../downloads.html">Downloads</a></li><li><a href="../docs.html" aria-current="page">Documentation</a></li><li><a href="../faq.html">FAQ</a></li><li><a href="../changelog.html">Changelog</a></li><li><a href="../about.html">About</a></li><li><a href="https://github.com/PiBOH/jarock/issues">Issues</a></li></ul></nav>
+</header>
+<main id="main-content" class="page-layout">
+  <aside class="sidebar">
+    <h2 class="sidebar-heading">First run</h2>
+    <ul>
+      <li><a href="#before">Before starting</a></li>
+      <li><a href="#launcher">Start the launcher</a></li>
+      <li><a href="#loader">Choose a loader</a></li>
+      <li><a href="#settings">Configure settings</a></li>
+      <li><a href="#eula">Accept the EULA</a></li>
+      <li><a href="#startup">Finish the first startup</a></li>
+      <li><a href="#shutdown">Stop safely</a></li>
+      <li><a href="../docs.html">Documentation index</a></li>
+    </ul>
+  </aside>
+  <section class="content">
+    <p class="breadcrumb"><a href="../index.html">Main Page</a> &gt; <a href="../docs.html">Documentation</a> &gt; First run</p>
+    <h1>Jarock first run</h1>
+    <p class="lead">A beginner-friendly sequence for taking a fresh Jarock download to a correctly configured server.</p>
+    <div class="notice">This is the compact website edition. The <a href="https://github.com/PiBOH/jarock/blob/main/docs/en/first-run.md">complete first-run guide</a> contains the full troubleshooting table and translations.</div>
+
+    <h2 id="before">1. Before starting</h2>
+    <ol class="list-tight">
+      <li>Use a 64-bit Windows installation and install a 64-bit Java 25 or newer JDK. With Eclipse Temurin, enable <strong>Set JAVA_HOME variable</strong> during installation, then reopen Command Prompt.</li>
+      <li>Extract the complete repository into any writable folder. Paths containing spaces are supported.</li>
+      <li>Do not double-click <code>server/server.jar</code>; always use <code>start-server.bat</code> from the repository root.</li>
+      <li>Make sure the computer has enough RAM, disk space, and Internet access for the first download.</li>
+    </ol>
+
+    <h2 id="launcher">2. Start the launcher</h2>
+    <p>Double-click <code>start-server.bat</code>. Jarock resolves its own folder, checks the path, Windows long-path support, Java, templates, and settings in <code>scripts/server-launch-settings.ini</code>.</p>
+    <p>If Java 25 is missing and the bundled installers are present, Jarock launches <code>prerequisites/jre-8-windows-x64.exe</code> first and the Temurin JDK 25 MSI second. Accept each Windows UAC prompt and let both installers finish. Java 8 is a legacy prerequisite; Java 25 runs Minecraft.</p>
+    <p>Jarock never opens router ports, changes firewall rules, or configures port forwarding.</p>
+
+    <h2 id="loader">3. Choose a loader</h2>
+    <p>On a fresh setup, choose one loader:</p>
+    <table class="catalog-table compact"><tr><th scope="col">Choice</th><th scope="col">When to use it</th></tr><tr><td><strong>Fabric</strong></td><td>Recommended first choice for the supplied optimization, redstone, Geyser, Floodgate, and technical mods.</td></tr><tr><td><strong>NeoForge</strong></td><td>Fallback when a required mod is not available for Fabric.</td></tr><tr><td><strong>Forge</strong></td><td>Not installed silently while an official, verified Minecraft 26.2 server build is unavailable.</td></tr></table>
+    <p>Jarock downloads and verifies the selected loader and its matching server-side manifest. Never mix Fabric and NeoForge files. If you change loader later, back up the world and run <code>clean-server-runtime.bat</code> first.</p>
+
+    <h2 id="settings">4. Configure optional settings</h2>
+    <p>The first-run flow can open <code>parameter-manager.bat</code> in a separate window. It shows current values on the right and editable options on the left. You can configure RAM, GUI or console mode, the garbage collector profile, Java environment setup, <code>online-mode</code>, the ready banner, and the read-only startup update check.</p>
+    <p>Choose <strong>Save and exit</strong> or <strong>Save and start</strong> to keep changes. Choose <strong>Exit without saving</strong> to cancel without changing existing settings. The default is <code>online-mode=true</code>.</p>
+    <div class="notice warning"><strong>Important:</strong> do not set <code>online-mode=false</code> before the first successful startup. Let Minecraft create its initial files with <code>online-mode=true</code>. Only change it later for a private, trusted setup when you understand the authentication risks.</div>
+
+    <h2 id="eula">5. Accept the Minecraft EULA</h2>
+    <p>The first bootstrap creates <code>server/eula.txt</code> and normally stops. Read the <a href="https://www.minecraft.net/eula">Minecraft EULA</a>. If you agree, change <code>eula=false</code> to <code>eula=true</code>, save the file, and run <code>start-server.bat</code> again. Jarock never accepts the EULA for you.</p>
+
+    <h2 id="startup">6. Let the first server startup finish</h2>
+    <p>Run the launcher again. Let it download and verify the loader, mods, and Geyser/Floodgate configuration, then wait while Minecraft generates the world. When Geyser is installed, the optional ready banner appears only after Geyser has started.</p>
+    <p>If a world-generation error occurs, stop safely and inspect <code>server/logs/latest.log</code> and <code>server/crash-reports/</code>. Do not repeatedly restart or delete a world before making a backup.</p>
+
+    <h2 id="shutdown">7. Stop safely</h2>
+    <p>Type <code>stop</code> in the server console. Do <strong>not</strong> close the window immediately. Wait until Minecraft finishes saving and Jarock prints:</p>
+    <pre class="command">CLEAN SHUTDOWN COMPLETE
+SAFE TO CLOSE</pre>
+    <p>Only then close the window. Force-closing while the world is being saved can leave <code>level.dat</code> or world-generation data incomplete and may appear as world corruption.</p>
+
+    <h2>After the first run</h2>
+    <ul class="list-tight">
+      <li>Keep <code>online-mode=true</code> unless this is a private, trusted test server.</li>
+      <li>Back up the world before changing loaders, mods, or important settings.</li>
+      <li>Complete <a href="https://github.com/PiBOH/jarock/blob/main/TODO.md">TODO.md</a> and read the <a href="https://github.com/PiBOH/jarock/blob/main/docs/en/network-and-ports.md">network guide</a> before making the server public.</li>
+      <li>If the startup update check is enabled, it only reports updates. Run <code>scripts/update-jarock.bat</code> explicitly to install one.</li>
+      <li>Keep generated worlds, logs, libraries, downloaded jars, keys, and local settings private.</li>
+    </ul>
+    <p>For the full architecture explanation, read <a href="how-does-jarock-work.html">How does Jarock work?</a>.</p>
+  </section>
+</main>
+<footer class="site-footer"><div class="container footer-links"><a href="../index.html">Main Page</a><a href="../tools.html">Tools</a><a href="../docs.html">Docs</a><a href="../faq.html">FAQ</a><a href="../about.html">About</a></div><div class="container footer-note">For the complete first-run procedure and all translations, use the <a href="https://github.com/PiBOH/jarock/blob/main/docs/en/first-run.md">repository guide</a>.</div></footer>
+</body>
+</html>
