@@ -48,19 +48,21 @@ echo   %OPT3%%PAD:~0,21%[%GUI_MODE%]
 echo   %OPT4%%PAD:~0,14%[%GC_PROFILE%]
 echo   %OPT5%%PAD:~0,3%[%AUTO_CONFIGURE_JAVA%]
 echo   %OPT6%%PAD:~0,29%[%ONLINE_MODE%]
+echo   %OPT7%%PAD:~0,28%[%SHOW_READY_BANNER%]
 echo.
-echo   %OPT7%%PAD:~0,22%[starts the server]
-echo   %OPT8%%PAD:~0,34%[saves settings]
-echo   %OPT9%%PAD:~0,28%[restores defaults]
+echo   %OPT8%%PAD:~0,22%[starts the server]
+echo   %OPT9%%PAD:~0,34%[saves settings]
 echo   %OPT0%%PAD:~0,28%[discards changes]
+echo   %OPTX%%PAD:~0,28%[restores defaults]
 echo.
 if /i "%ONLINE_MODE%"=="false" echo  WARNING: online-mode=false disables Mojang authentication. Keep it for private testing only.
 echo.
-choice /c 1234567890 /n /m "Choose an option: "
+choice /c 1234567890X /n /m "Choose an option: "
+if errorlevel 11 goto reset
 if errorlevel 10 goto cancel_exit
-if errorlevel 9 goto reset
-if errorlevel 8 goto save_exit
-if errorlevel 7 goto save_start
+if errorlevel 9 goto save_exit
+if errorlevel 8 goto save_start
+if errorlevel 7 goto banner_toggle
 if errorlevel 6 goto online_mode_menu
 if errorlevel 5 goto java_toggle
 if errorlevel 4 goto gc_menu
@@ -185,6 +187,21 @@ if errorlevel 1 pause
 pause
 goto menu
 
+:banner_toggle
+cls
+call :read_value SHOW_READY_BANNER true
+if /i "%SHOW_READY_BANNER%"=="true" (
+    set "NEW_BANNER=false"
+    echo The ready banner will be hidden when the server finishes loading.
+) else (
+    set "NEW_BANNER=true"
+    echo The ready banner will be shown when the server finishes loading.
+)
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name SHOW_READY_BANNER -Value "%NEW_BANNER%"
+if errorlevel 1 pause
+pause
+goto menu
+
 :reset
 copy /y "%TEMPLATE%" "%TEMP_SETTINGS%" >nul
 if errorlevel 1 (
@@ -252,10 +269,11 @@ set "OPT3=3. Choose GUI or console mode"
 set "OPT4=4. Choose garbage-collection profile"
 set "OPT5=5. Toggle automatic user Java environment setup"
 set "OPT6=6. Choose online-mode"
-set "OPT7=7. Save and start the server"
-set "OPT8=8. Save and exit"
-set "OPT9=9. Reset safe defaults"
+set "OPT7=7. Toggle ready banner"
+set "OPT8=8. Save and start the server"
+set "OPT9=9. Save and exit"
 set "OPT0=0. Exit without saving"
+set "OPTX=X. Reset safe defaults"
 call :read_value LOADER_TYPE none
 call :read_value RAM_INITIAL 4G
 call :read_value RAM_MAX 4G
@@ -263,6 +281,7 @@ call :read_value GUI_MODE nogui
 call :read_value GC_PROFILE default
 call :read_value AUTO_CONFIGURE_JAVA true
 call :read_value ONLINE_MODE true
+call :read_value SHOW_READY_BANNER true
 exit /b 0
 
 :read_value

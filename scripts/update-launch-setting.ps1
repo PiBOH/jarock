@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)] [string]$SettingsPath,
-    [Parameter(Mandatory = $true)] [ValidateSet('LOADER_TYPE','GUI_MODE','GC_PROFILE','AUTO_CONFIGURE_JAVA','ONLINE_MODE')] [string]$Name,
+    [Parameter(Mandatory = $true)] [ValidateSet('LOADER_TYPE','GUI_MODE','GC_PROFILE','AUTO_CONFIGURE_JAVA','ONLINE_MODE','SHOW_READY_BANNER')] [string]$Name,
     [Parameter(Mandatory = $true)] [string]$Value
 )
 
@@ -15,6 +15,7 @@ try {
         'GC_PROFILE' { if ($Value -notin @('default','low-pause')) { throw 'GC_PROFILE must be default or low-pause.' } }
         'AUTO_CONFIGURE_JAVA' { if ($Value -notin @('true','false')) { throw 'AUTO_CONFIGURE_JAVA must be true or false.' } }
         'ONLINE_MODE' { if ($Value -notin @('true','false')) { throw 'ONLINE_MODE must be true or false.' } }
+        'SHOW_READY_BANNER' { if ($Value -notin @('true','false')) { throw 'SHOW_READY_BANNER must be true or false.' } }
     }
     $Content = Get-Content -LiteralPath $SettingsPath -Raw
     $SettingPattern = "(?m)^$Name=.*$"

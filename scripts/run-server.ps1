@@ -99,8 +99,10 @@ try {
     Set-ServerOnlineMode $Properties $Online
     Repair-IncompleteWorld $ServerDirectory
     Write-Host "Loader=$Loader; Java=$($Runtime.Version); memory=$InitialMemory/$MaximumMemory; mode=$GuiMode; GC=$GcProfile" -ForegroundColor Green
+    $ShowBanner=$true
+    if($Settings.ContainsKey('SHOW_READY_BANNER')){$ShowBanner=([string]$Settings['SHOW_READY_BANNER']) -notmatch '^(?i:false|no|0)$'}
     $ReadyBanner=@(); $ReadyBannerPath=Join-Path $PSScriptRoot 'server-ready-banner.txt'
-    if(Test-Path -LiteralPath $ReadyBannerPath -PathType Leaf){$ReadyBanner=@(Get-Content -LiteralPath $ReadyBannerPath)}
+    if($ShowBanner -and (Test-Path -LiteralPath $ReadyBannerPath -PathType Leaf)){$ReadyBanner=@(Get-Content -LiteralPath $ReadyBannerPath)}
     $script:BannerShown=$false
     $script:GeyserPresent=$false
     $GeyserJar=Get-ChildItem -LiteralPath (Join-Path $ServerDirectory 'mods') -Filter 'Geyser-*.jar' -ErrorAction SilentlyContinue | Select-Object -First 1
@@ -121,7 +123,7 @@ try {
                         if([string]::IsNullOrWhiteSpace($Line)){return}
                     } else { $Line=[string]$_ }
                     Write-Host $Line
-                    if(-not $script:BannerShown -and $script:ReadyBanner.Count -gt 0){
+                    if($ShowBanner -and -not $script:BannerShown -and $script:ReadyBanner.Count -gt 0){
                         $ReadyLine=$false
                         if($script:GeyserPresent){$ReadyLine=$Line -match '(?i)geyser help'}
                         else{$ReadyLine=$Line -match 'Done \(\d+\.\d+s\)'}
@@ -150,7 +152,7 @@ try {
                         if([string]::IsNullOrWhiteSpace($Line)){return}
                     } else { $Line=[string]$_ }
                     Write-Host $Line
-                    if(-not $script:BannerShown -and $script:ReadyBanner.Count -gt 0){
+                    if($ShowBanner -and -not $script:BannerShown -and $script:ReadyBanner.Count -gt 0){
                         $ReadyLine=$false
                         if($script:GeyserPresent){$ReadyLine=$Line -match '(?i)geyser help'}
                         else{$ReadyLine=$Line -match 'Done \(\d+\.\d+s\)'}

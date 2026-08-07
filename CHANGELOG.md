@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.33-beta] - 2026-08-07
+
+### Added
+
+- Added a `SHOW_READY_BANNER` launch setting that controls the ASCII-art banner shown when the server finishes loading. It can be toggled from `parameter-manager.bat` (option 7, "Toggle ready banner") and defaults to `true`.
+
+### Changed
+
+- The ready banner is now fully suppressed at runtime when `SHOW_READY_BANNER=false`: `scripts/run-server.ps1` skips loading and printing it in both the Fabric and NeoForge launch paths.
+- `scripts/validate-launch-settings.ps1` and `scripts/update-launch-setting.ps1` now recognize and validate the new setting, and the settings template ships with it documented.
+
 ## [0.0.32-beta] - 2026-08-07
 
 ### Changed
@@ -341,7 +352,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.32-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.33-beta...HEAD
+[0.0.33-beta]: https://github.com/PiBOH/jarock/compare/0.0.32-beta...0.0.33-beta
 [0.0.32-beta]: https://github.com/PiBOH/jarock/compare/0.0.31-beta...0.0.32-beta
 [0.0.31-beta]: https://github.com/PiBOH/jarock/compare/0.0.30-beta...0.0.31-beta
 [0.0.30-beta]: https://github.com/PiBOH/jarock/compare/0.0.29-beta...0.0.30-beta

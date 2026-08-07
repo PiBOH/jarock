@@ -9,3 +9,5 @@ GUI_MODE=nogui
 AUTO_CONFIGURE_JAVA=true
 ONLINE_MODE=true
 GC_PROFILE=default
+# Set to false to hide the ASCII-art banner that is shown when the server finishes loading.
+SHOW_READY_BANNER=true
