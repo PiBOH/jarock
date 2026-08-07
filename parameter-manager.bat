@@ -204,11 +204,13 @@ cls
 call :read_value AUTO_UPDATE_CHECK false
 if /i "%AUTO_UPDATE_CHECK%"=="true" (
     set "NEW_AUTO_UPDATE=false"
-    echo Automatic startup update checks will be disabled.
+    echo Run startup update check will be disabled.
+echo Jarock will not contact GitHub during startup.
 ) else (
     set "NEW_AUTO_UPDATE=true"
-    echo Read-only startup update checks will be enabled.
-    echo Jarock will never install an update automatically.
+echo Run startup update check will be enabled.
+echo This is a read-only notification check; Jarock will never install an update automatically.
+echo To install an update, stop the server and run scripts\update-jarock.bat manually.
 )
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name AUTO_UPDATE_CHECK -Value "%NEW_AUTO_UPDATE%"
 if errorlevel 1 pause
@@ -297,12 +299,12 @@ set "OPT3=3. Choose GUI or console mode"
 set "OPT4=4. Choose garbage-collection profile"
 set "OPT5=5. Toggle automatic user Java environment setup"
 set "OPT6=6. Choose online-mode"
-set "OPT7=7. Toggle ready banner"
+set "OPT7=7. Show ready banner"
 set "OPT8=8. Save and start the server"
 set "OPT9=9. Save and exit"
 set "OPT0=0. Exit without saving"
 set "OPTX=X. Reset safe defaults"
-set "OPTY=Y. Toggle startup update check"
+set "OPTY=Y. Run startup update check"
 call :read_value LOADER_TYPE none
 call :read_value RAM_INITIAL 4G
 call :read_value RAM_MAX 4G

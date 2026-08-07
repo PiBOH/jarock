@@ -84,6 +84,8 @@ scripts/run-server.ps1
 scripts/configure-java-environment.ps1
 scripts/configure-geyser.ps1
 scripts/enable-long-paths.ps1
+scripts/update-jarock.bat
+scripts/validate-eula.ps1
 scripts/server-launch-settings.ini.template
 server/mods-manifest.ps1
 server/server.properties.template
@@ -155,7 +157,7 @@ Jarock does not open router ports, modify firewall rules, configure port forward
 
 The `scripts/version.txt` contains the installed Jarock version. If `AUTO_UPDATE_CHECK=true`, `start-server.bat` performs a read-only release check before startup and reports a compatible newer release without modifying files. To install an update, first stop the server and wait for `SAFE TO CLOSE`, then run `scripts/update-jarock.bat`; startup checks never install updates automatically. The updater compares the local version with GitHub releases in the same channel: beta installations look for newer beta releases, while stable installations look for newer stable releases. Draft releases and releases without the expected package are ignored.
 
-After confirmation, it downloads the matching `jarock-full` package and its published SHA-512 checksum, verifies the archive before extraction, checks the package version and excludes `.github/` and `.website/`. It updates only the project files from the package. It preserves the generated `server/` directory, world data, mods, libraries, server properties, EULA, Geyser/Floodgate keys, local launch settings, Java selection, logs and the updater cache. A rollback copy of overwritten project files is stored under `.cache/update-backups/`.
+After confirmation, it downloads the matching `jarock-lite` package (`jarock-lite.zip` for stable releases or `jarock-lite-<version>.zip` for beta releases) and its published SHA-512 checksum, verifies the archive before extraction, checks the package version and excludes `.github/` and `.website/`. The Lite package is used intentionally because an existing installation already has its Java prerequisites; the updater does not download or reinstall them. It updates only the project files from the package. It preserves the generated `server/` directory, world data, mods, libraries, server properties, EULA, Geyser/Floodgate keys, local launch settings, Java selection, logs and the updater cache. A rollback copy of overwritten project files is stored under `.cache/update-backups/`.
 
 The updater does not silently reinstall dependencies. The next `start-server.bat` run verifies the selected loader and existing mod files; it downloads only what is missing or invalid. Never run the updater while Minecraft is running, and never close the window during the update.
 

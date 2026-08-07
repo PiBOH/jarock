@@ -11,5 +11,6 @@ ONLINE_MODE=true
 GC_PROFILE=default
 # Set to false to hide the ASCII-art banner that is shown when the server finishes loading.
 SHOW_READY_BANNER=true
-# When true, startup performs a read-only GitHub release check. It never installs updates automatically.
+# When true, startup runs a read-only GitHub release check and reports updates.
+# It never installs anything. To update, stop the server and run scripts/update-jarock.bat.
 AUTO_UPDATE_CHECK=false

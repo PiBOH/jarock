@@ -14,6 +14,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Added the optional `AUTO_UPDATE_CHECK` setting to `parameter-manager.bat`. When enabled, `start-server.bat` performs a read-only GitHub release check and reports compatible updates without installing or modifying files; installation remains an explicit `scripts/update-jarock.bat` action.
+- Replaced the fragile exact-line EULA check with a tolerant PowerShell validator, so harmless whitespace, casing and Windows/Unix line-ending differences do not make a valid `eula=true` appear to be rejected.
+- Changed `scripts/update-jarock.ps1` to update existing installations from the matching Lite release package (`jarock-lite.zip` or `jarock-lite-<version>.zip`) while retaining SHA-512, version, channel, process, Git-safety and rollback checks. Existing Java prerequisites are preserved and are not reinstalled during updates.
+- Clarified the parameter manager: `Show ready banner` controls the startup banner, while `Run startup update check` performs notifications only. It never installs updates automatically; use `scripts/update-jarock.bat` after safely stopping the server.
+
+## [0.0.55-beta] - 2026-08-07
+
+### Added
+
+- Added a dedicated `scripts/validate-eula.ps1` helper for robust launcher-side EULA validation.
+
+### Changed
+
+- Updated the English and localized documentation to use the clearer parameter-manager labels `Show ready banner` and `Run startup update check`.
+- Documented that existing installations use the Lite package for updates because Java prerequisites are already present.
 
 ## [0.0.54-beta] - 2026-08-07
 
@@ -522,7 +536,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.54-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.55-beta...HEAD
+[0.0.55-beta]: https://github.com/PiBOH/jarock/compare/0.0.54-beta...0.0.55-beta
 [0.0.54-beta]: https://github.com/PiBOH/jarock/compare/0.0.53-beta...0.0.54-beta
 [0.0.53-beta]: https://github.com/PiBOH/jarock/compare/0.0.52-beta...0.0.53-beta
 [0.0.52-beta]: https://github.com/PiBOH/jarock/compare/0.0.51-beta...0.0.52-beta

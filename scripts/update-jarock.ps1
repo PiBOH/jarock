@@ -98,13 +98,13 @@ function Get-ReleaseCandidate($Release, $LocalVersion) {
     try { $ReleaseVersion = Parse-SemVer ([string]$Release.tag_name) } catch { return $null }
     $SameChannel = (($null -ne $LocalVersion.Pre) -eq ($null -ne $ReleaseVersion.Pre))
     if (-not $SameChannel -or (Compare-SemVer $ReleaseVersion $LocalVersion) -le 0) { return $null }
-    $ExpectedName = if ($null -ne $LocalVersion.Pre) { "jarock-full-$($ReleaseVersion.Text).zip" } else { 'jarock-full.zip' }
+    $ExpectedName = if ($null -ne $LocalVersion.Pre) { "jarock-lite-$($ReleaseVersion.Text).zip" } else { 'jarock-lite.zip' }
     $Asset = @($Release.assets | Where-Object { $_.name -eq $ExpectedName } | Select-Object -First 1)
     $ChecksumName = "$ExpectedName.sha512"
     $ChecksumAsset = @($Release.assets | Where-Object { $_.name -eq $ChecksumName } | Select-Object -First 1)
-    # Only the Full package is accepted: it is the recommended distribution and
-    # contains the bundled prerequisites needed by a clean Windows installation.
-    # Never silently downgrade an update to the Lite package or an unchecked archive.
+    # Updates use the Lite package: an existing installation already has its
+    # prerequisites, and the Lite archive avoids downloading/installing Java again.
+    # The package and its SHA-512 checksum are still required; never apply an unchecked archive.
     if ($Asset.Count -eq 0 -or $ChecksumAsset.Count -eq 0) { return $null }
     [PSCustomObject]@{ Release = $Release; Version = $ReleaseVersion; Asset = $Asset[0]; ChecksumAsset = $ChecksumAsset[0] }
 }
@@ -121,7 +121,7 @@ function Find-LatestUpdate($LocalVersion) {
         if ($SameChannel -and (Compare-SemVer $ReleaseVersion $LocalVersion) -gt 0) { $UnverifiedNewer += $ReleaseVersion.Text }
     }
     if ($Candidates.Count -eq 0) {
-        if ($UnverifiedNewer.Count -gt 0) { throw "A newer $($(if ($null -ne $LocalVersion.Pre) { 'prerelease/beta' } else { 'stable' })) release exists, but it has no matching Full package and SHA-512 checksum. Install it manually from the GitHub Releases page before using the updater again." }
+        if ($UnverifiedNewer.Count -gt 0) { throw "A newer $($(if ($null -ne $LocalVersion.Pre) { 'prerelease/beta' } else { 'stable' })) release exists, but it has no matching Lite package and SHA-512 checksum. Install it manually from the GitHub Releases page before using the updater again." }
         return $null
     }
     $Best = $Candidates[0]
@@ -215,9 +215,7 @@ function Test-Package([string]$ZipPath, $ExpectedVersion) {
         $StartEntry = $Archive.GetEntry('start-server.bat')
         $UpdateEntry = $Archive.GetEntry('scripts/update-jarock.ps1')
         $UpdateLauncherEntry = $Archive.GetEntry('scripts/update-jarock.bat')
-        $PrerequisiteJre = $Archive.GetEntry('prerequisites/jre-8-windows-x64.exe')
-        $PrerequisiteJdk = $Archive.GetEntry('prerequisites/OpenJDK25U-jdk_x64_windows_hotspot.msi')
-        if ($null -eq $VersionEntry -or $null -eq $StartEntry -or $null -eq $UpdateEntry -or $null -eq $UpdateLauncherEntry -or $null -eq $PrerequisiteJre -or $null -eq $PrerequisiteJdk) { throw 'The downloaded Full package is missing required Jarock or Java prerequisite files.' }
+        if ($null -eq $VersionEntry -or $null -eq $StartEntry -or $null -eq $UpdateEntry -or $null -eq $UpdateLauncherEntry) { throw 'The downloaded Lite package is missing required Jarock updater files.' }
         $Reader = New-Object IO.StreamReader($VersionEntry.Open())
         try { $PackageVersion = Parse-SemVer $Reader.ReadToEnd() } finally { $Reader.Dispose() }
         if ((Compare-SemVer $PackageVersion $ExpectedVersion) -ne 0) { throw "The package version ($($PackageVersion.Text)) does not match the release version ($($ExpectedVersion.Text))." }
@@ -252,7 +250,7 @@ function Test-ProtectedProjectPath([string]$Relative) {
     $Normalized = ([string]$Relative).Replace('\','/')
     $Comparable = $Normalized.ToLowerInvariant()
     $Top = $Comparable.Split('/')[0]
-    if (@('.git', '.github', '.website', '.cache') -contains $Top) { return $true }
+    if (@('.git', '.github', '.website', '.cache', 'prerequisites') -contains $Top) { return $true }
     if ($Comparable -in @('.gitignore', '.gitattributes', 'scripts/server-launch-settings.ini', 'java-home.txt')) { return $true }
     if ($Top -ne 'server') { return $false }
 

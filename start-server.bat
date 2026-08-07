@@ -69,7 +69,7 @@ if not exist "%ROOT%\server\eula.txt" (
     exit /b 1
 )
 
-findstr /r /c:"^eula=true$" "%ROOT%\server\eula.txt" >nul
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\validate-eula.ps1" -Path "%ROOT%\server\eula.txt" >nul
 if errorlevel 1 (
     echo.
     echo ERROR: The Minecraft EULA has not been accepted.

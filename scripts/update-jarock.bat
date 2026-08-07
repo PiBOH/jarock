@@ -22,6 +22,8 @@ if not exist "%SCRIPT_DIR%\update-jarock.ps1" (
 echo.
 echo Jarock updater
 echo Do not run this file while the server is running.
+echo The updater uses the Lite release package because this installation already has its prerequisites.
+echo Java installers are not downloaded, reinstalled or removed by an update.
 echo The updater preserves the world, server runtime, mods, libraries and local settings.
 echo.
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%\update-jarock.ps1"
