@@ -124,6 +124,8 @@ You should see Java 25 and a 64-bit runtime. If Windows says that `java` is not 
 
 > If the official Fabric installer or the Minecraft launcher reports a different Java requirement, follow the requirement shown by that official tool. Never force an older Java runtime.
 
+> If no compatible Java is installed, `start-server.bat` launches the bundled Java installers automatically: first the legacy Java 8 runtime (`prerequisites/jre-8-windows-x64.exe`) and, once it finishes, the Eclipse Temurin JDK 25 MSI (`prerequisites/OpenJDK25U-jdk_x64_windows_hotspot.msi`). Accept each UAC prompt and let the installers finish; Jarock then re-checks Java and continues.
+
 ---
 
 ## 5. Choose and install a server loader

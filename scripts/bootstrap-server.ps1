@@ -93,8 +93,55 @@ function Select-Loader {
     }
     return $Loader
 }
+function Install-BundledPrerequisites {
+    # When no compatible Java is installed, launch the bundled installers in order:
+    # first the legacy Java 8 runtime, then the Eclipse Temurin JDK 25 MSI. Each
+    # installer runs elevated (UAC prompt) and the next one starts only after the
+    # previous one has closed.
+    $PrereqDir = Join-Path $Root 'prerequisites'
+    $JreInstaller = Join-Path $PrereqDir 'jre-8-windows-x64.exe'
+    $JdkInstaller = Join-Path $PrereqDir 'OpenJDK25U-jdk_x64_windows_hotspot.msi'
+    $JreName = [IO.Path]::GetFileName($JreInstaller)
+    $JdkName = [IO.Path]::GetFileName($JdkInstaller)
+    $Missing = @()
+    if (-not (Test-Path -LiteralPath $JreInstaller -PathType Leaf)) { $Missing += $JreName }
+    if (-not (Test-Path -LiteralPath $JdkInstaller -PathType Leaf)) { $Missing += $JdkName }
+    if ($Missing.Count -gt 0) {
+        Write-Host "The bundled Java installers are missing in prerequisites/: $($Missing -join ', ')" -ForegroundColor Yellow
+        Write-Host 'Download a 64-bit Java 25+ JDK from https://adoptium.net/temurin/releases/?version=25&os=windows&arch=x64&package=jdk, or place the installers in the prerequisites folder and run start-server.bat again.' -ForegroundColor Yellow
+        return $false
+    }
+    Write-Host ''
+    Write-Host 'No compatible 64-bit Java 25+ runtime was found.' -ForegroundColor Yellow
+    Write-Host 'Jarock will launch the bundled Java installers in order. A Windows UAC prompt appears for each one; accept it and let the installer finish.' -ForegroundColor Cyan
+    Write-Host "  1) $JreName - legacy Java 8 runtime" -ForegroundColor Cyan
+    Write-Host "  2) $JdkName - Eclipse Temurin JDK 25 (the runtime the server needs)" -ForegroundColor Cyan
+    Write-Host "Starting $JreName ..." -ForegroundColor Green
+    try {
+        $JreProcess = Start-Process -FilePath $JreInstaller -Verb RunAs -Wait -PassThru -ErrorAction Stop
+        Write-Host "$JreName finished (exit code $($JreProcess.ExitCode))." -ForegroundColor Green
+    }
+    catch {
+        Write-Host "WARNING: Could not start ${JreName}: $($_.Exception.Message)" -ForegroundColor Yellow
+        return $false
+    }
+    Write-Host "Starting $JdkName ..." -ForegroundColor Green
+    try {
+        $JdkProcess = Start-Process -FilePath 'msiexec.exe' -ArgumentList @('/i', ('"' + $JdkInstaller + '"')) -Verb RunAs -Wait -PassThru -ErrorAction Stop
+        Write-Host "$JdkName finished (exit code $($JdkProcess.ExitCode))." -ForegroundColor Green
+    }
+    catch {
+        Write-Host "WARNING: Could not start ${JdkName}: $($_.Exception.Message)" -ForegroundColor Yellow
+        return $false
+    }
+    return $true
+}
 function Get-SelectedJava {
     $Result = Find-CompatibleJava -MinimumMajor $JavaMinimum
+    if ($null -eq $Result.Selected) {
+        Install-BundledPrerequisites
+        $Result = Find-CompatibleJava -MinimumMajor $JavaMinimum
+    }
     if ($null -eq $Result.Selected) {
         $Details = if ($Result.Inspected.Count -gt 0) { (($Result.Inspected | ForEach-Object { "$($_.Path) -> Java $($_.Major), 64-bit=$($_.Is64Bit)" }) -join '; ') } else { 'No usable Java executable was found.' }
         Stop-WithGuidance "No compatible 64-bit Java $JavaMinimum+ runtime was found. Detected candidates: $Details" 'Install a 64-bit Java 25+ JDK, set java-home.txt to its JDK folder if necessary, close and reopen the terminal, then run start-server.bat again.'

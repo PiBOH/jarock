@@ -12,7 +12,7 @@ Install the JDK installer, not only a Java Runtime Environment. Jarock requires 
 
 ## Legacy installer
 
-- `jre-81-windows-x64.exe` — legacy Java 8 x64 runtime (file version 8.0.5010.8).
+- `jre-8-windows-x64.exe` — legacy Java 8 x64 runtime (file version 8.0.5010.8).
 - SHA-256: `d99eb213b11b84fed4d0ffbb7595c77c7b952035a9025ed062c2d9c95ea22a8e`
 - Official source: [Oracle Java SE downloads](https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html)
 

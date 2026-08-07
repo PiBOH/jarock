@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.36-beta] - 2026-08-07
+
+### Added
+
+- When no compatible 64-bit Java 25+ runtime is found, `start-server.bat` now installs the bundled Java prerequisites automatically: it launches the legacy Java 8 installer (`prerequisites/jre-8-windows-x64.exe`) first, waits for it to finish, then launches the Eclipse Temurin JDK 25 MSI (`prerequisites/OpenJDK25U-jdk_x64_windows_hotspot.msi`) and re-checks Java afterwards. Each installer runs elevated and shows a UAC prompt. If the installers are missing, the bootstrap keeps the previous download guidance.
+
+### Changed
+
+- Renamed the bundled legacy Java 8 installer to `jre-8-windows-x64.exe` (same file, same SHA-256) and documented the automatic prerequisite installation in the guides in all supported languages.
+
 ## [0.0.35-beta] - 2026-08-07
 
 ### Changed
@@ -364,7 +374,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.35-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.36-beta...HEAD
+[0.0.36-beta]: https://github.com/PiBOH/jarock/compare/0.0.35-beta...0.0.36-beta
 [0.0.35-beta]: https://github.com/PiBOH/jarock/compare/0.0.34-beta...0.0.35-beta
 [0.0.34-beta]: https://github.com/PiBOH/jarock/compare/0.0.33-beta...0.0.34-beta
 [0.0.33-beta]: https://github.com/PiBOH/jarock/compare/0.0.32-beta...0.0.33-beta
