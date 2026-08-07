@@ -18,7 +18,7 @@ function Get-Megabytes([string]$Value) {
 try {
     $InitialMb = Get-Megabytes $InitialMemory
     $MaximumMb = Get-Megabytes $MaximumMemory
-    if ($InitialMb -lt 512 -or $MaximumMb -lt 512) { throw 'RAM values must be at least 512M.' }
+    if ($InitialMb -lt 1024 -or $MaximumMb -lt 1024) { throw 'RAM values must be at least 1G.' }
     if ($InitialMb -gt $MaximumMb) { throw 'RAM_INITIAL cannot be greater than RAM_MAX.' }
     $ComputerSystem = Get-CimInstance -ClassName Win32_ComputerSystem -ErrorAction SilentlyContinue
     if ($null -ne $ComputerSystem -and $null -ne $ComputerSystem.TotalPhysicalMemory) {

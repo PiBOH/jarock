@@ -23,7 +23,7 @@ function Assert-MemoryValue([string]$Name, [string]$Value) {
     if ($Value -notmatch '^(?<amount>[1-9][0-9]*)(?<unit>[mMgG])$') { throw "$Name has an invalid value '$Value'. Use a positive amount followed by M or G, for example 4G." }
     $Mb = [int64]$Matches['amount']
     if ($Matches['unit'].ToUpperInvariant() -eq 'G') { $Mb *= 1024 }
-    if ($Mb -lt 512) { throw "$Name is too small ('$Value'). Use at least 512M." }
+    if ($Mb -lt 1024) { throw "$Name is too small ('$Value'). Use at least 1G." }
     return $Mb
 }
 function Set-ServerOnlineMode([string]$Path, [string]$Value) {

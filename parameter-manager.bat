@@ -40,7 +40,7 @@ cls
 echo ================================================
 echo Jarock server parameter manager
 echo ================================================
-echo.
+call :show_summary
 echo 1. Choose server mod loader
 echo 2. Configure RAM
 echo 3. Choose GUI or console mode
@@ -95,7 +95,7 @@ echo Current values:
 call :read_value RAM_INITIAL 4G
 call :read_value RAM_MAX 4G
 echo.
-echo Enter values such as 4G or 6144M. Minimum is 512M.
+echo Enter values such as 4G or 6144M. Minimum is 1G.
 set "NEW_INITIAL="
 set /p "NEW_INITIAL=Initial RAM [%RAM_INITIAL%]: "
 if not defined NEW_INITIAL set "NEW_INITIAL=%RAM_INITIAL%"
@@ -239,6 +239,26 @@ if errorlevel 1 (
 echo Settings saved:
  type "%SETTINGS%"
 del /q "%TEMP_SETTINGS%" >nul 2>&1
+exit /b 0
+
+:show_summary
+call :read_value LOADER_TYPE none
+call :read_value RAM_INITIAL 4G
+call :read_value RAM_MAX 4G
+call :read_value GUI_MODE nogui
+call :read_value GC_PROFILE default
+call :read_value AUTO_CONFIGURE_JAVA true
+call :read_value ONLINE_MODE true
+echo Current settings:
+echo   Loader:        %LOADER_TYPE%
+echo   Initial RAM:   %RAM_INITIAL%
+echo   Maximum RAM:   %RAM_MAX%
+echo   Mode:          %GUI_MODE%
+echo   GC profile:    %GC_PROFILE%
+echo   Auto Java env: %AUTO_CONFIGURE_JAVA%
+echo   online-mode:   %ONLINE_MODE%
+if /i "%ONLINE_MODE%"=="false" echo   WARNING: offline mode disables Mojang authentication; keep it for private testing only.
+echo.
 exit /b 0
 
 :read_value

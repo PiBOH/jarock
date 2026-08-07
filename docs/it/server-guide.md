@@ -100,7 +100,7 @@ In questo repository non devi creare manualmente `start.bat`. Avvia `parameter-m
 - profilo GC predefinito o `low-pause`;
 - configurazione automatica dell'ambiente Java dell'utente.
 
-Le impostazioni vengono salvate in `server-launch-settings.ini`, un file locale ignorato da Git. Il programma controlla che la RAM sia valida, che sia almeno `512M`, che la RAM iniziale non superi quella massima e che non superi la memoria fisica rilevata.
+Le impostazioni vengono salvate in `server-launch-settings.ini`, un file locale ignorato da Git. Il programma controlla che la RAM sia valida, che sia almeno `1G`, che la RAM iniziale non superi quella massima e che non superi la memoria fisica rilevata.
 
 Dopo aver salvato, scegli **Save and start the server** oppure esegui `start-server.bat`. Jarock trova automaticamente un Java 25 a 64 bit compatibile e usa quel percorso, anche se Java 8 è il primo elemento del `PATH`.
 

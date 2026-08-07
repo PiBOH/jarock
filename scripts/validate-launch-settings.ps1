@@ -34,7 +34,7 @@ try {
     if ([string]$Values['LOADER_TYPE'] -notin @('none','fabric','forge','neoforge')) { throw 'LOADER_TYPE must be none, fabric, forge or neoforge.' }
     $InitialMb = Get-Megabytes ([string]$Values['RAM_INITIAL'])
     $MaximumMb = Get-Megabytes ([string]$Values['RAM_MAX'])
-    if ($InitialMb -lt 512 -or $MaximumMb -lt 512) { throw 'RAM values must be at least 512M.' }
+    if ($InitialMb -lt 1024 -or $MaximumMb -lt 1024) { throw 'RAM values must be at least 1G.' }
     if ($InitialMb -gt $MaximumMb) { throw 'RAM_INITIAL cannot be greater than RAM_MAX.' }
     $ComputerSystem = Get-CimInstance -ClassName Win32_ComputerSystem -ErrorAction SilentlyContinue
     if ($null -ne $ComputerSystem -and $null -ne $ComputerSystem.TotalPhysicalMemory) {
