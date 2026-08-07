@@ -99,6 +99,9 @@ try {
     Set-ServerOnlineMode $Properties $Online
     Repair-IncompleteWorld $ServerDirectory
     Write-Host "Loader=$Loader; Java=$($Runtime.Version); memory=$InitialMemory/$MaximumMemory; mode=$GuiMode; GC=$GcProfile" -ForegroundColor Green
+    $ReadyBanner=@(); $ReadyBannerPath=Join-Path $PSScriptRoot 'server-ready-banner.txt'
+    if(Test-Path -LiteralPath $ReadyBannerPath -PathType Leaf){$ReadyBanner=@(Get-Content -LiteralPath $ReadyBannerPath)}
+    $script:BannerShown=$false
     Push-Location -LiteralPath $ServerDirectory
     try {
         if($Loader -eq 'fabric') {
@@ -107,14 +110,40 @@ try {
             $Args=@("-Xms$InitialMemory","-Xmx$MaximumMemory")
             if($GcProfile -eq 'low-pause'){$Args+=@('-XX:+UseG1GC','-XX:MaxGCPauseMillis=200')}
             $Args+=@('-jar',$Launcher);if($GuiMode -eq 'nogui'){$Args+='nogui'}
-            & $Runtime.Path @Args; $ExitCode=$LASTEXITCODE
+            $PreviousEap=$ErrorActionPreference; $ErrorActionPreference='Continue'
+            try {
+                & $Runtime.Path @Args 2>&1 | ForEach-Object {
+                    $Line=[string]$_ ; Write-Host $Line
+                    if(-not $script:BannerShown -and $Line -match 'Done \(\d+\.\d+s\)' -and $script:ReadyBanner.Count -gt 0){
+                        $script:BannerShown=$true
+                        Write-Host ''
+                        foreach($BannerLine in $script:ReadyBanner){Write-Host $BannerLine -ForegroundColor Green}
+                        Write-Host 'The Jarock server has finished loading.' -ForegroundColor Green
+                        Write-Host ''
+                    }
+                }
+                $ExitCode=$LASTEXITCODE
+            } finally { $ErrorActionPreference=$PreviousEap }
         } else {
             $RunBat=Join-Path $ServerDirectory 'run.bat'; if(-not(Test-Path -LiteralPath $RunBat -PathType Leaf)){throw 'The generated NeoForge run.bat was not found. Run start-server.bat again.'}
             Set-NeoForgeJvmArgs (Join-Path $ServerDirectory 'user_jvm_args.txt') $InitialMemory $MaximumMemory $GcProfile
             $Args=@();if($GuiMode -eq 'nogui'){$Args+='nogui'}
             $Command = 'call "run.bat"'
             if ($Args.Count -gt 0) { $Command += ' ' + ($Args -join ' ') }
-            & cmd.exe /d /c $Command; $ExitCode=$LASTEXITCODE
+            $PreviousEap=$ErrorActionPreference; $ErrorActionPreference='Continue'
+            try {
+                & cmd.exe /d /c $Command 2>&1 | ForEach-Object {
+                    $Line=[string]$_ ; Write-Host $Line
+                    if(-not $script:BannerShown -and $Line -match 'Done \(\d+\.\d+s\)' -and $script:ReadyBanner.Count -gt 0){
+                        $script:BannerShown=$true
+                        Write-Host ''
+                        foreach($BannerLine in $script:ReadyBanner){Write-Host $BannerLine -ForegroundColor Green}
+                        Write-Host 'The Jarock server has finished loading.' -ForegroundColor Green
+                        Write-Host ''
+                    }
+                }
+                $ExitCode=$LASTEXITCODE
+            } finally { $ErrorActionPreference=$PreviousEap }
         }
     } finally { Pop-Location }
     exit $ExitCode

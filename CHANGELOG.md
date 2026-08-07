@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.29-beta] - 2026-08-07
+
+### Added
+
+- The server console now prints an ASCII-art banner ("JAROCK SERVER" / "READY!" in the ANSI Regular figlet style) as soon as Minecraft finishes loading, detected from the standard `Done (x.xxxs)!` console line.
+
 ### Changed
 
 - Marked the completed first-run and EULA/server.properties items as done in `TODO.md` and highlighted the two remaining blockers for public access (`online-mode` and `white-list`, both still `false`).
@@ -316,7 +322,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.28-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.29-beta...HEAD
+[0.0.29-beta]: https://github.com/PiBOH/jarock/compare/0.0.28-beta...0.0.29-beta
 [0.0.28-beta]: https://github.com/PiBOH/jarock/compare/0.0.27-beta...0.0.28-beta
 [0.0.27-beta]: https://github.com/PiBOH/jarock/compare/0.0.26-beta...0.0.27-beta
 [0.0.26-beta]: https://github.com/PiBOH/jarock/compare/0.0.25-beta...0.0.26-beta
