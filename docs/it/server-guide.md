@@ -141,8 +141,8 @@ Ferma il server e apri `server.properties` con Notepad. Come base sicura usa o c
 ```properties
 motd=My Fabric 26.2 Server
 online-mode=true
-enforce-whitelist=true
-white-list=true
+white-list=false
+enforce-whitelist=false
 max-players=20
 view-distance=8
 simulation-distance=6
@@ -152,7 +152,7 @@ server-port=25565
 - Lascia **`online-mode=true`**. Non disattivarlo per far funzionare Floodgate.
 
 > **Non impostare `online-mode=false` prima di aver creato il server per la prima volta.** Il file server.properties potrebbe non esistere ancora, e forzare la modalità offline prima che il loader abbia completato l'installazione iniziale può interferire con il primo avvio. Fai sempre partire il server con `online-mode=true` almeno una volta, poi eventualmente modificalo dopo se hai una ragione documentata e testata.
-- `white-list=true` impedisce l'accesso agli sconosciuti.
+- La whitelist è **disabilitata di default** (`white-list=false`, `enforce-whitelist=false`) così chiunque può entrare per i test. Prima di aprire il server al pubblico imposta entrambi su `true` e aggiungi ogni giocatore fidato; `enforce-whitelist` applica la whitelist anche agli operatori.
 - `25565` è la porta Java TCP predefinita; un hosting potrebbe assegnarne un'altra.
 - `view-distance` e `simulation-distance` possono essere aumentate dopo aver misurato le prestazioni.
 
@@ -343,7 +343,7 @@ Non installare dieci mod subito. Controlla CPU, entità, generazione dei chunk, 
 - [ ] Fabric Server è per Minecraft 26.2.
 - [ ] Hai letto e accettato la EULA.
 - [ ] `online-mode=true` è attivo.
-- [ ] La whitelist è attiva prima dei test pubblici.
+- [ ] La whitelist è attiva prima dei test pubblici (di default è disabilitata: imposta `white-list=true` e `enforce-whitelist=true`).
 - [ ] Fabric API, Geyser-Fabric e Floodgate-Fabric sono compatibili con 26.2.
 - [ ] `auth-type: floodgate` è configurato.
 - [ ] Porta Java TCP e porta Bedrock UDP sono corrette e diverse.

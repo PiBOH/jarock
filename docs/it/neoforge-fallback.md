@@ -201,14 +201,14 @@ In `server.properties` mantieni:
 
 ```properties
 online-mode=true
-white-list=true
-enforce-whitelist=true
+white-list=false
+enforce-whitelist=false
 server-port=25565
 view-distance=8
 simulation-distance=6
 ```
 
-Non impostare `online-mode=false` per usare Floodgate. Aggiungi un giocatore Java con:
+Non impostare `online-mode=false` per usare Floodgate. La whitelist è disabilitata di default così chiunque può entrare per i test; prima dell'accesso pubblico imposta `white-list=true` e `enforce-whitelist=true` e aggiungi ogni giocatore fidato. Aggiungi un giocatore Java con:
 
 ```text
 whitelist add JavaPlayerName

@@ -202,8 +202,8 @@ A safe starting point includes:
 ```properties
 motd=My Fabric 26.2 Server
 online-mode=true
-enforce-whitelist=true
-white-list=true
+white-list=false
+enforce-whitelist=false
 max-players=20
 view-distance=8
 simulation-distance=6
@@ -213,13 +213,12 @@ server-port=25565
 Notes:
 
 - `online-mode=true` protects Java account authentication. Keep it enabled.
-- `white-list=true` prevents unknown players from joining.
-- `enforce-whitelist=true` applies the whitelist consistently.
+- The whitelist is **disabled by default** (`white-list=false`, `enforce-whitelist=false`) so anyone can join for testing. Before opening the server to the public, set both to `true` and add every trusted player; `enforce-whitelist` applies the whitelist consistently even to operators.
 - `view-distance` and `simulation-distance` affect performance. Increase them only after testing.
 - `server-port=25565` is the normal Java port. A host may assign a different one.
 - Do not paste comments or extra spaces into properties values unless you know they are supported.
 
-Start the server once after saving. In the console, add trusted Java players with:
+Start the server once after saving. With the whitelist enabled, add trusted Java players with:
 
 ```text
 whitelist add JavaPlayerName
@@ -448,7 +447,7 @@ Use this list in order:
 - [ ] Fabric Server explicitly targets Minecraft 26.2.
 - [ ] `eula=true` is set only after reading and accepting the EULA.
 - [ ] `online-mode=true` remains enabled, or a trusted proxy architecture has been documented and tested before using `false`.
-- [ ] `white-list=true` is enabled before public testing.
+- [ ] The whitelist is enabled (`white-list=true`, `enforce-whitelist=true`) before public testing; it is disabled by default.
 - [ ] Fabric API is in `mods/`.
 - [ ] Geyser-Fabric explicitly targets 26.2.
 - [ ] Floodgate-Fabric explicitly targets 26.2.

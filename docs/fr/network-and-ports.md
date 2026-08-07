@@ -3,3 +3,5 @@
 Installez Java 25 64 bits, lancez `start-server. (enable "Set JAVA_HOME variable" in the Temurin installer) (abilita Set JAVA_HOME nell’installer Temurin)bat` et terminez `TODO.md` avant d'ouvrir les ports. Attribuez une IP LAN fixe, ouvrez TCP `25565` (Java) et UDP `19132` (Bedrock) dans le pare-feu Windows, configurez la redirection de ports sur le routeur ou utilisez un tunnel compatible UDP comme playit.gg. Vérifiez que `online-mode=true` et `white-list=true`, et ne publiez jamais `key.pem`. En cas de CGNAT, utilisez un tunnel. Voir le [guide en anglais](../en/network-and-ports.md).
 
 > Utilisez toujours `start-server.bat` ; ne double-cliquez pas sur `server.jar`.
+
+> The whitelist is disabled by default in server.properties (white-list=false, enforce-whitelist=false); enable it (white-list=true, enforce-whitelist=true) before opening the server to the public.

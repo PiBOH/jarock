@@ -11,7 +11,7 @@
 Complete the items in `TODO.md` before exposing the server publicly:
 
 - [ ] Java and Bedrock joining works on `localhost`.
-- [ ] `online-mode=true` and `white-list=true` are enabled.
+- [ ] `online-mode=true` is enabled and the whitelist is enabled (`white-list=true`, `enforce-whitelist=true`) before public access; it is disabled by default.
 - [ ] Floodgate `key.pem` is kept private and never published or committed.
 - [ ] A working backup exists and you have verified you can restore it.
 
@@ -134,7 +134,7 @@ If port forwarding is not possible (CGNAT, ISP blocks, no router access), a tunn
 ## 7. Security checklist before going public
 
 - [ ] `online-mode=true` — cracked-mode is unsafe on a public server without a trusted authentication proxy.
-- [ ] `white-list=true` — only approved players should join.
+- [ ] `white-list=true` — only approved players should join (disabled by default; enable it before going public).
 - [ ] `enable-query=false` — unless you know why you need it.
 - [ ] `enable-rcon=false` — unless you secure it with a strong password and firewall rules.
 - [ ] Floodgate `key.pem` is not shared, published, or committed.

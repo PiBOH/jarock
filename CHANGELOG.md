@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Marked the parameter-manager and ready-banner verification items as complete in `TODO.md`.
 
+## [0.0.41-beta] - 2026-08-07
+
+### Changed
+
+- The whitelist is now **disabled by default**: `server/server.properties.template` ships with `white-list=false` and `enforce-whitelist=false` (with a comment explaining how to enable it before public access), so a freshly created server lets anyone join for testing. The local generated `server.properties` follows the same default.
+- Updated the English and Italian server guides, the NeoForge fallback guides and the network-and-ports guide to state that the whitelist is off by default and must be turned on (`white-list=true`, `enforce-whitelist=true`) before opening the server to the public, adding every trusted player with `whitelist add <name>`.
+- Attached the same whitelist note to all 31 fallback language summaries of the server guide and of the network-and-ports guide.
+
 ## [0.0.40-beta] - 2026-08-07
 
 ### Fixed

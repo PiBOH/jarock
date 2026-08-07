@@ -16,8 +16,11 @@ max-players=20
 view-distance=8
 simulation-distance=6
 online-mode=true
-white-list=true
-enforce-whitelist=true
+# The whitelist is DISABLED by default so the server can be tested easily.
+# Before opening the server to the public, set white-list=true and enforce-whitelist=true,
+# then add players from the console with: whitelist add PlayerName
+white-list=false
+enforce-whitelist=false
 enforce-secure-profile=true
 prevent-proxy-connections=false
 server-port=25565

@@ -293,14 +293,14 @@ Stop the server before editing `server.properties`. Start with:
 
 ```properties
 online-mode=true
-white-list=true
-enforce-whitelist=true
+white-list=false
+enforce-whitelist=false
 server-port=25565
 view-distance=8
 simulation-distance=6
 ```
 
-Keep `online-mode=true`. Floodgate is not a reason to make the entire server offline-mode.
+Keep `online-mode=true`. Floodgate is not a reason to make the entire server offline-mode. The whitelist is disabled by default so anyone can join for testing; before public access, set `white-list=true` and `enforce-whitelist=true` and add every trusted player.
 
 Add a Java player:
 
