@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.37-beta] - 2026-08-07
+
+### Fixed
+
+- Suppressed the stray `True`/`False` line that could appear in the console after the bundled Java installers ran: the prerequisite-install call in the bootstrap now discards its return value.
+
 ## [0.0.36-beta] - 2026-08-07
 
 ### Added
@@ -374,7 +380,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.36-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.37-beta...HEAD
+[0.0.37-beta]: https://github.com/PiBOH/jarock/compare/0.0.36-beta...0.0.37-beta
 [0.0.36-beta]: https://github.com/PiBOH/jarock/compare/0.0.35-beta...0.0.36-beta
 [0.0.35-beta]: https://github.com/PiBOH/jarock/compare/0.0.34-beta...0.0.35-beta
 [0.0.34-beta]: https://github.com/PiBOH/jarock/compare/0.0.33-beta...0.0.34-beta

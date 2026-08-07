@@ -139,7 +139,7 @@ function Install-BundledPrerequisites {
 function Get-SelectedJava {
     $Result = Find-CompatibleJava -MinimumMajor $JavaMinimum
     if ($null -eq $Result.Selected) {
-        Install-BundledPrerequisites
+        Install-BundledPrerequisites | Out-Null
         $Result = Find-CompatibleJava -MinimumMajor $JavaMinimum
     }
     if ($null -eq $Result.Selected) {
