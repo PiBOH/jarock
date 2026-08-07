@@ -24,7 +24,7 @@ Skatiet pilno angļu rokasgrāmatu: [../en/server-guide.md](../en/server-guide.m
 
 ## Jarock atjaunināšana
 
-> Izlasiet `version.txt`, apturiet serveri un gaidiet `SAFE TO CLOSE`; pēc tam palaidiet `update-jarock.bat`. Tas meklē jaunāku tās pašas beta/stabilā kanāla versiju, lūdz apstiprinājumu un izveido atcelšanas dublējumu. Pasaule, runtime, modifikācijas, bibliotēkas un lokālie iestatījumi tiek saglabāti; atkarības labo tikai tad, ja tās trūkst vai ir nederīgas.
+> Izlasiet `scripts/version.txt`, apturiet serveri un gaidiet `SAFE TO CLOSE`; pēc tam palaidiet `scripts/update-jarock.bat`. Tas meklē jaunāku tās pašas beta/stabilā kanāla versiju, lūdz apstiprinājumu un izveido atcelšanas dublējumu. Pasaule, runtime, modifikācijas, bibliotēkas un lokālie iestatījumi tiek saglabāti; atkarības labo tikai tad, ja tās trūkst vai ir nederīgas.
 
 > Pilnā pakotne un tās publicētā SHA-512 kontrolsumma tiek pārbaudīta pirms instalēšanas.
 
@@ -32,4 +32,4 @@ Skatiet pilno angļu rokasgrāmatu: [../en/server-guide.md](../en/server-guide.m
 
 ## Atjauninājumu pārbaude palaišanas laikā
 
-Iestatiet AUTO_UPDATE_CHECK=true failā parameter-manager.bat, lai start-server.bat veiktu tikai lasāmu GitHub pārbaudi. Tiks ziņots par saderīgu jaunāku Jarock versiju, bet nekas netiks instalēts automātiski. Apturiet serveri, uzgaidiet SAFE TO CLOSE un palaidiet update-jarock.bat. Noklusējums ir AUTO_UPDATE_CHECK=false.
+Iestatiet AUTO_UPDATE_CHECK=true failā parameter-manager.bat, lai start-server.bat veiktu tikai lasāmu GitHub pārbaudi. Tiks ziņots par saderīgu jaunāku Jarock versiju, bet nekas netiks instalēts automātiski. Apturiet serveri, uzgaidiet SAFE TO CLOSE un palaidiet scripts/update-jarock.bat. Noklusējums ir AUTO_UPDATE_CHECK=false.

@@ -34,7 +34,7 @@ scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
 server/server.properties.template
 server/eula.txt.template
-version.txt
+scripts/version.txt
 CHANGELOG.md
 TODO.md
 ```
@@ -84,7 +84,7 @@ Jarock verander nie die router, firewall, port forwarding of openbare IP nie. Di
 
 ## Jarock-bywerking
 
-> Lees `version.txt`, stop die bediener en wag vir `SAFE TO CLOSE`; voer dan `update-jarock.bat` uit. Dit soek ’n nuwer vrystelling in dieselfde beta/stabiele kanaal, vra bevestiging en maak ’n terugrolrugsteun. Die wêreld, runtime, mods, biblioteke en plaaslike instellings bly behoue; afhanklikhede word net herstel as hulle ontbreek of ongeldig is.
+> Lees `scripts/version.txt`, stop die bediener en wag vir `SAFE TO CLOSE`; voer dan `scripts/update-jarock.bat` uit. Dit soek ’n nuwer vrystelling in dieselfde beta/stabiele kanaal, vra bevestiging en maak ’n terugrolrugsteun. Die wêreld, runtime, mods, biblioteke en plaaslike instellings bly behoue; afhanklikhede word net herstel as hulle ontbreek of ongeldig is.
 
 > Die volledige pakket en sy gepubliseerde SHA-512-kontrolesom word voor installasie nagegaan.
 
@@ -92,4 +92,4 @@ Jarock verander nie die router, firewall, port forwarding of openbare IP nie. Di
 
 ## Kontrole vir opdaterings tydens opstart
 
-Stel AUTO_UPDATE_CHECK=true in parameter-manager.bat sodat start-server.bat tydens opstart 'n leesalleen-GitHub-kontrole uitvoer. Dit meld 'n versoenbare nuwer Jarock-weergawe, maar installeer niks outomaties nie. Stop veilig, wag vir SAFE TO CLOSE en voer update-jarock.bat uit. Die verstek is AUTO_UPDATE_CHECK=false.
+Stel AUTO_UPDATE_CHECK=true in parameter-manager.bat sodat start-server.bat tydens opstart 'n leesalleen-GitHub-kontrole uitvoer. Dit meld 'n versoenbare nuwer Jarock-weergawe, maar installeer niks outomaties nie. Stop veilig, wag vir SAFE TO CLOSE en voer scripts/update-jarock.bat uit. Die verstek is AUTO_UPDATE_CHECK=false.

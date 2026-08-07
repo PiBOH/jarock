@@ -402,4 +402,4 @@ Measure before adding more mods. Check CPU, entity counts, chunk generation, vie
 
 ## Optional startup update check
 
-Set AUTO_UPDATE_CHECK=true in parameter-manager.bat to make start-server.bat perform a read-only GitHub release check at startup. It reports a compatible newer Jarock release but never installs or modifies anything automatically. Stop safely, wait for SAFE TO CLOSE, and run update-jarock.bat explicitly to install an update. The default is AUTO_UPDATE_CHECK=false.
+Set AUTO_UPDATE_CHECK=true in parameter-manager.bat to make start-server.bat perform a read-only GitHub release check at startup. It reports a compatible newer Jarock release but never installs or modifies anything automatically. Stop safely, wait for SAFE TO CLOSE, and run scripts/update-jarock.bat explicitly to install an update. The default is AUTO_UPDATE_CHECK=false.

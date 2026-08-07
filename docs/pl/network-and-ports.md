@@ -17,7 +17,7 @@ Zainstaluj 64-bitową Javę 25, uruchom `start-server.bat` i ukończ `TODO.md` p
 
 ## Aktualizacja Jarock
 
-> Odczytaj `version.txt`, zatrzymaj serwer i poczekaj na `SAFE TO CLOSE`; następnie uruchom `update-jarock.bat`. Wyszuka nowsze wydanie w tym samym kanale beta/stabilnym, poprosi o potwierdzenie i utworzy kopię do wycofania. Świat, runtime, mody, biblioteki i ustawienia lokalne zostają zachowane; zależności są naprawiane tylko gdy ich brakuje lub są nieprawidłowe.
+> Odczytaj `scripts/version.txt`, zatrzymaj serwer i poczekaj na `SAFE TO CLOSE`; następnie uruchom `scripts/update-jarock.bat`. Wyszuka nowsze wydanie w tym samym kanale beta/stabilnym, poprosi o potwierdzenie i utworzy kopię do wycofania. Świat, runtime, mody, biblioteki i ustawienia lokalne zostają zachowane; zależności są naprawiane tylko gdy ich brakuje lub są nieprawidłowe.
 
 > Pełny pakiet i opublikowana suma kontrolna SHA-512 są sprawdzane przed instalacją.
 
@@ -25,4 +25,4 @@ Zainstaluj 64-bitową Javę 25, uruchom `start-server.bat` i ukończ `TODO.md` p
 
 ## Sprawdzanie aktualizacji przy uruchamianiu
 
-Ustaw AUTO_UPDATE_CHECK=true w parameter-manager.bat, aby start-server.bat sprawdzał wydania GitHub tylko do odczytu. Zgłosi zgodną nowszą wersję Jarock, ale niczego nie zainstaluje automatycznie. Zatrzymaj serwer, zaczekaj na SAFE TO CLOSE i uruchom update-jarock.bat. Wartość domyślna to AUTO_UPDATE_CHECK=false.
+Ustaw AUTO_UPDATE_CHECK=true w parameter-manager.bat, aby start-server.bat sprawdzał wydania GitHub tylko do odczytu. Zgłosi zgodną nowszą wersję Jarock, ale niczego nie zainstaluje automatycznie. Zatrzymaj serwer, zaczekaj na SAFE TO CLOSE i uruchom scripts/update-jarock.bat. Wartość domyślna to AUTO_UPDATE_CHECK=false.

@@ -34,7 +34,7 @@ scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
 server/server.properties.template
 server/eula.txt.template
-version.txt
+scripts/version.txt
 CHANGELOG.md
 TODO.md
 ```
@@ -80,7 +80,7 @@ Lees na elke fout `ERROR:` of `WARNING:` en volg `Suggested fix:`. Als Java stop
 
 ## Jarock bijwerken
 
-> Lees `version.txt`, stop de server en wacht op `SAFE TO CLOSE`; voer daarna `update-jarock.bat` uit. Het zoekt een nieuwere release in hetzelfde beta/stabiele kanaal, vraagt bevestiging en maakt een rollback-back-up. Wereld, runtime, mods, bibliotheken en lokale instellingen blijven behouden; afhankelijkheden worden alleen hersteld als ze ontbreken of ongeldig zijn.
+> Lees `scripts/version.txt`, stop de server en wacht op `SAFE TO CLOSE`; voer daarna `scripts/update-jarock.bat` uit. Het zoekt een nieuwere release in hetzelfde beta/stabiele kanaal, vraagt bevestiging en maakt een rollback-back-up. Wereld, runtime, mods, bibliotheken en lokale instellingen blijven behouden; afhankelijkheden worden alleen hersteld als ze ontbreken of ongeldig zijn.
 
 > Het volledige pakket en de gepubliceerde SHA-512-controlesom worden vóór de installatie gecontroleerd.
 
@@ -88,4 +88,4 @@ Lees na elke fout `ERROR:` of `WARNING:` en volg `Suggested fix:`. Als Java stop
 
 ## Updatecontrole bij het opstarten
 
-Stel AUTO_UPDATE_CHECK=true in parameter-manager.bat in zodat start-server.bat GitHub bij het opstarten alleen-lezen controleert. Een compatibele nieuwere Jarock-versie wordt gemeld, maar niets wordt automatisch geïnstalleerd. Stop de server, wacht op SAFE TO CLOSE en voer update-jarock.bat uit. De standaardwaarde is AUTO_UPDATE_CHECK=false.
+Stel AUTO_UPDATE_CHECK=true in parameter-manager.bat in zodat start-server.bat GitHub bij het opstarten alleen-lezen controleert. Een compatibele nieuwere Jarock-versie wordt gemeld, maar niets wordt automatisch geïnstalleerd. Stop de server, wacht op SAFE TO CLOSE en voer scripts/update-jarock.bat uit. De standaardwaarde is AUTO_UPDATE_CHECK=false.

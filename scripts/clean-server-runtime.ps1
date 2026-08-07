@@ -43,7 +43,7 @@ try {
     $ServerDirectory = [IO.Path]::GetFullPath($ServerDirectory).TrimEnd('\')
     $RepositoryRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..')).TrimEnd('\')
     $ExpectedServerDirectory = [IO.Path]::GetFullPath((Join-Path $RepositoryRoot 'server')).TrimEnd('\')
-    $SettingsPath = Join-Path $RepositoryRoot 'server-launch-settings.ini'
+    $SettingsPath = Join-Path $PSScriptRoot 'server-launch-settings.ini'
 
     if ($ServerDirectory -ine $ExpectedServerDirectory) {
         throw "Refusing to clean an unexpected directory: $ServerDirectory"

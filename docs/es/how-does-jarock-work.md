@@ -34,7 +34,7 @@ scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
 server/server.properties.template
 server/eula.txt.template
-version.txt
+scripts/version.txt
 CHANGELOG.md
 TODO.md
 ```
@@ -109,7 +109,7 @@ Jarock no modifica router, firewall, port forwarding, IP pública, permisos de o
 
 ## Actualizar Jarock
 
-> Lee `version.txt`, detén el servidor y espera a `SAFE TO CLOSE`; después ejecuta `update-jarock.bat`. Busca una versión más nueva del mismo canal beta/estable, pide confirmación y crea una copia de rollback. Conserva el mundo, runtime, mods, bibliotecas y ajustes locales; solo repara dependencias ausentes o inválidas.
+> Lee `scripts/version.txt`, detén el servidor y espera a `SAFE TO CLOSE`; después ejecuta `scripts/update-jarock.bat`. Busca una versión más nueva del mismo canal beta/estable, pide confirmación y crea una copia de rollback. Conserva el mundo, runtime, mods, bibliotecas y ajustes locales; solo repara dependencias ausentes o inválidas.
 
 > El paquete completo y su suma de comprobación SHA-512 publicada se verifican antes de la instalación.
 
@@ -117,4 +117,4 @@ Jarock no modifica router, firewall, port forwarding, IP pública, permisos de o
 
 ## Comprobación de actualizaciones al iniciar
 
-Establece AUTO_UPDATE_CHECK=true en parameter-manager.bat para que start-server.bat compruebe GitHub en modo de solo lectura. Informará de una versión compatible más reciente, pero no instalará nada automáticamente. Detén el servidor, espera a SAFE TO CLOSE y ejecuta update-jarock.bat. El valor predeterminado es AUTO_UPDATE_CHECK=false.
+Establece AUTO_UPDATE_CHECK=true en parameter-manager.bat para que start-server.bat compruebe GitHub en modo de solo lectura. Informará de una versión compatible más reciente, pero no instalará nada automáticamente. Detén el servidor, espera a SAFE TO CLOSE y ejecuta scripts/update-jarock.bat. El valor predeterminado es AUTO_UPDATE_CHECK=false.

@@ -18,7 +18,7 @@ body:
       label: Pre-flight checklist
       description: Please confirm these items before submitting the report.
       options:
-        - label: I am using the latest Jarock release or I have included my exact `version.txt` value below.
+        - label: I am using the latest Jarock release or I have included my exact `scripts/version.txt` value below.
           required: true
         - label: I searched existing issues and this does not appear to be a duplicate.
           required: true
@@ -34,7 +34,7 @@ body:
       description: Which part of Jarock appears to be involved?
       options:
         - "start-server.bat / bootstrap"
-        - "update-jarock.bat / updater"
+        - "scripts/update-jarock.bat / updater"
         - "parameter-manager.bat"
         - "Fabric loader or Fabric Installer"
         - "NeoForge loader or NeoForge Installer"
@@ -107,7 +107,7 @@ body:
     id: jarock_version
     attributes:
       label: Jarock version
-      description: Copy the complete value from the root `version.txt` file, for example `0.0.48-beta`.
+      description: Copy the complete value from the `scripts/version.txt` file, for example `0.0.48-beta`.
       placeholder: "0.0.48-beta"
     validations:
       required: true

@@ -34,7 +34,7 @@ scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
 server/server.properties.template
 server/eula.txt.template
-version.txt
+scripts/version.txt
 CHANGELOG.md
 TODO.md
 ```
@@ -82,7 +82,7 @@ Po chybě si přečtěte `ERROR:` nebo `WARNING:` a postupujte podle `Suggested 
 
 ## Aktualizace Jarock
 
-> Přečtěte `version.txt`, zastavte server a počkejte na `SAFE TO CLOSE`; potom spusťte `update-jarock.bat`. Vyhledá novější verzi ve stejném beta/stabilním kanálu, vyžádá potvrzení a vytvoří zálohu pro návrat. Svět, runtime, mody, knihovny a místní nastavení zůstanou zachovány; závislosti se obnoví jen při chybění nebo neplatnosti.
+> Přečtěte `scripts/version.txt`, zastavte server a počkejte na `SAFE TO CLOSE`; potom spusťte `scripts/update-jarock.bat`. Vyhledá novější verzi ve stejném beta/stabilním kanálu, vyžádá potvrzení a vytvoří zálohu pro návrat. Svět, runtime, mody, knihovny a místní nastavení zůstanou zachovány; závislosti se obnoví jen při chybění nebo neplatnosti.
 
 > Úplný balíček a jeho zveřejněný kontrolní součet SHA-512 se před instalací ověří.
 
@@ -90,4 +90,4 @@ Po chybě si přečtěte `ERROR:` nebo `WARNING:` a postupujte podle `Suggested 
 
 ## Kontrola aktualizací při spuštění
 
-Nastav AUTO_UPDATE_CHECK=true v parameter-manager.bat, aby start-server.bat provedl kontrolu vydání GitHub pouze pro čtení. Oznámí kompatibilní novější verzi, ale nic nenainstaluje automaticky. Bezpečně server zastav, počkej na SAFE TO CLOSE a spusť update-jarock.bat. Výchozí hodnota je AUTO_UPDATE_CHECK=false.
+Nastav AUTO_UPDATE_CHECK=true v parameter-manager.bat, aby start-server.bat provedl kontrolu vydání GitHub pouze pro čtení. Oznámí kompatibilní novější verzi, ale nic nenainstaluje automaticky. Bezpečně server zastav, počkej na SAFE TO CLOSE a spusť scripts/update-jarock.bat. Výchozí hodnota je AUTO_UPDATE_CHECK=false.

@@ -17,7 +17,7 @@ $Root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $ServerDir = Join-Path $Root 'server'
 $ModsDir = Join-Path $ServerDir 'mods'
 $ConfigDir = Join-Path $ServerDir 'config'
-$SettingsPath = Join-Path $Root 'server-launch-settings.ini'
+$SettingsPath = Join-Path $PSScriptRoot 'server-launch-settings.ini'
 $MinecraftVersion = '26.2'
 $JavaMinimum = 25
 $FabricInstallerUrl = 'https://maven.fabricmc.net/net/fabricmc/fabric-installer/1.1.2/fabric-installer-1.1.2.jar'
@@ -421,7 +421,7 @@ function Install-DedicatedPower {
 try {
     Write-Step 'Checking repository and loader configuration'
     New-Item -ItemType Directory -Force -Path $ServerDir | Out-Null
-    if (-not (Test-Path -LiteralPath $SettingsPath -PathType Leaf)) { Stop-WithGuidance 'server-launch-settings.ini is missing.' 'Run start-server.bat again so it can restore the settings template.' }
+    if (-not (Test-Path -LiteralPath $SettingsPath -PathType Leaf)) { Stop-WithGuidance 'scripts\server-launch-settings.ini is missing.' 'Run start-server.bat again so it can restore the settings template.' }
     $Loader = Select-Loader
     Confirm-LoaderChange $Loader
     if ($Loader -eq 'forge') { Stop-WithGuidance 'Forge currently has no official Minecraft 26.2 server build available to this bootstrap.' 'Choose Fabric or NeoForge in parameter-manager.bat. Forge will be enabled only after an official 26.2 installer and compatible mods are verified.' }

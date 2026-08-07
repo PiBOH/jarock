@@ -1,7 +1,8 @@
 @echo off
 setlocal EnableExtensions DisableDelayedExpansion
-set "ROOT=%~dp0"
-if "%ROOT:~-1%"=="\" set "ROOT=%ROOT:~0,-1%"
+set "SCRIPT_DIR=%~dp0"
+if "%SCRIPT_DIR:~-1%"=="\" set "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
+for %%I in ("%SCRIPT_DIR%\..") do set "ROOT=%%~fI"
 
 where powershell.exe >nul 2>&1
 if errorlevel 1 (
@@ -11,7 +12,7 @@ if errorlevel 1 (
     exit /b 1
 )
 
-if not exist "%ROOT%\scripts\update-jarock.ps1" (
+if not exist "%SCRIPT_DIR%\update-jarock.ps1" (
     echo ERROR: The Jarock updater script is missing.
     echo Suggested fix: restore scripts\update-jarock.ps1 from the repository or release package.
     pause
@@ -23,7 +24,7 @@ echo Jarock updater
 echo Do not run this file while the server is running.
 echo The updater preserves the world, server runtime, mods, libraries and local settings.
 echo.
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-jarock.ps1"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%\update-jarock.ps1"
 set "EXIT_CODE=%errorlevel%"
 echo.
 if "%EXIT_CODE%"=="0" (

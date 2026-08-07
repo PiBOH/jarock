@@ -17,7 +17,7 @@
 
 ## עדכון Jarock
 
-> קרא את `version.txt`, עצור את השרת והמתן ל-`SAFE TO CLOSE`; לאחר מכן הפעל `update-jarock.bat`. הוא מחפש גרסה חדשה יותר באותו ערוץ בטא/יציב, מבקש אישור ויוצר גיבוי לחזרה. העולם, ה-runtime, המודים, הספריות וההגדרות המקומיות נשמרים; תלויות יתוקנו רק אם הן חסרות או לא תקינות.
+> קרא את `scripts/version.txt`, עצור את השרת והמתן ל-`SAFE TO CLOSE`; לאחר מכן הפעל `scripts/update-jarock.bat`. הוא מחפש גרסה חדשה יותר באותו ערוץ בטא/יציב, מבקש אישור ויוצר גיבוי לחזרה. העולם, ה-runtime, המודים, הספריות וההגדרות המקומיות נשמרים; תלויות יתוקנו רק אם הן חסרות או לא תקינות.
 
 > החבילה המלאה וסכום הבדיקה SHA-512 שפורסם עבורה נבדקים לפני ההתקנה.
 
@@ -25,4 +25,4 @@
 
 ## בדיקת עדכונים בעת ההפעלה
 
-הגדר AUTO_UPDATE_CHECK=true בתוך parameter-manager.bat כדי ש-start-server.bat יבצע בדיקת GitHub לקריאה בלבד. תוצג גרסה תואמת חדשה יותר, אך דבר לא יותקן אוטומטית. עצור את השרת, המתן ל-SAFE TO CLOSE והפעל update-jarock.bat. ברירת המחדל היא AUTO_UPDATE_CHECK=false.
+הגדר AUTO_UPDATE_CHECK=true בתוך parameter-manager.bat כדי ש-start-server.bat יבצע בדיקת GitHub לקריאה בלבד. תוצג גרסה תואמת חדשה יותר, אך דבר לא יותקן אוטומטית. עצור את השרת, המתן ל-SAFE TO CLOSE והפעל scripts/update-jarock.bat. ברירת המחדל היא AUTO_UPDATE_CHECK=false.

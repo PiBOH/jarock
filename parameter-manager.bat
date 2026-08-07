@@ -2,8 +2,8 @@
 setlocal EnableExtensions DisableDelayedExpansion
 set "ROOT=%~dp0"
 if "%ROOT:~-1%"=="\" set "ROOT=%ROOT:~0,-1%"
-set "SETTINGS=%ROOT%\server-launch-settings.ini"
-set "TEMPLATE=%ROOT%\server-launch-settings.ini.template"
+set "SETTINGS=%ROOT%\scripts\server-launch-settings.ini"
+set "TEMPLATE=%ROOT%\scripts\server-launch-settings.ini.template"
 set "TEMP_SETTINGS=%TEMP%\Jarock-parameter-manager-%RANDOM%-%RANDOM%.ini"
 set "CONFIG_ONLY=false"
 if /i "%~1"=="/configure-only" set "CONFIG_ONLY=true"
@@ -16,9 +16,19 @@ if errorlevel 1 (
     exit /b 1
 )
 
+if not exist "%SETTINGS%" if exist "%ROOT%\server-launch-settings.ini" (
+    echo Migrating local launch settings to scripts\server-launch-settings.ini ...
+    move /y "%ROOT%\server-launch-settings.ini" "%SETTINGS%" >nul
+    if errorlevel 1 (
+        echo ERROR: Could not migrate the existing local launch settings.
+        echo Suggested fix: close editors or antivirus scans using the file, check permissions, and run parameter-manager.bat again.
+        pause
+        exit /b 1
+    )
+)
 if not exist "%SETTINGS%" if not exist "%TEMPLATE%" (
     echo ERROR: The launch-settings template is missing.
-    echo Suggested fix: restore server-launch-settings.ini.template from the repository.
+    echo Suggested fix: restore scripts\server-launch-settings.ini.template from the repository.
     pause
     exit /b 1
 )

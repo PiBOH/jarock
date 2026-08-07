@@ -81,16 +81,19 @@ function Restore-Java {
     $env:Path = $Saved.ProcessPath
 }
 
-$SettingsPath = Join-Path $Root 'server-launch-settings.ini'
-$SettingsTemplate = Join-Path $Root 'server-launch-settings.ini.template'
+$SettingsPath = Join-Path $PSScriptRoot 'server-launch-settings.ini'
+$SettingsTemplate = Join-Path $PSScriptRoot 'server-launch-settings.ini.template'
 
 try {
     Write-Host '==> Simulating a Windows PC that does not have the Java prerequisites installed' -ForegroundColor Cyan
 
     # 1. Local settings must exist and select Fabric so the bootstrap never prompts.
     if (-not (Test-Path -LiteralPath $SettingsPath -PathType Leaf)) {
-        if (-not (Test-Path -LiteralPath $SettingsTemplate -PathType Leaf)) { throw 'server-launch-settings.ini.template is missing.' }
-        Copy-Item -LiteralPath $SettingsTemplate -Destination $SettingsPath
+        if (Test-Path -LiteralPath (Join-Path $Root 'server-launch-settings.ini') -PathType Leaf) {
+            Move-Item -LiteralPath (Join-Path $Root 'server-launch-settings.ini') -Destination $SettingsPath
+        }
+        elseif (-not (Test-Path -LiteralPath $SettingsTemplate -PathType Leaf)) { throw 'scripts/server-launch-settings.ini.template is missing.' }
+        else { Copy-Item -LiteralPath $SettingsTemplate -Destination $SettingsPath }
     }
     & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'update-launch-setting.ps1') -SettingsPath $SettingsPath -Name LOADER_TYPE -Value fabric
     if ($LASTEXITCODE -ne 0) { throw 'Could not set LOADER_TYPE=fabric for the test.' }

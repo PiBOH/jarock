@@ -34,7 +34,7 @@ scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
 server/server.properties.template
 server/eula.txt.template
-version.txt
+scripts/version.txt
 CHANGELOG.md
 TODO.md
 ```
@@ -84,7 +84,7 @@ Java ихэвчлэн TCP `25565`, Bedrock UDP `19132` ашиглана. Jarock 
 
 ## Jarock шинэчлэх
 
-> `version.txt`-г уншиж, серверийг зогсоогоод `SAFE TO CLOSE` гарч ирэхийг хүлээнэ үү; дараа нь `update-jarock.bat`-г ажиллуулна. Ижил beta/тогтвортой сувгийн шинэ хувилбарыг хайж, баталгаажуулалт авч буцаах нөөц үүсгэнэ. Дэлхий, runtime, mod, сангууд болон дотоод тохиргоо хадгалагдана; хамаарлыг зөвхөн байхгүй эсвэл буруу үед засна.
+> `scripts/version.txt`-г уншиж, серверийг зогсоогоод `SAFE TO CLOSE` гарч ирэхийг хүлээнэ үү; дараа нь `scripts/update-jarock.bat`-г ажиллуулна. Ижил beta/тогтвортой сувгийн шинэ хувилбарыг хайж, баталгаажуулалт авч буцаах нөөц үүсгэнэ. Дэлхий, runtime, mod, сангууд болон дотоод тохиргоо хадгалагдана; хамаарлыг зөвхөн байхгүй эсвэл буруу үед засна.
 
 > Бүтэн багц болон нийтэлсэн SHA-512 шалгах нийлбэрийг суулгахаас өмнө шалгана.
 
@@ -92,4 +92,4 @@ Java ихэвчлэн TCP `25565`, Bedrock UDP `19132` ашиглана. Jarock 
 
 ## Эхлэх үед шинэчлэлт шалгах
 
-parameter-manager.bat дотор AUTO_UPDATE_CHECK=true тохируулснаар start-server.bat GitHub хувилбаруудыг зөвхөн унших горимоор шалгана. Тохирох шинэ Jarock хувилбарыг мэдээлэх боловч автоматаар суулгахгүй. Серверийг зогсоож SAFE TO CLOSE-ийг хүлээгээд update-jarock.bat ажиллуулна. Анхдагч утга AUTO_UPDATE_CHECK=false.
+parameter-manager.bat дотор AUTO_UPDATE_CHECK=true тохируулснаар start-server.bat GitHub хувилбаруудыг зөвхөн унших горимоор шалгана. Тохирох шинэ Jarock хувилбарыг мэдээлэх боловч автоматаар суулгахгүй. Серверийг зогсоож SAFE TO CLOSE-ийг хүлээгээд scripts/update-jarock.bat ажиллуулна. Анхдагч утга AUTO_UPDATE_CHECK=false.

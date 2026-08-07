@@ -7,7 +7,7 @@
 **Main platform:** Windows 10/11
 ** language:** English
 
-This document explains what happens after someone downloads the Jarock repository. It describes the real files and scripts in this repository, not an imaginary installer. The current Jarock project version is stored only in the root `version.txt` file.
+This document explains what happens after someone downloads the Jarock repository. It describes the real files and scripts in this repository, not an imaginary installer. The current Jarock project version is stored only in the `scripts/version.txt` file.
 
 ---
 
@@ -36,7 +36,7 @@ The router, firewall and port forwarding are **not** configured by Jarock. Alway
 
 ## 2. The parameter manager
 
-`parameter-manager.bat` is a safe beginner-friendly menu. It edits a temporary copy of the settings first and stores changes in `server-launch-settings.ini`, which is ignored by Git, only when the user chooses Save and exit or Save and start. The menu also provides Exit without saving; this deletes the temporary copy and leaves the existing settings unchanged.
+`parameter-manager.bat` is a safe beginner-friendly menu. It edits a temporary copy of the settings first and stores changes in `scripts/server-launch-settings.ini`, which is ignored by Git, only when the user chooses Save and exit or Save and start. The menu also provides Exit without saving; this deletes the temporary copy and leaves the existing settings unchanged.
 
 It can configure:
 
@@ -84,16 +84,16 @@ scripts/run-server.ps1
 scripts/configure-java-environment.ps1
 scripts/configure-geyser.ps1
 scripts/enable-long-paths.ps1
-server-launch-settings.ini.template
+scripts/server-launch-settings.ini.template
 server/mods-manifest.ps1
 server/server.properties.template
 server/eula.txt.template
-version.txt
+scripts/version.txt
 CHANGELOG.md
 TODO.md
 ```
 
-The generated runtime is placed below `server/`. Generated files such as the world, logs, downloaded `.jar` files, libraries, private keys, local player lists and `server-launch-settings.ini` are ignored by Git.
+The generated runtime is placed below `server/`. Generated files such as the world, logs, downloaded `.jar` files, libraries, private keys, local player lists and `scripts/server-launch-settings.ini` are ignored by Git.
 
 ---
 
@@ -153,7 +153,7 @@ Jarock does not open router ports, modify firewall rules, configure port forward
 
 ## 10. Updating Jarock itself
 
-The root `version.txt` contains the installed Jarock version. If `AUTO_UPDATE_CHECK=true`, `start-server.bat` performs a read-only release check before startup and reports a compatible newer release without modifying files. To install an update, first stop the server and wait for `SAFE TO CLOSE`, then run `update-jarock.bat`; startup checks never install updates automatically. The updater compares the local version with GitHub releases in the same channel: beta installations look for newer beta releases, while stable installations look for newer stable releases. Draft releases and releases without the expected package are ignored.
+The `scripts/version.txt` contains the installed Jarock version. If `AUTO_UPDATE_CHECK=true`, `start-server.bat` performs a read-only release check before startup and reports a compatible newer release without modifying files. To install an update, first stop the server and wait for `SAFE TO CLOSE`, then run `scripts/update-jarock.bat`; startup checks never install updates automatically. The updater compares the local version with GitHub releases in the same channel: beta installations look for newer beta releases, while stable installations look for newer stable releases. Draft releases and releases without the expected package are ignored.
 
 After confirmation, it downloads the matching `jarock-full` package and its published SHA-512 checksum, verifies the archive before extraction, checks the package version and excludes `.github/` and `.website/`. It updates only the project files from the package. It preserves the generated `server/` directory, world data, mods, libraries, server properties, EULA, Geyser/Floodgate keys, local launch settings, Java selection, logs and the updater cache. A rollback copy of overwritten project files is stored under `.cache/update-backups/`.
 
@@ -171,4 +171,4 @@ Type `stop` in the server console and leave the window open. Wait for Jarock to 
 
 ## Optional startup update check
 
-Set AUTO_UPDATE_CHECK=true in parameter-manager.bat to make start-server.bat perform a read-only GitHub release check at startup. It reports a compatible newer Jarock release but never installs or modifies anything automatically. Stop safely, wait for SAFE TO CLOSE, and run update-jarock.bat explicitly to install an update. The default is AUTO_UPDATE_CHECK=false.
+Set AUTO_UPDATE_CHECK=true in parameter-manager.bat to make start-server.bat perform a read-only GitHub release check at startup. It reports a compatible newer Jarock release but never installs or modifies anything automatically. Stop safely, wait for SAFE TO CLOSE, and run scripts/update-jarock.bat explicitly to install an update. The default is AUTO_UPDATE_CHECK=false.

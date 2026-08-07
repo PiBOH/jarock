@@ -34,7 +34,7 @@ scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
 server/server.properties.template
 server/eula.txt.template
-version.txt
+scripts/version.txt
 CHANGELOG.md
 TODO.md
 ```
@@ -82,7 +82,7 @@ Nakon pogreške pročitajte `ERROR:` ili `WARNING:` i slijedite `Suggested fix:`
 
 ## Ažuriranje Jarocka
 
-> Pročitajte `version.txt`, zaustavite poslužitelj i pričekajte `SAFE TO CLOSE`; zatim pokrenite `update-jarock.bat`. Traži noviju verziju istog beta/stabilnog kanala, traži potvrdu i stvara pričuvnu kopiju za povratak. Svijet, runtime, modovi, biblioteke i lokalne postavke ostaju sačuvani; ovisnosti se obnavljaju samo ako nedostaju ili nisu valjane.
+> Pročitajte `scripts/version.txt`, zaustavite poslužitelj i pričekajte `SAFE TO CLOSE`; zatim pokrenite `scripts/update-jarock.bat`. Traži noviju verziju istog beta/stabilnog kanala, traži potvrdu i stvara pričuvnu kopiju za povratak. Svijet, runtime, modovi, biblioteke i lokalne postavke ostaju sačuvani; ovisnosti se obnavljaju samo ako nedostaju ili nisu valjane.
 
 > Potpuni paket i njegov objavljeni kontrolni zbroj SHA-512 provjeravaju se prije instalacije.
 
@@ -90,4 +90,4 @@ Nakon pogreške pročitajte `ERROR:` ili `WARNING:` i slijedite `Suggested fix:`
 
 ## Provjera ažuriranja pri pokretanju
 
-Postavi AUTO_UPDATE_CHECK=true u parameter-manager.bat kako bi start-server.bat izvršio GitHub provjeru samo za čitanje. Prijavit će kompatibilnu noviju verziju, ali ništa neće automatski instalirati. Sigurno zaustavi poslužitelj, pričekaj SAFE TO CLOSE i pokreni update-jarock.bat. Zadano je AUTO_UPDATE_CHECK=false.
+Postavi AUTO_UPDATE_CHECK=true u parameter-manager.bat kako bi start-server.bat izvršio GitHub provjeru samo za čitanje. Prijavit će kompatibilnu noviju verziju, ali ništa neće automatski instalirati. Sigurno zaustavi poslužitelj, pričekaj SAFE TO CLOSE i pokreni scripts/update-jarock.bat. Zadano je AUTO_UPDATE_CHECK=false.

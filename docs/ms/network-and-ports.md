@@ -17,7 +17,7 @@ Pasang Java 25 64-bit, jalankan `start-server. (enable "Set JAVA_HOME variable" 
 
 ## Kemas kini Jarock
 
-> Baca `version.txt`, hentikan pelayan dan tunggu `SAFE TO CLOSE`; kemudian jalankan `update-jarock.bat`. Ia mencari keluaran lebih baharu dalam saluran beta/stabil yang sama, meminta pengesahan dan membuat sandaran rollback. Dunia, runtime, mod, pustaka dan tetapan tempatan dikekalkan; kebergantungan hanya dibaiki jika hilang atau tidak sah.
+> Baca `scripts/version.txt`, hentikan pelayan dan tunggu `SAFE TO CLOSE`; kemudian jalankan `scripts/update-jarock.bat`. Ia mencari keluaran lebih baharu dalam saluran beta/stabil yang sama, meminta pengesahan dan membuat sandaran rollback. Dunia, runtime, mod, pustaka dan tetapan tempatan dikekalkan; kebergantungan hanya dibaiki jika hilang atau tidak sah.
 
 > Pakej penuh dan checksum SHA-512 yang diterbitkan disahkan sebelum pemasangan.
 
@@ -25,4 +25,4 @@ Pasang Java 25 64-bit, jalankan `start-server. (enable "Set JAVA_HOME variable" 
 
 ## Semakan kemas kini semasa mula
 
-Tetapkan AUTO_UPDATE_CHECK=true dalam parameter-manager.bat supaya start-server.bat menjalankan semakan GitHub baca sahaja. Versi Jarock serasi yang lebih baharu akan dilaporkan, tetapi tiada pemasangan automatik. Hentikan pelayan, tunggu SAFE TO CLOSE dan jalankan update-jarock.bat. Nilai lalai ialah AUTO_UPDATE_CHECK=false.
+Tetapkan AUTO_UPDATE_CHECK=true dalam parameter-manager.bat supaya start-server.bat menjalankan semakan GitHub baca sahaja. Versi Jarock serasi yang lebih baharu akan dilaporkan, tetapi tiada pemasangan automatik. Hentikan pelayan, tunggu SAFE TO CLOSE dan jalankan scripts/update-jarock.bat. Nilai lalai ialah AUTO_UPDATE_CHECK=false.

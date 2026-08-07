@@ -7,10 +7,10 @@ on:
       - 'scripts/**'
       - 'prerequisites/**'
       - '*.bat'
-      - 'server-launch-settings.ini.template'
+      - 'scripts/server-launch-settings.ini.template'
       - 'server/eula.txt.template'
       - 'server/server.properties.template'
-      - 'version.txt'
+      - 'scripts/version.txt'
       - 'CHANGELOG.md'
       - '.github/workflows/**'
   workflow_dispatch:

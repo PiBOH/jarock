@@ -6,17 +6,17 @@
 - [Minecraft Java NeoForge fallback](en/neoforge-fallback.md)
 - [How does Jarock work?](en/how-does-jarock-work.md)
 
-The English guides are the source of truth for the technical procedure. The current project version is stored only in the root `version.txt` file.
+The English guides are the source of truth for the technical procedure. The current project version is stored only in the `scripts/version.txt` file.
 
 ## Runtime and launch configuration
 
 - `parameter-manager.bat` configures the loader, RAM, GUI/console mode, a conservative GC profile, online-mode, the ready banner, the optional read-only startup update check and user-scoped Java environment setup. It edits a temporary copy and includes `Exit without saving` to discard all pending changes.
-- `server-launch-settings.ini.template` is the tracked safe default.
-- `server-launch-settings.ini` is local and ignored by Git.
+- `scripts/server-launch-settings.ini.template` is the tracked safe default.
+- `scripts/server-launch-settings.ini` is local and ignored by Git.
 - `java-home.txt` is an optional local override for a custom JDK folder and is ignored by Git; `JAROCK_JAVA_HOME` is the advanced equivalent.
 - `scripts/java-runtime.ps1` finds a compatible 64-bit Java 25+ runtime even when Java 8 or Java 21 appears first on `PATH`; if none is available and the bundled installers are present in `prerequisites/`, `start-server.bat` runs them automatically (legacy Java 8 first, then the Temurin JDK 25 MSI); otherwise it lists the detected incompatible candidates and gives a Java 25 installation link.
 - `scripts/configure-java-environment.ps1` updates only the current user's `JAVA_HOME` and `PATH`, preserving unrelated entries.
-- `update-jarock.bat` safely applies a confirmed update while preserving the generated `server/` runtime, world, mods, libraries, local settings, Java selection, logs and secrets. It verifies the published SHA-512 checksum before extraction, creates a rollback backup and never changes router, firewall or port-forwarding settings. When `AUTO_UPDATE_CHECK=true`, `start-server.bat` performs only a read-only release check; installation still requires an explicit `update-jarock.bat` run.
+- `scripts/update-jarock.bat` safely applies a confirmed update while preserving the generated `server/` runtime, world, mods, libraries, local settings, Java selection, logs and secrets. It verifies the published SHA-512 checksum before extraction, creates a rollback backup and never changes router, firewall or port-forwarding settings. When `AUTO_UPDATE_CHECK=true`, `start-server.bat` performs only a read-only release check; installation still requires an explicit `scripts/update-jarock.bat` run.
 
 ## How Jarock works translations
 
@@ -59,7 +59,7 @@ Each requested locale has a concise translated `how-does-jarock-work.md`. The En
 
 ## Installation and fallback translations
 
-Every requested locale has both an installation guide and a NeoForge fallback guide. The English files are ; localized files are concise summaries; files whose prose remains English are explicitly English fallback summaries and link to the complete English procedure. They do not include a project version; consult root `version.txt`.
+Every requested locale has both an installation guide and a NeoForge fallback guide. The English files are ; localized files are concise summaries; files whose prose remains English are explicitly English fallback summaries and link to the complete English procedure. They do not include a project version; consult `scripts/version.txt`.
 
 Each local file has the same names:
 

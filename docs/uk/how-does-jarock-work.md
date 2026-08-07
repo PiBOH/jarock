@@ -34,7 +34,7 @@ scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
 server/server.properties.template
 server/eula.txt.template
-version.txt
+scripts/version.txt
 CHANGELOG.md
 TODO.md
 ```
@@ -82,7 +82,7 @@ Java зазвичай використовує TCP `25565`, а Bedrock — UDP `
 
 ## Оновлення Jarock
 
-> Прочитайте `version.txt`, зупиніть сервер і дочекайтеся `SAFE TO CLOSE`; потім запустіть `update-jarock.bat`. Він шукає новішу версію в тому самому beta/стабільному каналі, просить підтвердження та створює резервну копію для відкату. Світ, runtime, моди, бібліотеки й локальні налаштування зберігаються; залежності виправляються лише за відсутності або пошкодження.
+> Прочитайте `scripts/version.txt`, зупиніть сервер і дочекайтеся `SAFE TO CLOSE`; потім запустіть `scripts/update-jarock.bat`. Він шукає новішу версію в тому самому beta/стабільному каналі, просить підтвердження та створює резервну копію для відкату. Світ, runtime, моди, бібліотеки й локальні налаштування зберігаються; залежності виправляються лише за відсутності або пошкодження.
 
 > Повний пакет і опублікована контрольна сума SHA-512 перевіряються перед встановленням.
 
@@ -90,4 +90,4 @@ Java зазвичай використовує TCP `25565`, а Bedrock — UDP `
 
 ## Перевірка оновлень під час запуску
 
-Встановіть AUTO_UPDATE_CHECK=true у parameter-manager.bat, щоб start-server.bat перевіряв релізи GitHub лише для читання. Буде повідомлено про сумісну новішу версію Jarock, але автоматичного встановлення не буде. Зупиніть сервер, дочекайтеся SAFE TO CLOSE і запустіть update-jarock.bat. Значення за замовчуванням AUTO_UPDATE_CHECK=false.
+Встановіть AUTO_UPDATE_CHECK=true у parameter-manager.bat, щоб start-server.bat перевіряв релізи GitHub лише для читання. Буде повідомлено про сумісну новішу версію Jarock, але автоматичного встановлення не буде. Зупиніть сервер, дочекайтеся SAFE TO CLOSE і запустіть scripts/update-jarock.bat. Значення за замовчуванням AUTO_UPDATE_CHECK=false.

@@ -24,7 +24,7 @@ See the [English installation guide](../en/server-guide.md) for the complete pro
 
 ## تحديث Jarock
 
-> اقرأ `version.txt`، أوقف الخادم وانتظر `SAFE TO CLOSE`، ثم شغّل `update-jarock.bat`. يبحث عن إصدار أحدث في القناة نفسها، يطلب التأكيد وينشئ نسخة للتراجع. تبقى العوالم وملفات التشغيل والإضافات والمكتبات والإعدادات المحلية محفوظة؛ تُصلح التبعيات فقط عند فقدانها أو عدم صلاحيتها.
+> اقرأ `scripts/version.txt`، أوقف الخادم وانتظر `SAFE TO CLOSE`، ثم شغّل `scripts/update-jarock.bat`. يبحث عن إصدار أحدث في القناة نفسها، يطلب التأكيد وينشئ نسخة للتراجع. تبقى العوالم وملفات التشغيل والإضافات والمكتبات والإعدادات المحلية محفوظة؛ تُصلح التبعيات فقط عند فقدانها أو عدم صلاحيتها.
 
 > يتم التحقق من الحزمة الكاملة ومجموع التحقق SHA-512 المنشور قبل التثبيت.
 
@@ -32,4 +32,4 @@ See the [English installation guide](../en/server-guide.md) for the complete pro
 
 ## فحص التحديثات عند بدء التشغيل
 
-اضبط AUTO_UPDATE_CHECK=true في parameter-manager.bat ليجري start-server.bat فحصًا للقراءة فقط عند بدء التشغيل. سيبلغ عن إصدار Jarock متوافق أحدث، لكنه لن يثبت شيئًا تلقائيًا. أوقف الخادم بأمان، وانتظر SAFE TO CLOSE، ثم شغّل update-jarock.bat. القيمة الافتراضية AUTO_UPDATE_CHECK=false.
+اضبط AUTO_UPDATE_CHECK=true في parameter-manager.bat ليجري start-server.bat فحصًا للقراءة فقط عند بدء التشغيل. سيبلغ عن إصدار Jarock متوافق أحدث، لكنه لن يثبت شيئًا تلقائيًا. أوقف الخادم بأمان، وانتظر SAFE TO CLOSE، ثم شغّل scripts/update-jarock.bat. القيمة الافتراضية AUTO_UPDATE_CHECK=false.

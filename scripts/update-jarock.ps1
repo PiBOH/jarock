@@ -17,7 +17,7 @@ $Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $CacheRoot = Join-Path $Root '.cache'
 $DownloadRoot = Join-Path $CacheRoot 'updates'
 $BackupRoot = Join-Path $CacheRoot 'update-backups'
-$VersionPath = Join-Path $Root 'version.txt'
+$VersionPath = Join-Path $PSScriptRoot 'version.txt'
 $UserAgent = 'Jarock-updater'
 $script:TrackedFilesCache = $null
 
@@ -77,7 +77,7 @@ function Compare-SemVer($Left, $Right) {
 }
 
 function Get-LocalVersion {
-    if (-not (Test-Path -LiteralPath $VersionPath -PathType Leaf)) { throw 'version.txt is missing from the repository root.' }
+    if (-not (Test-Path -LiteralPath $VersionPath -PathType Leaf)) { throw 'scripts/version.txt is missing.' }
     return Parse-SemVer (Get-Content -LiteralPath $VersionPath -Raw)
 }
 
@@ -211,12 +211,13 @@ function Test-Package([string]$ZipPath, $ExpectedVersion) {
     Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
     $Archive = [IO.Compression.ZipFile]::OpenRead($ZipPath)
     try {
-        $VersionEntry = $Archive.GetEntry('version.txt')
+        $VersionEntry = $Archive.GetEntry('scripts/version.txt')
         $StartEntry = $Archive.GetEntry('start-server.bat')
         $UpdateEntry = $Archive.GetEntry('scripts/update-jarock.ps1')
+        $UpdateLauncherEntry = $Archive.GetEntry('scripts/update-jarock.bat')
         $PrerequisiteJre = $Archive.GetEntry('prerequisites/jre-8-windows-x64.exe')
         $PrerequisiteJdk = $Archive.GetEntry('prerequisites/OpenJDK25U-jdk_x64_windows_hotspot.msi')
-        if ($null -eq $VersionEntry -or $null -eq $StartEntry -or $null -eq $UpdateEntry -or $null -eq $PrerequisiteJre -or $null -eq $PrerequisiteJdk) { throw 'The downloaded Full package is missing required Jarock or Java prerequisite files.' }
+        if ($null -eq $VersionEntry -or $null -eq $StartEntry -or $null -eq $UpdateEntry -or $null -eq $UpdateLauncherEntry -or $null -eq $PrerequisiteJre -or $null -eq $PrerequisiteJdk) { throw 'The downloaded Full package is missing required Jarock or Java prerequisite files.' }
         $Reader = New-Object IO.StreamReader($VersionEntry.Open())
         try { $PackageVersion = Parse-SemVer $Reader.ReadToEnd() } finally { $Reader.Dispose() }
         if ((Compare-SemVer $PackageVersion $ExpectedVersion) -ne 0) { throw "The package version ($($PackageVersion.Text)) does not match the release version ($($ExpectedVersion.Text))." }
@@ -252,7 +253,7 @@ function Test-ProtectedProjectPath([string]$Relative) {
     $Comparable = $Normalized.ToLowerInvariant()
     $Top = $Comparable.Split('/')[0]
     if (@('.git', '.github', '.website', '.cache') -contains $Top) { return $true }
-    if ($Comparable -in @('.gitignore', '.gitattributes', 'server-launch-settings.ini', 'java-home.txt')) { return $true }
+    if ($Comparable -in @('.gitignore', '.gitattributes', 'scripts/server-launch-settings.ini', 'java-home.txt')) { return $true }
     if ($Top -ne 'server') { return $false }
 
     # In a Git checkout, tracked server templates/manifests are project files and
@@ -380,7 +381,7 @@ catch {
         Show-ErrorGuidance $_.Exception.Message 'This read-only startup check could not reach GitHub. Verify Internet/proxy settings if you want update notifications; the server startup can continue and no files were changed.'
     }
     else {
-        Show-ErrorGuidance $_.Exception.Message 'Stop the server, make a backup, check Internet access and permissions, then run update-jarock.bat again. No update was applied if the error occurred before the final success message.'
+        Show-ErrorGuidance $_.Exception.Message 'Stop the server, make a backup, check Internet access and permissions, then run scripts/update-jarock.bat again. No update was applied if the error occurred before the final success message.'
     }
     exit 1
 }

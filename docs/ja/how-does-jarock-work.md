@@ -34,7 +34,7 @@ scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
 server/server.properties.template
 server/eula.txt.template
-version.txt
+scripts/version.txt
 CHANGELOG.md
 TODO.md
 ```
@@ -80,7 +80,7 @@ Java は通常 TCP `25565`、Bedrock は UDP `19132` を使用します。Jarock
 
 ## Jarock の更新
 
-> `version.txt` を確認し、サーバーを停止して `SAFE TO CLOSE` を待ってから `update-jarock.bat` を実行します。同じベータ/安定チャンネルの新しいリリースを探し、確認後にロールバック用バックアップを作成します。ワールド、ランタイム、MOD、ライブラリ、ローカル設定は保持され、依存関係は不足または無効な場合だけ修復されます。
+> `scripts/version.txt` を確認し、サーバーを停止して `SAFE TO CLOSE` を待ってから `scripts/update-jarock.bat` を実行します。同じベータ/安定チャンネルの新しいリリースを探し、確認後にロールバック用バックアップを作成します。ワールド、ランタイム、MOD、ライブラリ、ローカル設定は保持され、依存関係は不足または無効な場合だけ修復されます。
 
 > 完全パッケージと公開された SHA-512 チェックサムは、インストール前に検証されます。
 
@@ -88,4 +88,4 @@ Java は通常 TCP `25565`、Bedrock は UDP `19132` を使用します。Jarock
 
 ## 起動時の更新確認
 
-parameter-manager.bat で AUTO_UPDATE_CHECK=true を設定すると、start-server.bat は起動時に読み取り専用で GitHub を確認します。互換性のある新しい Jarock を通知しますが、自動インストールは行いません。サーバーを停止し、SAFE TO CLOSE を待って update-jarock.bat を実行してください。既定値は AUTO_UPDATE_CHECK=false です。
+parameter-manager.bat で AUTO_UPDATE_CHECK=true を設定すると、start-server.bat は起動時に読み取り専用で GitHub を確認します。互換性のある新しい Jarock を通知しますが、自動インストールは行いません。サーバーを停止し、SAFE TO CLOSE を待って scripts/update-jarock.bat を実行してください。既定値は AUTO_UPDATE_CHECK=false です。

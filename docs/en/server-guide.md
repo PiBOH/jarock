@@ -144,7 +144,7 @@ After choosing a loader, do not mix its mods with another loader. To change load
 
 ## 6. Configure and start Jarock
 
-For this repository, use `parameter-manager.bat` instead of creating a separate `start.bat`. It safely configures RAM, GUI/console mode, the GC profile, online-mode, the ready banner and optional user-scoped Java environment setup. The manager works on a temporary copy: choose Save and exit or Save and start to commit changes, or choose Exit without saving to discard every change and keep the previous settings. The settings are stored locally in `server-launch-settings.ini`.
+For this repository, use `parameter-manager.bat` instead of creating a separate `start.bat`. It safely configures RAM, GUI/console mode, the GC profile, online-mode, the ready banner and optional user-scoped Java environment setup. The manager works on a temporary copy: choose Save and exit or Save and start to commit changes, or choose Exit without saving to discard every change and keep the previous settings. The settings are stored locally in `scripts/server-launch-settings.ini`.
 
 The online-mode menu controls `server.properties`:
 
@@ -540,4 +540,4 @@ Always prefer the project's current documentation and download page over a copie
 
 ## Optional startup update check
 
-Set AUTO_UPDATE_CHECK=true in parameter-manager.bat to make start-server.bat perform a read-only GitHub release check at startup. It reports a compatible newer Jarock release but never installs or modifies anything automatically. Stop safely, wait for SAFE TO CLOSE, and run update-jarock.bat explicitly to install an update. The default is AUTO_UPDATE_CHECK=false.
+Set AUTO_UPDATE_CHECK=true in parameter-manager.bat to make start-server.bat perform a read-only GitHub release check at startup. It reports a compatible newer Jarock release but never installs or modifies anything automatically. Stop safely, wait for SAFE TO CLOSE, and run scripts/update-jarock.bat explicitly to install an update. The default is AUTO_UPDATE_CHECK=false.

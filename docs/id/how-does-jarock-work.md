@@ -34,7 +34,7 @@ scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
 server/server.properties.template
 server/eula.txt.template
-version.txt
+scripts/version.txt
 CHANGELOG.md
 TODO.md
 ```
@@ -82,7 +82,7 @@ Setelah kesalahan, baca `ERROR:` atau `WARNING:` dan ikuti `Suggested fix:`. Jik
 
 ## Memperbarui Jarock
 
-> Baca `version.txt`, hentikan server dan tunggu `SAFE TO CLOSE`; lalu jalankan `update-jarock.bat`. Program mencari rilis yang lebih baru di kanal beta/stabil yang sama, meminta konfirmasi, dan membuat cadangan rollback. Dunia, runtime, mod, pustaka, dan pengaturan lokal dipertahankan; dependensi hanya diperbaiki jika hilang atau tidak valid.
+> Baca `scripts/version.txt`, hentikan server dan tunggu `SAFE TO CLOSE`; lalu jalankan `scripts/update-jarock.bat`. Program mencari rilis yang lebih baru di kanal beta/stabil yang sama, meminta konfirmasi, dan membuat cadangan rollback. Dunia, runtime, mod, pustaka, dan pengaturan lokal dipertahankan; dependensi hanya diperbaiki jika hilang atau tidak valid.
 
 > Paket lengkap dan checksum SHA-512 yang dipublikasikan diverifikasi sebelum pemasangan.
 
@@ -90,4 +90,4 @@ Setelah kesalahan, baca `ERROR:` atau `WARNING:` dan ikuti `Suggested fix:`. Jik
 
 ## Pemeriksaan pembaruan saat memulai
 
-Atur AUTO_UPDATE_CHECK=true di parameter-manager.bat agar start-server.bat memeriksa rilis GitHub hanya-baca. Versi Jarock yang lebih baru dan kompatibel akan dilaporkan, tetapi tidak dipasang otomatis. Hentikan server dengan aman, tunggu SAFE TO CLOSE, lalu jalankan update-jarock.bat. Nilai bawaan AUTO_UPDATE_CHECK=false.
+Atur AUTO_UPDATE_CHECK=true di parameter-manager.bat agar start-server.bat memeriksa rilis GitHub hanya-baca. Versi Jarock yang lebih baru dan kompatibel akan dilaporkan, tetapi tidak dipasang otomatis. Hentikan server dengan aman, tunggu SAFE TO CLOSE, lalu jalankan scripts/update-jarock.bat. Nilai bawaan AUTO_UPDATE_CHECK=false.

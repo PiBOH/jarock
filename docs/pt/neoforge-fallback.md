@@ -15,7 +15,7 @@ Consulte o guia completo em inglês: [../en/neoforge-fallback.md](../en/neoforge
 
 ## Atualizar o Jarock
 
-> Leia `version.txt`, pare o servidor e aguarde `SAFE TO CLOSE`; depois execute `update-jarock.bat`. Ele procura uma versão mais recente no mesmo canal beta/estável, pede confirmação e cria um backup de reversão. Mundo, runtime, mods, bibliotecas e configurações locais são preservados; dependências só são corrigidas se estiverem ausentes ou inválidas.
+> Leia `scripts/version.txt`, pare o servidor e aguarde `SAFE TO CLOSE`; depois execute `scripts/update-jarock.bat`. Ele procura uma versão mais recente no mesmo canal beta/estável, pede confirmação e cria um backup de reversão. Mundo, runtime, mods, bibliotecas e configurações locais são preservados; dependências só são corrigidas se estiverem ausentes ou inválidas.
 
 > O pacote completo e o respetivo checksum SHA-512 publicado são verificados antes da instalação.
 
@@ -23,4 +23,4 @@ Consulte o guia completo em inglês: [../en/neoforge-fallback.md](../en/neoforge
 
 ## Verificação de atualizações na inicialização
 
-Defina AUTO_UPDATE_CHECK=true em parameter-manager.bat para que start-server.bat verifique o GitHub somente para leitura. Uma versão compatível mais recente será indicada, mas nada será instalado automaticamente. Pare o servidor, aguarde SAFE TO CLOSE e execute update-jarock.bat. O valor padrão é AUTO_UPDATE_CHECK=false.
+Defina AUTO_UPDATE_CHECK=true em parameter-manager.bat para que start-server.bat verifique o GitHub somente para leitura. Uma versão compatível mais recente será indicada, mas nada será instalado automaticamente. Pare o servidor, aguarde SAFE TO CLOSE e execute scripts/update-jarock.bat. O valor padrão é AUTO_UPDATE_CHECK=false.

@@ -36,6 +36,8 @@
 **/run.bat
 **/run.sh
 **/java-path.txt
+/scripts/server-launch-settings.ini
+/scripts/java-home.txt
 /server-launch-settings.ini
 /java-home.txt
 

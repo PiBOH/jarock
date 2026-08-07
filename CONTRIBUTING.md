@@ -22,14 +22,14 @@ Thank you for helping maintain Jarock. This project is a beginner-friendly Windo
 - `docs/en/` — English guides.
 - `docs/<locale>/` — localized guides.
 - `TODO.md` — work required before public release.
-- `version.txt` — current SemVer version, including its pre-release suffix.
+- `scripts/version.txt` — current SemVer version, including its pre-release suffix.
 - `CHANGELOG.md` — release notes in Keep a Changelog format.
 - `.github/workflows/auto-release.yml` — release automation.
 
 ## Before changing code
 
 1. Read the relevant script, template and documentation first.
-2. Check the current `version.txt`, `CHANGELOG.md` and `.gitignore`.
+2. Check the current `scripts/version.txt`, `CHANGELOG.md` and `.gitignore`.
 3. Confirm that a change works on Windows PowerShell 5.1 as well as newer PowerShell where practical.
 4. Preserve repository-relative paths. Do not introduce a fixed drive letter or working directory.
 5. Preserve support for spaces, Unicode characters, `!` and deeply nested repository paths.
@@ -91,7 +91,7 @@ Write descriptive commits so the history can be read without opening diffs:
 
 ## Versioning, changelog and release commits
 
-Jarock uses Semantic Versioning in `version.txt`, for example:
+Jarock uses Semantic Versioning in `scripts/version.txt`, for example:
 
 ```text
 MAJOR.MINOR.PATCH-prerelease
@@ -99,7 +99,7 @@ MAJOR.MINOR.PATCH-prerelease
 
 Update `CHANGELOG.md` with every change, not only at release time: record user-facing changes under `[Unreleased]` in the same commit that introduces them, then fold them into the dated release section when the version is bumped.
 
-Use `CHANGELOG.md` according to Keep a Changelog. The current prerelease channel is `beta`; use `-beta` for new prerelease versions unless the maintainer explicitly changes the channel. Keep the current project version in `version.txt`; do not duplicate it in general documentation:
+Use `CHANGELOG.md` according to Keep a Changelog. The current prerelease channel is `beta`; use `-beta` for new prerelease versions unless the maintainer explicitly changes the channel. Keep the current project version in `scripts/version.txt`; do not duplicate it in general documentation:
 
 - `Added` for new capabilities;
 - `Changed` for changes to existing behavior;
@@ -109,7 +109,7 @@ Use `CHANGELOG.md` according to Keep a Changelog. The current prerelease channel
 
 For a release-test or release commit:
 
-1. Bump `version.txt` deliberately.
+1. Bump `scripts/version.txt` deliberately.
 2. Move the accumulated `[Unreleased]` entries into the matching dated section of `CHANGELOG.md`.
 3. Ensure the version tag does not already exist.
 4. Use a subject beginning with `v`, such as `v0.0.28-beta`, and describe the release in the commit body. Historical `-alpha` entries remain in the changelog; new prerelease commits should use the current `-beta` channel.

@@ -34,7 +34,7 @@ scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
 server/server.properties.template
 server/eula.txt.template
-version.txt
+scripts/version.txt
 CHANGELOG.md
 TODO.md
 ```
@@ -82,7 +82,7 @@ Efter ett fel, läs `ERROR:` eller `WARNING:` och följ `Suggested fix:`. Om Jav
 
 ## Uppdatera Jarock
 
-> Läs `version.txt`, stoppa servern och vänta på `SAFE TO CLOSE`; kör sedan `update-jarock.bat`. Den söker efter en nyare version i samma beta/stabila kanal, frågar efter bekräftelse och skapar en återställningskopia. Värld, runtime, moddar, bibliotek och lokala inställningar bevaras; beroenden repareras bara om de saknas eller är ogiltiga.
+> Läs `scripts/version.txt`, stoppa servern och vänta på `SAFE TO CLOSE`; kör sedan `scripts/update-jarock.bat`. Den söker efter en nyare version i samma beta/stabila kanal, frågar efter bekräftelse och skapar en återställningskopia. Värld, runtime, moddar, bibliotek och lokala inställningar bevaras; beroenden repareras bara om de saknas eller är ogiltiga.
 
 > Hela paketet och dess publicerade SHA-512-kontrollsumma verifieras före installationen.
 
@@ -90,4 +90,4 @@ Efter ett fel, läs `ERROR:` eller `WARNING:` och följ `Suggested fix:`. Om Jav
 
 ## Sök efter uppdateringar vid start
 
-Ställ in AUTO_UPDATE_CHECK=true i parameter-manager.bat så att start-server.bat gör en skrivskyddad GitHub-kontroll. En kompatibel nyare Jarock-version rapporteras, men inget installeras automatiskt. Stoppa servern, vänta på SAFE TO CLOSE och kör update-jarock.bat. Standardvärdet är AUTO_UPDATE_CHECK=false.
+Ställ in AUTO_UPDATE_CHECK=true i parameter-manager.bat så att start-server.bat gör en skrivskyddad GitHub-kontroll. En kompatibel nyare Jarock-version rapporteras, men inget installeras automatiskt. Stoppa servern, vänta på SAFE TO CLOSE och kör scripts/update-jarock.bat. Standardvärdet är AUTO_UPDATE_CHECK=false.

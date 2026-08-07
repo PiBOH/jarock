@@ -15,7 +15,7 @@ Tam İngilizce kılavuza bakın: [../en/neoforge-fallback.md](../en/neoforge-fal
 
 ## Jarock güncellemesi
 
-> `version.txt` dosyasını okuyun, sunucuyu durdurun ve `SAFE TO CLOSE` mesajını bekleyin; ardından `update-jarock.bat` dosyasını çalıştırın. Aynı beta/kararlı kanaldaki daha yeni sürümü arar, onay ister ve geri alma yedeği oluşturur. Dünya, runtime, modlar, kütüphaneler ve yerel ayarlar korunur; bağımlılıklar yalnızca eksik veya geçersizse düzeltilir.
+> `scripts/version.txt` dosyasını okuyun, sunucuyu durdurun ve `SAFE TO CLOSE` mesajını bekleyin; ardından `scripts/update-jarock.bat` dosyasını çalıştırın. Aynı beta/kararlı kanaldaki daha yeni sürümü arar, onay ister ve geri alma yedeği oluşturur. Dünya, runtime, modlar, kütüphaneler ve yerel ayarlar korunur; bağımlılıklar yalnızca eksik veya geçersizse düzeltilir.
 
 > Tam paket ve yayımlanan SHA-512 sağlama toplamı yüklemeden önce doğrulanır.
 
@@ -23,4 +23,4 @@ Tam İngilizce kılavuza bakın: [../en/neoforge-fallback.md](../en/neoforge-fal
 
 ## Başlangıçta güncelleme denetimi
 
-start-server.bat dosyasının GitHub sürümlerini yalnızca okuma amacıyla denetlemesi için parameter-manager.bat içinde AUTO_UPDATE_CHECK=true ayarlayın. Uyumlu daha yeni Jarock sürümü bildirilir, ancak otomatik yükleme yapılmaz. Sunucuyu durdurun, SAFE TO CLOSE iletisini bekleyin ve update-jarock.bat dosyasını çalıştırın. Varsayılan AUTO_UPDATE_CHECK=false değeridir.
+start-server.bat dosyasının GitHub sürümlerini yalnızca okuma amacıyla denetlemesi için parameter-manager.bat içinde AUTO_UPDATE_CHECK=true ayarlayın. Uyumlu daha yeni Jarock sürümü bildirilir, ancak otomatik yükleme yapılmaz. Sunucuyu durdurun, SAFE TO CLOSE iletisini bekleyin ve scripts/update-jarock.bat dosyasını çalıştırın. Varsayılan AUTO_UPDATE_CHECK=false değeridir.

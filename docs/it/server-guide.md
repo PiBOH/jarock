@@ -103,7 +103,7 @@ In questo repository non devi creare manualmente `start.bat`. Avvia `parameter-m
 - configurazione automatica dell'ambiente Java dell'utente;
 - banner di fine caricamento del server: mostra o nasconde l'avviso ASCII-art quando il server ha terminato l'avvio (opzione "Toggle ready banner").
 
-Le impostazioni vengono salvate in `server-launch-settings.ini`, un file locale ignorato da Git. Il programma controlla che la RAM sia valida, che sia almeno `1G`, che la RAM iniziale non superi quella massima e che non superi la memoria fisica rilevata.
+Le impostazioni vengono salvate in `scripts/server-launch-settings.ini`, un file locale ignorato da Git. Il programma controlla che la RAM sia valida, che sia almeno `1G`, che la RAM iniziale non superi quella massima e che non superi la memoria fisica rilevata.
 
 Dopo aver salvato, scegli **Save and start the server** oppure esegui `start-server.bat`. Jarock trova automaticamente un Java 25 a 64 bit compatibile e usa quel percorso, anche se Java 8 è il primo elemento del `PATH`.
 
@@ -374,7 +374,7 @@ Non installare dieci mod subito. Controlla CPU, entità, generazione dei chunk, 
 
 ## Aggiornare Jarock
 
-> Leggi `version.txt`, arresta il server e attendi `SAFE TO CLOSE`; poi esegui `update-jarock.bat`. Cerca una release più recente nello stesso canale beta/stabile, chiede conferma e crea un backup per il rollback. Mondo, runtime, mod, librerie e impostazioni locali vengono preservati; le dipendenze vengono riscaricate solo se mancanti o non valide.
+> Leggi `scripts/version.txt`, arresta il server e attendi `SAFE TO CLOSE`; poi esegui `scripts/update-jarock.bat`. Cerca una release più recente nello stesso canale beta/stabile, chiede conferma e crea un backup per il rollback. Mondo, runtime, mod, librerie e impostazioni locali vengono preservati; le dipendenze vengono riscaricate solo se mancanti o non valide.
 
 > Il pacchetto completo e il relativo checksum SHA-512 pubblicato vengono verificati prima dell'installazione.
 
@@ -382,4 +382,4 @@ Non installare dieci mod subito. Controlla CPU, entità, generazione dei chunk, 
 
 ## Controllo aggiornamenti all'avvio
 
-Imposta AUTO_UPDATE_CHECK=true in parameter-manager.bat per fare in modo che start-server.bat esegua un controllo GitHub in sola lettura. Segnalerà una versione compatibile più recente, ma non installerà nulla automaticamente. Arresta il server, attendi SAFE TO CLOSE ed esegui update-jarock.bat. Il valore predefinito è AUTO_UPDATE_CHECK=false.
+Imposta AUTO_UPDATE_CHECK=true in parameter-manager.bat per fare in modo che start-server.bat esegua un controllo GitHub in sola lettura. Segnalerà una versione compatibile più recente, ma non installerà nulla automaticamente. Arresta il server, attendi SAFE TO CLOSE ed esegui scripts/update-jarock.bat. Il valore predefinito è AUTO_UPDATE_CHECK=false.

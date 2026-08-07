@@ -9,13 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added the optional `AUTO_UPDATE_CHECK` setting to `parameter-manager.bat`. When enabled, `start-server.bat` performs a read-only GitHub release check and reports compatible updates without installing or modifying files; installation remains an explicit `update-jarock.bat` action.
+- Moved the tracked version file, launch-settings template, updater launcher, and local launch-settings file under `scripts/`. Root launchers now migrate existing root-local settings automatically, while release and CI workflows use the new paths.
+
+### Changed
+
+- Added the optional `AUTO_UPDATE_CHECK` setting to `parameter-manager.bat`. When enabled, `start-server.bat` performs a read-only GitHub release check and reports compatible updates without installing or modifying files; installation remains an explicit `scripts/update-jarock.bat` action.
 
 ### Removed
 
 - Removed the obsolete `scripts/bootstrap-fabric.ps1` legacy bootstrap; `scripts/bootstrap-server.ps1` is now the single maintained loader-aware bootstrap entry point.
 - Removed the unused `scripts/mark-english-fallback.ps1` one-off documentation helper, which was not referenced by any launcher, workflow or maintenance command.
 - Updated all localized `how-does-jarock-work.md` guides to reference the maintained unified bootstrap script.
+
+## [0.0.50-beta] - 2026-08-07
+
+### Changed
+
+- Relocated the project version source to `scripts/version.txt` and moved the updater entry point and launch-settings files into `scripts/`. Existing installations are migrated automatically by the root launchers.
 
 ## [0.0.49-beta] - 2026-08-07
 
@@ -28,7 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Safe Jarock updater**: added `update-jarock.bat` and `scripts/update-jarock.ps1`. The updater reads the installed SemVer from `version.txt`, checks GitHub releases in the same stable or beta channel, ignores drafts, requires the Full package and its published SHA-512 checksum, asks for confirmation, validates the archive before extraction, and creates a rollback backup before applying the update. It is intentionally an explicit manual action rather than a silent startup update.
+- **Safe Jarock updater**: added `scripts/update-jarock.bat` and `scripts/update-jarock.ps1`. The updater reads the installed SemVer from `scripts/version.txt`, checks GitHub releases in the same stable or beta channel, ignores drafts, requires the Full package and its published SHA-512 checksum, asks for confirmation, validates the archive before extraction, and creates a rollback backup before applying the update. It is intentionally an explicit manual action rather than a silent startup update.
 - The updater preserves the generated `server/` runtime, world data, mods, libraries, server properties, EULA, Geyser/Floodgate keys, local launch settings, Java selection, logs and secrets. Tracked templates and manifests are updated, while generated runtime files remain protected; obsolete tracked project files are removed only after being backed up. It never changes router, firewall or port-forwarding settings.
 - Added updater instructions to the English and translated documentation, including SHA-512 verification and the manual-update safety boundary. Existing dependencies are not proactively reinstalled; the next normal bootstrap verifies them and downloads only missing or invalid files. Releases without checksum assets are reported as requiring manual installation instead of being silently applied.
 
@@ -426,7 +436,7 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 
 - Made Fabric the first-choice ready-to-run server stack and kept NeoForge as the last loader fallback.
 - Changed automatic release tags to use the plain semantic version without a `v` prefix.
-- Removed project-version literals from documentation; `version.txt` is the single source for the current project version.
+- Removed project-version literals from documentation; `scripts/version.txt` is the single source for the current project version.
 
 ## [0.0.4-alpha] - 2026-08-05
 
@@ -480,7 +490,7 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Pinned Fabric mod manifest with SHA-512 verification.
 - Safe server and Geyser configuration templates.
 - English public-release checklist in `TODO.md`.
-- Semantic version file in `version.txt`.
+- Semantic version file in `scripts/version.txt`.
 - GitHub Actions autorelease workflow.
 
 ### Security

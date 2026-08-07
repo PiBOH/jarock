@@ -24,7 +24,7 @@
 
 ## อัปเดต Jarock
 
-> อ่าน `version.txt` หยุดเซิร์ฟเวอร์และรอ `SAFE TO CLOSE` จากนั้นเรียกใช้ `update-jarock.bat` โปรแกรมจะค้นหารุ่นใหม่ในช่อง beta/stable เดียวกัน ขอการยืนยันและสร้างข้อมูลสำรองสำหรับย้อนกลับ โลก runtime ม็อด ไลบรารี และการตั้งค่าจะถูกเก็บไว้ และจะแก้ไข dependency เฉพาะเมื่อขาดหายหรือไม่ถูกต้อง
+> อ่าน `scripts/version.txt` หยุดเซิร์ฟเวอร์และรอ `SAFE TO CLOSE` จากนั้นเรียกใช้ `scripts/update-jarock.bat` โปรแกรมจะค้นหารุ่นใหม่ในช่อง beta/stable เดียวกัน ขอการยืนยันและสร้างข้อมูลสำรองสำหรับย้อนกลับ โลก runtime ม็อด ไลบรารี และการตั้งค่าจะถูกเก็บไว้ และจะแก้ไข dependency เฉพาะเมื่อขาดหายหรือไม่ถูกต้อง
 
 > แพ็กเกจเต็มและค่า checksum SHA-512 ที่เผยแพร่จะถูกตรวจสอบก่อนติดตั้ง
 
@@ -32,4 +32,4 @@
 
 ## ตรวจสอบการอัปเดตเมื่อเริ่มต้น
 
-ตั้งค่า AUTO_UPDATE_CHECK=true ใน parameter-manager.bat เพื่อให้ start-server.bat ตรวจสอบ GitHub แบบอ่านอย่างเดียว ระบบจะแจ้ง Jarock รุ่นใหม่ที่เข้ากันได้ แต่จะไม่ติดตั้งอัตโนมัติ ให้หยุดเซิร์ฟเวอร์ รอ SAFE TO CLOSE แล้วเรียกใช้ update-jarock.bat ค่าเริ่มต้นคือ AUTO_UPDATE_CHECK=false
+ตั้งค่า AUTO_UPDATE_CHECK=true ใน parameter-manager.bat เพื่อให้ start-server.bat ตรวจสอบ GitHub แบบอ่านอย่างเดียว ระบบจะแจ้ง Jarock รุ่นใหม่ที่เข้ากันได้ แต่จะไม่ติดตั้งอัตโนมัติ ให้หยุดเซิร์ฟเวอร์ รอ SAFE TO CLOSE แล้วเรียกใช้ scripts/update-jarock.bat ค่าเริ่มต้นคือ AUTO_UPDATE_CHECK=false
