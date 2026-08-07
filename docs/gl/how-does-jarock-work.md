@@ -9,7 +9,7 @@
 Este documento explica que acontece despois de descargar Jarock.
 
 
-> DedicatedPower is updated automatically from its latest GitHub release; the other server mods are pinned and verified with SHA-512.
+> DedicatedPower is a Fabric-only mod: it is updated automatically from its latest GitHub release, while the other server mods are pinned and verified with SHA-512.
 
 > Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Nota de mantemento:** o lanzador agora busca un runtime Java 25+ compatible de 64 bits en vez de confiar só no primeiro `java.exe` de `PATH`. Usa `scripts/java-runtime.ps1`, garda o executable seleccionado en `server/java-path.txt` e valídao antes de iniciar. Java 8 pode permanecer instalado.

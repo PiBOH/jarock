@@ -7,11 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.28-beta] - 2026-08-07
+
 The active prerelease channel is now `beta`; new prerelease versions use the `-beta` suffix. Earlier `-alpha` entries are historical.
 
 ### Added
 
-- The bootstrap now always downloads the latest DedicatedPower release from its GitHub releases page instead of a pinned version. It picks the asset matching the target Minecraft version (`dedicatedpower-<minecraft>-<mod>.jar`), verifies size and checksum after download, keeps a local version marker so unchanged releases are not re-downloaded, and removes stale DedicatedPower jars.
+- The bootstrap now always downloads the latest DedicatedPower release from its GitHub releases page instead of a pinned version. It picks the asset matching the target Minecraft version (`dedicatedpower-<minecraft>-<mod>.jar`), verifies size and checksum after download, keeps a local version marker so unchanged releases are not re-downloaded, and removes stale DedicatedPower jars. DedicatedPower is a Fabric-only mod, so it is downloaded only when Fabric is the selected loader.
+- Documented the Fabric-only nature of DedicatedPower in `how-does-jarock-work.md` in all 31 supported languages.
 
 ### Changed
 
@@ -309,7 +312,9 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.26-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.28-beta...HEAD
+[0.0.28-beta]: https://github.com/PiBOH/jarock/compare/0.0.27-beta...0.0.28-beta
+[0.0.27-beta]: https://github.com/PiBOH/jarock/compare/0.0.26-beta...0.0.27-beta
 [0.0.26-beta]: https://github.com/PiBOH/jarock/compare/0.0.25-beta...0.0.26-beta
 [0.0.25-beta]: https://github.com/PiBOH/jarock/compare/0.0.24-beta...0.0.25-beta
 [0.0.24-beta]: https://github.com/PiBOH/jarock/compare/0.0.23-beta...0.0.24-beta

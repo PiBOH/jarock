@@ -9,7 +9,7 @@
 Ta dokument razloži, kaj se zgodi po prenosu Jarocka.
 
 
-> DedicatedPower is updated automatically from its latest GitHub release; the other server mods are pinned and verified with SHA-512.
+> DedicatedPower is a Fabric-only mod: it is updated automatically from its latest GitHub release, while the other server mods are pinned and verified with SHA-512.
 
 > Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Opomba za vzdrževanje:** zaganjalnik zdaj poišče združljiv 64-bitni Java 25+ namesto zaupanja samo prvemu `java.exe` v `PATH`. Uporabi `scripts/java-runtime.ps1`, izbrano izvedljivo datoteko shrani v `server/java-path.txt` in jo preveri pred zagonom. Java 8 lahko ostane nameščena.

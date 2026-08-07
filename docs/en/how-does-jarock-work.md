@@ -23,7 +23,7 @@ The user does not manually assemble a Minecraft server from many websites. They 
 6. PowerShell checks Java, the Windows path and the repository files.
 7. If necessary, Windows long-path support is requested.
 8. The bootstrap installs the selected loader and downloads its pinned mod files.
-9. Every downloaded file is checked with SHA-512. DedicatedPower is the exception: it is updated automatically from the latest GitHub release, and its size and checksum are verified after download.
+9. Every downloaded file is checked with SHA-512. DedicatedPower is the exception: it is a Fabric-only mod, updated automatically from the latest GitHub release, and its size and checksum are verified after download.
 10. Fabric creates its runtime and renames its launcher to local `server.jar`; NeoForge creates its official `run.bat` runtime in `server/`.
 11. The first bootstrap creates `server/eula.txt`; the launcher stops so the user can read the EULA.
 12. After the user sets `eula=true`, the first real server run starts the selected loader and lets Geyser generate its complete configuration.
@@ -108,7 +108,7 @@ If bootstrap or launch fails, the batch file stops and tells the user to read th
 
 ## 6. What the bootstrap does
 
-The bootstrap calculates the repository root from `$PSScriptRoot`, discovers a compatible 64-bit Java 25+ runtime, installs the selected loader, loads the matching loader-specific manifest, downloads and verifies its pinned server mods (DedicatedPower is the one exception and is always taken from the latest GitHub release), and creates local EULA/properties templates without overwriting existing local configuration. Fabric renames its launcher to the local runtime `server.jar`, keeps the vanilla engine as `vanilla-server.jar`, and maintains `fabric-server-launcher.properties` with `serverJar=vanilla-server.jar`; this prevents the launcher from trying to load itself as the game. NeoForge uses its official generated `run.bat` and libraries. Forge is currently rejected with an actionable message because no official 26.2 build is available.
+The bootstrap calculates the repository root from `$PSScriptRoot`, discovers a compatible 64-bit Java 25+ runtime, installs the selected loader, loads the matching loader-specific manifest, downloads and verifies its pinned server mods (DedicatedPower, which is Fabric-only, is the one exception and is always taken from the latest GitHub release), and creates local EULA/properties templates without overwriting existing local configuration. Fabric renames its launcher to the local runtime `server.jar`, keeps the vanilla engine as `vanilla-server.jar`, and maintains `fabric-server-launcher.properties` with `serverJar=vanilla-server.jar`; this prevents the launcher from trying to load itself as the game. NeoForge uses its official generated `run.bat` and libraries. Forge is currently rejected with an actionable message because no official 26.2 build is available.
 
 The default Fabric stack contains Fabric API, Geyser-Fabric, Floodgate-Fabric, Lithium, FerriteCore, Krypton, ServerCore, Fabric Carpet and DedicatedPower. It does not install arbitrary Bukkit, Spigot or Paper plugins and it does not add client-only content such as Sodium to the server.
 

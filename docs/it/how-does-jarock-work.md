@@ -19,7 +19,7 @@ L'utente deve:
 5. PowerShell controlla Java, il percorso e i file del repository.
 6. Se necessario, viene richiesto di abilitare i percorsi lunghi di Windows.
 7. Vengono scaricati Fabric e le mod bloccate nel manifest.
-8. Ogni download viene verificato con SHA-512. DedicatedPower è l'eccezione: viene aggiornata automaticamente all'ultima release GitHub e dimensione e checksum vengono verificati dopo il download.
+8. Ogni download viene verificato con SHA-512. DedicatedPower è l'eccezione: è una mod solo per Fabric, aggiornata automaticamente all'ultima release GitHub e dimensione e checksum vengono verificati dopo il download.
 9. Fabric crea il runtime in `server/`.
 10. Il primo avvio crea `server/eula.txt` e si ferma.
 11. Dopo aver impostato `eula=true`, un nuovo avvio parte normalmente.
@@ -77,7 +77,7 @@ HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled
 
 Se non vale `1`, può chiedere privilegi amministrativi ed eseguire `scripts\enable-long-paths.ps1`. Il cambiamento è globale per la macchina e può richiedere un riavvio.
 
-Controlla quindi i candidati Java con `java -version`, richiedendo Java 25+ a 64 bit, carica `server\mods-manifest.ps1`, installa Fabric 26.2 con Loader `0.19.3`, scarica le mod in `server\mods\` e verifica ogni SHA-512 (l'eccezione è DedicatedPower, presa sempre dall'ultima release GitHub). I file esistenti vengono verificati e le configurazioni locali non vengono sovrascritte. Java 8 può restare installato senza bloccare il progetto.
+Controlla quindi i candidati Java con `java -version`, richiedendo Java 25+ a 64 bit, carica `server\mods-manifest.ps1`, installa Fabric 26.2 con Loader `0.19.3`, scarica le mod in `server\mods\` e verifica ogni SHA-512 (l'eccezione è DedicatedPower, mod solo per Fabric, presa sempre dall'ultima release GitHub). I file esistenti vengono verificati e le configurazioni locali non vengono sovrascritte. Java 8 può restare installato senza bloccare il progetto.
 
 La configurazione predefinita include Fabric API, Geyser-Fabric, Floodgate-Fabric, Lithium, FerriteCore, Krypton, ServerCore, Fabric Carpet e DedicatedPower. Non installa plugin Bukkit/Spigot/Paper.
 

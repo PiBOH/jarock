@@ -9,7 +9,7 @@
 このドキュメントでは、Jarock をダウンロードした後に実際に何が起きるかを説明します。
 
 
-> DedicatedPower is updated automatically from its latest GitHub release; the other server mods are pinned and verified with SHA-512.
+> DedicatedPower is a Fabric-only mod: it is updated automatically from its latest GitHub release, while the other server mods are pinned and verified with SHA-512.
 
 > Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **メンテナンスメモ:** ランチャーは `PATH` の最初の `java.exe` だけに依存せず、互換性のある 64 ビット Java 25 以降を探します。`scripts/java-runtime.ps1` を使用し、選択した実行ファイルを `server/java-path.txt` に保存して起動前に検証します。Java 8 はインストールしたままでも構いません。
