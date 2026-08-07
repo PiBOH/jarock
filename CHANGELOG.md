@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Marked the parameter-manager and ready-banner verification items as complete in `TODO.md`.
 
+## [0.0.46-beta] - 2026-08-07
+
+### Fixed
+
+- **Downloads page release buttons now work for prereleases**: the page fetched `/releases/latest`, which GitHub returns as HTTP 404 while the newest release is a prerelease (the whole beta channel), so the buttons would have stayed on the fallback message until a stable release existed. It now uses the releases list endpoint (`/releases?per_page=5`, newest first, prereleases included) and picks the newest release that actually carries the matching zip asset.
+- The version label and download URL injected by the Downloads page are now HTML-escaped, matching the changelog box pattern.
+- Removed the redundant explicit `git lfs pull` step from the release workflow (the checkout already enables Git LFS).
+
 ## [0.0.45-beta] - 2026-08-07
 
 ### Added

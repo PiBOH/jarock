@@ -68,22 +68,30 @@
 
   const releaseSpans = [...document.querySelectorAll('[data-release-package]')];
   if (releaseSpans.length) {
-    const apiUrl = 'https://api.github.com/repos/PiBOH/jarock/releases/latest';
+    // Use the LIST endpoint, not /releases/latest: the "latest" endpoint returns
+    // HTTP 404 while the newest release is a prerelease, which would keep the
+    // buttons on the fallback message for the whole beta channel. The list is
+    // ordered newest-first and includes prereleases.
+    const apiUrl = 'https://api.github.com/repos/PiBOH/jarock/releases?per_page=5';
     const releasesFallback = 'https://github.com/PiBOH/jarock/releases';
+    const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     fetch(apiUrl)
       .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-      .then(rel => {
-        const version = rel.tag_name || 'latest';
+      .then(list => {
+        if (!Array.isArray(list) || !list.length) throw new Error('no releases');
         releaseSpans.forEach(span => {
           const kind = span.dataset.releasePackage; // 'full' or 'lite'
           const prefix = 'jarock-' + kind;
-          const asset = (rel.assets || []).find(a => a.name.startsWith(prefix) && a.name.endsWith('.zip'));
-          if (asset) {
-            const sizeMb = asset.size ? ' (' + Math.max(1, Math.round(asset.size / 1048576)) + ' MB)' : '';
-            span.innerHTML = '<a class="download-link" href="' + asset.browser_download_url + '">Download ' + (kind === 'full' ? 'Full' : 'Lite') + ' package (' + version + ')' + sizeMb + '</a>';
-          } else {
+          const rel = list.find(r => (r.assets || []).some(a => a.name.startsWith(prefix) && a.name.endsWith('.zip')));
+          if (!rel) {
             span.innerHTML = '<strong>No release package available yet.</strong> See the <a href="' + releasesFallback + '">releases page</a>.';
+            return;
           }
+          const asset = rel.assets.find(a => a.name.startsWith(prefix) && a.name.endsWith('.zip'));
+          const version = esc(rel.tag_name || 'latest');
+          const url = esc(asset.browser_download_url);
+          const sizeMb = asset.size ? ' (' + Math.max(1, Math.round(asset.size / 1048576)) + ' MB)' : '';
+          span.innerHTML = '<a class="download-link" href="' + url + '">Download ' + (kind === 'full' ? 'Full' : 'Lite') + ' package (' + version + ')' + sizeMb + '</a>';
         });
       })
       .catch(() => {

@@ -28,10 +28,6 @@ jobs:
           fetch-depth: 0
           lfs: true
 
-      - name: Checkout LFS files (prerequisites installers)
-        run: git lfs pull
-        shell: bash
-
       - name: Read and validate version
         id: version
         shell: bash
