@@ -98,7 +98,7 @@ Only then close the window. Force-closing the console while the world is saving 
 - Configure router, firewall and port forwarding manually only after completing the security checklist in `TODO.md` and `docs/<locale>/network-and-ports.md`.
 - Back up the world before changing loaders, mods or server settings.
 - Run `parameter-manager.bat` when you need to change launch settings.
-- If `AUTO_UPDATE_CHECK=true`, startup only checks GitHub in read-only mode. It never installs an update automatically. Stop the server safely and run `scripts/update-jarock.bat` explicitly to install one.
+- If `AUTO_UPDATE_CHECK=true`, startup checks GitHub and asks `Download and install it now? (y/N)` when a newer compatible release exists. Choose `Y` to install the verified Lite package, or `N`/Enter to continue with the current version. It never updates silently. You can also stop the server safely and run `scripts/update-jarock.bat` manually.
 - Keep the generated `server/` runtime private and do not commit worlds, logs, libraries, downloaded jars, keys or local settings.
 
 ## Common first-run problems

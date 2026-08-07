@@ -23,4 +23,4 @@ Consultați ghidul complet în engleză: [../en/neoforge-fallback.md](../en/neof
 
 ## Verificarea actualizărilor la pornire
 
-Setează AUTO_UPDATE_CHECK=true în parameter-manager.bat pentru ca start-server.bat să verifice lansările GitHub doar pentru citire. Va raporta o versiune compatibilă mai nouă, dar nu va instala nimic automat. Oprește serverul, așteaptă SAFE TO CLOSE și rulează scripts/update-jarock.bat. Valoarea implicită este AUTO_UPDATE_CHECK=false.
+Setează AUTO_UPDATE_CHECK=true în parameter-manager.bat pentru ca start-server.bat să verifice lansările GitHub doar pentru citire. Va raporta o versiune compatibilă mai nouă, dar nu va instala nimic automat. Oprește serverul, așteaptă SAFE TO CLOSE și rulează scripts/update-jarock.bat. Valoarea implicită este AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.

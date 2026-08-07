@@ -34,18 +34,7 @@ if not exist "%SETTINGS%" (
 )
 
 findstr /i /r /c:"^AUTO_UPDATE_CHECK=true$" "%SETTINGS%" >nul
-
-if not errorlevel 1 (
-    echo.
-    echo ==> Checking for a newer Jarock release (read-only)
-    echo This check never installs updates automatically and does not change server files.
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-jarock.ps1" -CheckOnly -NonInteractive
-    if errorlevel 1 (
-        echo WARNING: The automatic update check could not complete.
-        echo Suggested fix: verify Internet access, or run scripts/update-jarock.bat manually when the server is stopped.
-        echo Continuing with the server startup; no automatic update was installed.
-    )
-)
+if not errorlevel 1 call :startup_update_check
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\bootstrap-server.ps1"
 set "BOOTSTRAP_EXIT_CODE=%errorlevel%"
@@ -133,3 +122,15 @@ if "%EXIT_CODE%"=="0" (
 )
 pause
 exit /b %EXIT_CODE%
+
+:startup_update_check
+echo.
+echo ==> Checking for a newer Jarock release
+echo If a newer release is available, Jarock will ask whether to install it now.
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-jarock.ps1" -PromptForUpdate
+set "UPDATE_CHECK_EXIT_CODE=%errorlevel%"
+if "%UPDATE_CHECK_EXIT_CODE%"=="1" echo WARNING: The startup update check could not complete.
+if "%UPDATE_CHECK_EXIT_CODE%"=="1" echo Suggested fix: verify Internet access, or run scripts\update-jarock.bat manually when the server is stopped.
+if "%UPDATE_CHECK_EXIT_CODE%"=="1" echo Continuing with the current Jarock version.
+if "%UPDATE_CHECK_EXIT_CODE%"=="2" echo Update skipped. Continuing with the current Jarock version.
+exit /b 0

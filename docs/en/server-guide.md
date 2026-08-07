@@ -540,4 +540,4 @@ Always prefer the project's current documentation and download page over a copie
 
 ## Optional startup update check
 
-Set AUTO_UPDATE_CHECK=true in parameter-manager.bat to make start-server.bat perform a read-only GitHub release check at startup. It reports a compatible newer Jarock release but never installs or modifies anything automatically. Stop safely, wait for SAFE TO CLOSE, and run scripts/update-jarock.bat explicitly to install an update. The default is AUTO_UPDATE_CHECK=false.
+Set AUTO_UPDATE_CHECK=true in parameter-manager.bat to make start-server.bat check GitHub at startup. If a compatible newer release is found, it asks `Download and install it now? (y/N)`: choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently. Stop safely before any manual update. The default is AUTO_UPDATE_CHECK=false.

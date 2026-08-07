@@ -209,8 +209,9 @@ echo Jarock will not contact GitHub during startup.
 ) else (
     set "NEW_AUTO_UPDATE=true"
 echo Run startup update check will be enabled.
-echo This is a read-only notification check; Jarock will never install an update automatically.
-echo To install an update, stop the server and run scripts\update-jarock.bat manually.
+echo Jarock will ask for confirmation when a newer release is found.
+echo y installs the verified Lite update; N or Enter skips it. It never updates silently.
+echo You can also install manually with scripts\update-jarock.bat while the server is stopped.
 )
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name AUTO_UPDATE_CHECK -Value "%NEW_AUTO_UPDATE%"
 if errorlevel 1 pause

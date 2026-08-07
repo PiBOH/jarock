@@ -2,6 +2,7 @@
 param(
     [switch]$NonInteractive,
     [switch]$CheckOnly,
+    [switch]$PromptForUpdate,
     [switch]$AllowLocalChanges,
     [string]$ReleaseApiUrl = 'https://api.github.com/repos/PiBOH/jarock/releases?per_page=100'
 )
@@ -347,7 +348,13 @@ try {
     }
     Write-Host "Available update: $($Candidate.Version.Text) ($($Candidate.Asset.name))" -ForegroundColor Yellow
     Write-Host "Download size: $([math]::Round(([double]$Candidate.Asset.size / 1MB), 1)) MB" -ForegroundColor Yellow
-    if ($CheckOnly) { exit 0 }
+    if ($CheckOnly -and -not $PromptForUpdate) { exit 0 }
+    if ($PromptForUpdate) {
+        $Answer = Read-Host 'A newer Jarock release is available. Download and install it now? (y/N)'
+        if ($Answer -notmatch '^(?i:y|yes)$') { Write-Host 'Update skipped. Continuing with the current Jarock version.' -ForegroundColor Yellow; exit 2 }
+        # The startup prompt is the confirmation; do not ask a second time below.
+        $NonInteractive = $true
+    }
     if (-not $NonInteractive) {
         $Answer = Read-Host 'Download and install this update now? (Y/N)'
         if ($Answer -notmatch '^(?i:y|yes)$') { Write-Host 'Update cancelled. No files were changed.' -ForegroundColor Yellow; exit 2 }
@@ -376,7 +383,7 @@ try {
 }
 catch {
     if ($CheckOnly) {
-        Show-ErrorGuidance $_.Exception.Message 'This read-only startup check could not reach GitHub. Verify Internet/proxy settings if you want update notifications; the server startup can continue and no files were changed.'
+        Show-ErrorGuidance $_.Exception.Message 'The startup update check could not reach GitHub. Verify Internet/proxy settings if you want update notifications; the server startup can continue and no files were changed.'
     }
     else {
         Show-ErrorGuidance $_.Exception.Message 'Stop the server, make a backup, check Internet access and permissions, then run scripts/update-jarock.bat again. No update was applied if the error occurred before the final success message.'

@@ -25,4 +25,4 @@ Instala Java 25 de 64 bits, executa `start-server. (enable "Set JAVA_HOME variab
 
 ## Comprobación de actualizacións ao iniciar
 
-Establece AUTO_UPDATE_CHECK=true en parameter-manager.bat para que start-server.bat comprobe GitHub en modo de só lectura. Informará dunha versión compatible máis recente, pero non instalará nada automaticamente. Detén o servidor, agarda por SAFE TO CLOSE e executa scripts/update-jarock.bat. O valor predeterminado é AUTO_UPDATE_CHECK=false.
+Establece AUTO_UPDATE_CHECK=true en parameter-manager.bat para que start-server.bat comprobe GitHub en modo de só lectura. Informará dunha versión compatible máis recente, pero non instalará nada automaticamente. Detén o servidor, agarda por SAFE TO CLOSE e executa scripts/update-jarock.bat. O valor predeterminado é AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.

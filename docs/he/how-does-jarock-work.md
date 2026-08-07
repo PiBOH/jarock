@@ -90,4 +90,4 @@ Java משתמש בדרך כלל ב-TCP `25565` ו-Bedrock ב-UDP `19132`. Jarock
 
 ## בדיקת עדכונים בעת ההפעלה
 
-הגדר AUTO_UPDATE_CHECK=true בתוך parameter-manager.bat כדי ש-start-server.bat יבצע בדיקת GitHub לקריאה בלבד. תוצג גרסה תואמת חדשה יותר, אך דבר לא יותקן אוטומטית. עצור את השרת, המתן ל-SAFE TO CLOSE והפעל scripts/update-jarock.bat. ברירת המחדל היא AUTO_UPDATE_CHECK=false.
+הגדר AUTO_UPDATE_CHECK=true בתוך parameter-manager.bat כדי ש-start-server.bat יבצע בדיקת GitHub לקריאה בלבד. תוצג גרסה תואמת חדשה יותר, אך דבר לא יותקן אוטומטית. עצור את השרת, המתן ל-SAFE TO CLOSE והפעל scripts/update-jarock.bat. ברירת המחדל היא AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.

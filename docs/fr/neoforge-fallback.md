@@ -23,4 +23,4 @@ See the [English NeoForge fallback guide](../en/neoforge-fallback.md) for the co
 
 ## Vérification des mises à jour au démarrage
 
-Définissez AUTO_UPDATE_CHECK=true dans parameter-manager.bat afin que start-server.bat vérifie GitHub en lecture seule au démarrage. Une version compatible plus récente est signalée, mais rien n’est installé automatiquement. Arrêtez le serveur, attendez SAFE TO CLOSE et exécutez scripts/update-jarock.bat. La valeur par défaut est AUTO_UPDATE_CHECK=false.
+Définissez AUTO_UPDATE_CHECK=true dans parameter-manager.bat afin que start-server.bat vérifie GitHub en lecture seule au démarrage. Une version compatible plus récente est signalée, mais demandera une confirmation avant l’installation. Choisissez Y pour installer la mise à jour Lite ou N/Entrée pour continuer avec la version actuelle. La valeur par défaut est AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.

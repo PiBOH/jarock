@@ -25,4 +25,4 @@ Namestite 64-bitno Javo 25, zaženite `start-server.bat` in dokončajte `TODO.md
 
 ## Preverjanje posodobitev ob zagonu
 
-V parameter-manager.bat nastavite AUTO_UPDATE_CHECK=true, da start-server.bat preveri izdaje GitHub samo za branje. Poročal bo o združljivi novejši različici Jarock, vendar je ne bo samodejno namestil. Ustavite strežnik, počakajte na SAFE TO CLOSE in zaženite scripts/update-jarock.bat. Privzeto je AUTO_UPDATE_CHECK=false.
+V parameter-manager.bat nastavite AUTO_UPDATE_CHECK=true, da start-server.bat preveri izdaje GitHub samo za branje. Poročal bo o združljivi novejši različici Jarock, vendar je ne bo samodejno namestil. Ustavite strežnik, počakajte na SAFE TO CLOSE in zaženite scripts/update-jarock.bat. Privzeto je AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.

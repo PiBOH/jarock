@@ -32,4 +32,4 @@ See the [English installation guide](../en/server-guide.md) for the complete pro
 
 ## فحص التحديثات عند بدء التشغيل
 
-اضبط AUTO_UPDATE_CHECK=true في parameter-manager.bat ليجري start-server.bat فحصًا للقراءة فقط عند بدء التشغيل. سيبلغ عن إصدار Jarock متوافق أحدث، لكنه لن يثبت شيئًا تلقائيًا. أوقف الخادم بأمان، وانتظر SAFE TO CLOSE، ثم شغّل scripts/update-jarock.bat. القيمة الافتراضية AUTO_UPDATE_CHECK=false.
+اضبط AUTO_UPDATE_CHECK=true في parameter-manager.bat ليجري start-server.bat فحصًا للقراءة فقط عند بدء التشغيل. سيبلغ عن إصدار Jarock متوافق أحدث، ويطلب التأكيد قبل التثبيت. اختر Y لتثبيت تحديث Lite أو N/Enter للمتابعة بالإصدار الحالي. القيمة الافتراضية AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.

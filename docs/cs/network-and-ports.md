@@ -25,4 +25,4 @@ Nainstalujte 64bitovou Javu 25, spusťte `start-server.bat` a dokončete `TODO.m
 
 ## Kontrola aktualizací při spuštění
 
-Nastav AUTO_UPDATE_CHECK=true v parameter-manager.bat, aby start-server.bat provedl kontrolu vydání GitHub pouze pro čtení. Oznámí kompatibilní novější verzi, ale nic nenainstaluje automaticky. Bezpečně server zastav, počkej na SAFE TO CLOSE a spusť scripts/update-jarock.bat. Výchozí hodnota je AUTO_UPDATE_CHECK=false.
+Nastav AUTO_UPDATE_CHECK=true v parameter-manager.bat, aby start-server.bat provedl kontrolu vydání GitHub pouze pro čtení. Oznámí kompatibilní novější verzi, ale nic nenainstaluje automaticky. Bezpečně server zastav, počkej na SAFE TO CLOSE a spusť scripts/update-jarock.bat. Výchozí hodnota je AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.

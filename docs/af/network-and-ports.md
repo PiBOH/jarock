@@ -25,4 +25,4 @@ Installeer 64-bis Java 25, voer `start-server. (enable "Set JAVA_HOME variable" 
 
 ## Kontrole vir opdaterings tydens opstart
 
-Stel AUTO_UPDATE_CHECK=true in parameter-manager.bat sodat start-server.bat tydens opstart 'n leesalleen-GitHub-kontrole uitvoer. Dit meld 'n versoenbare nuwer Jarock-weergawe, maar installeer niks outomaties nie. Stop veilig, wag vir SAFE TO CLOSE en voer scripts/update-jarock.bat uit. Die verstek is AUTO_UPDATE_CHECK=false.
+Stel AUTO_UPDATE_CHECK=true in parameter-manager.bat sodat start-server.bat tydens opstart 'n leesalleen-GitHub-kontrole uitvoer. Dit meld 'n versoenbare nuwer Jarock-weergawe, vra eers bevestiging voordat dit installeer. Kies Y om die Lite-opdatering te installeer, of N/Enter om voort te gaan met die huidige weergawe. Die verstek is AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.

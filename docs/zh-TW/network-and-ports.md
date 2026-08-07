@@ -25,4 +25,4 @@
 
 ## 啟動時檢查更新
 
-在 parameter-manager.bat 中將 AUTO_UPDATE_CHECK=true，讓 start-server.bat 以唯讀方式檢查 GitHub 發行版本。它會回報相容的新版本 Jarock，但不會自動安裝。請停止伺服器，等待 SAFE TO CLOSE，然後執行 scripts/update-jarock.bat。預設值為 AUTO_UPDATE_CHECK=false。
+在 parameter-manager.bat 中將 AUTO_UPDATE_CHECK=true，讓 start-server.bat 以唯讀方式檢查 GitHub 發行版本。它會回報相容的新版本 Jarock，但不會自動安裝。請停止伺服器，等待 SAFE TO CLOSE，然後執行 scripts/update-jarock.bat。預設值為 AUTO_UPDATE_CHECK=false。 When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.

@@ -23,4 +23,4 @@ Lesen Sie die vollständige englische Anleitung: [../en/neoforge-fallback.md](..
 
 ## Updateprüfung beim Start
 
-Setze AUTO_UPDATE_CHECK=true in parameter-manager.bat, damit start-server.bat beim Start eine schreibgeschützte GitHub-Prüfung ausführt. Eine kompatible neuere Jarock-Version wird gemeldet, aber nichts automatisch installiert. Stoppe den Server sicher, warte auf SAFE TO CLOSE und führe scripts/update-jarock.bat aus. Der Standardwert ist AUTO_UPDATE_CHECK=false.
+Setze AUTO_UPDATE_CHECK=true in parameter-manager.bat, damit start-server.bat beim Start eine schreibgeschützte GitHub-Prüfung ausführt. Eine kompatible neuere Jarock-Version wird gemeldet, aber nichts automatisch installiert. Stoppe den Server sicher, warte auf SAFE TO CLOSE und führe scripts/update-jarock.bat aus. Der Standardwert ist AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.

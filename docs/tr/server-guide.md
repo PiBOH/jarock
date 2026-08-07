@@ -32,4 +32,4 @@ Tam İngilizce kılavuza bakın: [../en/server-guide.md](../en/server-guide.md)
 
 ## Başlangıçta güncelleme denetimi
 
-start-server.bat dosyasının GitHub sürümlerini yalnızca okuma amacıyla denetlemesi için parameter-manager.bat içinde AUTO_UPDATE_CHECK=true ayarlayın. Uyumlu daha yeni Jarock sürümü bildirilir, ancak otomatik yükleme yapılmaz. Sunucuyu durdurun, SAFE TO CLOSE iletisini bekleyin ve scripts/update-jarock.bat dosyasını çalıştırın. Varsayılan AUTO_UPDATE_CHECK=false değeridir.
+start-server.bat dosyasının GitHub sürümlerini yalnızca okuma amacıyla denetlemesi için parameter-manager.bat içinde AUTO_UPDATE_CHECK=true ayarlayın. Uyumlu daha yeni Jarock sürümü bildirilir, ancak otomatik yükleme yapılmaz. Sunucuyu durdurun, SAFE TO CLOSE iletisini bekleyin ve scripts/update-jarock.bat dosyasını çalıştırın. Varsayılan AUTO_UPDATE_CHECK=false değeridir. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.

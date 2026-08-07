@@ -32,4 +32,4 @@ See the [English installation guide](../en/server-guide.md) for the complete pro
 
 ## Comprovació d'actualitzacions en iniciar
 
-Estableix AUTO_UPDATE_CHECK=true a parameter-manager.bat perquè start-server.bat faci una comprovació de GitHub només de lectura. Informa d'una versió compatible més nova, però no instal·la res automàticament. Atura el servidor, espera SAFE TO CLOSE i executa scripts/update-jarock.bat. El valor predeterminat és AUTO_UPDATE_CHECK=false.
+Estableix AUTO_UPDATE_CHECK=true a parameter-manager.bat perquè start-server.bat faci una comprovació de GitHub només de lectura. Informa d'una versió compatible més nova, però demana confirmació abans d’instal·lar. Tria Y per instal·lar l’actualització Lite o N/Enter per continuar amb la versió actual. El valor predeterminat és AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.

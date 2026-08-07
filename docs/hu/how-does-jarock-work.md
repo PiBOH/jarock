@@ -90,4 +90,4 @@ Hiba után olvasd el az `ERROR:` vagy `WARNING:` sort, és kövesd a `Suggested 
 
 ## Frissítések ellenőrzése indításkor
 
-Állítsd AUTO_UPDATE_CHECK=true értékre a parameter-manager.bat fájlban, hogy a start-server.bat csak olvasási GitHub-ellenőrzést végezzen. Jelzi a kompatibilis újabb verziót, de nem telepít automatikusan. Állítsd le biztonságosan a szervert, várd meg a SAFE TO CLOSE üzenetet, majd futtasd az scripts/update-jarock.bat fájlt. Az alapérték AUTO_UPDATE_CHECK=false.
+Állítsd AUTO_UPDATE_CHECK=true értékre a parameter-manager.bat fájlban, hogy a start-server.bat csak olvasási GitHub-ellenőrzést végezzen. Jelzi a kompatibilis újabb verziót, de nem telepít automatikusan. Állítsd le biztonságosan a szervert, várd meg a SAFE TO CLOSE üzenetet, majd futtasd az scripts/update-jarock.bat fájlt. Az alapérték AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.

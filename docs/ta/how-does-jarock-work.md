@@ -90,4 +90,4 @@ Java பொதுவாக TCP `25565`-ஐயும் Bedrock UDP `19132`-ஐ�
 
 ## தொடக்கத்தில் புதுப்பிப்பு சரிபார்ப்பு
 
-GitHub வெளியீடுகளை படிக்க மட்டும் சரிபார்க்க start-server.bat செய்ய parameter-manager.bat இல் AUTO_UPDATE_CHECK=true அமைக்கவும். இணக்கமான புதிய Jarock பதிப்பு தெரிவிக்கப்படும்; தானாக நிறுவப்படாது. சேவையகத்தை நிறுத்தி SAFE TO CLOSE வரும் வரை காத்திருந்து scripts/update-jarock.bat இயக்கவும். இயல்புநிலை AUTO_UPDATE_CHECK=false.
+GitHub வெளியீடுகளை படிக்க மட்டும் சரிபார்க்க start-server.bat செய்ய parameter-manager.bat இல் AUTO_UPDATE_CHECK=true அமைக்கவும். இணக்கமான புதிய Jarock பதிப்பு தெரிவிக்கப்படும்; தானாக நிறுவப்படாது. சேவையகத்தை நிறுத்தி SAFE TO CLOSE வரும் வரை காத்திருந்து scripts/update-jarock.bat இயக்கவும். இயல்புநிலை AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.

@@ -115,4 +115,4 @@ O Jarock não altera roteador, firewall, port forwarding ou IP público. O que a
 
 ## Verificação de atualizações na inicialização
 
-Defina AUTO_UPDATE_CHECK=true em parameter-manager.bat para que start-server.bat verifique o GitHub somente para leitura. Uma versão compatível mais recente será indicada, mas nada será instalado automaticamente. Pare o servidor, aguarde SAFE TO CLOSE e execute scripts/update-jarock.bat. O valor padrão é AUTO_UPDATE_CHECK=false.
+Defina AUTO_UPDATE_CHECK=true em parameter-manager.bat para que start-server.bat verifique o GitHub somente para leitura. Uma versão compatível mais recente será indicada, mas nada será instalado automaticamente. Pare o servidor, aguarde SAFE TO CLOSE e execute scripts/update-jarock.bat. O valor padrão é AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.

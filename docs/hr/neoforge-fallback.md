@@ -23,4 +23,4 @@ See the [English NeoForge fallback guide](../en/neoforge-fallback.md) for the co
 
 ## Provjera ažuriranja pri pokretanju
 
-Postavi AUTO_UPDATE_CHECK=true u parameter-manager.bat kako bi start-server.bat izvršio GitHub provjeru samo za čitanje. Prijavit će kompatibilnu noviju verziju, ali ništa neće automatski instalirati. Sigurno zaustavi poslužitelj, pričekaj SAFE TO CLOSE i pokreni scripts/update-jarock.bat. Zadano je AUTO_UPDATE_CHECK=false.
+Postavi AUTO_UPDATE_CHECK=true u parameter-manager.bat kako bi start-server.bat izvršio GitHub provjeru samo za čitanje. Prijavit će kompatibilnu noviju verziju, ali ništa neće automatski instalirati. Sigurno zaustavi poslužitelj, pričekaj SAFE TO CLOSE i pokreni scripts/update-jarock.bat. Zadano je AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.

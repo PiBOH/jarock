@@ -23,4 +23,4 @@ See the [English NeoForge fallback guide](../en/neoforge-fallback.md) for the co
 
 ## Updatecontrole bij het opstarten
 
-Stel AUTO_UPDATE_CHECK=true in parameter-manager.bat in zodat start-server.bat GitHub bij het opstarten alleen-lezen controleert. Een compatibele nieuwere Jarock-versie wordt gemeld, maar niets wordt automatisch geïnstalleerd. Stop de server, wacht op SAFE TO CLOSE en voer scripts/update-jarock.bat uit. De standaardwaarde is AUTO_UPDATE_CHECK=false.
+Stel AUTO_UPDATE_CHECK=true in parameter-manager.bat in zodat start-server.bat GitHub bij het opstarten alleen-lezen controleert. Een compatibele nieuwere Jarock-versie wordt gemeld, maar niets wordt automatisch geïnstalleerd. Stop de server, wacht op SAFE TO CLOSE en voer scripts/update-jarock.bat uit. De standaardwaarde is AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.
