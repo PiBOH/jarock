@@ -9,6 +9,8 @@
 این سند توضیح می‌دهد پس از دانلود Jarock چه اتفاقی می‌افتد.
 
 
+> DedicatedPower is updated automatically from its latest GitHub release; the other server mods are pinned and verified with SHA-512.
+
 > Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **یادداشت نگهداری:** اجراکننده اکنون به‌جای اعتماد به اولین `java.exe` در `PATH`، یک Java 25+ سازگار و 64 بیتی را پیدا می‌کند. از `scripts/java-runtime.ps1` استفاده می‌کند، فایل اجرایی انتخاب‌شده را در `server/java-path.txt` ذخیره می‌کند و پیش از اجرا آن را اعتبارسنجی می‌کند. Java 8 می‌تواند نصب‌شده باقی بماند.
 

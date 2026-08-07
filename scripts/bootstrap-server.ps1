@@ -270,6 +270,64 @@ function Install-Mods([string]$Loader) {
         Write-Host "Verified $($Mod.Name) [$($Mod.Purpose)]" -ForegroundColor Green
     }
 }
+function Get-LatestDedicatedPowerRelease {
+    try {
+        return Invoke-RestMethod -Uri 'https://api.github.com/repos/PiBOH/DedicatedPower/releases/latest' -Headers @{ 'User-Agent' = 'Jarock-loader-bootstrap' }
+    }
+    catch {
+        Write-Host "WARNING: Could not query the latest DedicatedPower release: $($_.Exception.Message)" -ForegroundColor Yellow
+        return $null
+    }
+}
+function Install-DedicatedPower {
+    $Marker = Join-Path $ModsDir '.dedicatedpower-version'
+    $StoredTag = ''; $StoredHash = ''; $StoredFile = ''
+    if (Test-Path -LiteralPath $Marker -PathType Leaf) {
+        $MarkerLines = @(Get-Content -LiteralPath $Marker)
+        if ($MarkerLines.Count -ge 3) { $StoredTag = [string]$MarkerLines[0].Trim(); $StoredHash = [string]$MarkerLines[1].Trim(); $StoredFile = [string]$MarkerLines[2].Trim() }
+    }
+    $Release = Get-LatestDedicatedPowerRelease
+    if ($null -eq $Release -or -not ($Release.PSObject.Properties.Name -contains 'tag_name')) {
+        if ($StoredFile -and (Test-Path -LiteralPath (Join-Path $ModsDir $StoredFile) -PathType Leaf) -and (Get-Sha512 (Join-Path $ModsDir $StoredFile)) -eq $StoredHash) {
+            Write-Host "DedicatedPower GitHub is unreachable; keeping $StoredFile ($StoredTag)." -ForegroundColor Yellow
+            return
+        }
+        Stop-WithGuidance 'Could not resolve the latest DedicatedPower release and no valid local copy exists.' 'Check Internet access and proxy/antivirus settings, then run start-server.bat again.'
+    }
+    $Tag = [string]$Release.tag_name
+    $Assets = @($Release.assets | Where-Object { $_.name -match '^dedicatedpower-.+\.jar$' })
+    if ($Assets.Count -eq 0) { Stop-WithGuidance "The latest DedicatedPower release ($Tag) has no .jar asset." 'Check the DedicatedPower release page and report the missing asset to its maintainer.' }
+    # Asset names look like dedicatedpower-<minecraft>-<mod>.jar; prefer the one for the target Minecraft version.
+    $Asset = $Assets | Where-Object { $_.name -match "^dedicatedpower-$([regex]::Escape($MinecraftVersion))-" } | Select-Object -First 1
+    if ($null -eq $Asset) {
+        $Asset = $Assets[0]
+        Write-Host "WARNING: The latest DedicatedPower release has no asset named for Minecraft $MinecraftVersion; using $($Asset.name)." -ForegroundColor Yellow
+    }
+    $Target = Join-Path $ModsDir $Asset.name
+    $NeedDownload = $true
+    if ($StoredTag -eq $Tag -and $StoredFile -eq $Asset.name -and (Test-Path -LiteralPath $Target -PathType Leaf) -and (Get-Sha512 $Target) -eq $StoredHash) { $NeedDownload = $false }
+    if ($NeedDownload) {
+        Write-Host "Downloading DedicatedPower $Tag ($($Asset.name)) ..."
+        try {
+            Invoke-WebRequest -Uri $Asset.browser_download_url -OutFile $Target -Headers @{ 'User-Agent' = 'Jarock-loader-bootstrap' } -UseBasicParsing
+        }
+        catch {
+            Remove-Item -LiteralPath $Target -Force -ErrorAction SilentlyContinue
+            Stop-WithGuidance "DedicatedPower download failed: $($_.Exception.Message)" 'Check Internet access, then run start-server.bat again.'
+        }
+        if ((Get-Item -LiteralPath $Target).Length -ne [int64]$Asset.size) {
+            Remove-Item -LiteralPath $Target -Force
+            Stop-WithGuidance 'The DedicatedPower download size does not match the release asset.' 'Run start-server.bat again; if the error repeats, report it to the DedicatedPower maintainer.'
+        }
+        $NewHash = Get-Sha512 $Target
+        [IO.File]::WriteAllLines($Marker, @($Tag, $NewHash, $Asset.name), (New-Object Text.UTF8Encoding($false)))
+        Get-ChildItem -LiteralPath $ModsDir -Filter 'dedicatedpower-*.jar' -File | Where-Object { $_.FullName -ne $Target } | Remove-Item -Force -ErrorAction SilentlyContinue
+        Write-Host "Verified $($Asset.name) [DedicatedPower, latest GitHub release]" -ForegroundColor Green
+    }
+    else {
+        Write-Host "Verified $($Asset.name) [DedicatedPower, already current]" -ForegroundColor Green
+    }
+}
 try {
     Write-Step 'Checking repository and loader configuration'
     New-Item -ItemType Directory -Force -Path $ServerDir | Out-Null
@@ -284,6 +342,7 @@ try {
     Ensure-LocalTemplates
     Write-Step "Downloading and verifying $Loader server mods"
     Install-Mods $Loader
+    if ($Loader -eq 'fabric') { Install-DedicatedPower }
     Write-LoaderMarker $Loader
     Write-Step 'Bootstrap complete'
     Write-Host "Loader: $Loader" -ForegroundColor Green

@@ -9,6 +9,8 @@
 Энэ баримт нь Jarock-ийг татсаны дараа юу болдгийг тайлбарлана.
 
 
+> DedicatedPower is updated automatically from its latest GitHub release; the other server mods are pinned and verified with SHA-512.
+
 > Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Засвар үйлчилгээний тэмдэглэл:** эхлүүлэгч нь `PATH` дахь эхний `java.exe`-д дангаар найдахгүй, нийцтэй 64-бит Java 25+ орчныг хайна. `scripts/java-runtime.ps1`-ийг ашиглаж, сонгосон гүйцэтгэх файлыг `server/java-path.txt`-д хадгалан эхлүүлэхийн өмнө шалгана. Java 8 суусан хэвээр байж болно.
 
