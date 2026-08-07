@@ -25,38 +25,38 @@ Each requested locale has a concise translated `how-does-jarock-work.md`. The En
 
 | Locale | Guide |
 |---|---|
-| `af` | [Afrikaans](af/how-does-jarock-work.md) |
-| `ar` | [Arabic](ar/how-does-jarock-work.md) |
-| `ca` | [Catalan](ca/how-does-jarock-work.md) |
-| `zh-CN` | [Chinese Simplified](zh-CN/how-does-jarock-work.md) |
-| `zh-TW` | [Chinese Traditional](zh-TW/how-does-jarock-work.md) |
-| `hr` | [Croatian](hr/how-does-jarock-work.md) |
-| `cs` | [Czech](cs/how-does-jarock-work.md) |
-| `nl` | [Dutch](nl/how-does-jarock-work.md) |
-| `fa` | [Farsi](fa/how-does-jarock-work.md) |
-| `fr` | [French](fr/how-does-jarock-work.md) |
-| `gl` | [Galician](gl/how-does-jarock-work.md) |
-| `de` | [German](de/how-does-jarock-work.md) |
-| `he` | [Hebrew](he/how-does-jarock-work.md) |
-| `hu` | [Hungarian](hu/how-does-jarock-work.md) |
-| `id` | [Indonesian](id/how-does-jarock-work.md) |
-| `it` | [Italian](it/how-does-jarock-work.md) |
-| `ja` | [Japanese](ja/how-does-jarock-work.md) |
-| `ko` | [Korean](ko/how-does-jarock-work.md) |
-| `lv` | [Latvian](lv/how-does-jarock-work.md) |
-| `ms` | [Malay](ms/how-does-jarock-work.md) |
-| `mn` | [Mongolian](mn/how-does-jarock-work.md) |
-| `pl` | [Polish](pl/how-does-jarock-work.md) |
-| `pt` | [Portuguese](pt/how-does-jarock-work.md) |
-| `ro` | [Romanian](ro/how-does-jarock-work.md) |
-| `ru` | [Russian](ru/how-does-jarock-work.md) |
-| `es` | [Spanish](es/how-does-jarock-work.md) |
-| `sv` | [Swedish](sv/how-does-jarock-work.md) |
-| `sl` | [Slovenian](sl/how-does-jarock-work.md) |
-| `ta` | [Tamil](ta/how-does-jarock-work.md) |
-| `th` | [Thai](th/how-does-jarock-work.md) |
-| `tr` | [Turkish](tr/how-does-jarock-work.md) |
-| `uk` | [Ukrainian](uk/how-does-jarock-work.md) |
+| `af` | [Hoe werk Jarock?](af/how-does-jarock-work.md) |
+| `ar` | [كيف يعمل Jarock؟](ar/how-does-jarock-work.md) |
+| `ca` | [Com funciona Jarock?](ca/how-does-jarock-work.md) |
+| `zh-CN` | [Jarock 是如何工作的？](zh-CN/how-does-jarock-work.md) |
+| `zh-TW` | [Jarock 如何運作？](zh-TW/how-does-jarock-work.md) |
+| `hr` | [Kako Jarock radi?](hr/how-does-jarock-work.md) |
+| `cs` | [Jak Jarock funguje?](cs/how-does-jarock-work.md) |
+| `nl` | [Hoe werkt Jarock?](nl/how-does-jarock-work.md) |
+| `fa` | [Jarock چگونه کار می‌کند؟](fa/how-does-jarock-work.md) |
+| `fr` | [Comment fonctionne Jarock ?](fr/how-does-jarock-work.md) |
+| `gl` | [Como funciona Jarock?](gl/how-does-jarock-work.md) |
+| `de` | [Wie funktioniert Jarock?](de/how-does-jarock-work.md) |
+| `he` | [איך Jarock עובד?](he/how-does-jarock-work.md) |
+| `hu` | [Hogyan működik a Jarock?](hu/how-does-jarock-work.md) |
+| `id` | [Bagaimana Jarock bekerja?](id/how-does-jarock-work.md) |
+| `it` | [Come funziona Jarock?](it/how-does-jarock-work.md) |
+| `ja` | [Jarock はどのように動作しますか？](ja/how-does-jarock-work.md) |
+| `ko` | [Jarock은 어떻게 작동하나요?](ko/how-does-jarock-work.md) |
+| `lv` | [Kā darbojas Jarock?](lv/how-does-jarock-work.md) |
+| `ms` | [Bagaimanakah Jarock berfungsi?](ms/how-does-jarock-work.md) |
+| `mn` | [Jarock хэрхэн ажилладаг вэ?](mn/how-does-jarock-work.md) |
+| `pl` | [Jak działa Jarock?](pl/how-does-jarock-work.md) |
+| `pt` | [Como funciona o Jarock?](pt/how-does-jarock-work.md) |
+| `ro` | [Cum funcționează Jarock?](ro/how-does-jarock-work.md) |
+| `ru` | [Как работает Jarock?](ru/how-does-jarock-work.md) |
+| `es` | [¿Cómo funciona Jarock?](es/how-does-jarock-work.md) |
+| `sv` | [Hur fungerar Jarock?](sv/how-does-jarock-work.md) |
+| `sl` | [Kako deluje Jarock?](sl/how-does-jarock-work.md) |
+| `ta` | [Jarock எவ்வாறு செயல்படுகிறது?](ta/how-does-jarock-work.md) |
+| `th` | [Jarock ทำงานอย่างไร?](th/how-does-jarock-work.md) |
+| `tr` | [Jarock nasıl çalışır?](tr/how-does-jarock-work.md) |
+| `uk` | [Як працює Jarock?](uk/how-does-jarock-work.md) |
 
 ## First-run translations
 
@@ -64,49 +64,78 @@ Every supported locale has a `first-run.md` guide. The English guide is the comp
 
 | Locale | Guide |
 |---|---|
-| `af` | [Afrikaans](af/first-run.md) |
-| `ar` | [Arabic](ar/first-run.md) |
-| `ca` | [Catalan](ca/first-run.md) |
-| `zh-CN` | [Chinese Simplified](zh-CN/first-run.md) |
-| `zh-TW` | [Chinese Traditional](zh-TW/first-run.md) |
-| `hr` | [Croatian](hr/first-run.md) |
-| `cs` | [Czech](cs/first-run.md) |
-| `nl` | [Dutch](nl/first-run.md) |
-| `fa` | [Farsi](fa/first-run.md) |
-| `fr` | [French](fr/first-run.md) |
-| `gl` | [Galician](gl/first-run.md) |
-| `de` | [German](de/first-run.md) |
-| `he` | [Hebrew](he/first-run.md) |
-| `hu` | [Hungarian](hu/first-run.md) |
-| `id` | [Indonesian](id/first-run.md) |
-| `it` | [Italian](it/first-run.md) |
-| `ja` | [Japanese](ja/first-run.md) |
-| `ko` | [Korean](ko/first-run.md) |
-| `lv` | [Latvian](lv/first-run.md) |
-| `ms` | [Malay](ms/first-run.md) |
-| `mn` | [Mongolian](mn/first-run.md) |
-| `pl` | [Polish](pl/first-run.md) |
-| `pt` | [Portuguese](pt/first-run.md) |
-| `ro` | [Romanian](ro/first-run.md) |
-| `ru` | [Russian](ru/first-run.md) |
-| `es` | [Spanish](es/first-run.md) |
-| `sv` | [Swedish](sv/first-run.md) |
-| `sl` | [Slovenian](sl/first-run.md) |
-| `ta` | [Tamil](ta/first-run.md) |
-| `th` | [Thai](th/first-run.md) |
-| `tr` | [Turkish](tr/first-run.md) |
-| `uk` | [Ukrainian](uk/first-run.md) |
+| `af` | [Eerste Jarock-beginloop](af/first-run.md) |
+| `ar` | [التشغيل الأول لـ Jarock](ar/first-run.md) |
+| `ca` | [Primera execució de Jarock](ca/first-run.md) |
+| `zh-CN` | [Jarock 首次启动](zh-CN/first-run.md) |
+| `zh-TW` | [Jarock 首次啟動](zh-TW/first-run.md) |
+| `hr` | [Prvo pokretanje Jarocka](hr/first-run.md) |
+| `cs` | [První spuštění Jarock](cs/first-run.md) |
+| `nl` | [Eerste start van Jarock](nl/first-run.md) |
+| `fa` | [اجرای نخست Jarock](fa/first-run.md) |
+| `fr` | [Premier démarrage de Jarock](fr/first-run.md) |
+| `gl` | [Primeiro arranque de Jarock](gl/first-run.md) |
+| `de` | [Erster Start von Jarock](de/first-run.md) |
+| `he` | [הפעלה ראשונה של Jarock](he/first-run.md) |
+| `hu` | [A Jarock első indítása](hu/first-run.md) |
+| `id` | [Penggunaan pertama Jarock](id/first-run.md) |
+| `it` | [Primo avvio di Jarock](it/first-run.md) |
+| `ja` | [Jarock の初回起動](ja/first-run.md) |
+| `ko` | [Jarock 최초 실행](ko/first-run.md) |
+| `lv` | [Jarock pirmā palaišana](lv/first-run.md) |
+| `ms` | [Pelancaran pertama Jarock](ms/first-run.md) |
+| `mn` | [Jarock-ийн анхны ажиллуулалт](mn/first-run.md) |
+| `pl` | [Pierwsze uruchomienie Jarock](pl/first-run.md) |
+| `pt` | [Primeira execução do Jarock](pt/first-run.md) |
+| `ro` | [Prima pornire Jarock](ro/first-run.md) |
+| `ru` | [Первый запуск Jarock](ru/first-run.md) |
+| `es` | [Primer arranque de Jarock](es/first-run.md) |
+| `sv` | [Första starten av Jarock](sv/first-run.md) |
+| `sl` | [Prvi zagon Jarocka](sl/first-run.md) |
+| `ta` | [Jarock முதல் தொடக்கம்](ta/first-run.md) |
+| `th` | [การเริ่มต้น Jarock ครั้งแรก](th/first-run.md) |
+| `tr` | [Jarock ilk çalıştırma](tr/first-run.md) || `uk` | [Перший запуск Jarock](uk/first-run.md) |
 
 ## Installation and fallback translations
 
-Every requested locale has both an installation guide and a NeoForge fallback guide. The English files are ; localized files are concise summaries; files whose prose remains English are explicitly English fallback summaries and link to the complete English procedure. They do not include a project version; consult `scripts/version.txt`.
+Every supported locale has translated visible document titles for the server, network, and NeoForge fallback guides. Technical filenames remain stable so links, release packages and maintenance scripts continue to work.
 
-Each local file has the same names:
+| Locale | Server guide | NeoForge fallback | Network guide |
+|---|---|---|---|
+| `af` | [Fabric-bedienergids](af/server-guide.md) | [NeoForge-terugvalgids](af/neoforge-fallback.md) | [Gids vir netwerk, firewall en router](af/network-and-ports.md) |
+| `ar` | [دليل خادم Fabric](ar/server-guide.md) | [دليل NeoForge الاحتياطي](ar/neoforge-fallback.md) | [دليل الشبكة وجدار الحماية والموجّه](ar/network-and-ports.md) |
+| `ca` | [Guia del servidor Fabric](ca/server-guide.md) | [Guia alternativa NeoForge](ca/neoforge-fallback.md) | [Guia de xarxa, tallafocs i router](ca/network-and-ports.md) |
+| `zh-CN` | [Fabric 服务器指南](zh-CN/server-guide.md) | [NeoForge 后备指南](zh-CN/neoforge-fallback.md) | [网络、防火墙和路由器指南](zh-CN/network-and-ports.md) |
+| `zh-TW` | [Fabric 伺服器指南](zh-TW/server-guide.md) | [NeoForge 備用指南](zh-TW/neoforge-fallback.md) | [網路、防火牆和路由器指南](zh-TW/network-and-ports.md) |
+| `hr` | [Vodič za Fabric poslužitelj](hr/server-guide.md) | [NeoForge rezervni vodič](hr/neoforge-fallback.md) | [Vodič za mrežu, vatrozid i usmjerivač](hr/network-and-ports.md) |
+| `cs` | [Průvodce serverem Fabric](cs/server-guide.md) | [Záložní průvodce NeoForge](cs/neoforge-fallback.md) | [Průvodce sítí, firewallem a routerem](cs/network-and-ports.md) |
+| `nl` | [Fabric-serverhandleiding](nl/server-guide.md) | [NeoForge-terugvalhandleiding](nl/neoforge-fallback.md) | [Gids voor netwerk, firewall en router](nl/network-and-ports.md) |
+| `fa` | [راهنمای سرور Fabric](fa/server-guide.md) | [راهنمای پشتیبان NeoForge](fa/neoforge-fallback.md) | [راهنمای شبکه، فایروال و روتر](fa/network-and-ports.md) |
+| `fr` | [Guide du serveur Fabric](fr/server-guide.md) | [Guide de secours NeoForge](fr/neoforge-fallback.md) | [Réseau, pare-feu et routeur](fr/network-and-ports.md) |
+| `gl` | [Guía do servidor Fabric](gl/server-guide.md) | [Guía de reserva NeoForge](gl/neoforge-fallback.md) | [Guía de rede, firewall e router](gl/network-and-ports.md) |
+| `de` | [Fabric-Serverhandbuch](de/server-guide.md) | [NeoForge-Ausweichhandbuch](de/neoforge-fallback.md) | [Netzwerk-, Firewall- und Router-Konfiguration](de/network-and-ports.md) |
+| `he` | [מדריך שרת Fabric](he/server-guide.md) | [מדריך חלופי NeoForge](he/neoforge-fallback.md) | [מדריך רשת, חומת אש ונתב](he/network-and-ports.md) |
+| `hu` | [Fabric szerver útmutató](hu/server-guide.md) | [NeoForge tartalék útmutató](hu/neoforge-fallback.md) | [Hálózati, tűzfal és router útmutató](hu/network-and-ports.md) |
+| `id` | [Panduan server Fabric](id/server-guide.md) | [Panduan cadangan NeoForge](id/neoforge-fallback.md) | [Panduan jaringan, firewall, dan router](id/network-and-ports.md) |
+| `it` | [Server Minecraft Java 26.2 con Fabric](it/server-guide.md) | [Fallback NeoForge per Minecraft Java 26.2](it/neoforge-fallback.md) | [Guida a rete, firewall e router](it/network-and-ports.md) |
+| `ja` | [Fabric サーバーガイド](ja/server-guide.md) | [NeoForge フォールバックガイド](ja/neoforge-fallback.md) | [ネットワーク、ファイアウォール、ルーターガイド](ja/network-and-ports.md) |
+| `ko` | [Fabric 서버 안내서](ko/server-guide.md) | [NeoForge 대체 안내서](ko/neoforge-fallback.md) | [네트워크, 방화벽 및 라우터 가이드](ko/network-and-ports.md) |
+| `lv` | [Fabric servera rokasgrāmata](lv/server-guide.md) | [NeoForge rezerves rokasgrāmata](lv/neoforge-fallback.md) | [Tīkla, ugunsmūra un maršrutētāja rokasgrāmata](lv/network-and-ports.md) |
+| `ms` | [Panduan pelayan Fabric](ms/server-guide.md) | [Panduan sandaran NeoForge](ms/neoforge-fallback.md) | [Panduan rangkaian, firewall dan penghala](ms/network-and-ports.md) |
+| `mn` | [Fabric серверийн гарын авлага](mn/server-guide.md) | [NeoForge нөөц гарын авлага](mn/neoforge-fallback.md) | [Сүлжээ, галт хана болон чиглүүлэгчийн гарын авлага](mn/network-and-ports.md) |
+| `pl` | [Poradnik serwera Fabric](pl/server-guide.md) | [Poradnik awaryjny NeoForge](pl/neoforge-fallback.md) | [Przewodnik po sieci, zaporze i routerze](pl/network-and-ports.md) |
+| `pt` | [Guia do servidor Fabric](pt/server-guide.md) | [Guia de fallback NeoForge](pt/neoforge-fallback.md) | [Guia de rede, firewall e router](pt/network-and-ports.md) |
+| `ro` | [Ghid pentru server Fabric](ro/server-guide.md) | [Ghid de rezervă NeoForge](ro/neoforge-fallback.md) | [Ghid de rețea, firewall și router](ro/network-and-ports.md) |
+| `ru` | [Руководство сервера Fabric](ru/server-guide.md) | [Резервное руководство NeoForge](ru/neoforge-fallback.md) | [Руководство по сети, брандмауэру и роутеру](ru/network-and-ports.md) |
+| `es` | [Guía del servidor Fabric](es/server-guide.md) | [Guía alternativa de NeoForge](es/neoforge-fallback.md) | [Guía de red, firewall y router](es/network-and-ports.md) |
+| `sv` | [Fabric-serverguide](sv/server-guide.md) | [NeoForge-reservguide](sv/neoforge-fallback.md) | [Guide för nätverk, brandvägg och router](sv/network-and-ports.md) |
+| `sl` | [Vodnik za strežnik Fabric](sl/server-guide.md) | [Rezervni vodnik NeoForge](sl/neoforge-fallback.md) | [Vodnik za omrežje, požarni zid in usmerjevalnik](sl/network-and-ports.md) |
+| `ta` | [Fabric சேவையக வழிகாட்டி](ta/server-guide.md) | [NeoForge மாற்று வழிகாட்டி](ta/neoforge-fallback.md) | [பிணையம், ஃபயர்வால் மற்றும் ரௌட்டர் வழிகாட்டி](ta/network-and-ports.md) |
+| `th` | [คู่มือเซิร์ฟเวอร์ Fabric](th/server-guide.md) | [คู่มือทางเลือก NeoForge](th/neoforge-fallback.md) | [คู่มือเครือข่าย ไฟร์วอลล์ และเราเตอร์](th/network-and-ports.md) |
+| `tr` | [Fabric sunucu kılavuzu](tr/server-guide.md) | [NeoForge yedek kılavuzu](tr/neoforge-fallback.md) | [Ağ, Güvenlik Duvarı ve Yönlendirici Kılavuzu](tr/network-and-ports.md) |
+| `uk` | [Посібник сервера Fabric](uk/server-guide.md) | [Резервний посібник NeoForge](uk/neoforge-fallback.md) | [Посібник із мережі, брандмауера та маршрутизатора](uk/network-and-ports.md) |
 
-- `docs/<locale>/server-guide.md`
-- `docs/<locale>/neoforge-fallback.md`
-
-The English guides remain authoritative for detailed network setup, troubleshooting, backup paths, compatibility checks and security warnings. The Italian guides are also detailed translations. Other localized files are concise summaries and are labeled accordingly; keep technical literals, commands, paths, keys and URLs unchanged when improving translations.
+The English guides remain authoritative for detailed network setup, troubleshooting, backup paths, compatibility checks and security warnings. Localized files preserve technical literals, commands, paths, keys and URLs.
 
 ## Loader policy
 
