@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Marked the completed first-run and EULA/server.properties items as done in `TODO.md` and highlighted the two remaining blockers for public access (`online-mode` and `white-list`, both still `false`).
+
 ## [0.0.28-beta] - 2026-08-07
 
 The active prerelease channel is now `beta`; new prerelease versions use the `-beta` suffix. Earlier `-alpha` entries are historical.

@@ -8,11 +8,11 @@ The repository intentionally does **not** open router ports, modify firewall rul
 
 - [x] Install a supported 64-bit Java runtime for Minecraft 26.2 and confirm `java -version` (Java 25.0.4, 64-bit, selected successfully by the launcher).
 - [x] Download this repository from a trusted source. The launcher supports spaces, Unicode names and ordinary deeply nested paths; do not use unavailable drives or folders where Windows denies write access.
-- [ ] Run `start-server.bat` once, choose Fabric or NeoForge, and confirm the selected loader-specific runtime and mods are installed.
-- [ ] Read the Minecraft EULA at <https://www.minecraft.net/eula> and set the generated `server/eula.txt` to `eula=true` only if you agree.
-- [ ] Review `server/server.properties` and replace the default `motd`, player limit, difficulty and gameplay settings.
-- [ ] Keep `online-mode=true` unless an official proxy architecture explicitly requires a different configuration; never use `false` on a public server without trusted authentication.
-- [ ] Keep `white-list=true` and add trusted Java players with the server console.
+- [x] Run `start-server.bat` once, choose Fabric or NeoForge, and confirm the selected loader-specific runtime and mods are installed. Fabric 26.2 was selected, the runtime was generated, and the server booted successfully with all pinned mods (Fabric API, Geyser, Floodgate, Lithium, FerriteCore, Krypton, ServerCore, Fabric Carpet, I'm Fast, DedicatedPower).
+- [x] Read the Minecraft EULA at <https://www.minecraft.net/eula> and set the generated `server/eula.txt` to `eula=true` only if you agree. The generated `server/eula.txt` is set to `eula=true`.
+- [x] Review `server/server.properties` and replace the default `motd`, player limit, difficulty and gameplay settings. Customized: `motd=Jarock Minecraft 26.2 Server`, `max-players=20`, `difficulty=normal`, `gamemode=survival`.
+- [ ] Keep `online-mode=true` unless an official proxy architecture explicitly requires a different configuration; never use `false` on a public server without trusted authentication. **Currently `online-mode=false` in `server/server.properties` — flip it to `true` before going public.**
+- [ ] Keep `white-list=true` and add trusted Java players with the server console. **Currently `white-list=false` — enable it and add trusted players before going public.**
 - [ ] Confirm the Floodgate authentication configuration and protect the generated `key.pem` file.
 - [ ] Set an administrator/operator policy and add only trusted operators.
 - [ ] Test a clean Java client connection on the local machine or LAN.
