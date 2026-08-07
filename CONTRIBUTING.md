@@ -115,6 +115,8 @@ For a release-test or release commit:
 4. Use a subject beginning with `v`, such as `v0.0.28-beta`, and describe the release in the commit body. Historical `-alpha` entries remain in the changelog; new prerelease commits should use the current `-beta` channel.
 5. Push to `main` only after validation. The GitHub Actions workflow then validates the version and changelog and creates the prerelease.
 
+To run `.github/workflows/auto-release.yml` manually, keep the existing **Create the release as a draft** option as needed and optionally fill in **Manual release version without the v prefix**. Enter only a SemVer value such as `0.0.52-beta`; do not type `v`. If the field is left empty, the workflow uses `scripts/version.txt`. This manual override applies only to `workflow_dispatch`; automatic release pushes continue to use `scripts/version.txt`.
+
 `server/server.jar` is generated locally and ignored. Do not add it, loader runtimes, downloaded mods or generated files to a commit.
 
 Do not rewrite published history or force-push unless the repository owner explicitly requests it.

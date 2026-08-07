@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added the optional `AUTO_UPDATE_CHECK` setting to `parameter-manager.bat`. When enabled, `start-server.bat` performs a read-only GitHub release check and reports compatible updates without installing or modifying files; installation remains an explicit `scripts/update-jarock.bat` action.
 
+## [0.0.52-beta] - 2026-08-07
+
+### Added
+
+- Added an optional manual version input to `.github/workflows/auto-release.yml`. It is available only for manual workflow runs, accepts a SemVer value without the `v` prefix, and falls back to `scripts/version.txt` when left empty. The existing draft-release input and automatic push behavior remain unchanged.
+
 ## [0.0.51-beta] - 2026-08-07
 
 ### Added
@@ -504,7 +510,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.51-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.52-beta...HEAD
+[0.0.52-beta]: https://github.com/PiBOH/jarock/compare/0.0.51-beta...0.0.52-beta
 [0.0.51-beta]: https://github.com/PiBOH/jarock/compare/0.0.50-beta...0.0.51-beta
 [0.0.50-beta]: https://github.com/PiBOH/jarock/compare/0.0.49-beta...0.0.50-beta
 [0.0.49-beta]: https://github.com/PiBOH/jarock/compare/0.0.48-beta...0.0.49-beta
