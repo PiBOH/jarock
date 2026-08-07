@@ -14,8 +14,7 @@ Thank you for helping maintain Jarock. This project is a beginner-friendly Windo
 ## Repository layout
 
 - `start-server.bat` — the single Windows entry point.
-- `scripts/bootstrap-server.ps1` — loader selection, Java discovery, installer downloads, SHA-512 verification and runtime setup.
-- `scripts/bootstrap-fabric.ps1` — retained Fabric-specific implementation and compatibility reference.
+- `scripts/bootstrap-server.ps1` — the unified loader selection, Java discovery, installer downloads, SHA-512 verification and runtime setup entry point.
 - `server/mods-manifest.ps1` and `server/mods-manifest-neoforge.ps1` — loader-specific pinned mod manifests.
 - `scripts/java-runtime.ps1` — PowerShell 5.1-compatible Java runtime discovery.
 - `scripts/configure-geyser.ps1` — safe Floodgate authentication configuration after Geyser generates its config.

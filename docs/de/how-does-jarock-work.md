@@ -28,7 +28,7 @@ Im Repository liegen Skripte, Vorlagen und das Manifest, aber keine generierte W
 
 ```text
 start-server.bat
-scripts/bootstrap-fabric.ps1
+scripts/bootstrap-server.ps1
 scripts/configure-geyser.ps1
 scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
@@ -45,7 +45,7 @@ Die Laufzeit wird unter `server/` erstellt. Welten, Logs, Bibliotheken, private 
 
 `start-server.bat` verwendet seinen eigenen Speicherort statt eines festen Pfads wie `C:\MinecraftServer`. Zugängliche Ordner mit Leerzeichen, Unicode, `!` und Verschachtelungen werden unterstützt.
 
-Es startet `scripts\bootstrap-fabric.ps1`, prüft `server/fabric-server-launch.jar` und `server/eula.txt`, führt `scripts\configure-geyser.ps1` aus und startet:
+Es startet `scripts\bootstrap-server.ps1`, prüft `server/fabric-server-launch.jar` und `server/eula.txt`, führt `scripts\configure-geyser.ps1` aus und startet:
 
 ```text
 java -Xms4G -Xmx4G -jar fabric-server-launch.jar nogui

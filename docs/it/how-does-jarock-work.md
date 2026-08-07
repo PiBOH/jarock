@@ -33,7 +33,7 @@ Il repository contiene script, template e manifest; non contiene il mondo né i 
 
 ```text
 start-server.bat
-scripts/bootstrap-fabric.ps1
+scripts/bootstrap-server.ps1
 scripts/java-runtime.ps1
 scripts/run-server.ps1
 scripts/configure-geyser.ps1
@@ -54,7 +54,7 @@ Non impostare `online-mode=false` prima che il server sia stato avviato almeno u
 
 Il file salva la cartella in cui si trova e non usa un percorso fisso come `C:\MinecraftServer`. Per questo può essere spostato su un'altra unità e può contenere spazi, Unicode e `!`.
 
-Esegue `scripts\bootstrap-fabric.ps1`, controlla `server/fabric-server-launch.jar`, verifica `server/eula.txt`, quindi esegue `scripts\configure-geyser.ps1`. Il bootstrap cerca Java 25+ a 64 bit in `JAVA_HOME`, in tutte le occorrenze di `PATH`, nelle cartelle standard e nel registro; se trova soltanto Java 8 o Java 21, interrompe l'avvio e mostra i candidati rilevati insieme al link diretto per installare Java 25; salva il percorso scelto in `server\java-path.txt`. `scripts\run-server.ps1` verifica nuovamente quel percorso e avvia l'eseguibile selezionato, non necessariamente il vecchio Java 8 del `PATH`:
+Esegue `scripts\bootstrap-server.ps1`, controlla `server/fabric-server-launch.jar`, verifica `server/eula.txt`, quindi esegue `scripts\configure-geyser.ps1`. Il bootstrap cerca Java 25+ a 64 bit in `JAVA_HOME`, in tutte le occorrenze di `PATH`, nelle cartelle standard e nel registro; se trova soltanto Java 8 o Java 21, interrompe l'avvio e mostra i candidati rilevati insieme al link diretto per installare Java 25; salva il percorso scelto in `server\java-path.txt`. `scripts\run-server.ps1` verifica nuovamente quel percorso e avvia l'eseguibile selezionato, non necessariamente il vecchio Java 8 del `PATH`:
 
 ```text
 <selected-java.exe> -Xms4G -Xmx4G -jar fabric-server-launch.jar nogui

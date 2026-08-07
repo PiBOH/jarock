@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Removed the obsolete `scripts/bootstrap-fabric.ps1` legacy bootstrap; `scripts/bootstrap-server.ps1` is now the single maintained loader-aware bootstrap entry point.
+- Removed the unused `scripts/mark-english-fallback.ps1` one-off documentation helper, which was not referenced by any launcher, workflow or maintenance command.
+- Updated all localized `how-does-jarock-work.md` guides to reference the maintained unified bootstrap script.
+
 ## [0.0.49-beta] - 2026-08-07
 
 ### Added

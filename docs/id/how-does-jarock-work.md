@@ -28,7 +28,7 @@ Repository berisi scripts, template, dan manifest, tetapi tidak berisi dunia ata
 
 ```text
 start-server.bat
-scripts/bootstrap-fabric.ps1
+scripts/bootstrap-server.ps1
 scripts/configure-geyser.ps1
 scripts/enable-long-paths.ps1
 server/mods-manifest.ps1

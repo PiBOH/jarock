@@ -28,7 +28,7 @@ El repositorio contiene scripts, plantillas y un manifiesto, no el mundo ni los 
 
 ```text
 start-server.bat
-scripts/bootstrap-fabric.ps1
+scripts/bootstrap-server.ps1
 scripts/configure-geyser.ps1
 scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
@@ -45,7 +45,7 @@ El runtime se crea en `server/`. Mundos, logs, librerías, claves privadas y lis
 
 `start-server.bat` calcula su ubicación y no utiliza una carpeta fija como `C:\MinecraftServer`. Por eso funciona con espacios, Unicode, `!` y carpetas anidadas accesibles.
 
-Ejecuta `scripts\bootstrap-fabric.ps1`, comprueba `server/fabric-server-launch.jar`, verifica que `server/eula.txt` contiene exactamente `eula=true`, ejecuta `scripts\configure-geyser.ps1` y lanza:
+Ejecuta `scripts\bootstrap-server.ps1`, comprueba `server/fabric-server-launch.jar`, verifica que `server/eula.txt` contiene exactamente `eula=true`, ejecuta `scripts\configure-geyser.ps1` y lanza:
 
 ```text
 java -Xms4G -Xmx4G -jar fabric-server-launch.jar nogui

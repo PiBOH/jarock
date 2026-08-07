@@ -28,7 +28,7 @@ Die repository bevat skrifte, sjablone en ’n manifest, maar nie die wêreld of
 
 ```text
 start-server.bat
-scripts/bootstrap-fabric.ps1
+scripts/bootstrap-server.ps1
 scripts/configure-geyser.ps1
 scripts/enable-long-paths.ps1
 server/mods-manifest.ps1

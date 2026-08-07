@@ -28,7 +28,7 @@ repository 中保存脚本、模板和 manifest，不保存世界或生成的 `.
 
 ```text
 start-server.bat
-scripts/bootstrap-fabric.ps1
+scripts/bootstrap-server.ps1
 scripts/configure-geyser.ps1
 scripts/enable-long-paths.ps1
 server/mods-manifest.ps1

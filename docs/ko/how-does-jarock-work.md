@@ -28,7 +28,7 @@ repository에는 scripts, 템플릿, manifest가 있지만 월드나 생성된 `
 
 ```text
 start-server.bat
-scripts/bootstrap-fabric.ps1
+scripts/bootstrap-server.ps1
 scripts/configure-geyser.ps1
 scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
