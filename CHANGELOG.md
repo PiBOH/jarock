@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added the optional `AUTO_UPDATE_CHECK` setting to `parameter-manager.bat`. When enabled, `start-server.bat` performs a read-only GitHub release check and reports compatible updates without installing or modifying files; installation remains an explicit `update-jarock.bat` action.
+
 ### Removed
 
 - Removed the obsolete `scripts/bootstrap-fabric.ps1` legacy bootstrap; `scripts/bootstrap-server.ps1` is now the single maintained loader-aware bootstrap entry point.

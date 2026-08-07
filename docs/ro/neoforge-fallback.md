@@ -18,3 +18,9 @@ Consultați ghidul complet în engleză: [../en/neoforge-fallback.md](../en/neof
 > Citiți `version.txt`, opriți serverul și așteptați `SAFE TO CLOSE`; apoi rulați `update-jarock.bat`. Caută o versiune mai nouă în același canal beta/stabil, cere confirmare și creează o copie pentru revenire. Lumea, runtime-ul, modurile, bibliotecile și setările locale sunt păstrate; dependențele sunt reparate doar dacă lipsesc sau sunt invalide.
 
 > Pachetul complet și suma de verificare SHA-512 publicată sunt verificate înainte de instalare.
+
+<!-- jarock-auto-update-check -->
+
+## Verificarea actualizărilor la pornire
+
+Setează AUTO_UPDATE_CHECK=true în parameter-manager.bat pentru ca start-server.bat să verifice lansările GitHub doar pentru citire. Va raporta o versiune compatibilă mai nouă, dar nu va instala nimic automat. Oprește serverul, așteaptă SAFE TO CLOSE și rulează update-jarock.bat. Valoarea implicită este AUTO_UPDATE_CHECK=false.

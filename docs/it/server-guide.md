@@ -377,3 +377,9 @@ Non installare dieci mod subito. Controlla CPU, entità, generazione dei chunk, 
 > Leggi `version.txt`, arresta il server e attendi `SAFE TO CLOSE`; poi esegui `update-jarock.bat`. Cerca una release più recente nello stesso canale beta/stabile, chiede conferma e crea un backup per il rollback. Mondo, runtime, mod, librerie e impostazioni locali vengono preservati; le dipendenze vengono riscaricate solo se mancanti o non valide.
 
 > Il pacchetto completo e il relativo checksum SHA-512 pubblicato vengono verificati prima dell'installazione.
+
+<!-- jarock-auto-update-check -->
+
+## Controllo aggiornamenti all'avvio
+
+Imposta AUTO_UPDATE_CHECK=true in parameter-manager.bat per fare in modo che start-server.bat esegua un controllo GitHub in sola lettura. Segnalerà una versione compatibile più recente, ma non installerà nulla automaticamente. Arresta il server, attendi SAFE TO CLOSE ed esegui update-jarock.bat. Il valore predefinito è AUTO_UPDATE_CHECK=false.

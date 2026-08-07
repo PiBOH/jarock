@@ -159,3 +159,9 @@ If you complete this guide and the server is still unreachable, open a [GitHub i
 - The exact `start-server.bat` output.
 - The router model and the port-forwarding screenshot (redact public IP).
 - The result of the test: LAN access works? Java works? Bedrock works?
+
+<!-- jarock-auto-update-check -->
+
+## Optional startup update check
+
+Set AUTO_UPDATE_CHECK=true in parameter-manager.bat to make start-server.bat perform a read-only GitHub release check at startup. It reports a compatible newer Jarock release but never installs or modifies anything automatically. Stop safely, wait for SAFE TO CLOSE, and run update-jarock.bat explicitly to install an update. The default is AUTO_UPDATE_CHECK=false.

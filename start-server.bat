@@ -21,6 +21,19 @@ if not exist "%ROOT%\server-launch-settings.ini" (
     copy /y "%ROOT%\server-launch-settings.ini.template" "%ROOT%\server-launch-settings.ini" >nul
 )
 
+findstr /i /r /c:"^AUTO_UPDATE_CHECK=true$" "%ROOT%\server-launch-settings.ini" >nul
+if not errorlevel 1 (
+    echo.
+    echo ==> Checking for a newer Jarock release (read-only)
+    echo This check never installs updates automatically and does not change server files.
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-jarock.ps1" -CheckOnly -NonInteractive
+    if errorlevel 1 (
+        echo WARNING: The automatic update check could not complete.
+        echo Suggested fix: verify Internet access, or run update-jarock.bat manually when the server is stopped.
+        echo Continuing with the server startup; no automatic update was installed.
+    )
+)
+
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\bootstrap-server.ps1"
 set "BOOTSTRAP_EXIT_CODE=%errorlevel%"
 if "%BOOTSTRAP_EXIT_CODE%"=="2" (

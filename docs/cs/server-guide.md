@@ -27,3 +27,9 @@ See the [English installation guide](../en/server-guide.md) for the complete pro
 > Přečtěte `version.txt`, zastavte server a počkejte na `SAFE TO CLOSE`; potom spusťte `update-jarock.bat`. Vyhledá novější verzi ve stejném beta/stabilním kanálu, vyžádá potvrzení a vytvoří zálohu pro návrat. Svět, runtime, mody, knihovny a místní nastavení zůstanou zachovány; závislosti se obnoví jen při chybění nebo neplatnosti.
 
 > Úplný balíček a jeho zveřejněný kontrolní součet SHA-512 se před instalací ověří.
+
+<!-- jarock-auto-update-check -->
+
+## Kontrola aktualizací při spuštění
+
+Nastav AUTO_UPDATE_CHECK=true v parameter-manager.bat, aby start-server.bat provedl kontrolu vydání GitHub pouze pro čtení. Oznámí kompatibilní novější verzi, ale nic nenainstaluje automaticky. Bezpečně server zastav, počkej na SAFE TO CLOSE a spusť update-jarock.bat. Výchozí hodnota je AUTO_UPDATE_CHECK=false.

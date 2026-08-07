@@ -18,3 +18,9 @@ Skatiet pilno angļu rokasgrāmatu: [../en/neoforge-fallback.md](../en/neoforge-
 > Izlasiet `version.txt`, apturiet serveri un gaidiet `SAFE TO CLOSE`; pēc tam palaidiet `update-jarock.bat`. Tas meklē jaunāku tās pašas beta/stabilā kanāla versiju, lūdz apstiprinājumu un izveido atcelšanas dublējumu. Pasaule, runtime, modifikācijas, bibliotēkas un lokālie iestatījumi tiek saglabāti; atkarības labo tikai tad, ja tās trūkst vai ir nederīgas.
 
 > Pilnā pakotne un tās publicētā SHA-512 kontrolsumma tiek pārbaudīta pirms instalēšanas.
+
+<!-- jarock-auto-update-check -->
+
+## Atjauninājumu pārbaude palaišanas laikā
+
+Iestatiet AUTO_UPDATE_CHECK=true failā parameter-manager.bat, lai start-server.bat veiktu tikai lasāmu GitHub pārbaudi. Tiks ziņots par saderīgu jaunāku Jarock versiju, bet nekas netiks instalēts automātiski. Apturiet serveri, uzgaidiet SAFE TO CLOSE un palaidiet update-jarock.bat. Noklusējums ir AUTO_UPDATE_CHECK=false.

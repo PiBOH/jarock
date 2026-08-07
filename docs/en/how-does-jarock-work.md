@@ -17,7 +17,7 @@ The user does not manually assemble a Minecraft server from many websites. They 
 
 1. Install a supported 64-bit Java 25 runtime. **If you use the Eclipse Temurin installer:** during setup, make sure the "Set JAVA_HOME variable" option is enabled (click the red X icon and select "Will be installed on local hard drive"). Without `JAVA_HOME`, Jarock and the server may not find Java.
 2. Download or clone this repository.
-3. Optionally run `parameter-manager.bat` to choose the loader, RAM, GUI/console mode, a GC profile, the ready banner and user-scoped Java environment setup.
+3. Optionally run `parameter-manager.bat` to choose the loader, RAM, GUI/console mode, a GC profile, the ready banner, the optional startup update check and user-scoped Java environment setup.
 4. Run `start-server.bat`; if no loader is configured, Jarock asks whether to use Fabric, Forge or NeoForge and can open the parameter manager.
 5. The repository finds its own location.
 6. PowerShell checks Java, the Windows path and the repository files.
@@ -45,7 +45,8 @@ It can configure:
 - `GUI_MODE=gui` or `GUI_MODE=nogui`;
 - `GC_PROFILE=default` or the tested `low-pause` profile;
 - `LOADER_TYPE=none`, `fabric`, `neoforge` or the unavailable `forge` option;
-- `AUTO_CONFIGURE_JAVA=true` or `false`.
+- `AUTO_CONFIGURE_JAVA=true` or `false`;
+- `AUTO_UPDATE_CHECK=true` or `false`; when enabled, startup performs a read-only GitHub release check and reports updates without installing them.
 
 RAM values are validated, must be at least `1G`, and initial RAM cannot exceed maximum RAM. Jarock does not silently give all physical memory to Java. The user should still leave enough memory for Windows, backups and other programs.
 
@@ -152,7 +153,7 @@ Jarock does not open router ports, modify firewall rules, configure port forward
 
 ## 10. Updating Jarock itself
 
-The root `version.txt` contains the installed Jarock version. To manually check for an update, first stop the server and wait for `SAFE TO CLOSE`, then run `update-jarock.bat`; Jarock does not silently update during `start-server.bat`. The updater compares the local version with GitHub releases in the same channel: beta installations look for newer beta releases, while stable installations look for newer stable releases. Draft releases and releases without the expected package are ignored.
+The root `version.txt` contains the installed Jarock version. If `AUTO_UPDATE_CHECK=true`, `start-server.bat` performs a read-only release check before startup and reports a compatible newer release without modifying files. To install an update, first stop the server and wait for `SAFE TO CLOSE`, then run `update-jarock.bat`; startup checks never install updates automatically. The updater compares the local version with GitHub releases in the same channel: beta installations look for newer beta releases, while stable installations look for newer stable releases. Draft releases and releases without the expected package are ignored.
 
 After confirmation, it downloads the matching `jarock-full` package and its published SHA-512 checksum, verifies the archive before extraction, checks the package version and excludes `.github/` and `.website/`. It updates only the project files from the package. It preserves the generated `server/` directory, world data, mods, libraries, server properties, EULA, Geyser/Floodgate keys, local launch settings, Java selection, logs and the updater cache. A rollback copy of overwritten project files is stored under `.cache/update-backups/`.
 
@@ -165,3 +166,9 @@ That is Jarock: a reproducible, verified, local loader-aware server bootstrap wi
 ## Safe shutdown
 
 Type `stop` in the server console and leave the window open. Wait for Jarock to print `CLEAN SHUTDOWN COMPLETE` and then `SAFE TO CLOSE`; only then close the window. If the second message does not appear, do not force the process to end: inspect `server\\logs\\latest.log` and the newest crash report, and restore a backup if necessary.
+
+<!-- jarock-auto-update-check -->
+
+## Optional startup update check
+
+Set AUTO_UPDATE_CHECK=true in parameter-manager.bat to make start-server.bat perform a read-only GitHub release check at startup. It reports a compatible newer Jarock release but never installs or modifies anything automatically. Stop safely, wait for SAFE TO CLOSE, and run update-jarock.bat explicitly to install an update. The default is AUTO_UPDATE_CHECK=false.

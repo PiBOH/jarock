@@ -15,7 +15,7 @@ Beginner-friendly template and documentation for a professional Minecraft Java 2
 
 ### Loader selection on first start
 
-If `LOADER_TYPE=none` in the local settings, the first `start-server.bat` run asks which loader to use. The same prompt can open `parameter-manager.bat` so RAM, GUI/console mode, GC profile, online-mode and Java environment automation can be configured before installation.
+If `LOADER_TYPE=none` in the local settings, the first `start-server.bat` run asks which loader to use. The same prompt can open `parameter-manager.bat` so RAM, GUI/console mode, GC profile, online-mode, Java environment automation and the optional startup update check can be configured before installation.
 
 - **Fabric:** recommended; the Fabric launcher is renamed to the local runtime `server/server.jar`, while the vanilla engine is retained as `server/vanilla-server.jar`. Jarock maintains Fabric's launcher metadata so it points to the vanilla jar rather than the launcher itself.
 - **NeoForge:** fallback; the official installer generates `run.bat`, libraries and `user_jvm_args.txt`, which Jarock starts without inventing a fragile wrapper jar. NeoForge therefore does not use a portable `server.jar` entry point.
@@ -48,7 +48,7 @@ Neither Fabric nor NeoForge automatically runs Bukkit/Spigot/Paper plugins. If t
 
 Always use `start-server.bat` to launch this repository. It repairs Fabric's local launcher metadata before starting. Do not double-click `server/server.jar`: that bypasses the repair and Windows may associate it with Java 8 or Java 21, producing `UnsupportedClassVersionError` or a missing-game error.
 
-To manually check for a newer Jarock release, stop the server completely and run `update-jarock.bat`. Jarock does not silently update during `start-server.bat`; this explicit step prevents a release from changing a working server unexpectedly. The updater reads the local version from `version.txt` (the numeric SemVer plus its channel suffix), checks the matching GitHub release channel, asks for confirmation, downloads the appropriate release package, validates it together with its published SHA-512 checksum, and keeps a rollback backup. It does not reinstall the existing loader or mods first, and it preserves the generated `server/` runtime, world, mods, libraries, local settings, Java selection, logs and secrets. It updates only the tracked project files included in the release package. Do not update while Minecraft is running and do not use `git pull` as a substitute for the updater.
+To check for a newer Jarock release, enable `AUTO_UPDATE_CHECK` in `parameter-manager.bat`. On each startup Jarock then performs a read-only GitHub check and reports available updates, but never installs anything automatically. To install an update, stop the server completely and run `update-jarock.bat`; this explicit step prevents a release from changing a working server unexpectedly. The updater reads the local version from `version.txt` (the numeric SemVer plus its channel suffix), checks the matching GitHub release channel, asks for confirmation, downloads the appropriate release package, validates it together with its published SHA-512 checksum, and keeps a rollback backup. It does not reinstall the existing loader or mods first, and it preserves the generated `server/` runtime, world, mods, libraries, local settings, Java selection, logs and secrets. It updates only the tracked project files included in the release package. Do not update while Minecraft is running and do not use `git pull` as a substitute for the updater.
 
 The bootstrap calculates its root from the location of the repository, so it does not depend on a fixed drive or folder. It supports spaces, Unicode names and ordinary deeply nested paths. If the Windows path is long enough to risk the legacy 260-character limit, it checks `LongPathsEnabled` and requests administrator permission to enable it; the script prints whether the change succeeded. It cannot bypass folders for which Windows denies access, unavailable drives, network shares that do not support long paths, or legacy applications that are not long-path-aware. The bootstrap downloads generated runtime files into `server/`, which is ignored by Git. It does **not** open router ports, change firewall rules, configure port forwarding, or expose the server publicly. Configure those items manually only after completing [TODO.md](TODO.md).
 
@@ -61,7 +61,7 @@ Fabric is the default stack and NeoForge is the fallback. Each loader receives o
 - [All installation and fallback translations (including clearly labeled English fallback summaries)](docs/README.md)
 - [Guida italiana Fabric](docs/it/server-guide.md)
 - [Guida italiana NeoForge](docs/it/neoforge-fallback.md)
-- [Configure RAM, GUI, online-mode and safe launch options (including Exit without saving)](parameter-manager.bat)
+- [Configure RAM, GUI, online-mode, startup update checks and safe launch options (including Exit without saving)](parameter-manager.bat)
 - [How Jarock works — English](docs/en/how-does-jarock-work.md)
 - [How Jarock works — all translations](docs/README.md)
 - [Documentation and translation roadmap](docs/README.md)

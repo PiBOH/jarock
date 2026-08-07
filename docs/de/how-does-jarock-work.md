@@ -112,3 +112,9 @@ Jarock verändert keinen Router, keine Firewall, kein Port Forwarding und keine 
 > Lesen Sie `version.txt`, beenden Sie den Server und warten Sie auf `SAFE TO CLOSE`; starten Sie danach `update-jarock.bat`. Es sucht eine neuere Version im gleichen Beta/stabilen Kanal, fragt nach Bestätigung und erstellt ein Rollback-Backup. Welt, Runtime, Mods, Bibliotheken und lokale Einstellungen bleiben erhalten; Abhängigkeiten werden nur bei fehlenden oder ungültigen Dateien erneut geladen.
 
 > Das vollständige Paket und seine veröffentlichte SHA-512-Prüfsumme werden vor der Installation geprüft.
+
+<!-- jarock-auto-update-check -->
+
+## Updateprüfung beim Start
+
+Setze AUTO_UPDATE_CHECK=true in parameter-manager.bat, damit start-server.bat beim Start eine schreibgeschützte GitHub-Prüfung ausführt. Eine kompatible neuere Jarock-Version wird gemeldet, aber nichts automatisch installiert. Stoppe den Server sicher, warte auf SAFE TO CLOSE und führe update-jarock.bat aus. Der Standardwert ist AUTO_UPDATE_CHECK=false.

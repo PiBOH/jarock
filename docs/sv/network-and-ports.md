@@ -20,3 +20,9 @@ Installera 64-bitars Java 25, kör `start-server. (enable "Set JAVA_HOME variabl
 > Läs `version.txt`, stoppa servern och vänta på `SAFE TO CLOSE`; kör sedan `update-jarock.bat`. Den söker efter en nyare version i samma beta/stabila kanal, frågar efter bekräftelse och skapar en återställningskopia. Värld, runtime, moddar, bibliotek och lokala inställningar bevaras; beroenden repareras bara om de saknas eller är ogiltiga.
 
 > Hela paketet och dess publicerade SHA-512-kontrollsumma verifieras före installationen.
+
+<!-- jarock-auto-update-check -->
+
+## Sök efter uppdateringar vid start
+
+Ställ in AUTO_UPDATE_CHECK=true i parameter-manager.bat så att start-server.bat gör en skrivskyddad GitHub-kontroll. En kompatibel nyare Jarock-version rapporteras, men inget installeras automatiskt. Stoppa servern, vänta på SAFE TO CLOSE och kör update-jarock.bat. Standardvärdet är AUTO_UPDATE_CHECK=false.

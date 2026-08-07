@@ -9,6 +9,10 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
+# GitHub requires TLS 1.2 or newer. Windows PowerShell 5.1 may otherwise negotiate
+# an obsolete protocol on older Windows installations.
+try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch { }
+
 $Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $CacheRoot = Join-Path $Root '.cache'
 $DownloadRoot = Join-Path $CacheRoot 'updates'
@@ -79,10 +83,13 @@ function Get-LocalVersion {
 
 function Get-ReleaseList {
     try {
-        return @(Invoke-RestMethod -Uri $ReleaseApiUrl -Headers @{ 'User-Agent' = $UserAgent } -UseBasicParsing)
+        # Invoke-WebRequest provides a bounded timeout in Windows PowerShell 5.1.
+        # Startup checks must not wait indefinitely when DNS, GitHub or a proxy is unavailable.
+        $Response = Invoke-WebRequest -Uri $ReleaseApiUrl -Headers @{ 'User-Agent' = $UserAgent } -UseBasicParsing -TimeoutSec 30
+        return @($Response.Content | ConvertFrom-Json)
     }
     catch {
-        throw "Could not query the Jarock GitHub releases: $($_.Exception.Message)"
+        throw "Could not query the Jarock GitHub releases within 30 seconds: $($_.Exception.Message)"
     }
 }
 
@@ -136,7 +143,20 @@ function Invoke-RobustDownload([string]$Url, [string]$Path) {
         Remove-Item -LiteralPath $Path -Force -ErrorAction SilentlyContinue
         throw "curl.exe failed to download the update (exit code $LASTEXITCODE); the incomplete file was removed."
     }
-    Invoke-WebRequest -Uri $Url -OutFile $Path -Headers @{ 'User-Agent' = $UserAgent } -UseBasicParsing
+    for ($Attempt = 1; $Attempt -le 3; $Attempt++) {
+        try {
+            Invoke-WebRequest -Uri $Url -OutFile $Path -Headers @{ 'User-Agent' = $UserAgent } -UseBasicParsing -TimeoutSec 900
+            return
+        }
+        catch {
+            if ($Attempt -eq 3) {
+                Remove-Item -LiteralPath $Path -Force -ErrorAction SilentlyContinue
+                throw "PowerShell failed to download the update after 3 attempts: $($_.Exception.Message)"
+            }
+            Write-Host "Download attempt $Attempt of 3 failed; retrying ..." -ForegroundColor Yellow
+            Start-Sleep -Seconds 3
+        }
+    }
 }
 
 function Assert-ServerStopped {
@@ -311,8 +331,13 @@ function Backup-AndApply([string]$Stage, $NewVersion) {
 
 try {
     Write-Host '==> Checking Jarock update status' -ForegroundColor Cyan
-    Assert-ServerStopped
-    Assert-GitTreeSafe
+    if (-not $CheckOnly) {
+        Assert-ServerStopped
+        Assert-GitTreeSafe
+    }
+    else {
+        Write-Host 'Read-only startup/update check: no files will be changed.' -ForegroundColor Cyan
+    }
     $LocalVersion = Get-LocalVersion
     Write-Host "Installed Jarock version: $($LocalVersion.Text)" -ForegroundColor Green
     $Candidate = Find-LatestUpdate $LocalVersion
@@ -351,6 +376,11 @@ try {
     exit 0
 }
 catch {
-    Show-ErrorGuidance $_.Exception.Message 'Stop the server, make a backup, check Internet access and permissions, then run update-jarock.bat again. No update was applied if the error occurred before the final success message.'
+    if ($CheckOnly) {
+        Show-ErrorGuidance $_.Exception.Message 'This read-only startup check could not reach GitHub. Verify Internet/proxy settings if you want update notifications; the server startup can continue and no files were changed.'
+    }
+    else {
+        Show-ErrorGuidance $_.Exception.Message 'Stop the server, make a backup, check Internet access and permissions, then run update-jarock.bat again. No update was applied if the error occurred before the final success message.'
+    }
     exit 1
 }

@@ -397,3 +397,9 @@ Measure before adding more mods. Check CPU, entity counts, chunk generation, vie
 - Geyser downloads: <https://geysermc.org/download>
 - Floodgate setup: <https://geysermc.org/wiki/floodgate/setup/>
 - Minecraft EULA: <https://www.minecraft.net/eula>
+
+<!-- jarock-auto-update-check -->
+
+## Optional startup update check
+
+Set AUTO_UPDATE_CHECK=true in parameter-manager.bat to make start-server.bat perform a read-only GitHub release check at startup. It reports a compatible newer Jarock release but never installs or modifies anything automatically. Stop safely, wait for SAFE TO CLOSE, and run update-jarock.bat explicitly to install an update. The default is AUTO_UPDATE_CHECK=false.

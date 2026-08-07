@@ -535,3 +535,9 @@ Do not immediately install ten optimization mods. First check the server's tick 
 - Modrinth mod catalogue: <https://modrinth.com/mods>
 
 Always prefer the project's current documentation and download page over a copied command from an old video or blog post.
+
+<!-- jarock-auto-update-check -->
+
+## Optional startup update check
+
+Set AUTO_UPDATE_CHECK=true in parameter-manager.bat to make start-server.bat perform a read-only GitHub release check at startup. It reports a compatible newer Jarock release but never installs or modifies anything automatically. Stop safely, wait for SAFE TO CLOSE, and run update-jarock.bat explicitly to install an update. The default is AUTO_UPDATE_CHECK=false.

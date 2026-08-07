@@ -49,6 +49,7 @@ echo   %OPT4%%PAD:~0,14%[%GC_PROFILE%]
 echo   %OPT5%%PAD:~0,3%[%AUTO_CONFIGURE_JAVA%]
 echo   %OPT6%%PAD:~0,29%[%ONLINE_MODE%]
 echo   %OPT7%%PAD:~0,28%[%SHOW_READY_BANNER%]
+echo   %OPTY%%PAD:~0,30%[%AUTO_UPDATE_CHECK%]
 echo.
 echo   %OPT8%%PAD:~0,22%[starts the server]
 echo   %OPT9%%PAD:~0,34%[saves settings]
@@ -57,7 +58,8 @@ echo   %OPTX%%PAD:~0,28%[restores defaults]
 echo.
 if /i "%ONLINE_MODE%"=="false" echo  WARNING: online-mode=false disables Mojang authentication. Keep it for private testing only.
 echo.
-choice /c 1234567890X /n /m "Choose an option: "
+choice /c 1234567890XY /n /m "Choose an option: "
+if errorlevel 12 goto auto_update_toggle
 if errorlevel 11 goto reset
 if errorlevel 10 goto cancel_exit
 if errorlevel 9 goto save_exit
@@ -187,6 +189,22 @@ if errorlevel 1 pause
 pause
 goto menu
 
+:auto_update_toggle
+cls
+call :read_value AUTO_UPDATE_CHECK false
+if /i "%AUTO_UPDATE_CHECK%"=="true" (
+    set "NEW_AUTO_UPDATE=false"
+    echo Automatic startup update checks will be disabled.
+) else (
+    set "NEW_AUTO_UPDATE=true"
+    echo Read-only startup update checks will be enabled.
+    echo Jarock will never install an update automatically.
+)
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name AUTO_UPDATE_CHECK -Value "%NEW_AUTO_UPDATE%"
+if errorlevel 1 pause
+pause
+goto menu
+
 :banner_toggle
 cls
 call :read_value SHOW_READY_BANNER true
@@ -274,6 +292,7 @@ set "OPT8=8. Save and start the server"
 set "OPT9=9. Save and exit"
 set "OPT0=0. Exit without saving"
 set "OPTX=X. Reset safe defaults"
+set "OPTY=Y. Toggle startup update check"
 call :read_value LOADER_TYPE none
 call :read_value RAM_INITIAL 4G
 call :read_value RAM_MAX 4G
@@ -282,6 +301,7 @@ call :read_value GC_PROFILE default
 call :read_value AUTO_CONFIGURE_JAVA true
 call :read_value ONLINE_MODE true
 call :read_value SHOW_READY_BANNER true
+call :read_value AUTO_UPDATE_CHECK false
 exit /b 0
 
 :read_value

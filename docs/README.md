@@ -10,13 +10,13 @@ The English guides are the source of truth for the technical procedure. The curr
 
 ## Runtime and launch configuration
 
-- `parameter-manager.bat` configures the loader, RAM, GUI/console mode, a conservative GC profile, online-mode, the ready banner and user-scoped Java environment setup. It edits a temporary copy and includes `Exit without saving` to discard all pending changes.
+- `parameter-manager.bat` configures the loader, RAM, GUI/console mode, a conservative GC profile, online-mode, the ready banner, the optional read-only startup update check and user-scoped Java environment setup. It edits a temporary copy and includes `Exit without saving` to discard all pending changes.
 - `server-launch-settings.ini.template` is the tracked safe default.
 - `server-launch-settings.ini` is local and ignored by Git.
 - `java-home.txt` is an optional local override for a custom JDK folder and is ignored by Git; `JAROCK_JAVA_HOME` is the advanced equivalent.
 - `scripts/java-runtime.ps1` finds a compatible 64-bit Java 25+ runtime even when Java 8 or Java 21 appears first on `PATH`; if none is available and the bundled installers are present in `prerequisites/`, `start-server.bat` runs them automatically (legacy Java 8 first, then the Temurin JDK 25 MSI); otherwise it lists the detected incompatible candidates and gives a Java 25 installation link.
 - `scripts/configure-java-environment.ps1` updates only the current user's `JAVA_HOME` and `PATH`, preserving unrelated entries.
-- `update-jarock.bat` manually checks `version.txt` against the matching GitHub release channel and safely applies a confirmed update while preserving the generated `server/` runtime, world, mods, libraries, local settings, Java selection, logs and secrets. It verifies the published SHA-512 checksum before extraction, creates a rollback backup and never changes router, firewall or port-forwarding settings. It does not silently update during `start-server.bat`.
+- `update-jarock.bat` safely applies a confirmed update while preserving the generated `server/` runtime, world, mods, libraries, local settings, Java selection, logs and secrets. It verifies the published SHA-512 checksum before extraction, creates a rollback backup and never changes router, firewall or port-forwarding settings. When `AUTO_UPDATE_CHECK=true`, `start-server.bat` performs only a read-only release check; installation still requires an explicit `update-jarock.bat` run.
 
 ## How Jarock works translations
 
