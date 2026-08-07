@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Marked the parameter-manager and ready-banner verification items as complete in `TODO.md`.
+
 ## [0.0.37-beta] - 2026-08-07
 
 ### Fixed
