@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.49-beta] - 2026-08-07
+
 ### Added
 
 - Rebuilt the English interactive GitHub issue forms for bug reports and feature requests with Jarock-specific loader, Java, server, Geyser/Floodgate, updater, workflow and documentation fields.
@@ -476,7 +478,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.48-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.49-beta...HEAD
+[0.0.49-beta]: https://github.com/PiBOH/jarock/compare/0.0.48-beta...0.0.49-beta
 [0.0.48-beta]: https://github.com/PiBOH/jarock/compare/0.0.47-beta...0.0.48-beta
 [0.0.47-beta]: https://github.com/PiBOH/jarock/compare/0.0.46-beta...0.0.47-beta
 [0.0.46-beta]: https://github.com/PiBOH/jarock/compare/0.0.45-beta...0.0.46-beta
