@@ -40,17 +40,21 @@ cls
 echo ================================================
 echo Jarock server parameter manager
 echo ================================================
-call :show_summary
-echo 1. Choose server mod loader
-echo 2. Configure RAM
-echo 3. Choose GUI or console mode
-echo 4. Choose garbage-collection profile
-echo 5. Toggle automatic user Java environment setup
-echo 6. Choose online-mode (authentication)
-echo 7. Save and start the server
-echo 8. Save and exit
-echo 9. Reset safe defaults
-echo 0. Exit without saving
+call :read_menu_values
+set "PAD=                                                  "
+echo   %OPT1%%PAD:~0,23%[%LOADER_TYPE%]
+echo   %OPT2%%PAD:~0,34%[%RAM_INITIAL% / %RAM_MAX%]
+echo   %OPT3%%PAD:~0,21%[%GUI_MODE%]
+echo   %OPT4%%PAD:~0,14%[%GC_PROFILE%]
+echo   %OPT5%%PAD:~0,3%[%AUTO_CONFIGURE_JAVA%]
+echo   %OPT6%%PAD:~0,29%[%ONLINE_MODE%]
+echo.
+echo   %OPT7%%PAD:~0,22%[starts the server]
+echo   %OPT8%%PAD:~0,34%[saves settings]
+echo   %OPT9%%PAD:~0,28%[restores defaults]
+echo   %OPT0%%PAD:~0,28%[discards changes]
+echo.
+if /i "%ONLINE_MODE%"=="false" echo  WARNING: online-mode=false disables Mojang authentication. Keep it for private testing only.
 echo.
 choice /c 1234567890 /n /m "Choose an option: "
 if errorlevel 10 goto cancel_exit
@@ -241,7 +245,17 @@ echo Settings saved:
 del /q "%TEMP_SETTINGS%" >nul 2>&1
 exit /b 0
 
-:show_summary
+:read_menu_values
+set "OPT1=1. Choose server mod loader"
+set "OPT2=2. Configure RAM"
+set "OPT3=3. Choose GUI or console mode"
+set "OPT4=4. Choose garbage-collection profile"
+set "OPT5=5. Toggle automatic user Java environment setup"
+set "OPT6=6. Choose online-mode"
+set "OPT7=7. Save and start the server"
+set "OPT8=8. Save and exit"
+set "OPT9=9. Reset safe defaults"
+set "OPT0=0. Exit without saving"
 call :read_value LOADER_TYPE none
 call :read_value RAM_INITIAL 4G
 call :read_value RAM_MAX 4G
@@ -249,16 +263,6 @@ call :read_value GUI_MODE nogui
 call :read_value GC_PROFILE default
 call :read_value AUTO_CONFIGURE_JAVA true
 call :read_value ONLINE_MODE true
-echo Current settings:
-echo   Loader:        %LOADER_TYPE%
-echo   Initial RAM:   %RAM_INITIAL%
-echo   Maximum RAM:   %RAM_MAX%
-echo   Mode:          %GUI_MODE%
-echo   GC profile:    %GC_PROFILE%
-echo   Auto Java env: %AUTO_CONFIGURE_JAVA%
-echo   online-mode:   %ONLINE_MODE%
-if /i "%ONLINE_MODE%"=="false" echo   WARNING: offline mode disables Mojang authentication; keep it for private testing only.
-echo.
 exit /b 0
 
 :read_value
