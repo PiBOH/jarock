@@ -57,21 +57,34 @@ jobs:
             echo "prerelease=$PRERELEASE"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Extract changelog section
+      - name: Build release notes
         id: changelog
         shell: bash
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
+          PREV_TAG="$(git tag | grep -E '^[0-9]+[.][0-9]+[.][0-9]+' | sort -V | tail -n1 || true)"
+          {
+            echo "## Changes in this release"
+            echo ""
+            if [[ -n "${PREV_TAG}" ]]; then
+              git log --oneline --no-merges "${PREV_TAG}..HEAD" | sed 's/^/- /'
+            else
+              git log --oneline --no-merges HEAD | sed 's/^/- /'
+            fi
+            echo ""
+            echo "## Changelog"
+            echo ""
+          } > release-notes.md
           awk -v version="$VERSION" '
-          BEGIN { in_section=0 }
-          $0 ~ "^## \\[" version "\\]" { in_section=1; print; next }
-          in_section && $0 ~ /^## \[/ { exit }
-          in_section { print }
-          ' CHANGELOG.md > release-notes.md
-          if [[ ! -s release-notes.md ]]; then
-            printf 'See [CHANGELOG.md](https://github.com/%s/blob/main/CHANGELOG.md) for details.\n' "${GITHUB_REPOSITORY}" > release-notes.md
+            BEGIN { target = "## [" version "]" ; in_section = 0 }
+            index($0, target) == 1 { in_section = 1; print; next }
+            in_section && $0 ~ /^## \[/ { exit }
+            in_section { print }
+          ' CHANGELOG.md >> release-notes.md
+          if ! grep -q '^## \[' release-notes.md; then
+            printf 'See [CHANGELOG.md](https://github.com/%s/blob/main/CHANGELOG.md) for details.\n' "${GITHUB_REPOSITORY}" >> release-notes.md
           fi
 
       - name: Create GitHub Release

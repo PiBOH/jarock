@@ -17,6 +17,7 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 
 - Documented the maintenance conventions in `CONTRIBUTING.md`: commits now require a detailed body explaining what and why, and `CHANGELOG.md` is updated with every change under `[Unreleased]` instead of only at release time.
 - The parameter manager now renders a two-column main menu: the options are listed on the left and the current value of each setting (or an action hint) is shown on the right.
+- The auto-release workflow now publishes release notes with a summary of the commits since the previous release followed by the changelog section of the released version.
 
 ### Planned
 
