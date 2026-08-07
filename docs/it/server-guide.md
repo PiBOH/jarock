@@ -362,3 +362,18 @@ Non installare dieci mod subito. Controlla CPU, entità, generazione dei chunk, 
 - <https://geysermc.org/download>
 - <https://www.minecraft.net/eula>
 - <https://github.com/CardboardPowered/cardboard>
+
+<!-- jarock-safe-shutdown -->
+
+## Arresto sicuro
+
+> Scrivi `stop` nella console e lascia aperta la finestra. Prima di chiuderla attendi `CLEAN SHUTDOWN COMPLETE` e poi `SAFE TO CLOSE`. Se il secondo messaggio non compare, controlla log e crash report e ripristina un backup se necessario.
+
+<!-- jarock-updater -->
+
+
+## Aggiornare Jarock
+
+> Leggi `version.txt`, arresta il server e attendi `SAFE TO CLOSE`; poi esegui `update-jarock.bat`. Cerca una release più recente nello stesso canale beta/stabile, chiede conferma e crea un backup per il rollback. Mondo, runtime, mod, librerie e impostazioni locali vengono preservati; le dipendenze vengono riscaricate solo se mancanti o non valide.
+
+> Il pacchetto completo e il relativo checksum SHA-512 pubblicato vengono verificati prima dell'installazione.

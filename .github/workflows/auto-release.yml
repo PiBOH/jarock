@@ -128,11 +128,15 @@ jobs:
           import shutil, sys
           shutil.make_archive(sys.argv[2][:-4], 'zip', sys.argv[1])
           PY
+          sha512sum "$FULL_NAME" > "$FULL_NAME.sha512"
+          sha512sum "$LITE_NAME" > "$LITE_NAME.sha512"
           {
             echo "full_name=$FULL_NAME"
             echo "lite_name=$LITE_NAME"
+            echo "full_checksum=$FULL_NAME.sha512"
+            echo "lite_checksum=$LITE_NAME.sha512"
           } >> "$GITHUB_OUTPUT"
-          ls -la "$FULL_NAME" "$LITE_NAME"
+          ls -la "$FULL_NAME" "$LITE_NAME" "$FULL_NAME.sha512" "$LITE_NAME.sha512"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -146,5 +150,7 @@ jobs:
           files: |
             ${{ steps.package.outputs.full_name }}
             ${{ steps.package.outputs.lite_name }}
+            ${{ steps.package.outputs.full_checksum }}
+            ${{ steps.package.outputs.lite_checksum }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

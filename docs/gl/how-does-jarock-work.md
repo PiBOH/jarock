@@ -70,3 +70,18 @@ Java adoita usar TCP `25565` e Bedrock UDP `19132`. Jarock non abre portos. `key
 Despois dun erro, le `ERROR:` ou `WARNING:` e segue `Suggested fix:`. Se Java se pecha, busca o primeiro `Caused by:` en `server\logs\latest.log` ou `server\crash-reports\`. As tarefas restantes están en `TODO.md`.
 
 > **Nota técnica: Usa sempre o `start-server.bat` da raíz do repositorio. Non fagas dobre clic en `server.jar`; Windows pode usar Java 8 ou Java 21, mentres que Minecraft 26.2 require Java 25+ de 64 bits. Consulta a [guía completa en inglés](../en/how-does-jarock-work.md).**
+
+<!-- jarock-safe-shutdown -->
+
+## Apagado seguro
+
+> Escribe `stop` e deixa a xanela aberta. Agarda por `CLEAN SHUTDOWN COMPLETE` e despois `SAFE TO CLOSE` antes de pechala. Se falta a segunda mensaxe, revisa o rexistro e o informe de fallo e restaura unha copia se é preciso.
+
+<!-- jarock-updater -->
+
+
+## Actualizar Jarock
+
+> Le `version.txt`, detén o servidor e agarda por `SAFE TO CLOSE`; despois executa `update-jarock.bat`. Busca unha versión máis nova da mesma canle beta/estable, pide confirmación e crea unha copia de recuperación. Conserva o mundo, runtime, mods, bibliotecas e configuración local; só repara dependencias ausentes ou inválidas.
+
+> O paquete completo e a súa suma de comprobación SHA-512 publicada verifícanse antes da instalación.

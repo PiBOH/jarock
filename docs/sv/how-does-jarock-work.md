@@ -70,3 +70,18 @@ Java använder normalt TCP `25565` och Bedrock UDP `19132`. Jarock öppnar inga 
 Efter ett fel, läs `ERROR:` eller `WARNING:` och följ `Suggested fix:`. Om Java avslutas, leta efter den första `Caused by:` i `server\logs\latest.log` eller `server\crash-reports\`. Återstående uppgifter finns i `TODO.md`.
 
 > **Teknisk information: Använd alltid `start-server.bat` i repositoryts rot. Dubbelklicka inte på `server.jar`; Windows kan använda Java 8 eller Java 21, medan Minecraft 26.2 kräver 64-bitars Java 25+. Se [den fullständiga engelska guiden](../en/how-does-jarock-work.md).**
+
+<!-- jarock-safe-shutdown -->
+
+## Säker avstängning
+
+> Skriv `stop` och låt fönstret vara öppet. Vänta på `CLEAN SHUTDOWN COMPLETE` och sedan `SAFE TO CLOSE` innan du stänger det. Om det andra meddelandet saknas, kontrollera loggen och kraschrapporten och återställ en säkerhetskopia vid behov.
+
+<!-- jarock-updater -->
+
+
+## Uppdatera Jarock
+
+> Läs `version.txt`, stoppa servern och vänta på `SAFE TO CLOSE`; kör sedan `update-jarock.bat`. Den söker efter en nyare version i samma beta/stabila kanal, frågar efter bekräftelse och skapar en återställningskopia. Värld, runtime, moddar, bibliotek och lokala inställningar bevaras; beroenden repareras bara om de saknas eller är ogiltiga.
+
+> Hela paketet och dess publicerade SHA-512-kontrollsumma verifieras före installationen.

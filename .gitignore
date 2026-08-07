@@ -16,7 +16,7 @@
 /server/config/Geyser-NeoForge/*
 !/server/config/Geyser-NeoForge/config.yml.template
 
-# Local bootstrap cache
+# Local bootstrap and updater cache
 /.cache/
 
 # Generated runtime data if a user changes the server directory

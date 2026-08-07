@@ -97,3 +97,18 @@ Después de cualquier error, lee `ERROR:` o `WARNING:` y sigue `Suggested fix:`.
 Jarock no modifica router, firewall, port forwarding, IP pública, permisos de operador ni GitHub. Lo que falta antes de publicar está en `TODO.md`.
 
 > **Nota técnica: Usa siempre `start-server.bat` en la raíz del repositorio. No hagas doble clic en `server.jar`; Windows puede usar Java 8 o Java 21, mientras que Minecraft 26.2 requiere Java 25+ de 64 bits. Consulta la [guía completa en inglés](../en/how-does-jarock-work.md).**
+
+<!-- jarock-safe-shutdown -->
+
+## Apagado seguro
+
+> Escribe `stop` y deja la ventana abierta. Antes de cerrarla, espera `CLEAN SHUTDOWN COMPLETE` y después `SAFE TO CLOSE`. Si falta el segundo mensaje, revisa el registro y el informe de error y restaura una copia si es necesario.
+
+<!-- jarock-updater -->
+
+
+## Actualizar Jarock
+
+> Lee `version.txt`, detén el servidor y espera a `SAFE TO CLOSE`; después ejecuta `update-jarock.bat`. Busca una versión más nueva del mismo canal beta/estable, pide confirmación y crea una copia de rollback. Conserva el mundo, runtime, mods, bibliotecas y ajustes locales; solo repara dependencias ausentes o inválidas.
+
+> El paquete completo y su suma de comprobación SHA-512 publicada se verifican antes de la instalación.

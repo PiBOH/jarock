@@ -5,3 +5,18 @@ Instalējiet 64 bitu Java 25, palaidiet `start-server. (enable "Set JAVA_HOME va
 > Vienmēr izmantojiet `start-server.bat`; neveiciet dubultklikšķi uz `server.jar`.
 
 > The whitelist is disabled by default in server.properties (white-list=false, enforce-whitelist=false); enable it (white-list=true, enforce-whitelist=true) before opening the server to the public.
+
+<!-- jarock-safe-shutdown -->
+
+## Droša apturēšana
+
+> Ierakstiet `stop` un atstājiet logu atvērtu. Pirms aizvēršanas gaidiet `CLEAN SHUTDOWN COMPLETE` un pēc tam `SAFE TO CLOSE`. Ja otrais ziņojums neparādās, pārbaudiet žurnālu un avārijas ziņojumu un vajadzības gadījumā atjaunojiet dublējumu.
+
+<!-- jarock-updater -->
+
+
+## Jarock atjaunināšana
+
+> Izlasiet `version.txt`, apturiet serveri un gaidiet `SAFE TO CLOSE`; pēc tam palaidiet `update-jarock.bat`. Tas meklē jaunāku tās pašas beta/stabilā kanāla versiju, lūdz apstiprinājumu un izveido atcelšanas dublējumu. Pasaule, runtime, modifikācijas, bibliotēkas un lokālie iestatījumi tiek saglabāti; atkarības labo tikai tad, ja tās trūkst vai ir nederīgas.
+
+> Pilnā pakotne un tās publicētā SHA-512 kontrolsumma tiek pārbaudīta pirms instalēšanas.

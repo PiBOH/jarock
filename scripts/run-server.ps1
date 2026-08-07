@@ -104,6 +104,7 @@ try {
     $ReadyBanner=@(); $ReadyBannerPath=Join-Path $PSScriptRoot 'server-ready-banner.txt'
     if($ShowBanner -and (Test-Path -LiteralPath $ReadyBannerPath -PathType Leaf)){$ReadyBanner=@(Get-Content -LiteralPath $ReadyBannerPath)}
     $script:BannerShown=$false
+    $script:WorldSaveComplete=$false
     $script:GeyserPresent=$false
     $GeyserJar=Get-ChildItem -LiteralPath (Join-Path $ServerDirectory 'mods') -Filter 'Geyser-*.jar' -ErrorAction SilentlyContinue | Select-Object -First 1
     if($null -ne $GeyserJar){$script:GeyserPresent=$true}
@@ -123,6 +124,7 @@ try {
                         if([string]::IsNullOrWhiteSpace($Line)){return}
                     } else { $Line=[string]$_ }
                     Write-Host $Line
+                    if($Line -match '(?i)All dimensions are saved'){$script:WorldSaveComplete=$true}
                     if($ShowBanner -and -not $script:BannerShown -and $script:ReadyBanner.Count -gt 0){
                         $ReadyLine=$false
                         if($script:GeyserPresent){$ReadyLine=$Line -match '(?i)geyser help'}
@@ -152,6 +154,7 @@ try {
                         if([string]::IsNullOrWhiteSpace($Line)){return}
                     } else { $Line=[string]$_ }
                     Write-Host $Line
+                    if($Line -match '(?i)All dimensions are saved'){$script:WorldSaveComplete=$true}
                     if($ShowBanner -and -not $script:BannerShown -and $script:ReadyBanner.Count -gt 0){
                         $ReadyLine=$false
                         if($script:GeyserPresent){$ReadyLine=$Line -match '(?i)geyser help'}
@@ -169,5 +172,11 @@ try {
             } finally { $ErrorActionPreference=$PreviousEap }
         }
     } finally { Pop-Location }
-    exit $ExitCode
+    $FinalExitCode=$ExitCode
+    if($ExitCode -eq 0 -and -not $script:WorldSaveComplete){
+        Write-Host 'WARNING: The server process exited normally, but the complete world-save message was not observed.' -ForegroundColor Yellow
+        Write-Host 'Do not assume it is safe to close or restart yet; inspect the server log before continuing.' -ForegroundColor Yellow
+        $FinalExitCode=10
+    }
+    exit $FinalExitCode
 } catch { Show-ErrorGuidance $_.Exception.Message 'Open parameter-manager.bat, select a supported loader and valid settings, then run start-server.bat again.'; exit 1 }

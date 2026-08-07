@@ -12,3 +12,18 @@ Oglejte si celoten angleški priročnik: [../en/server-guide.md](../en/server-gu
 > The parameter manager also has a "Toggle ready banner" option: it shows or hides the ASCII-art banner printed when the server finishes loading. See the [full English guide](../en/server-guide.md).
 > If no compatible Java 25+ is found, start-server.bat launches the bundled Java installers in order: the legacy Java 8 runtime (jre-8-windows-x64.exe) first, then the Eclipse Temurin JDK 25 MSI (OpenJDK25U-jdk_x64_windows_hotspot.msi). Accept each UAC prompt and let the installers finish.
 > **Tehnična opomba: Vedno uporabite `start-server.bat` v korenu repozitorija. (enable "Set JAVA_HOME variable" in the Temurin installer) Ne dvokliknite `server.jar`; Windows lahko uporabi Java 8 ali Java 21, Minecraft 26.2 pa zahteva 64-bitno Javo 25+. Glejte [celoten angleški priročnik](../en/server-guide.md).**
+
+<!-- jarock-safe-shutdown -->
+
+## Varna zaustavitev
+
+> Vnesite `stop` in pustite okno odprto. Pred zaprtjem počakajte na `CLEAN SHUTDOWN COMPLETE` in nato `SAFE TO CLOSE`. Če drugega sporočila ni, preverite dnevnik in poročilo o sesutju ter po potrebi obnovite varnostno kopijo.
+
+<!-- jarock-updater -->
+
+
+## Posodobitev Jarock
+
+> Preberite `version.txt`, ustavite strežnik in počakajte na `SAFE TO CLOSE`; nato zaženite `update-jarock.bat`. Poišče novejšo izdajo istega beta/stabilnega kanala, zahteva potrditev in ustvari varnostno kopijo za povrnitev. Svet, runtime, modifikacije, knjižnice in lokalne nastavitve ostanejo; odvisnosti se popravijo le, če manjkajo ali so neveljavne.
+
+> Celoten paket in njegova objavljena kontrolna vsota SHA-512 se preverita pred namestitvijo.

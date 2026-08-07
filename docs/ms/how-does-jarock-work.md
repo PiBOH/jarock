@@ -70,3 +70,18 @@ Java biasanya menggunakan TCP `25565`, manakala Bedrock menggunakan UDP `19132`.
 Selepas ralat, baca `ERROR:` atau `WARNING:` dan ikuti `Suggested fix:`. Jika Java berhenti, cari `Caused by:` pertama dalam `server\logs\latest.log` atau `server\crash-reports\`. Tugasan yang tinggal terdapat dalam `TODO.md`.
 
 > **Nota teknikal: Sentiasa gunakan `start-server.bat` di akar repositori. Jangan klik dua kali `server.jar`; Windows mungkin menggunakan Java 8 atau Java 21, sedangkan Minecraft 26.2 memerlukan Java 25+ 64-bit. Lihat [panduan bahasa Inggeris lengkap](../en/how-does-jarock-work.md).**
+
+<!-- jarock-safe-shutdown -->
+
+## Penutupan selamat
+
+> Taip `stop` dan biarkan tetingkap terbuka. Tunggu `CLEAN SHUTDOWN COMPLETE` kemudian `SAFE TO CLOSE` sebelum menutupnya. Jika mesej kedua tiada, semak log dan laporan ranap dan pulihkan sandaran jika perlu.
+
+<!-- jarock-updater -->
+
+
+## Kemas kini Jarock
+
+> Baca `version.txt`, hentikan pelayan dan tunggu `SAFE TO CLOSE`; kemudian jalankan `update-jarock.bat`. Ia mencari keluaran lebih baharu dalam saluran beta/stabil yang sama, meminta pengesahan dan membuat sandaran rollback. Dunia, runtime, mod, pustaka dan tetapan tempatan dikekalkan; kebergantungan hanya dibaiki jika hilang atau tidak sah.
+
+> Pakej penuh dan checksum SHA-512 yang diterbitkan disahkan sebelum pemasangan.

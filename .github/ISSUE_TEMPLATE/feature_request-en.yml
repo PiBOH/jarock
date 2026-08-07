@@ -1,46 +1,114 @@
-name: 🚀 Feature Request (English)
-description: Have an idea or proposal? Pitch it!
-title: "[Feat]: "
-labels: ["enhancement", "triage"]
+name: "🚀 Feature Request (English)"
+description: "Suggest a practical improvement to the Jarock server template, launcher, documentation, or automation."
+title: "[Feature]: "
+labels:
+  - "enhancement"
+  - "triage"
 body:
- - type: markdown
- attributes:
- value: |
- ### 💡 Feature Proposal
- Help improve Jarock by sharing your ideas for new features or enhancements.
- - type: dropdown
- id: category
- attributes:
- label: 🏷️ Category
- options:
- - 🧵 New loader / mod platform support
- - 📦 New mod / tool to include in manifest
- - ⚙️ New parameter / setting in parameter-manager
- - 📄 Documentation / guide improvement
- - 🌐 Translation / new language
- - 🌐 Cross-play improvement (Geyser / Floodgate)
- - 🏷️ CI / auto-release improvement
- - 🔧 Other
- validations:
- required: true
- - type: textarea
- id: description
- attributes:
- label: 📝 What is your idea?
- description: Describe your proposal in detail. How should it work?
- placeholder: "I would like Jarock to support..."
- validations:
- required: true
- - type: textarea
- id: problem
- attributes:
- label: 🤝 What problem does it solve or improve?
- description: Why is this feature needed? What workflow would it make faster or easier?
- placeholder: "Currently, it is difficult or cumbersome to..."
- validations:
- required: true
- - type: textarea
- id: context
- attributes:
- label: 🎨 Mockups / Screenshots / Extras
- description: Drag & drop images, sketches, diagrams, or links if you have them!
+  - type: markdown
+    attributes:
+      value: |
+        ## 💡 Jarock feature proposal
+
+        Please explain the user problem first. Jarock prioritizes simple, reproducible Windows setup, Fabric-first compatibility, safe server operation, and no automatic router, firewall, or port-forwarding changes.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Pre-flight checklist
+      options:
+        - label: I searched existing issues and discussions for a similar request.
+          required: true
+        - label: This proposal does not require Jarock to expose a router, firewall, or public-network configuration automatically.
+          required: true
+        - label: I have described a practical use case rather than only requesting a specific implementation.
+          required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature category
+      options:
+        - "Launcher or first-run setup"
+        - "Parameter manager or server configuration"
+        - "Fabric loader or server-side mod support"
+        - "NeoForge fallback support"
+        - "Geyser / Floodgate / cross-play"
+        - "Updater or rollback safety"
+        - "Backup, shutdown, or world safety"
+        - "Documentation or translation"
+        - "GitHub Actions, packaging, or auto-release"
+        - "Website or release downloads"
+        - "Other"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What is difficult, missing, unsafe, or repetitive today? Who would benefit?
+      placeholder: "When I ..., it is difficult because ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe what Jarock should do from the user's point of view. Include an example workflow if possible.
+      placeholder: |
+        1. The user runs ...
+        2. Jarock asks or detects ...
+        3. Jarock preserves ... and reports ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: loader_scope
+    attributes:
+      label: Loader scope
+      description: Is this request tied to a specific server loader?
+      options:
+        - "Fabric"
+        - "NeoForge"
+        - "Both Fabric and NeoForge"
+        - "Loader-independent"
+        - "Not applicable"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: breaking_change
+    attributes:
+      label: Compatibility impact
+      description: Could the proposal change existing settings, runtime data, or the first-run flow?
+      options:
+        - "No known breaking change"
+        - "Changes an existing setting or default"
+        - "Changes the first-run or update flow"
+        - "May affect worlds, mods, or server compatibility"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What workaround, script, mod, service, or manual process do you use today? Why is it insufficient?
+      placeholder: "Currently I ... but this does not work well because ..."
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Examples and supporting material
+      description: Add mockups, screenshots, links, logs, compatibility information, or implementation ideas. Redact private data and secrets.
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I understand that the maintainers may adjust the proposal to preserve simplicity, security, and loader compatibility.
+          required: true

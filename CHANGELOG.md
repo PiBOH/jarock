@@ -7,9 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Rebuilt the English interactive GitHub issue forms for bug reports and feature requests with Jarock-specific loader, Java, server, Geyser/Floodgate, updater, workflow and documentation fields.
+- Added mandatory privacy and troubleshooting checklists plus GitHub Discussions, documentation and security contact links.
+
+## [0.0.48-beta] - 2026-08-07
+
+### Added
+
+- **Safe Jarock updater**: added `update-jarock.bat` and `scripts/update-jarock.ps1`. The updater reads the installed SemVer from `version.txt`, checks GitHub releases in the same stable or beta channel, ignores drafts, requires the Full package and its published SHA-512 checksum, asks for confirmation, validates the archive before extraction, and creates a rollback backup before applying the update. It is intentionally an explicit manual action rather than a silent startup update.
+- The updater preserves the generated `server/` runtime, world data, mods, libraries, server properties, EULA, Geyser/Floodgate keys, local launch settings, Java selection, logs and secrets. Tracked templates and manifests are updated, while generated runtime files remain protected; obsolete tracked project files are removed only after being backed up. It never changes router, firewall or port-forwarding settings.
+- Added updater instructions to the English and translated documentation, including SHA-512 verification and the manual-update safety boundary. Existing dependencies are not proactively reinstalled; the next normal bootstrap verifies them and downloads only missing or invalid files. Releases without checksum assets are reported as requiring manual installation instead of being silently applied.
+
+### Security
+
+- The updater refuses to modify a running Jarock/Minecraft process and, for Git checkouts, refuses to overwrite uncommitted changes unless the explicit `-AllowLocalChanges` override is used.
+
+## [0.0.47-beta] - 2026-08-07
+
+### Added
+
+- **Safe shutdown guidance**: `start-server.bat` now tells operators not to close the console immediately after entering `stop`, and prints `CLEAN SHUTDOWN COMPLETE` followed by `SAFE TO CLOSE` only after the Minecraft process exits normally. A non-zero exit is clearly marked as unsafe to assume and points to the logs and crash reports.
+- Added the safe-shutdown instructions to the English and translated installation, loader-fallback, network and Jarock-operation guides. The instructions explain that force-closing the process or interrupting world saving can leave world data incomplete or corrupt.
+
 ### Changed
 
-- Marked the parameter-manager and ready-banner verification items as complete in `TODO.md`.
+- The final shutdown message remains safe even when the post-shutdown Geyser configuration update reports a warning: the world-save confirmation is based on the Minecraft process exit, while the Geyser warning is reported separately.
 
 ## [0.0.46-beta] - 2026-08-07
 
@@ -452,7 +476,10 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.40-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.48-beta...HEAD
+[0.0.48-beta]: https://github.com/PiBOH/jarock/compare/0.0.47-beta...0.0.48-beta
+[0.0.47-beta]: https://github.com/PiBOH/jarock/compare/0.0.46-beta...0.0.47-beta
+[0.0.46-beta]: https://github.com/PiBOH/jarock/compare/0.0.45-beta...0.0.46-beta
 [0.0.40-beta]: https://github.com/PiBOH/jarock/compare/0.0.39-beta...0.0.40-beta
 [0.0.39-beta]: https://github.com/PiBOH/jarock/compare/0.0.38-beta...0.0.39-beta
 [0.0.38-beta]: https://github.com/PiBOH/jarock/compare/0.0.37-beta...0.0.38-beta

@@ -70,3 +70,18 @@ Java obvykle používá TCP `25565` a Bedrock UDP `19132`. Jarock porty neoteví
 Po chybě si přečtěte `ERROR:` nebo `WARNING:` a postupujte podle `Suggested fix:`. Pokud Java skončí, vyhledejte první `Caused by:` v `server\logs\latest.log` nebo `server\crash-reports\`. Zbývající úkoly jsou v `TODO.md`.
 
 > **Technická poznámka: Vždy používejte `start-server.bat` v kořenu repozitáře. Na `server.jar` neklikejte dvakrát; Windows může použít Javu 8 nebo Javu 21, zatímco Minecraft 26.2 vyžaduje 64bitovou Javu 25+. Viz [úplná anglická příručka](../en/how-does-jarock-work.md).**
+
+<!-- jarock-safe-shutdown -->
+
+## Bezpečné vypnutí
+
+> Napište `stop` do konzole a nechte okno otevřené. Před zavřením počkejte na `CLEAN SHUTDOWN COMPLETE` a potom `SAFE TO CLOSE`. Pokud druhá zpráva chybí, zkontrolujte log a hlášení pádu a podle potřeby obnovte zálohu.
+
+<!-- jarock-updater -->
+
+
+## Aktualizace Jarock
+
+> Přečtěte `version.txt`, zastavte server a počkejte na `SAFE TO CLOSE`; potom spusťte `update-jarock.bat`. Vyhledá novější verzi ve stejném beta/stabilním kanálu, vyžádá potvrzení a vytvoří zálohu pro návrat. Svět, runtime, mody, knihovny a místní nastavení zůstanou zachovány; závislosti se obnoví jen při chybění nebo neplatnosti.
+
+> Úplný balíček a jeho zveřejněný kontrolní součet SHA-512 se před instalací ověří.

@@ -68,6 +68,8 @@ echo Starting Jarock server from:
 echo   "%ROOT%\server"
 echo No router or firewall changes are performed by this file.
 echo Type "stop" in the server console to shut it down safely.
+echo IMPORTANT: after typing "stop", do not close this window yet.
+echo Wait for the final "SAFE TO CLOSE" message after Minecraft finishes saving the world.
 echo Do not double-click server\server.jar directly: Windows may use an older Java association.
 echo.
 pushd "%ROOT%\server"
@@ -83,15 +85,24 @@ set "EXIT_CODE=%errorlevel%"
 popd
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\configure-geyser.ps1"
-if errorlevel 1 (
+set "GEYSER_EXIT_CODE=%errorlevel%"
+if not "%GEYSER_EXIT_CODE%"=="0" (
     echo.
     echo WARNING: Geyser authentication could not be patched after shutdown.
     echo Suggested fix: inspect the generated Geyser config and set auth-type: floodgate, then run this file again.
 )
 echo.
 echo Server stopped with exit code %EXIT_CODE%.
-if not "%EXIT_CODE%"=="0" (
-    echo Suggested fix: inspect server\logs\latest.log and the newest server\crash-reports file.
+if "%EXIT_CODE%"=="0" (
+    echo CLEAN SHUTDOWN COMPLETE: Minecraft finished saving the world and exited normally.
+    if "%GEYSER_EXIT_CODE%"=="0" (
+        echo SAFE TO CLOSE: You may now close this window.
+    ) else (
+        echo SAFE TO CLOSE: The world was saved; you may now close this window after reviewing the Geyser warning above.
+    )
+) else (
+    echo NOT SAFE TO ASSUME: Minecraft did not exit normally.
+    echo Suggested fix: inspect server\logs\latest.log and the newest server\crash-reports file before restarting.
     echo The first "Caused by:" line usually identifies the incompatible mod or missing dependency.
 )
 pause

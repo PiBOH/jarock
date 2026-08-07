@@ -5,3 +5,18 @@ Instalați Java 25 pe 64 de biți, rulați `start-server. (enable "Set JAVA_HOME
 > Folosiți întotdeauna `start-server.bat`; nu faceți dublu clic pe `server.jar`.
 
 > The whitelist is disabled by default in server.properties (white-list=false, enforce-whitelist=false); enable it (white-list=true, enforce-whitelist=true) before opening the server to the public.
+
+<!-- jarock-safe-shutdown -->
+
+## Oprire sigură
+
+> Scrieți `stop` și lăsați fereastra deschisă. Înainte de închidere așteptați `CLEAN SHUTDOWN COMPLETE`, apoi `SAFE TO CLOSE`. Dacă al doilea mesaj lipsește, verificați jurnalul și raportul de eroare și restaurați o copie dacă este necesar.
+
+<!-- jarock-updater -->
+
+
+## Actualizarea Jarock
+
+> Citiți `version.txt`, opriți serverul și așteptați `SAFE TO CLOSE`; apoi rulați `update-jarock.bat`. Caută o versiune mai nouă în același canal beta/stabil, cere confirmare și creează o copie pentru revenire. Lumea, runtime-ul, modurile, bibliotecile și setările locale sunt păstrate; dependențele sunt reparate doar dacă lipsesc sau sunt invalide.
+
+> Pachetul complet și suma de verificare SHA-512 publicată sunt verificate înainte de instalare.

@@ -1,8 +1,11 @@
 blank_issues_enabled: false
 contact_links:
- - name: ❓ GitHub Discussions (Q&A / Support)
- url: https://github.com/PiBOH/jarock/discussions/
- about: Use GitHub Discussions for Q&A, general support, and discussing ideas before opening an issue.
- - name: 📖 Documentation
- url: https://piboh.github.io/jarock/
- about: Read the Jarock website and guides before reporting a problem.
+  - name: "💬 GitHub Discussions"
+    url: "https://github.com/PiBOH/jarock/discussions"
+    about: "Use Discussions for questions, setup help, compatibility questions, and general support."
+  - name: "📖 Jarock documentation"
+    url: "https://github.com/PiBOH/jarock/tree/main/docs"
+    about: "Read the installation, loader, network, troubleshooting, and maintenance guides before opening an issue."
+  - name: "🔐 Security or credential exposure"
+    url: "https://github.com/PiBOH/jarock/security/advisories/new"
+    about: "Do not publish tokens, key.pem, passwords, or private world data in a public issue; report security problems privately."

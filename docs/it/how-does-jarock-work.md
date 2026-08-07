@@ -124,3 +124,18 @@ Un server Fabric normale non esegue plugin Bukkit. Se un plugin è indispensabil
 Dopo ogni errore leggere `ERROR:` o `WARNING:` e seguire `Suggested fix:`. Se il processo Java si chiude, controllare il primo `Caused by:` nei log. Cause comuni: Java mancante, permessi, download corrotto, EULA non accettata o mod incompatibile.
 
 Jarock non modifica router, firewall, port forwarding, IP pubblico, permessi operatori o repository GitHub. Le attività mancanti sono in `TODO.md`.
+
+<!-- jarock-safe-shutdown -->
+
+## Arresto sicuro
+
+> Scrivi `stop` nella console e lascia aperta la finestra. Prima di chiuderla attendi `CLEAN SHUTDOWN COMPLETE` e poi `SAFE TO CLOSE`. Se il secondo messaggio non compare, controlla log e crash report e ripristina un backup se necessario.
+
+<!-- jarock-updater -->
+
+
+## Aggiornare Jarock
+
+> Leggi `version.txt`, arresta il server e attendi `SAFE TO CLOSE`; poi esegui `update-jarock.bat`. Cerca una release più recente nello stesso canale beta/stabile, chiede conferma e crea un backup per il rollback. Mondo, runtime, mod, librerie e impostazioni locali vengono preservati; le dipendenze vengono riscaricate solo se mancanti o non valide.
+
+> Il pacchetto completo e il relativo checksum SHA-512 pubblicato vengono verificati prima dell'installazione.

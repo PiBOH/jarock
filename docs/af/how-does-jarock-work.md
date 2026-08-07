@@ -72,3 +72,18 @@ Na ’n fout, lees `ERROR:` of `WARNING:` en volg `Suggested fix:`. As Java stop
 Jarock verander nie die router, firewall, port forwarding of openbare IP nie. Die oorblywende take staan in `TODO.md`.
 
 > **Tegniese nota: Gebruik altyd die `start-server.bat` in die wortel van die repository. Moenie op `server.jar` dubbelklik nie; Windows kan Java 8 of Java 21 gebruik, terwyl Minecraft 26.2 64-bis Java 25+ vereis. Sien die [volledige Engelse gids](../en/how-does-jarock-work.md).**
+
+<!-- jarock-safe-shutdown -->
+
+## Veilige afsluiting
+
+> Tik `stop` in die bedienerkonsole en laat die venster oop. Wag vir `CLEAN SHUTDOWN COMPLETE` en daarna `SAFE TO CLOSE` voordat jy dit sluit. As die tweede boodskap ontbreek, lees die log en crash-verslag en herstel ’n rugsteun indien nodig.
+
+<!-- jarock-updater -->
+
+
+## Jarock-bywerking
+
+> Lees `version.txt`, stop die bediener en wag vir `SAFE TO CLOSE`; voer dan `update-jarock.bat` uit. Dit soek ’n nuwer vrystelling in dieselfde beta/stabiele kanaal, vra bevestiging en maak ’n terugrolrugsteun. Die wêreld, runtime, mods, biblioteke en plaaslike instellings bly behoue; afhanklikhede word net herstel as hulle ontbreek of ongeldig is.
+
+> Die volledige pakket en sy gepubliseerde SHA-512-kontrolesom word voor installasie nagegaan.

@@ -189,6 +189,8 @@ To stop safely, type this in the server console and press Enter:
 stop
 ```
 
+Then **leave the window open**. Minecraft may still be saving chunks and player data. Close the window only after Jarock prints both `CLEAN SHUTDOWN COMPLETE` and `SAFE TO CLOSE`. If `SAFE TO CLOSE` does not appear, do not force-close the window: inspect `server\logs\latest.log` and the newest crash report first. Force-closing the process, a power loss, or a crash during world saving can leave the world incomplete or corrupt.
+
 Never close the window or shut down the computer while the world is saving if you can avoid it.
 
 ---
@@ -479,6 +481,10 @@ Remove that mod and download a file that explicitly supports Minecraft 26.2 and 
 ### The server crashes during startup
 
 Open `logs/latest.log` and the newest file in `crash-reports/`. Look for the first `Caused by:` line, not only the final line. Common causes are a missing dependency, a client-only mod, duplicate mod files, or a version mismatch.
+
+### The world sometimes appears corrupted after stopping the server
+
+Always enter `stop` in the server console and wait. Do not click the window's X, terminate Java from Task Manager, or turn off the computer while Minecraft is saving. Jarock now prints `CLEAN SHUTDOWN COMPLETE` followed by `SAFE TO CLOSE` only after the Minecraft process exits normally. If the final message is missing or the exit code is not zero, make a backup of the current files, inspect `server\logs\latest.log` and the newest crash report, and restore the world from the newest known-good backup if necessary.
 
 ### The server stops with "Overworld settings missing" or does not load the world
 

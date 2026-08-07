@@ -68,3 +68,18 @@ Java は通常 TCP `25565`、Bedrock は UDP `19132` を使用します。Jarock
 エラーが発生したら `ERROR:` または `WARNING:` を読み、`Suggested fix:` に従ってください。Java が終了した場合は `server\logs\latest.log` または `server\crash-reports\` の最初の `Caused by:` を確認します。残りの作業は `TODO.md` にあります。
 
 > **技術メモ: 必ずリポジトリのルートにある `start-server.bat` を使用してください。`server.jar` をダブルクリックしないでください。Windows が Java 8 または Java 21 を使う可能性がありますが、Minecraft 26.2 には 64 ビット Java 25 以降が必要です。[英語の完全ガイド](../en/how-does-jarock-work.md)を参照してください。**
+
+<!-- jarock-safe-shutdown -->
+
+## 安全な停止
+
+> `stop` と入力し、ウィンドウを開いたままにしてください。閉じる前に `CLEAN SHUTDOWN COMPLETE`、続いて `SAFE TO CLOSE` を待ちます。2つ目の表示がなければログとクラッシュレポートを確認し、必要ならバックアップを復元してください。
+
+<!-- jarock-updater -->
+
+
+## Jarock の更新
+
+> `version.txt` を確認し、サーバーを停止して `SAFE TO CLOSE` を待ってから `update-jarock.bat` を実行します。同じベータ/安定チャンネルの新しいリリースを探し、確認後にロールバック用バックアップを作成します。ワールド、ランタイム、MOD、ライブラリ、ローカル設定は保持され、依存関係は不足または無効な場合だけ修復されます。
+
+> 完全パッケージと公開された SHA-512 チェックサムは、インストール前に検証されます。

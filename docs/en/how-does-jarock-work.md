@@ -150,4 +150,18 @@ Jarock does not open router ports, modify firewall rules, configure port forward
 6. Check that the relevant mod matches Fabric and the target Minecraft release.
 7. Never delete the world before making a backup.
 
+## 10. Updating Jarock itself
+
+The root `version.txt` contains the installed Jarock version. To manually check for an update, first stop the server and wait for `SAFE TO CLOSE`, then run `update-jarock.bat`; Jarock does not silently update during `start-server.bat`. The updater compares the local version with GitHub releases in the same channel: beta installations look for newer beta releases, while stable installations look for newer stable releases. Draft releases and releases without the expected package are ignored.
+
+After confirmation, it downloads the matching `jarock-full` package and its published SHA-512 checksum, verifies the archive before extraction, checks the package version and excludes `.github/` and `.website/`. It updates only the project files from the package. It preserves the generated `server/` directory, world data, mods, libraries, server properties, EULA, Geyser/Floodgate keys, local launch settings, Java selection, logs and the updater cache. A rollback copy of overwritten project files is stored under `.cache/update-backups/`.
+
+The updater does not silently reinstall dependencies. The next `start-server.bat` run verifies the selected loader and existing mod files; it downloads only what is missing or invalid. Never run the updater while Minecraft is running, and never close the window during the update.
+
 That is Jarock: a reproducible, verified, local loader-aware server bootstrap with Fabric as the first choice, NeoForge as fallback, configurable safe launch parameters and clear safety boundaries.
+
+<!-- jarock-safe-shutdown -->
+
+## Safe shutdown
+
+Type `stop` in the server console and leave the window open. Wait for Jarock to print `CLEAN SHUTDOWN COMPLETE` and then `SAFE TO CLOSE`; only then close the window. If the second message does not appear, do not force the process to end: inspect `server\\logs\\latest.log` and the newest crash report, and restore a backup if necessary.

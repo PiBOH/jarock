@@ -70,3 +70,18 @@ Java genellikle TCP `25565`, Bedrock ise UDP `19132` kullanır. Jarock port açm
 Bir hatadan sonra `ERROR:` veya `WARNING:` satırını okuyun ve `Suggested fix:` önerisini uygulayın. Java kapanırsa `server\logs\latest.log` veya `server\crash-reports\` içindeki ilk `Caused by:` satırını bulun. Kalan görevler `TODO.md` içindedir.
 
 > **Teknik not: Her zaman repository kökündeki `start-server.bat` dosyasını kullanın. `server.jar` dosyasına çift tıklamayın; Windows Java 8 veya Java 21 kullanabilir, ancak Minecraft 26.2 için 64 bit Java 25+ gerekir. [Tam İngilizce kılavuza](../en/how-does-jarock-work.md) bakın.**
+
+<!-- jarock-safe-shutdown -->
+
+## Güvenli kapatma
+
+> `stop` yazın ve pencereyi açık bırakın. Kapatmadan önce `CLEAN SHUTDOWN COMPLETE` ve ardından `SAFE TO CLOSE` mesajlarını bekleyin. İkinci mesaj yoksa günlüğü ve çökme raporunu kontrol edip gerekirse yedeği geri yükleyin.
+
+<!-- jarock-updater -->
+
+
+## Jarock güncellemesi
+
+> `version.txt` dosyasını okuyun, sunucuyu durdurun ve `SAFE TO CLOSE` mesajını bekleyin; ardından `update-jarock.bat` dosyasını çalıştırın. Aynı beta/kararlı kanaldaki daha yeni sürümü arar, onay ister ve geri alma yedeği oluşturur. Dünya, runtime, modlar, kütüphaneler ve yerel ayarlar korunur; bağımlılıklar yalnızca eksik veya geçersizse düzeltilir.
+
+> Tam paket ve yayımlanan SHA-512 sağlama toplamı yüklemeden önce doğrulanır.

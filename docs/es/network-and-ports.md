@@ -5,3 +5,18 @@ Instala Java 25 de 64 bits, ejecuta `start-server. (enable "Set JAVA_HOME variab
 > Usa siempre `start-server.bat`; no hagas doble clic en `server.jar`.
 
 > The whitelist is disabled by default in server.properties (white-list=false, enforce-whitelist=false); enable it (white-list=true, enforce-whitelist=true) before opening the server to the public.
+
+<!-- jarock-safe-shutdown -->
+
+## Apagado seguro
+
+> Escribe `stop` y deja la ventana abierta. Antes de cerrarla, espera `CLEAN SHUTDOWN COMPLETE` y después `SAFE TO CLOSE`. Si falta el segundo mensaje, revisa el registro y el informe de error y restaura una copia si es necesario.
+
+<!-- jarock-updater -->
+
+
+## Actualizar Jarock
+
+> Lee `version.txt`, detén el servidor y espera a `SAFE TO CLOSE`; después ejecuta `update-jarock.bat`. Busca una versión más nueva del mismo canal beta/estable, pide confirmación y crea una copia de rollback. Conserva el mundo, runtime, mods, bibliotecas y ajustes locales; solo repara dependencias ausentes o inválidas.
+
+> El paquete completo y su suma de comprobación SHA-512 publicada se verifican antes de la instalación.

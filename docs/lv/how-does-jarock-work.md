@@ -70,3 +70,18 @@ Java parasti izmanto TCP `25565`, bet Bedrock UDP `19132`. Jarock neatver portus
 Pēc kļūdas izlasi `ERROR:` vai `WARNING:` un izpildi `Suggested fix:`. Ja Java apstājas, meklē pirmo `Caused by:` ierakstu failā `server\logs\latest.log` vai mapē `server\crash-reports\`. Atlikušie uzdevumi ir `TODO.md`.
 
 > **Tehniska piezīme: Vienmēr izmantojiet repozitorija saknes mapē esošo `start-server.bat`. Neveiciet dubultklikšķi uz `server.jar`; Windows var izmantot Java 8 vai Java 21, bet Minecraft 26.2 nepieciešama 64 bitu Java 25+. Skatiet [pilno rokasgrāmatu angļu valodā](../en/how-does-jarock-work.md).**
+
+<!-- jarock-safe-shutdown -->
+
+## Droša apturēšana
+
+> Ierakstiet `stop` un atstājiet logu atvērtu. Pirms aizvēršanas gaidiet `CLEAN SHUTDOWN COMPLETE` un pēc tam `SAFE TO CLOSE`. Ja otrais ziņojums neparādās, pārbaudiet žurnālu un avārijas ziņojumu un vajadzības gadījumā atjaunojiet dublējumu.
+
+<!-- jarock-updater -->
+
+
+## Jarock atjaunināšana
+
+> Izlasiet `version.txt`, apturiet serveri un gaidiet `SAFE TO CLOSE`; pēc tam palaidiet `update-jarock.bat`. Tas meklē jaunāku tās pašas beta/stabilā kanāla versiju, lūdz apstiprinājumu un izveido atcelšanas dublējumu. Pasaule, runtime, modifikācijas, bibliotēkas un lokālie iestatījumi tiek saglabāti; atkarības labo tikai tad, ja tās trūkst vai ir nederīgas.
+
+> Pilnā pakotne un tās publicētā SHA-512 kontrolsumma tiek pārbaudīta pirms instalēšanas.

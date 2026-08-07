@@ -3,3 +3,18 @@
 Use NeoForge apenas como último recurso se Fabric não servir. Forge e NeoForge são loaders diferentes e os mods devem corresponder a NeoForge; adicione Geyser/Floodgate se necessário e teste primeiro uma cópia.
 
 Consulte o guia completo em inglês: [../en/neoforge-fallback.md](../en/neoforge-fallback.md)
+
+<!-- jarock-safe-shutdown -->
+
+## Encerramento seguro
+
+> Digite `stop` e deixe a janela aberta. Antes de fechá-la, aguarde `CLEAN SHUTDOWN COMPLETE` e depois `SAFE TO CLOSE`. Se a segunda mensagem não aparecer, verifique o log e o relatório de falha e restaure um backup se necessário.
+
+<!-- jarock-updater -->
+
+
+## Atualizar o Jarock
+
+> Leia `version.txt`, pare o servidor e aguarde `SAFE TO CLOSE`; depois execute `update-jarock.bat`. Ele procura uma versão mais recente no mesmo canal beta/estável, pede confirmação e cria um backup de reversão. Mundo, runtime, mods, bibliotecas e configurações locais são preservados; dependências só são corrigidas se estiverem ausentes ou inválidas.
+
+> O pacote completo e o respetivo checksum SHA-512 publicado são verificados antes da instalação.

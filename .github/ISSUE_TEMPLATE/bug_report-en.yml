@@ -1,123 +1,165 @@
-name: 🐛 Bug Report (English)
-description: Something is broken? Help us fix it!
+name: "🐛 Bug Report (English)"
+description: "Report a reproducible problem with Jarock, its launcher, documentation, workflow, or server setup."
 title: "[Bug]: "
-labels: ["bug", "triage"]
+labels:
+  - "bug"
+  - "triage"
 body:
- - type: markdown
- attributes:
- value: |
- ### 🛠️ Bug Report
- Thank you for reporting! Please fill out the form below with as much detail as possible.
- - type: checkboxes
- id: checklist
- attributes:
- label: Pre-flight Checklist
- options:
- - label: I am using the [latest release](https://github.com/PiBOH/jarock/releases/latest) of Jarock.
- required: true
- - label: I have searched existing issues and verified this is not a duplicate.
- required: true
- - label: I have read the `ERROR:` and `Suggested fix:` lines printed by the launcher.
- required: true
- - type: dropdown
- id: component
- attributes:
- label: 📍 Where do you believe the bug is?
- description: Select the area of Jarock where you encounter the issue.
- options:
- - 🚀 start-server.bat (launcher / bootstrap)
- - ⚙️ parameter-manager.bat (settings editor)
- - 🧵 Fabric loader / Fabric Installer
- - 🔨 NeoForge loader / NeoForge Installer
- - ☕ Java runtime discovery (java-runtime.ps1)
- - 📦 Mod manifest / mod download (Fabric or NeoForge)
- - 🧹 clean-server-runtime.bat (cleanup)
- - 🌐 Cross-play (Geyser / Floodgate)
- - 📄 Documentation / website
- - 🏷️ Auto-release workflow
- - ❓ Other
- validations:
- required: true
- - type: dropdown
- id: frequency
- attributes:
- label: 📉 How frequently does it occur?
- options:
- - 🔴 Always (100%)
- - 🟠 Often (> 50%)
- - 🟡 Sometimes (< 50%)
- - 🟢 Rarely (once or twice)
- validations:
- required: true
- - type: textarea
- id: reproduce-steps
- attributes:
- label: 🔄 Steps to reproduce the bug
- description: Clear, precise steps lead to a faster fix!
- placeholder: |
- 1. Run start-server.bat from the repository root...
- 2. Choose Fabric as the loader...
- 3. See the error...
- value: |
- 1.
- 2.
- 3.
- validations:
- required: true
- - type: textarea
- id: expected-actual
- attributes:
- label: 🆚 Expected behavior vs. Actual behavior
- description: What should have happened vs. what actually happened.
- placeholder: |
- Expected: The server starts and generates the world.
- Actual: The bootstrap prints an error and the server does not start.
- validations:
- required: true
- - type: markdown
- attributes:
- value: "---"
- - type: dropdown
- id: os-ver
- attributes:
- label: 💻 Operating System
- options:
- - 🪟 Windows 11
- - 🪟 Windows 10
- - 🪟 Windows Server
- - ❓ Other
- validations:
- required: true
- - type: input
- id: java-version
- attributes:
- label: ☕ Java version in use
- description: Paste the output of `java -version` or the Java path reported by start-server.bat.
- placeholder: e.g. OpenJDK 25.0.4 (Eclipse Adoptium), 64-bit
- validations:
- required: true
- - type: dropdown
- id: loader-type
- attributes:
- label: 🧵 Selected loader
- description: Which loader did you choose in start-server.bat?
- options:
- - Fabric
- - NeoForge
- - Forge (unavailable — informational only)
- - None / first-run
- validations:
- required: true
- - type: textarea
- id: logs
- attributes:
- label: 📄 Logs / Screenshots
- description: Paste the exact terminal output, `server/logs/latest.log`, crash reports, or drag & drop screenshots here.
- render: shell
- validations:
- required: true
- - type: textarea
- id: extra
- attributes:
- label: 📎 Additional context
- description: Anything else that might help? (custom Java path, antivirus, folder path length, etc.)
+  - type: markdown
+    attributes:
+      value: |
+        ## 🛠️ Jarock bug report
+
+        Thank you for helping improve Jarock. Please remove passwords, tokens, `key.pem`, public IP addresses, and private world data before submitting logs.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Pre-flight checklist
+      description: Please confirm these items before submitting the report.
+      options:
+        - label: I am using the latest Jarock release or I have included my exact `version.txt` value below.
+          required: true
+        - label: I searched existing issues and this does not appear to be a duplicate.
+          required: true
+        - label: I read the `ERROR:` and `Suggested fix:` lines printed by Jarock.
+          required: true
+        - label: I removed secrets and private data from all logs, screenshots, and attachments.
+          required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected component
+      description: Which part of Jarock appears to be involved?
+      options:
+        - "start-server.bat / bootstrap"
+        - "update-jarock.bat / updater"
+        - "parameter-manager.bat"
+        - "Fabric loader or Fabric Installer"
+        - "NeoForge loader or NeoForge Installer"
+        - "Java runtime discovery or JAVA_HOME"
+        - "Server mod download or manifest"
+        - "Geyser / Floodgate / Java-Bedrock cross-play"
+        - "Server startup, shutdown, or world data"
+        - "Documentation or translations"
+        - "GitHub Actions / auto-release workflow"
+        - "Other"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: Frequency
+      description: How often can you reproduce the problem?
+      options:
+        - "Always (100%)"
+        - "Often (more than 50%)"
+        - "Sometimes (less than 50%)"
+        - "Rarely (once or twice)"
+        - "Only on first setup"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Give the smallest exact sequence that triggers the problem.
+      placeholder: |
+        1. Download or clone the repository.
+        2. Run `start-server.bat`.
+        3. Select Fabric and answer the prompts.
+        4. Observe the error.
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_actual
+    attributes:
+      label: Expected and actual behavior
+      description: Explain what you expected and what happened instead.
+      placeholder: |
+        Expected: The server starts and reaches SAFE TO CLOSE after shutdown.
+        Actual: The launcher exits with an error before the server starts.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: operating_system
+    attributes:
+      label: Operating system
+      options:
+        - "Windows 11"
+        - "Windows 10"
+        - "Windows Server"
+        - "Other Windows version"
+        - "Other operating system (documentation or workflow issue)"
+    validations:
+      required: true
+
+  - type: input
+    id: jarock_version
+    attributes:
+      label: Jarock version
+      description: Copy the complete value from the root `version.txt` file, for example `0.0.48-beta`.
+      placeholder: "0.0.48-beta"
+    validations:
+      required: true
+
+  - type: input
+    id: java_version
+    attributes:
+      label: Java runtime
+      description: Paste `java -version` output or the Java path and version printed by `start-server.bat`.
+      placeholder: "Eclipse Temurin 25.0.4, 64-bit"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: loader
+    attributes:
+      label: Selected loader
+      options:
+        - "Fabric"
+        - "NeoForge"
+        - "Forge (currently unavailable for the verified 26.2 build)"
+        - "No loader selected yet"
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Relevant configuration
+      description: Include safe, non-secret details such as GUI/nogui, RAM, online-mode, Geyser presence, custom Java path, and whether the server was already running. If unavailable, write `Not available` and explain why.
+      placeholder: |
+        Mode: nogui
+        RAM: 4G-8G
+        online-mode: true
+        Geyser/Floodgate: installed
+        Custom Java path: no
+        Repository path contains spaces: yes
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and screenshots
+      description: Paste the complete relevant output, including the first `Caused by:` line. If no log was created, write `Not available` and explain why. Redact secrets, `key.pem`, IP addresses, tokens, and private player/world data.
+      render: shell
+      placeholder: "Paste the relevant console output or log here."
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional context
+      description: Add crash-report links, screenshots, recent changes, or anything else that may help reproduce the issue. Do not attach private credentials or unredacted world data.

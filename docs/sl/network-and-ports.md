@@ -5,3 +5,18 @@ Namestite 64-bitno Javo 25, zaženite `start-server.bat` in dokončajte `TODO.md
 > Vedno uporabite `start-server.bat`; ne dvokliknite `server.jar`.
 
 > The whitelist is disabled by default in server.properties (white-list=false, enforce-whitelist=false); enable it (white-list=true, enforce-whitelist=true) before opening the server to the public.
+
+<!-- jarock-safe-shutdown -->
+
+## Varna zaustavitev
+
+> Vnesite `stop` in pustite okno odprto. Pred zaprtjem počakajte na `CLEAN SHUTDOWN COMPLETE` in nato `SAFE TO CLOSE`. Če drugega sporočila ni, preverite dnevnik in poročilo o sesutju ter po potrebi obnovite varnostno kopijo.
+
+<!-- jarock-updater -->
+
+
+## Posodobitev Jarock
+
+> Preberite `version.txt`, ustavite strežnik in počakajte na `SAFE TO CLOSE`; nato zaženite `update-jarock.bat`. Poišče novejšo izdajo istega beta/stabilnega kanala, zahteva potrditev in ustvari varnostno kopijo za povrnitev. Svet, runtime, modifikacije, knjižnice in lokalne nastavitve ostanejo; odvisnosti se popravijo le, če manjkajo ali so neveljavne.
+
+> Celoten paket in njegova objavljena kontrolna vsota SHA-512 se preverita pred namestitvijo.

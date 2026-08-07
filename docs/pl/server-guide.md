@@ -12,3 +12,18 @@ Zobacz pełny poradnik po angielsku: [../en/server-guide.md](../en/server-guide.
 > The parameter manager also has a "Toggle ready banner" option: it shows or hides the ASCII-art banner printed when the server finishes loading. See the [full English guide](../en/server-guide.md).
 > If no compatible Java 25+ is found, start-server.bat launches the bundled Java installers in order: the legacy Java 8 runtime (jre-8-windows-x64.exe) first, then the Eclipse Temurin JDK 25 MSI (OpenJDK25U-jdk_x64_windows_hotspot.msi). Accept each UAC prompt and let the installers finish.
 > **Uwaga techniczna: Zawsze używaj pliku `start-server.bat` z katalogu głównego repozytorium. Nie klikaj dwukrotnie `server.jar`; Windows może użyć Javy 8 lub Javy 21, a Minecraft 26.2 wymaga 64-bitowej Javy 25+. Zobacz [pełną instrukcję po angielsku](../en/server-guide.md).**
+
+<!-- jarock-safe-shutdown -->
+
+## Bezpieczne zatrzymanie
+
+> Wpisz `stop` i pozostaw okno otwarte. Przed zamknięciem poczekaj na `CLEAN SHUTDOWN COMPLETE`, a następnie `SAFE TO CLOSE`. Jeśli drugiego komunikatu nie ma, sprawdź log i raport awarii oraz w razie potrzeby przywróć kopię.
+
+<!-- jarock-updater -->
+
+
+## Aktualizacja Jarock
+
+> Odczytaj `version.txt`, zatrzymaj serwer i poczekaj na `SAFE TO CLOSE`; następnie uruchom `update-jarock.bat`. Wyszuka nowsze wydanie w tym samym kanale beta/stabilnym, poprosi o potwierdzenie i utworzy kopię do wycofania. Świat, runtime, mody, biblioteki i ustawienia lokalne zostają zachowane; zależności są naprawiane tylko gdy ich brakuje lub są nieprawidłowe.
+
+> Pełny pakiet i opublikowana suma kontrolna SHA-512 są sprawdzane przed instalacją.

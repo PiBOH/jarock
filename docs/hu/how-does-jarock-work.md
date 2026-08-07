@@ -70,3 +70,18 @@ A Java általában TCP `25565`, a Bedrock pedig UDP `19132` portot használ. A J
 Hiba után olvasd el az `ERROR:` vagy `WARNING:` sort, és kövesd a `Suggested fix:` javaslatot. Ha a Java leáll, keresd meg az első `Caused by:` sort a `server\logs\latest.log` vagy a `server\crash-reports\` fájlban. A fennmaradó feladatok a `TODO.md` fájlban vannak.
 
 > **Technikai megjegyzés: Mindig a repository gyökerében található `start-server.bat` fájlt használja. Ne kattintson duplán a `server.jar` fájlra; a Windows Java 8-at vagy Java 21-et használhat, miközben a Minecraft 26.2 64 bites Java 25+-t igényel. Lásd a [teljes angol útmutatót](../en/how-does-jarock-work.md).**
+
+<!-- jarock-safe-shutdown -->
+
+## Biztonságos leállítás
+
+> Írja be a `stop` parancsot, és hagyja nyitva az ablakot. Bezárás előtt várja meg a `CLEAN SHUTDOWN COMPLETE`, majd a `SAFE TO CLOSE` üzenetet. Ha a második üzenet hiányzik, ellenőrizze a naplót és a hibajelentést, szükség esetén állítsa vissza a mentést.
+
+<!-- jarock-updater -->
+
+
+## Jarock frissítése
+
+> Olvassa el a `version.txt` fájlt, állítsa le a szervert, és várja meg a `SAFE TO CLOSE` üzenetet; ezután futtassa az `update-jarock.bat` fájlt. Azonos béta/stabil csatornán keres újabb verziót, megerősítést kér és visszaállítási mentést készít. A világ, a runtime, a modok, a könyvtárak és a helyi beállítások megmaradnak; a függőségeket csak hiány vagy érvénytelenség esetén javítja.
+
+> A teljes csomag és a hozzá közzétett SHA-512 ellenőrzőösszeg telepítés előtt ellenőrzésre kerül.

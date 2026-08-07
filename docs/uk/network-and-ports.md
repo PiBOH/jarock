@@ -5,3 +5,18 @@
 > Завжди використовуйте `start-server.bat`; не запускайте `server.jar` подвійним клацанням.
 
 > The whitelist is disabled by default in server.properties (white-list=false, enforce-whitelist=false); enable it (white-list=true, enforce-whitelist=true) before opening the server to the public.
+
+<!-- jarock-safe-shutdown -->
+
+## Безпечне завершення
+
+> Введіть `stop` і залиште вікно відкритим. Перед закриттям дочекайтеся `CLEAN SHUTDOWN COMPLETE`, а потім `SAFE TO CLOSE`. Якщо другого повідомлення немає, перевірте журнал і звіт про збій та за потреби відновіть резервну копію.
+
+<!-- jarock-updater -->
+
+
+## Оновлення Jarock
+
+> Прочитайте `version.txt`, зупиніть сервер і дочекайтеся `SAFE TO CLOSE`; потім запустіть `update-jarock.bat`. Він шукає новішу версію в тому самому beta/стабільному каналі, просить підтвердження та створює резервну копію для відкату. Світ, runtime, моди, бібліотеки й локальні налаштування зберігаються; залежності виправляються лише за відсутності або пошкодження.
+
+> Повний пакет і опублікована контрольна сума SHA-512 перевіряються перед встановленням.
