@@ -116,6 +116,15 @@ function Install-BundledPrerequisites {
     Write-Host 'Jarock will launch the bundled Java installers in order. A Windows UAC prompt appears for each one; accept it and let the installer finish.' -ForegroundColor Cyan
     Write-Host "  1) $JreName - legacy Java 8 runtime" -ForegroundColor Cyan
     Write-Host "  2) $JdkName - Eclipse Temurin JDK 25 (the runtime the server needs)" -ForegroundColor Cyan
+    if (-not [string]::IsNullOrWhiteSpace($env:JAROCK_PREREQ_DRY_RUN)) {
+        # Test hook used by the CI workflow: the installers are interactive and need
+        # UAC elevation, so on a headless runner we only simulate the launch sequence.
+        Write-Host 'JAROCK_PREREQ_DRY_RUN is set: simulating the installer launch sequence without launching the installers.' -ForegroundColor Cyan
+        Write-Host "  Simulated launch 1: $JreName (Start-Process -Verb RunAs -Wait)" -ForegroundColor Cyan
+        Write-Host "  Simulated launch 2: msiexec /i $JdkName (Start-Process -Verb RunAs -Wait)" -ForegroundColor Cyan
+        Write-Host 'Simulated installation finished; Java will be re-checked.' -ForegroundColor Cyan
+        return $true
+    }
     Write-Host "Starting $JreName ..." -ForegroundColor Green
     try {
         $JreProcess = Start-Process -FilePath $JreInstaller -Verb RunAs -Wait -PassThru -ErrorAction Stop

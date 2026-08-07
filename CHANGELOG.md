@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Marked the parameter-manager and ready-banner verification items as complete in `TODO.md`.
 
+## [0.0.39-beta] - 2026-08-07
+
+### Added
+
+- Added a `test.yml` GitHub Actions workflow (also runnable manually) that simulates a fresh Windows PC without the Java prerequisites: it checks out the bundled installers via Git LFS, masks every Java source the bootstrap reads, verifies that Jarock detects the missing Java and would install the JRE 8 installer first and the Temurin JDK 25 MSI second, then restores Java, installs the Fabric runtime and mods, boots the real server and stops it automatically once the ready banner appears.
+- Added `scripts/test-windows-bootstrap.ps1`, the end-to-end harness executed by the workflow (runnable locally with a 64-bit Java 25+ installed; the Java environment is restored afterwards).
+- Added a `JAROCK_PREREQ_DRY_RUN` environment variable that makes the prerequisite installer launch sequence simulated instead of starting the interactive UAC installers, so the flow can be exercised on a headless CI runner.
+
 ## [0.0.38-beta] - 2026-08-07
 
 ### Fixed
@@ -390,7 +398,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.38-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.39-beta...HEAD
+[0.0.39-beta]: https://github.com/PiBOH/jarock/compare/0.0.38-beta...0.0.39-beta
 [0.0.38-beta]: https://github.com/PiBOH/jarock/compare/0.0.37-beta...0.0.38-beta
 [0.0.37-beta]: https://github.com/PiBOH/jarock/compare/0.0.36-beta...0.0.37-beta
 [0.0.36-beta]: https://github.com/PiBOH/jarock/compare/0.0.35-beta...0.0.36-beta
