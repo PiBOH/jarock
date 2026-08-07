@@ -102,6 +102,9 @@ try {
     $ReadyBanner=@(); $ReadyBannerPath=Join-Path $PSScriptRoot 'server-ready-banner.txt'
     if(Test-Path -LiteralPath $ReadyBannerPath -PathType Leaf){$ReadyBanner=@(Get-Content -LiteralPath $ReadyBannerPath)}
     $script:BannerShown=$false
+    $script:GeyserPresent=$false
+    $GeyserJar=Get-ChildItem -LiteralPath (Join-Path $ServerDirectory 'mods') -Filter 'Geyser-*.jar' -ErrorAction SilentlyContinue | Select-Object -First 1
+    if($null -ne $GeyserJar){$script:GeyserPresent=$true}
     Push-Location -LiteralPath $ServerDirectory
     try {
         if($Loader -eq 'fabric') {
@@ -113,13 +116,22 @@ try {
             $PreviousEap=$ErrorActionPreference; $ErrorActionPreference='Continue'
             try {
                 & $Runtime.Path @Args 2>&1 | ForEach-Object {
-                    $Line=[string]$_ ; Write-Host $Line
-                    if(-not $script:BannerShown -and $Line -match 'Done \(\d+\.\d+s\)' -and $script:ReadyBanner.Count -gt 0){
-                        $script:BannerShown=$true
-                        Write-Host ''
-                        foreach($BannerLine in $script:ReadyBanner){Write-Host $BannerLine -ForegroundColor Green}
-                        Write-Host 'The Jarock server has finished loading.' -ForegroundColor Green
-                        Write-Host ''
+                    if($_ -is [System.Management.Automation.ErrorRecord]){
+                        $Line=[string]$_.Exception.Message
+                        if([string]::IsNullOrWhiteSpace($Line)){return}
+                    } else { $Line=[string]$_ }
+                    Write-Host $Line
+                    if(-not $script:BannerShown -and $script:ReadyBanner.Count -gt 0){
+                        $ReadyLine=$false
+                        if($script:GeyserPresent){$ReadyLine=$Line -match '(?i)geyser help'}
+                        else{$ReadyLine=$Line -match 'Done \(\d+\.\d+s\)'}
+                        if($ReadyLine){
+                            $script:BannerShown=$true
+                            Write-Host ''
+                            foreach($BannerLine in $script:ReadyBanner){Write-Host $BannerLine -ForegroundColor Green}
+                            Write-Host 'The Jarock server has finished loading.' -ForegroundColor Green
+                            Write-Host ''
+                        }
                     }
                 }
                 $ExitCode=$LASTEXITCODE
@@ -133,13 +145,22 @@ try {
             $PreviousEap=$ErrorActionPreference; $ErrorActionPreference='Continue'
             try {
                 & cmd.exe /d /c $Command 2>&1 | ForEach-Object {
-                    $Line=[string]$_ ; Write-Host $Line
-                    if(-not $script:BannerShown -and $Line -match 'Done \(\d+\.\d+s\)' -and $script:ReadyBanner.Count -gt 0){
-                        $script:BannerShown=$true
-                        Write-Host ''
-                        foreach($BannerLine in $script:ReadyBanner){Write-Host $BannerLine -ForegroundColor Green}
-                        Write-Host 'The Jarock server has finished loading.' -ForegroundColor Green
-                        Write-Host ''
+                    if($_ -is [System.Management.Automation.ErrorRecord]){
+                        $Line=[string]$_.Exception.Message
+                        if([string]::IsNullOrWhiteSpace($Line)){return}
+                    } else { $Line=[string]$_ }
+                    Write-Host $Line
+                    if(-not $script:BannerShown -and $script:ReadyBanner.Count -gt 0){
+                        $ReadyLine=$false
+                        if($script:GeyserPresent){$ReadyLine=$Line -match '(?i)geyser help'}
+                        else{$ReadyLine=$Line -match 'Done \(\d+\.\d+s\)'}
+                        if($ReadyLine){
+                            $script:BannerShown=$true
+                            Write-Host ''
+                            foreach($BannerLine in $script:ReadyBanner){Write-Host $BannerLine -ForegroundColor Green}
+                            Write-Host 'The Jarock server has finished loading.' -ForegroundColor Green
+                            Write-Host ''
+                        }
                     }
                 }
                 $ExitCode=$LASTEXITCODE

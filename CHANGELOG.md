@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.32-beta] - 2026-08-07
+
+### Changed
+
+- The ready banner now waits for Geyser when it is installed: if a Geyser jar is present in `server/mods/`, the banner is shown after Geyser finishes starting (its `Fatto`/`Done ... /geyser help` line) instead of after the earlier Minecraft `Done` line. Without Geyser, the previous Minecraft-`Done` trigger is kept.
+- Suppressed the stray `System.Management.Automation.RemoteException` line that could appear in the console when the server wrote empty lines to stderr.
+
 ## [0.0.31-beta] - 2026-08-07
 
 ### Changed
@@ -334,7 +341,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.31-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.32-beta...HEAD
+[0.0.32-beta]: https://github.com/PiBOH/jarock/compare/0.0.31-beta...0.0.32-beta
 [0.0.31-beta]: https://github.com/PiBOH/jarock/compare/0.0.30-beta...0.0.31-beta
 [0.0.30-beta]: https://github.com/PiBOH/jarock/compare/0.0.29-beta...0.0.30-beta
 [0.0.29-beta]: https://github.com/PiBOH/jarock/compare/0.0.28-beta...0.0.29-beta
