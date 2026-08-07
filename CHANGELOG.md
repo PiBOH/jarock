@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed `scripts/update-jarock.ps1` to update existing installations from the matching Lite release package (`jarock-lite.zip` or `jarock-lite-<version>.zip`) while retaining SHA-512, version, channel, process, Git-safety and rollback checks. Existing Java prerequisites are preserved and are not reinstalled during updates.
 - Clarified the parameter manager: `Show ready banner` controls the startup banner, while `Run startup update check` asks for confirmation when a newer compatible release is found. Lowercase `y` or `yes` installs the verified Lite package; `N` or Enter skips it. You can also use `scripts/update-jarock.bat` after safely stopping the server.
 
+## [0.0.58-beta] - 2026-08-07
+
+### Fixed
+
+- Synchronized the interactive startup update instructions across the English and localized guides without changing the updater code: `y` or `yes` confirms the Lite installation, while `N` or Enter skips it.
+
 ## [0.0.57-beta] - 2026-08-07
 
 ### Fixed
@@ -550,7 +556,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.57-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.58-beta...HEAD
+[0.0.58-beta]: https://github.com/PiBOH/jarock/compare/0.0.57-beta...0.0.58-beta
 [0.0.57-beta]: https://github.com/PiBOH/jarock/compare/0.0.56-beta...0.0.57-beta
 [0.0.56-beta]: https://github.com/PiBOH/jarock/compare/0.0.55-beta...0.0.56-beta
 [0.0.55-beta]: https://github.com/PiBOH/jarock/compare/0.0.54-beta...0.0.55-beta
