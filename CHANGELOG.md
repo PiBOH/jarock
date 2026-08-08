@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.65-beta] - 2026-08-08
+
 ### Changed
 
 - Renamed the automatic startup-install update mode from `auto` to `install` so its behavior is explicit. Existing local `auto` values and legacy `AUTO_UPDATE_CHECK=true/false` settings are still migrated for compatibility.
+- Added a release-package guard that rejects non-ASCII PowerShell scripts, preventing Windows PowerShell 5.1 encoding regressions such as the broken `Ð...` parser error found in older Lite packages.
 
 ### Fixed
 
@@ -588,7 +591,9 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.63-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.65-beta...HEAD
+[0.0.65-beta]: https://github.com/PiBOH/jarock/compare/0.0.64-beta...0.0.65-beta
+[0.0.64-beta]: https://github.com/PiBOH/jarock/compare/0.0.63-beta...0.0.64-beta
 [0.0.63-beta]: https://github.com/PiBOH/jarock/compare/0.0.62-beta...0.0.63-beta
 [0.0.62-beta]: https://github.com/PiBOH/jarock/compare/0.0.61-beta...0.0.62-beta
 [0.0.61-beta]: https://github.com/PiBOH/jarock/compare/0.0.60-beta...0.0.61-beta
