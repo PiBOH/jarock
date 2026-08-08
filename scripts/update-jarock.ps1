@@ -198,14 +198,47 @@ function Get-GitExecutable {
     if ($null -eq $Git) { throw 'This folder is a Git checkout, but git.exe was not found. The updater stopped to avoid overwriting uncommitted changes.' }
     return $Git.Source
 }
+function Test-LocalSettingsPath([string]$Path) {
+    $Relative = ([string]$Path).Replace('\\','/')
+    return $Relative -ieq 'scripts/server-launch-settings.ini'
+}
+
+function Get-GitStatusRecords([string]$GitPath) {
+    # NUL-separated porcelain output is unambiguous for spaces, quotes, arrows
+    # and other valid filename characters. It also keeps rename source/destination
+    # paths as separate records instead of requiring fragile text splitting.
+    $Output = (& $GitPath -C $Root status --porcelain=v1 -z --untracked-files=all 2>$null | Out-String)
+    if ($LASTEXITCODE -ne 0) { throw 'Git could not inspect the repository status. The updater stopped without changing files.' }
+    return @($Output -split [char]0 | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+}
+
+function Test-LocalSettingsChange([string[]]$Records) {
+    if ($null -eq $Records -or $Records.Count -eq 0) { return $false }
+    for ($Index = 0; $Index -lt $Records.Count; $Index++) {
+        $Record = [string]$Records[$Index]
+        if ($Record.Length -lt 4) { return $false }
+        $Code = $Record.Substring(0, 2)
+        $Paths = @($Record.Substring(3))
+        if ($Code[0] -in @('R','C') -or $Code[1] -in @('R','C')) {
+            if ($Index + 1 -ge $Records.Count) { return $false }
+            $Index++
+            $Paths += [string]$Records[$Index]
+        }
+        foreach ($Path in $Paths) {
+            # A rename involving any project file must remain blocking.
+            if (-not (Test-LocalSettingsPath $Path)) { return $false }
+        }
+    }
+    return $true
+}
+
 function Assert-GitTreeSafe {
     if ($AllowLocalChanges) { return }
     $GitPath = Get-GitExecutable
     if ($null -eq $GitPath) { return }
-    $Status = @(& $GitPath -C $Root status --porcelain 2>$null)
-    if ($LASTEXITCODE -ne 0) { throw 'Git could not inspect the repository status. The updater stopped without changing files.' }
-    if ($Status.Count -gt 0) {
-        throw 'The repository contains uncommitted changes. The updater will not overwrite them automatically. Commit/stash them or rerun with -AllowLocalChanges after making a backup.'
+    $StatusRecords = @(Get-GitStatusRecords $GitPath)
+    if ($StatusRecords.Count -gt 0 -and -not (Test-LocalSettingsChange $StatusRecords)) {
+        throw 'The repository contains uncommitted project changes. The updater will not overwrite them automatically. The local scripts/server-launch-settings.ini file is preserved and does not block updates; commit or stash other changes, or rerun with -AllowLocalChanges after making a backup.'
     }
 }
 function Get-TrackedFiles {

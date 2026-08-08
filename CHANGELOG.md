@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.76-beta] - 2026-08-08
+
+### Fixed
+
+- Fixed automatic startup updates being blocked by the intentionally local `scripts/server-launch-settings.ini` file. The updater now preserves this user configuration and ignores only its Git status entry, while still refusing to overwrite other uncommitted project changes.
+- Clarified the updater safety message so users do not need to commit or stash normal parameter-manager changes before updating Jarock. Project-file renames remain protected by the Git safety check.
+
 ## [0.0.75-beta] - 2026-08-08
 
 ### Added

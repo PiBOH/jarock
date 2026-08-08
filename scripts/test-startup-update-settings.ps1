@@ -56,6 +56,12 @@ try {
     Assert ($Batch.Contains('if not defined LEGACY_AUTO_UPDATE_CHECK call :startup_update_install')) 'missing mode uses the install default'
     Assert ($Batch.Contains('Invalid AUTO_UPDATE_MODE')) 'invalid explicit mode is reported'
     Assert (-not $Batch.Contains('^AUTO_UPDATE_MODE=install$')) 'start-server.bat no longer uses the CRLF-sensitive install regex'
+    Assert ($Updater.Contains('function Test-LocalSettingsPath')) 'the updater recognizes local launch settings as non-blocking'
+    Assert ($Updater.Contains('status --porcelain=v1 -z')) 'the updater uses unambiguous Git status records'
+    Assert ($Updater.Contains('function Test-LocalSettingsChange')) 'the updater filters local settings changes separately'
+    Assert ($Updater.Contains('A rename involving any project file must remain blocking')) 'the updater keeps project-file renames blocking'
+    Assert ($Updater.Contains('local scripts/server-launch-settings.ini file is preserved')) 'the updater explains that local settings do not block updates'
+    Assert ($Updater.Contains('IsNullOrWhiteSpace($_)')) 'the updater ignores empty NUL-separated Git status records'
 
     New-Item -ItemType Directory -Force -Path $TempRoot | Out-Null
     $HelperPath = Join-Path $TempRoot 'parse-settings.bat'
