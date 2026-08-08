@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.75-beta] - 2026-08-08
+
+### Added
+
+- Added the generated world seed to the final ready-status message as `seed:`, immediately after `The Jarock server has finished loading.` and before the Java/Bedrock LAN addresses. Jarock reads the seed from the startup log when available and falls back to the generated world's `level.dat` NBT data.
+
 ## [0.0.74-beta] - 2026-08-08
 
 ### Fixed

@@ -39,6 +39,9 @@ try {
     Assert ($PendingHelper.Contains('AddMinutes(10)')) 'deferred launcher helper has a bounded wait'
     $RunServer = Get-Content -LiteralPath (Join-Path $Root 'scripts/run-server.ps1') -Raw
     Assert ($RunServer.Contains('Get-Content -LiteralPath $ReadyBannerPath -Encoding UTF8')) 'run-server.ps1 reads the ready banner as UTF-8'
+    Assert ($RunServer.Contains('function Get-WorldSeed')) 'run-server.ps1 can read the generated world seed'
+    Assert ($RunServer.Contains('Write-Host "  seed:')) 'the ready status prints the seed before connection addresses'
+    Assert ($RunServer.Contains('seed:')) 'runtime output seed fallback is recognized'
     Assert ($Batch.Contains('set "STARTUP_UPDATE_MODE="')) 'start-server.bat initializes the startup update mode'
     Assert ($Batch.Contains('tokens=1,* delims==')) 'start-server.bat splits the setting key from its value'
     Assert ($Batch.Contains('AUTO_UPDATE_MODE=" "%SETTINGS%"')) 'start-server.bat reads AUTO_UPDATE_MODE without an end-of-line regex'

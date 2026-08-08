@@ -85,6 +85,87 @@ function Get-ConfiguredBedrockPort([string]$ServerDirectory, [string]$Loader) {
 function Test-GeyserReadyLine([string]$Line) {
     return $Line -match '(?i)(geyser\s+help|geyser.*(?:started|avviato|fatto).*udp|geyser.*udp|udp.*geyser)'
 }
+function Read-NbtUInt16([System.IO.BinaryReader]$Reader) {
+    $High = $Reader.ReadByte()
+    $Low = $Reader.ReadByte()
+    return (($High -shl 8) -bor $Low)
+}
+function Read-NbtInt32([System.IO.BinaryReader]$Reader) {
+    $B1 = $Reader.ReadByte(); $B2 = $Reader.ReadByte(); $B3 = $Reader.ReadByte(); $B4 = $Reader.ReadByte()
+    return [int32](($B1 -shl 24) -bor ($B2 -shl 16) -bor ($B3 -shl 8) -bor $B4)
+}
+function Read-NbtInt64([System.IO.BinaryReader]$Reader) {
+    $Bytes = New-Object byte[] 8
+    for ($Index = 0; $Index -lt 8; $Index++) { $Bytes[$Index] = $Reader.ReadByte() }
+    [Array]::Reverse($Bytes)
+    return [BitConverter]::ToInt64($Bytes, 0)
+}
+function Read-NbtString([System.IO.BinaryReader]$Reader) {
+    $Length = Read-NbtUInt16 $Reader
+    $Bytes = New-Object byte[] $Length
+    $Read = $Reader.Read($Bytes, 0, $Length)
+    if ($Read -ne $Length) { throw 'The level.dat NBT string was truncated.' }
+    return [Text.Encoding]::UTF8.GetString($Bytes)
+}
+function Read-NbtPayload([System.IO.BinaryReader]$Reader, [int]$Type, [string[]]$Path) {
+    switch ($Type) {
+        0 { return }
+        1 { [void]$Reader.ReadByte(); return }
+        2 { [void](Read-NbtUInt16 $Reader); return }
+        3 { [void](Read-NbtInt32 $Reader); return }
+        4 {
+            $Value = Read-NbtInt64 $Reader
+            if ($Path.Count -gt 0 -and $Path[-1] -ieq 'seed' -and ($Path -contains 'WorldGenSettings')) {
+                $script:WorldSeed = [string]$Value
+            }
+            return
+        }
+        5 { [void]$Reader.ReadBytes(4); return }
+        6 { [void]$Reader.ReadBytes(8); return }
+        7 { $Length = Read-NbtInt32 $Reader; if ($Length -gt 0) { [void]$Reader.ReadBytes($Length) }; return }
+        8 { [void](Read-NbtString $Reader); return }
+        9 {
+            $ElementType = $Reader.ReadByte()
+            $Length = Read-NbtInt32 $Reader
+            for ($Index = 0; $Index -lt $Length; $Index++) { [void](Read-NbtPayload $Reader $ElementType $Path) }
+            return
+        }
+        10 {
+            while ($true) {
+                $ChildType = $Reader.ReadByte()
+                if ($ChildType -eq 0) { break }
+                $ChildName = Read-NbtString $Reader
+                [void](Read-NbtPayload $Reader $ChildType (@($Path + $ChildName)))
+            }
+            return
+        }
+        11 { $Length = Read-NbtInt32 $Reader; if ($Length -gt 0) { [void]$Reader.ReadBytes($Length * 4) }; return }
+        12 { $Length = Read-NbtInt32 $Reader; if ($Length -gt 0) { [void]$Reader.ReadBytes($Length * 8) }; return }
+        default { throw "Unsupported NBT tag type $Type." }
+    }
+}
+function Get-WorldSeed([string]$ServerDirectory, [string]$LevelName) {
+    $LevelPath = Join-Path (Join-Path $ServerDirectory $LevelName) 'level.dat'
+    if (-not (Test-Path -LiteralPath $LevelPath -PathType Leaf)) { return 'unavailable' }
+    $FileStream = $null; $Gzip = $null; $Reader = $null
+    try {
+        $FileStream = [IO.File]::OpenRead($LevelPath)
+        $Gzip = New-Object IO.Compression.GzipStream($FileStream, [IO.Compression.CompressionMode]::Decompress)
+        $Reader = New-Object IO.BinaryReader($Gzip)
+        $script:WorldSeed = 'unavailable'
+        $RootType = $Reader.ReadByte()
+        if ($RootType -ne 10) { throw 'level.dat does not contain an NBT compound.' }
+        [void](Read-NbtString $Reader)
+        [void](Read-NbtPayload $Reader 10 @())
+        return [string]$script:WorldSeed
+    }
+    catch { return 'unavailable' }
+    finally {
+        if ($null -ne $Reader) { $Reader.Dispose() }
+        elseif ($null -ne $Gzip) { $Gzip.Dispose() }
+        elseif ($null -ne $FileStream) { $FileStream.Dispose() }
+    }
+}
 function Get-ConfiguredLevelName([string]$PropertiesPath) {
     if (Test-Path -LiteralPath $PropertiesPath -PathType Leaf) {
         $Content = Get-Content -LiteralPath $PropertiesPath -Raw
@@ -131,6 +212,7 @@ function Show-ReadyStatus([bool]$ShowBanner, [object[]]$ReadyBanner) {
         foreach($BannerLine in $ReadyBanner){Write-Host $BannerLine -ForegroundColor Green}
     }
     Write-Host 'The Jarock server has finished loading.' -ForegroundColor Green
+    Write-Host "  seed:                  $($script:WorldSeed)" -ForegroundColor Cyan
     Write-Host "  Java Edition (LAN):    $($script:LanIPv4):$($script:JavaPort)" -ForegroundColor Cyan
     if($script:GeyserPresent){
         Write-Host "  Bedrock Edition (LAN): $($script:LanIPv4):$($script:BedrockPort) (UDP)" -ForegroundColor Cyan
@@ -179,6 +261,7 @@ try {
     $ReadyBanner=@(); $ReadyBannerPath=Join-Path $PSScriptRoot 'server-ready-banner.txt'
     if($ShowBanner -and (Test-Path -LiteralPath $ReadyBannerPath -PathType Leaf)){$ReadyBanner=@(Get-Content -LiteralPath $ReadyBannerPath -Encoding UTF8)}
     $script:BannerShown=$false
+    $script:WorldSeed='unavailable'
     # A previous save message is not enough to authorize closing. The safe-close
     # state must belong to this shutdown: Minecraft must announce shutdown/saving,
     # complete the world save, and then exit with code 0.
@@ -222,6 +305,7 @@ try {
                         if([string]::IsNullOrWhiteSpace($Line)){return}
                     } else { $Line=[string]$_ }
                     Write-Host $Line
+                    if($Line -match '(?i)\bseed\s*:\s*\[?(-?\d+)\]?'){$script:WorldSeed=$Matches[1]}
                     if($Line -match '(?i)(Stopping( Minecraft)? server|Server is stopping|Arr\u00eat du serveur|Fermata del server|Deteniendo el servidor|\u041e\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0430|\u30b5\u30fc\u30d0\u30fc\u3092\u505c\u6b62)'){
                         # Only an explicit server-stop message starts the trusted
                         # shutdown sequence. Autosaves/manual saves never authorize
@@ -235,6 +319,7 @@ try {
                         if($script:GeyserPresent){$ReadyLine=Test-GeyserReadyLine $Line}
                         else{$ReadyLine=$Line -match 'Done \(\d+\.\d+s\)'}
                         if($ReadyLine){
+                            $script:WorldSeed=Get-WorldSeed $ServerDirectory (Get-ConfiguredLevelName $Properties)
                             $script:BannerShown=$true
                             Show-ReadyStatus $ShowBanner $script:ReadyBanner
                         }
@@ -256,6 +341,7 @@ try {
                         if([string]::IsNullOrWhiteSpace($Line)){return}
                     } else { $Line=[string]$_ }
                     Write-Host $Line
+                    if($Line -match '(?i)\bseed\s*:\s*\[?(-?\d+)\]?'){$script:WorldSeed=$Matches[1]}
                     if($Line -match '(?i)(Stopping( Minecraft)? server|Server is stopping|Arr\u00eat du serveur|Fermata del server|Deteniendo el servidor|\u041e\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0430|\u30b5\u30fc\u30d0\u30fc\u3092\u505c\u6b62)'){
                         # Only an explicit server-stop message starts the trusted
                         # shutdown sequence. Autosaves/manual saves never authorize
@@ -269,6 +355,7 @@ try {
                         if($script:GeyserPresent){$ReadyLine=Test-GeyserReadyLine $Line}
                         else{$ReadyLine=$Line -match 'Done \(\d+\.\d+s\)'}
                         if($ReadyLine){
+                            $script:WorldSeed=Get-WorldSeed $ServerDirectory (Get-ConfiguredLevelName $Properties)
                             $script:BannerShown=$true
                             Show-ReadyStatus $ShowBanner $script:ReadyBanner
                         }
