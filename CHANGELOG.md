@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.81-beta] - 2026-08-08
+
+### Added
+
+- Added Essential Commands 0.41.0 for Minecraft 26.2 Fabric, together with its required `ec-core` 1.3.0 component. Both Modrinth artifacts are pinned and verified with SHA-512 during bootstrap. No compatible NeoForge 26.2 build is available, so NeoForge does not install this Fabric-only mod.
+- Extended the Windows bootstrap regression test to verify both Essential Commands artifacts and their checksums, and updated the English, Italian and localized documentation with the loader limitation and command-mod behavior.
+
+
 ## [0.0.80-beta] - 2026-08-08
 
 ### Added
@@ -696,7 +704,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.78-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.81-beta...HEAD
+[0.0.81-beta]: https://github.com/PiBOH/jarock/compare/0.0.80-beta...0.0.81-beta
 [0.0.78-beta]: https://github.com/PiBOH/jarock/compare/0.0.77-beta...0.0.78-beta
 [0.0.77-beta]: https://github.com/PiBOH/jarock/compare/0.0.76-beta...0.0.77-beta
 [0.0.76-beta]: https://github.com/PiBOH/jarock/compare/0.0.75-beta...0.0.76-beta

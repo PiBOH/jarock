@@ -11,6 +11,20 @@ $Mods = @(
         Purpose = 'Fabric API dependency'
     }
     [pscustomobject]@{
+        Name = 'essential_commands-0.41.0-mc26.2.jar'
+        Url = 'https://cdn.modrinth.com/data/6VdDUivB/versions/QvCRhAmG/essential_commands-0.41.0-mc26.2.jar'
+        Sha512 = 'e70b62784e5dd0e41477cd0d9184a6da11c62f9f53899dd5309742a43ccf6c0abd4faddbc942799e94edb37daf88d09a0af66f99202c8e199ee465f98732c919'
+        Required = $true
+        Purpose = 'Essential server commands for Fabric 26.2'
+    }
+    [pscustomobject]@{
+        Name = 'ec-core-1.3.0-mc26.2.jar'
+        Url = 'https://cdn.modrinth.com/data/6VdDUivB/versions/QvCRhAmG/ec-core-1.3.0-mc26.2.jar'
+        Sha512 = '44c7b74e07050334b5b2b9a3448232dcc2eb94ecf9769827e64b0fc290a54b47ef7edd623d2546cf636e554e6406e77ab0b84e546ae253543a26a7692d2a945f'
+        Required = $true
+        Purpose = 'Required Essential Commands core dependency'
+    }
+    [pscustomobject]@{
         Name = 'Geyser-Fabric-2.11.1-b1209.jar'
         Url = 'https://cdn.modrinth.com/data/wKkoqHrH/versions/qx0y8XK1/Geyser-Fabric-2.11.1-b1209.jar'
         Sha512 = '4f894794ae3d3e6ffc1dfc43a231bcc13767958ba2c922018065faab737d2d34a8c65b33355cdb8a8759a760909634bd611acb6cbb37a0651a52d27aa4d32511'

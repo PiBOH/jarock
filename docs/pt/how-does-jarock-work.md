@@ -100,6 +100,8 @@ O Jarock não altera roteador, firewall, port forwarding ou IP público. O que a
 
 > No Chat Reports is a verified Minecraft 26.2 server-side mod for Fabric and NeoForge. It prevents the server from forwarding signed chat-reporting data; vanilla clients may still show unsigned-chat warnings, and Jarock does not automatically change `enforce-secure-profile`.
 
+> Essential Commands 0.41.0 with its required `ec-core` 1.3.0 component is verified for Minecraft 26.2 on Fabric only. It adds useful server commands; no compatible NeoForge 26.2 build is available, so NeoForge does not install it.
+
 <!-- jarock-safe-shutdown -->
 
 ## Encerramento seguro

@@ -168,6 +168,19 @@ try {
     }
     Assert ($FabricManifest -match 'welcome_awa-fabric-26\.2-2\.4\.jar') 'Fabric manifest contains Welcome AWA for Minecraft 26.2'
     Assert ($FabricManifest -match '981c813ae53a230b49b8e2a33f83cb6fac810847baffaef43369f3caeccace19b7d5f578093277d656f5e5817ec18139485b8d76bee8ec6329279cc6eaa388c5') 'Welcome AWA SHA-512 is pinned'
+    Assert ($FabricManifest -match 'essential_commands-0\.41\.0-mc26\.2\.jar') 'Fabric manifest contains Essential Commands for Minecraft 26.2'
+    Assert ($FabricManifest -match 'ec-core-1\.3\.0-mc26\.2\.jar') 'Fabric manifest contains the Essential Commands core dependency'
+    Assert ($FabricManifest -match 'e70b62784e5dd0e41477cd0d9184a6da11c62f9f53899dd5309742a43ccf6c0abd4faddbc942799e94edb37daf88d09a0af66f99202c8e199ee465f98732c919') 'Essential Commands SHA-512 is pinned'
+    $EssentialCommandsPath = Join-Path $Root 'server\\mods\\essential_commands-0.41.0-mc26.2.jar'
+    Assert (Test-Path -LiteralPath $EssentialCommandsPath -PathType Leaf) 'Essential Commands was downloaded into server/mods'
+    if (Test-Path -LiteralPath $EssentialCommandsPath -PathType Leaf) {
+        Assert ((Get-Sha512 $EssentialCommandsPath) -eq 'e70b62784e5dd0e41477cd0d9184a6da11c62f9f53899dd5309742a43ccf6c0abd4faddbc942799e94edb37daf88d09a0af66f99202c8e199ee465f98732c919') 'Downloaded Essential Commands SHA-512 matches the pinned hash'
+    }
+    $EcCorePath = Join-Path $Root 'server\\mods\\ec-core-1.3.0-mc26.2.jar'
+    Assert (Test-Path -LiteralPath $EcCorePath -PathType Leaf) 'Essential Commands core dependency was downloaded into server/mods'
+    if (Test-Path -LiteralPath $EcCorePath -PathType Leaf) {
+        Assert ((Get-Sha512 $EcCorePath) -eq '44c7b74e07050334b5b2b9a3448232dcc2eb94ecf9769827e64b0fc290a54b47ef7edd623d2546cf636e554e6406e77ab0b84e546ae253543a26a7692d2a945f') 'Downloaded Essential Commands core SHA-512 matches the pinned hash'
+    }
     Assert ($FabricManifest -match 'NoChatReports-FABRIC-26\.2-v2\.20\.1\.jar') 'Fabric manifest contains No Chat Reports for Minecraft 26.2'
     Assert ($FabricManifest -match '139dd09e04cc66fe4745264ddfbe3249be6e956326c931eb9707f9a640bbc011a4f1fd5684d04ca90e1b473be55772b0279e5c2f935c2f2e85d054e2ab0a6923') 'Fabric No Chat Reports SHA-512 is pinned'
     $NoChatReportsFabricPath = Join-Path $Root 'server\\mods\\NoChatReports-FABRIC-26.2-v2.20.1.jar'
@@ -192,6 +205,7 @@ try {
     }
     Assert ($RealText -match 'datapacks|BetterMultiplayerSleep') 'Bootstrap reports configured datapack installation support'
     $NeoForgeManifest = Get-Content -LiteralPath (Join-Path $Root 'server\\mods-manifest-neoforge.ps1') -Raw
+    Assert ($NeoForgeManifest -notmatch '(?i)essential_commands|ec-core') 'NeoForge manifest excludes Fabric-only Essential Commands'
     Assert ($NeoForgeManifest -match 'NoChatReports-NEOFORGE-26\\.2-v2\\.20\\.1\\.jar') 'NeoForge manifest contains No Chat Reports for Minecraft 26.2'
     Assert ($NeoForgeManifest -match '782b4b081c5d8bdd19139894feacc9c48b6fb025856e904c2bb9ee84438734de96eb5540f471e57830ecb92df8f18f6da20a1b619c4806b16f06780250999d03') 'NeoForge No Chat Reports SHA-512 is pinned'
     $NoChatReportsNeoForgeTemp = Join-Path ([IO.Path]::GetTempPath()) ("jarock-NoChatReports-NEOFORGE-26.2-v2.20.1-$PID.jar")
@@ -277,6 +291,10 @@ try {
     if ($TimedOut) { try { $ServerProc.Kill() } catch { } }
     if (-not $ServerProc.HasExited) { $ServerProc.WaitForExit(30000) | Out-Null }
     $ServerExitCode = $ServerProc.ExitCode
+    $LatestLogPath = Join-Path $Root 'server\\logs\\latest.log'
+    $LatestLogText = if (Test-Path -LiteralPath $LatestLogPath -PathType Leaf) { Get-Content -LiteralPath $LatestLogPath -Raw } else { '' }
+    Assert ($LatestLogText -match 'essential_commands') 'Fabric server log includes Essential Commands'
+    Assert ($LatestLogText -match 'ec[_-]?core') 'Fabric server log includes the Essential Commands core dependency'
     Assert $script:ServerStopped 'Ready banner appeared (server finished loading)'
     Assert ($ServerExitCode -eq 0) "Server shut down cleanly (exit code $ServerExitCode)"
     $WelcomeConfigPath = Join-Path $Root 'server\config\welcome-mod.json'
