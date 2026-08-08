@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.66-beta] - 2026-08-08
+
+### Added
+
+- Added `.github/workflows/test-update.yml`, a manually runnable Windows test that builds an isolated older installation from the previous commit, serves a current Lite package through a local mock release API, runs the current updater, and verifies checksum validation plus preservation of the world, server properties, Geyser configuration and local launch settings.
+
 ## [0.0.65-beta] - 2026-08-08
 
 ### Changed
@@ -591,7 +597,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.65-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.66-beta...HEAD
+[0.0.66-beta]: https://github.com/PiBOH/jarock/compare/0.0.65-beta...0.0.66-beta
 [0.0.65-beta]: https://github.com/PiBOH/jarock/compare/0.0.64-beta...0.0.65-beta
 [0.0.64-beta]: https://github.com/PiBOH/jarock/compare/0.0.63-beta...0.0.64-beta
 [0.0.63-beta]: https://github.com/PiBOH/jarock/compare/0.0.62-beta...0.0.63-beta

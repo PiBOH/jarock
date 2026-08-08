@@ -1,0 +1,178 @@
+name: test-update.yml
+
+'on':
+  push:
+    branches: [ main ]
+    paths:
+      - 'scripts/update-jarock.ps1'
+      - 'scripts/update-jarock.bat'
+      - 'scripts/version.txt'
+      - 'start-server.bat'
+      - 'parameter-manager.bat'
+      - 'CHANGELOG.md'
+      - '.github/workflows/auto-release.yml'
+      - '.github/workflows/test-update.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-update:
+    name: Windows update from an older isolated installation
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Download the older package and test the updater
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Set-StrictMode -Version Latest
+
+          $RepositoryRoot = (Get-Location).Path
+          $TestRoot = Join-Path $env:RUNNER_TEMP 'jarock-update-test'
+          $MockRoot = Join-Path $TestRoot 'mock-releases'
+          $InstallRoot = Join-Path $TestRoot 'older-installation'
+          $CurrentVersion = (Get-Content -LiteralPath (Join-Path $RepositoryRoot 'scripts/version.txt') -Raw).Trim()
+          $OldVersion = (& git show 'HEAD^:scripts/version.txt').Trim()
+          $Port = 18080
+          $HttpProcess = $null
+
+          function Assert-Condition([bool]$Condition, [string]$Message) {
+              if (-not $Condition) { throw "ASSERTION FAILED: $Message" }
+          }
+
+          function Copy-LiteTrackedFiles([string]$Destination, [string]$Revision) {
+              New-Item -ItemType Directory -Force -Path $Destination | Out-Null
+              $Files = @(& git ls-tree -r --name-only $Revision)
+              foreach ($Relative in $Files) {
+                  if ([string]::IsNullOrWhiteSpace($Relative)) { continue }
+                  if ($Relative -like '.github/*' -or $Relative -like '.website/*' -or
+                      $Relative -eq '.gitattributes' -or $Relative -eq '.gitignore' -or
+                      $Relative -like 'prerequisites/*') { continue }
+                  $Source = Join-Path $RepositoryRoot ($Relative.Replace('/', '\'))
+                  if (-not (Test-Path -LiteralPath $Source -PathType Leaf)) { continue }
+                  $Target = Join-Path $Destination ($Relative.Replace('/', '\'))
+                  New-Item -ItemType Directory -Force -Path (Split-Path -Parent $Target) | Out-Null
+                  Copy-Item -LiteralPath $Source -Destination $Target -Force
+              }
+          }
+
+          try {
+              Assert-Condition ($CurrentVersion -match '^\d+\.\d+\.\d+-.+') 'The workflow requires a beta/prerelease version.'
+              Assert-Condition ($OldVersion -match '^\d+\.\d+\.\d+-.+') 'The previous commit does not contain a beta version.'
+              Assert-Condition ($OldVersion -ne $CurrentVersion) "The previous version ($OldVersion) must differ from the current version ($CurrentVersion)."
+
+              New-Item -ItemType Directory -Force -Path $MockRoot, $InstallRoot | Out-Null
+
+              # Build the current Lite package using the same tracked-file boundary as
+              # auto-release.yml. It is the package the updater is expected to install.
+              $CurrentStage = Join-Path $TestRoot 'current-lite-stage'
+              Copy-LiteTrackedFiles $CurrentStage 'HEAD'
+              $CurrentAssetName = "jarock-lite-$CurrentVersion.zip"
+              $CurrentAssetPath = Join-Path $MockRoot $CurrentAssetName
+              Compress-Archive -Path (Join-Path $CurrentStage '*') -DestinationPath $CurrentAssetPath -CompressionLevel Optimal
+              $CurrentHash = (Get-FileHash -Algorithm SHA512 -LiteralPath $CurrentAssetPath).Hash.ToLowerInvariant()
+              $CurrentChecksumName = "$CurrentAssetName.sha512"
+              $CurrentChecksumPath = Join-Path $MockRoot $CurrentChecksumName
+              "$CurrentHash  $CurrentAssetName" | Set-Content -LiteralPath $CurrentChecksumPath -Encoding ascii
+
+              # Create an older package from the parent commit, then download it into
+              # the isolated installation. This avoids relying on an existing GitHub
+              # Release or racing the auto-release workflow, while exercising a real
+              # older repository snapshot rather than merely editing version.txt.
+              $OldAssetName = "jarock-lite-$OldVersion.zip"
+              $OldAssetPath = Join-Path $MockRoot $OldAssetName
+              & git archive --format=zip --output=$OldAssetPath 'HEAD^'
+              if ($LASTEXITCODE -ne 0) { throw 'Could not create the older release package from HEAD^.' }
+
+              $ReleaseJson = @(
+                  [pscustomobject]@{
+                      tag_name = $CurrentVersion
+                      draft = $false
+                      assets = @(
+                          [pscustomobject]@{
+                              name = $CurrentAssetName
+                              size = (Get-Item -LiteralPath $CurrentAssetPath).Length
+                              browser_download_url = "http://127.0.0.1:$Port/$CurrentAssetName"
+                          }
+                          [pscustomobject]@{
+                              name = $CurrentChecksumName
+                              size = (Get-Item -LiteralPath $CurrentChecksumPath).Length
+                              browser_download_url = "http://127.0.0.1:$Port/$CurrentChecksumName"
+                          }
+                      )
+                  }
+              )
+              $ReleaseJson | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $MockRoot 'release.json') -Encoding utf8
+
+              $Python = Get-Command python.exe -ErrorAction Stop
+              $HttpProcess = Start-Process -FilePath $Python.Source -ArgumentList @('-m', 'http.server', "$Port", '--bind', '127.0.0.1') -WorkingDirectory $MockRoot -PassThru -WindowStyle Hidden
+              $ApiUrl = "http://127.0.0.1:$Port/release.json"
+              $Ready = $false
+              for ($Attempt = 1; $Attempt -le 20; $Attempt++) {
+                  try {
+                      Invoke-WebRequest -Uri $ApiUrl -UseBasicParsing -TimeoutSec 5 | Out-Null
+                      $Ready = $true
+                      break
+                  }
+                  catch { Start-Sleep -Milliseconds 250 }
+              }
+              Assert-Condition $Ready 'The local mock release server did not start.'
+
+              $OldDownloadPath = Join-Path $TestRoot $OldAssetName
+              Invoke-WebRequest -Uri "http://127.0.0.1:$Port/$OldAssetName" -OutFile $OldDownloadPath -UseBasicParsing
+              Expand-Archive -LiteralPath $OldDownloadPath -DestinationPath $InstallRoot -Force
+
+              # Keep the old version marker, but run the updater from the current
+              # checkout. This is the behavior under test: a current updater must
+              # migrate an older installation safely.
+              Copy-Item -LiteralPath (Join-Path $RepositoryRoot 'scripts/update-jarock.ps1') -Destination (Join-Path $InstallRoot 'scripts/update-jarock.ps1') -Force
+              Copy-Item -LiteralPath (Join-Path $RepositoryRoot 'scripts/update-jarock.bat') -Destination (Join-Path $InstallRoot 'scripts/update-jarock.bat') -Force
+
+              # Add runtime-only files and an old project marker. The updater must
+              # replace the project file but preserve every generated runtime file.
+              $OldVersionPath = Join-Path $InstallRoot 'scripts/version.txt'
+              [IO.File]::WriteAllText($OldVersionPath, "$OldVersion`r`n", (New-Object Text.UTF8Encoding($false)))
+              [IO.File]::WriteAllText((Join-Path $InstallRoot 'README.md'), 'OLD INSTALLATION MARKER', (New-Object Text.UTF8Encoding($false)))
+              $WorldPath = Join-Path $InstallRoot 'server/world/level.dat'
+              $PropertiesPath = Join-Path $InstallRoot 'server/server.properties'
+              $GeyserConfigPath = Join-Path $InstallRoot 'server/config/Geyser-Fabric/config.yml'
+              $SettingsPath = Join-Path $InstallRoot 'scripts/server-launch-settings.ini'
+              New-Item -ItemType Directory -Force -Path (Split-Path -Parent $WorldPath), (Split-Path -Parent $PropertiesPath), (Split-Path -Parent $GeyserConfigPath), (Split-Path -Parent $SettingsPath) | Out-Null
+              Set-Content -LiteralPath $WorldPath -Value 'WORLD DATA MUST SURVIVE' -Encoding ascii
+              Set-Content -LiteralPath $PropertiesPath -Value @('server-port=25565', 'online-mode=true') -Encoding ascii
+              Set-Content -LiteralPath $GeyserConfigPath -Value 'auth-type: floodgate' -Encoding ascii
+              Set-Content -LiteralPath $SettingsPath -Value @('LOADER_TYPE=fabric', 'RAM_INITIAL=1G', 'RAM_MAX=4G') -Encoding ascii
+              $ExpectedReadmeHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'README.md')).Hash
+              $ExpectedUpdaterHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'scripts/update-jarock.ps1')).Hash
+
+              Write-Host "Older isolated installation: $OldVersion" -ForegroundColor Cyan
+              Write-Host "Target release: $CurrentVersion" -ForegroundColor Cyan
+              Write-Host 'Running the current updater through Windows PowerShell 5.1 ...' -ForegroundColor Cyan
+              $UpdaterPath = Join-Path $InstallRoot 'scripts/update-jarock.ps1'
+              $UpdaterOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $UpdaterPath -NonInteractive -AllowLocalChanges -ReleaseApiUrl $ApiUrl 2>&1)
+              $UpdaterExitCode = $LASTEXITCODE
+              $UpdaterOutput | ForEach-Object { Write-Host $_ }
+              Assert-Condition ($UpdaterExitCode -eq 0) "The updater exited with code $UpdaterExitCode."
+
+              $InstalledVersion = (Get-Content -LiteralPath (Join-Path $InstallRoot 'scripts/version.txt') -Raw).Trim()
+              Assert-Condition ($InstalledVersion -eq $CurrentVersion) "Expected version $CurrentVersion after update, found $InstalledVersion."
+              Assert-Condition ((Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $InstallRoot 'README.md')).Hash -eq $ExpectedReadmeHash) 'The current project files were not applied from the update package.'
+              Assert-Condition ((Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $InstallRoot 'scripts/update-jarock.ps1')).Hash -eq $ExpectedUpdaterHash) 'The current updater was not retained after the update.'
+              Assert-Condition ((Get-Content -LiteralPath $WorldPath -Raw).Trim() -eq 'WORLD DATA MUST SURVIVE') 'World data was not preserved.'
+              Assert-Condition ((Get-Content -LiteralPath $PropertiesPath -Raw).Trim() -like '*server-port=25565*') 'server.properties was not preserved.'
+              Assert-Condition ((Get-Content -LiteralPath $GeyserConfigPath -Raw).Trim() -eq 'auth-type: floodgate') 'The Geyser configuration was not preserved.'
+              Assert-Condition ((Get-Content -LiteralPath $SettingsPath -Raw).Trim() -like '*LOADER_TYPE=fabric*') 'Local launch settings were not preserved.'
+              Write-Host 'PASS: older package downloaded, Lite update applied, checksum verified, and runtime/settings/world data preserved.' -ForegroundColor Green
+          }
+          finally {
+              if ($null -ne $HttpProcess -and -not $HttpProcess.HasExited) {
+                  Stop-Process -Id $HttpProcess.Id -Force -ErrorAction SilentlyContinue
+              }
+          }
