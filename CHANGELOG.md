@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.71-beta] - 2026-08-08
+
+### Fixed
+
+- Fixed `.github/workflows/test-console-close.yml`: GitHub Actions does not allow the `matrix` expression in the step `shell` field used by the previous workflow. The workflow now runs the safe console-close smoke test explicitly with Windows PowerShell 5.1 and PowerShell 7.
+
 ## [0.0.70-beta] - 2026-08-08
 
 ### Fixed
@@ -624,7 +630,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.70-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.71-beta...HEAD
+[0.0.71-beta]: https://github.com/PiBOH/jarock/compare/0.0.70-beta...0.0.71-beta
 [0.0.70-beta]: https://github.com/PiBOH/jarock/compare/0.0.69-beta...0.0.70-beta
 [0.0.69-beta]: https://github.com/PiBOH/jarock/compare/0.0.68-beta...0.0.69-beta
 [0.0.68-beta]: https://github.com/PiBOH/jarock/compare/0.0.67-beta...0.0.68-beta

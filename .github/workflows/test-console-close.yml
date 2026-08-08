@@ -21,14 +21,14 @@ jobs:
     name: Windows console-close protection test
     runs-on: windows-latest
     timeout-minutes: 10
-    strategy:
-      fail-fast: false
-      matrix:
-        shell: [powershell, pwsh]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run safe console-close protection smoke test
-        shell: ${{ matrix.shell }}
+      - name: Run smoke test with Windows PowerShell 5.1
+        shell: powershell
+        run: ./scripts/test-console-close-protection.ps1
+
+      - name: Run smoke test with PowerShell 7
+        shell: pwsh
         run: ./scripts/test-console-close-protection.ps1
