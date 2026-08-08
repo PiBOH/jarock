@@ -17,6 +17,7 @@ $Root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $ServerDir = Join-Path $Root 'server'
 $ModsDir = Join-Path $ServerDir 'mods'
 $ConfigDir = Join-Path $ServerDir 'config'
+$DatapacksManifestPath = Join-Path $ServerDir 'datapacks-manifest.ps1'
 $SettingsPath = Join-Path $PSScriptRoot 'server-launch-settings.ini'
 $MinecraftVersion = '26.2'
 $JavaMinimum = 25
@@ -357,6 +358,76 @@ function Install-Mods([string]$Loader) {
         Write-Host "Verified $($Mod.Name) [$($Mod.Purpose)]" -ForegroundColor Green
     }
 }
+function Get-ConfiguredLevelName([string]$PropertiesPath) {
+    $Content = Get-Content -LiteralPath $PropertiesPath -Raw
+    if ($Content -match '(?m)^\s*level-name\s*=\s*([^\r\n#]+?)\s*(?:#.*)?$') {
+        $Name = $Matches[1].Trim()
+        if (-not [string]::IsNullOrWhiteSpace($Name) -and $Name -notmatch '[\\/:*?"<>|]') { return $Name }
+    }
+    return 'world'
+}
+function Read-DatapackMarker([string]$Path) {
+    $Values = @{}
+    if (Test-Path -LiteralPath $Path -PathType Leaf) {
+        foreach ($Line in Get-Content -LiteralPath $Path) {
+            if ($Line -match '^\s*([A-Z_]+)=(.*?)\s*$') { $Values[$Matches[1]] = $Matches[2] }
+        }
+    }
+    return $Values
+}
+function Test-SafeDatapackArchive([string]$Path) {
+    try {
+        Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
+        $Archive = [IO.Compression.ZipFile]::OpenRead($Path)
+        try {
+            $Entries = @($Archive.Entries)
+            $PackEntry = $Archive.GetEntry('pack.mcmeta')
+            if ($null -eq $PackEntry -or -not ($Entries | Where-Object { $_.FullName -match '^data/' })) { return $false }
+            foreach ($Entry in $Entries) {
+                $Name = $Entry.FullName.Replace('\\','/')
+                if ($Name.StartsWith('/') -or $Name -match '(^|/)\.\.(/|$)' -or $Name -match '^[A-Za-z]:') { return $false }
+            }
+            $Reader = New-Object IO.StreamReader($PackEntry.Open())
+            try {
+                $Metadata = $Reader.ReadToEnd() | ConvertFrom-Json
+                if ($null -eq $Metadata -or $null -eq $Metadata.pack) { return $false }
+            } finally { $Reader.Dispose() }
+            return $true
+        } finally { $Archive.Dispose() }
+    } catch { return $false }
+}
+function Install-Datapacks {
+    if (-not (Test-Path -LiteralPath $DatapacksManifestPath -PathType Leaf)) { Stop-WithGuidance 'The tracked datapack manifest is missing.' 'Restore server/datapacks-manifest.ps1 and run start-server.bat again.' }
+    . $DatapacksManifestPath
+    if (-not $Datapacks -or $Datapacks.Count -eq 0) { Stop-WithGuidance 'The datapack manifest is empty.' 'Restore server/datapacks-manifest.ps1 and run start-server.bat again.' }
+    $PropertiesPath = Join-Path $ServerDir 'server.properties'
+    $LevelName = Get-ConfiguredLevelName $PropertiesPath
+    $DatapacksDir = Join-Path (Join-Path $ServerDir $LevelName) 'datapacks'
+    New-Item -ItemType Directory -Force -Path $DatapacksDir | Out-Null
+    $MarkerPath = Join-Path $ConfigDir '.jarock-datapacks'
+    $Marker = Read-DatapackMarker $MarkerPath
+    foreach ($Datapack in $Datapacks) {
+        if ($Datapack.Name -notmatch '^[^\\/:*?"<>|]+\.zip$') { Stop-WithGuidance "The datapack manifest contains an unsafe filename '$($Datapack.Name)'." 'Restore server/datapacks-manifest.ps1 from the repository and run start-server.bat again.' }
+        if ($Marker.ContainsKey('BETTER_MULTIPLAYER_SLEEP_FILE') -and $Marker['BETTER_MULTIPLAYER_SLEEP_FILE'] -notmatch '^[^\\/:*?"<>|]+\.zip$') { Stop-WithGuidance 'The Jarock datapack marker contains an unsafe filename.' 'Delete the generated server/config/.jarock-datapacks marker and run start-server.bat again.' }
+        $Destination = Join-Path $DatapacksDir $Datapack.Name
+        $AlreadyVerified = $Marker.ContainsKey('BETTER_MULTIPLAYER_SLEEP_FILE') -and $Marker['BETTER_MULTIPLAYER_SLEEP_FILE'] -eq $Datapack.Name -and $Marker.ContainsKey('BETTER_MULTIPLAYER_SLEEP_HASH') -and $Marker['BETTER_MULTIPLAYER_SLEEP_HASH'].ToLowerInvariant() -eq $Datapack.Sha512.ToLowerInvariant() -and (Test-Path -LiteralPath $Destination -PathType Leaf)
+        if (-not $AlreadyVerified) { Download-AndVerify $Datapack.Url $Destination $Datapack.Sha512 }
+        if (-not (Test-SafeDatapackArchive $Destination)) {
+            Remove-Item -LiteralPath $Destination -Force -ErrorAction SilentlyContinue
+            Stop-WithGuidance "The downloaded datapack $($Datapack.Name) is not a safe, valid datapack archive." 'Run start-server.bat again; if the error repeats, report the pinned artifact to the project maintainer.'
+        }
+        if ($Marker.ContainsKey('BETTER_MULTIPLAYER_SLEEP_FILE') -and $Marker['BETTER_MULTIPLAYER_SLEEP_FILE'] -ne $Datapack.Name) {
+            $PreviousPath = Join-Path $DatapacksDir $Marker['BETTER_MULTIPLAYER_SLEEP_FILE']
+            if (Test-Path -LiteralPath $PreviousPath -PathType Leaf) { Remove-Item -LiteralPath $PreviousPath -Force }
+        }
+        $Marker['BETTER_MULTIPLAYER_SLEEP_FILE'] = $Datapack.Name
+        $Marker['BETTER_MULTIPLAYER_SLEEP_HASH'] = $Datapack.Sha512
+        New-Item -ItemType Directory -Force -Path $ConfigDir | Out-Null
+        [IO.File]::WriteAllLines($MarkerPath, @("BETTER_MULTIPLAYER_SLEEP_FILE=$($Marker['BETTER_MULTIPLAYER_SLEEP_FILE'])", "BETTER_MULTIPLAYER_SLEEP_HASH=$($Marker['BETTER_MULTIPLAYER_SLEEP_HASH'])"), (New-Object Text.UTF8Encoding($false)))
+        $Status = if ($AlreadyVerified) { 'already verified' } else { 'downloaded and verified' }
+        Write-Host "Verified $($Datapack.Name) [$($Datapack.Purpose)] in $LevelName/datapacks" -ForegroundColor Green
+    }
+}
 function Get-LatestDedicatedPowerRelease {
     try {
         return Invoke-RestMethod -Uri 'https://api.github.com/repos/PiBOH/DedicatedPower/releases/latest' -Headers @{ 'User-Agent' = 'Jarock-loader-bootstrap' }
@@ -433,6 +504,7 @@ try {
     Write-Step "Downloading and verifying $Loader server mods"
     Install-Mods $Loader
     if ($Loader -eq 'fabric') { Install-DedicatedPower }
+    Install-Datapacks
     Write-LoaderMarker $Loader
     Write-Step 'Bootstrap complete'
     Write-Host "Loader: $Loader" -ForegroundColor Green

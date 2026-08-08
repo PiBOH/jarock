@@ -73,6 +73,7 @@ try {
         'README.md',
         'mods-manifest.ps1',
         'mods-manifest-neoforge.ps1',
+        'datapacks-manifest.ps1',
         'jarock-loader.txt.template',
         'eula.txt.template',
         'server.properties.template',

@@ -32,6 +32,7 @@ Componenti:
 - **Fabric Carpet:** strumenti tecnici, regole e test per redstone.
 - **Links In Chat:** mod server-side che rende cliccabili gli URL nella chat e aggiunge i comandi `/link` e `/linkwhisper`; i client non devono installarla.
 - **Welcome AWA:** mod server-side che invia messaggi colorati quando entra un giocatore; usa `%player%`, i codici colore `&`, le interruzioni `\n` e il comando `welcome reload`.
+- **Better Multiplayer Sleep:** datapack verificato che permette a un solo giocatore di dormire per saltare la notte; viene installato nella cartella `datapacks` del mondo configurato, sia con Fabric sia con NeoForge.
 - **ServerCore, Carpet Extra e Carpet TIS Addition:** opzionali; installali solo se esiste una build compatibile con 26.2.
 
 ### Cosa non installare sul server
@@ -109,7 +110,7 @@ Le impostazioni vengono salvate in `scripts/server-launch-settings.ini`, un file
 
 Dopo aver salvato, scegli **Save and start the server** oppure esegui `start-server.bat`. Jarock trova automaticamente un Java 25 a 64 bit compatibile e usa quel percorso, anche se Java 8 è il primo elemento del `PATH`.
 
-Il primo avvio si fermerà creando `eula.txt`.
+Il primo avvio si fermerà creando `eula.txt`. Al bootstrap Jarock verifica Better Multiplayer Sleep e lo installa in `server\world\datapacks` (oppure nel mondo indicato da `level-name`), senza sostituire il mondo o gli altri datapack. Dopo una modifica manuale durante l'esecuzione usa `/reload`.
 
 1. Chiudi il server.
 2. Apri `server\eula.txt` nella cartella del repository.
@@ -352,6 +353,7 @@ Non installare dieci mod subito. Controlla CPU, entità, generazione dei chunk, 
 - [ ] `auth-type: floodgate` è configurato.
 - [ ] Porta Java TCP e porta Bedrock UDP sono corrette e diverse.
 - [ ] Nessuna mod client-only è nella cartella server `mods/`.
+- [ ] Better Multiplayer Sleep è presente nella cartella `datapacks` del mondo configurato e non produce errori.
 - [ ] Esiste un backup.
 - [ ] Java riesce a entrare.
 - [ ] Bedrock riesce a entrare.

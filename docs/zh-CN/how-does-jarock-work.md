@@ -71,6 +71,8 @@ Java 通常使用 TCP `25565`，Bedrock 通常使用 UDP `19132`。Jarock 不会
 
 > **技术说明：始终使用仓库根目录中的 `start-server.bat`。不要双击 `server.jar`；Windows 可能会使用 Java 8 或 Java 21，而 Minecraft 26.2 需要 64 位 Java 25+。请参阅[完整英文指南](../en/how-does-jarock-work.md)。**
 
+> Better Multiplayer Sleep is a verified Minecraft 26.2 datapack. Jarock installs it into the configured world's `datapacks` folder for Fabric and NeoForge without replacing the world or other datapacks; use `/reload` after manual changes.
+
 <!-- jarock-safe-shutdown -->
 
 ## 安全停止

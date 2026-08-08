@@ -71,6 +71,8 @@ Po chybě si přečtěte `ERROR:` nebo `WARNING:` a postupujte podle `Suggested 
 
 > **Technická poznámka: Vždy používejte `start-server.bat` v kořenu repozitáře. Na `server.jar` neklikejte dvakrát; Windows může použít Javu 8 nebo Javu 21, zatímco Minecraft 26.2 vyžaduje 64bitovou Javu 25+. Viz [úplná anglická příručka](../en/how-does-jarock-work.md).**
 
+> Better Multiplayer Sleep is a verified Minecraft 26.2 datapack. Jarock installs it into the configured world's `datapacks` folder for Fabric and NeoForge without replacing the world or other datapacks; use `/reload` after manual changes.
+
 <!-- jarock-safe-shutdown -->
 
 ## Bezpečné vypnutí

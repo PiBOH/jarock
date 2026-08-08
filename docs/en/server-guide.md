@@ -40,6 +40,7 @@ Bedrock players ─ Geyser ───┘ │
 | Fabric Carpet | Technical tools, rules and redstone testing | `mods/` |
 | Links In Chat | Server-side clickable links and `/link` or `/linkwhisper` chat commands | `mods/` |
 | Welcome AWA | Server-side colored join messages with `%player%` placeholder | `mods/`, Fabric 26.2 |
+| Better Multiplayer Sleep | Lets one player sleep through the night | configured world's `datapacks/`, Fabric or NeoForge |
 | Carpet Extra / Carpet TIS Addition | Optional Carpet extensions | `mods/`, only if compatible |
 
 This guide intentionally starts with a small stack. Add one mod at a time, start the server, and test it before adding another.
@@ -183,7 +184,7 @@ eula=true
 5. Save the file.
 6. Run `start-server.bat` again.
 
-The first complete start creates `world`, `logs`, `config` and `server.properties`. Wait until the console says that the server is done before trying to connect.
+The first complete start creates `world`, `logs`, `config` and `server.properties`. Jarock verifies Better Multiplayer Sleep and installs it in `world/datapacks` (or the folder named by `level-name`) without replacing an existing world or other datapacks. If you change a datapack manually while the server is running, use `/reload`. Wait until the console says that the server is done before trying to connect.
 
 To stop safely, type this in the server console and press Enter:
 
@@ -465,6 +466,7 @@ Use this list in order:
 - [ ] Every optimization and utility mod lists Fabric and Minecraft 26.2.
 - [ ] Links In Chat is installed from the pinned Fabric 26.2 manifest when clickable server-chat links are desired.
 - [ ] Welcome AWA is installed from the pinned Fabric 26.2 manifest when configurable join messages are desired.
+- [ ] Better Multiplayer Sleep is present in the configured world's `datapacks/` folder and loads without errors.
 - [ ] A backup exists before adding technical mods.
 - [ ] Java can connect.
 - [ ] Bedrock can connect.

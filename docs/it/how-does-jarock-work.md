@@ -19,7 +19,7 @@ L'utente deve:
 5. PowerShell controlla Java, il percorso e i file del repository.
 6. Se necessario, viene richiesto di abilitare i percorsi lunghi di Windows.
 7. Vengono scaricati Fabric e le mod bloccate nel manifest.
-8. Ogni download bloccato nel manifest viene verificato con SHA-512. DedicatedPower è l'eccezione: è una mod solo per Fabric, aggiornata automaticamente all'ultima release GitHub e dimensione e checksum vengono verificati dopo il download. Links In Chat e Welcome AWA sono bloccate sulle rispettive versioni Fabric 26.2 verificate da Modrinth con i relativi checksum.
+8. Ogni download bloccato nel manifest viene verificato con SHA-512. DedicatedPower è l'eccezione: è una mod solo per Fabric, aggiornata automaticamente all'ultima release GitHub e dimensione e checksum vengono verificati dopo il download. Links In Chat e Welcome AWA sono bloccate sulle rispettive versioni Fabric 26.2 verificate da Modrinth con i relativi checksum. Jarock verifica anche Better Multiplayer Sleep 1.1.0 e lo installa come datapack nella cartella `datapacks` del mondo configurato, sia con Fabric sia con NeoForge, senza sostituire mondi o datapack esistenti.
 9. Fabric crea il runtime in `server/`.
 10. Il primo avvio crea `server/eula.txt` e si ferma.
 11. Dopo aver impostato `eula=true`, un nuovo avvio parte normalmente.
@@ -79,7 +79,7 @@ Se non vale `1`, può chiedere privilegi amministrativi ed eseguire `scripts\ena
 
 Controlla quindi i candidati Java con `java -version`, richiedendo Java 25+ a 64 bit, carica `server\mods-manifest.ps1`, installa Fabric 26.2 con Loader `0.19.3`, scarica le mod in `server\mods\` e verifica ogni SHA-512 (l'eccezione è DedicatedPower, mod solo per Fabric, presa sempre dall'ultima release GitHub). I file esistenti vengono verificati e le configurazioni locali non vengono sovrascritte. Java 8 può restare installato senza bloccare il progetto.
 
-La configurazione Fabric predefinita include Fabric API, Geyser-Fabric, Floodgate-Fabric, Lithium, FerriteCore, Krypton, ServerCore, Fabric Carpet, Links In Chat, Welcome AWA e DedicatedPower. Links In Chat è una mod server-side che rende cliccabili gli URL nella chat e aggiunge i comandi `/link` e `/linkwhisper`. Welcome AWA invia messaggi colorati all'ingresso, usa `%player%` e può ricaricare `config/welcome-mod.json` con `welcome reload`; i client non devono installare nessuna delle due mod. Non installa plugin Bukkit/Spigot/Paper.
+La configurazione Fabric predefinita include Fabric API, Geyser-Fabric, Floodgate-Fabric, Lithium, FerriteCore, Krypton, ServerCore, Fabric Carpet, Links In Chat, Welcome AWA e DedicatedPower. Better Multiplayer Sleep è un datapack separato e neutrale rispetto al loader, installato nel mondo configurato; dopo modifiche manuali usa `/reload`. Links In Chat è una mod server-side che rende cliccabili gli URL nella chat e aggiunge i comandi `/link` e `/linkwhisper`. Welcome AWA invia messaggi colorati all'ingresso, usa `%player%` e può ricaricare `config/welcome-mod.json` con `welcome reload`; i client non devono installare nessuna delle due mod. Non installa plugin Bukkit/Spigot/Paper.
 
 ## 5. Perché servono due avvii
 

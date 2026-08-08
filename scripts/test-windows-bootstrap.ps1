@@ -162,6 +162,26 @@ try {
         $WelcomeAwaHash = Get-Sha512 $WelcomeAwaPath
         Assert ($WelcomeAwaHash -eq '981c813ae53a230b49b8e2a33f83cb6fac810847baffaef43369f3caeccace19b7d5f578093277d656f5e5817ec18139485b8d76bee8ec6329279cc6eaa388c5') 'Downloaded Welcome AWA SHA-512 matches the pinned hash'
     }
+    $DatapackManifest = Get-Content -LiteralPath (Join-Path $Root 'server\\datapacks-manifest.ps1') -Raw
+    Assert ($DatapackManifest -match 'BetterMultiplayerSleep-1\.1\.0-1\.21\.11\+\.zip') 'Datapack manifest contains Better Multiplayer Sleep for Minecraft 26.2'
+    Assert ($DatapackManifest -match '8ecadc28a73bbe12dade19d5dfa0840dc8d28b2bd80c0ef154779063375fb5c96cc7c877c55c627909f2aea2907a30b2a8f2038769d269443f0e1689f7f3017a') 'Better Multiplayer Sleep SHA-512 is pinned'
+    $DatapackPath = Join-Path $Root 'server\\world\\datapacks\\BetterMultiplayerSleep-1.1.0-1.21.11+.zip'
+    Assert (Test-Path -LiteralPath $DatapackPath -PathType Leaf) 'Better Multiplayer Sleep was installed in the configured world/datapacks folder'
+    if (Test-Path -LiteralPath $DatapackPath -PathType Leaf) {
+        $DatapackHash = Get-Sha512 $DatapackPath
+        Assert ($DatapackHash -eq '8ecadc28a73bbe12dade19d5dfa0840dc8d28b2bd80c0ef154779063375fb5c96cc7c877c55c627909f2aea2907a30b2a8f2038769d269443f0e1689f7f3017a') 'Downloaded Better Multiplayer Sleep SHA-512 matches the pinned hash'
+    }
+    Assert ($RealText -match 'datapacks|BetterMultiplayerSleep') 'Bootstrap reports configured datapack installation support'
+    $DatapackConfigRoot = Join-Path $Root 'server\\config'
+    $DatapackMarkerPath = Join-Path $DatapackConfigRoot '.jarock-datapacks'
+    Assert (Test-Path -LiteralPath $DatapackMarkerPath -PathType Leaf) 'Jarock datapack marker was created'
+    $DatapackMarkerBefore = if (Test-Path -LiteralPath $DatapackMarkerPath -PathType Leaf) { Get-Content -LiteralPath $DatapackMarkerPath -Raw } else { '' }
+    $DatapackPathBefore = if (Test-Path -LiteralPath $DatapackPath -PathType Leaf) { (Get-Item -LiteralPath $DatapackPath).FullName } else { '' }
+    $SecondBootstrapOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'bootstrap-server.ps1') 2>&1)
+    $SecondBootstrapCode = $LASTEXITCODE
+    Assert ($SecondBootstrapCode -eq 0) 'A second bootstrap remains idempotent'
+    Assert ((Test-Path -LiteralPath $DatapackPath -PathType Leaf) -and ((Get-Item -LiteralPath $DatapackPath).FullName -eq $DatapackPathBefore)) 'Second bootstrap preserves the managed datapack path'
+    Assert ((Get-Content -LiteralPath $DatapackMarkerPath -Raw) -eq $DatapackMarkerBefore) 'Second bootstrap preserves the datapack marker'
 
     # 6. Accept the EULA and boot the real server; stop it automatically after the ready banner.
     $EulaPath = Join-Path $Root 'server\eula.txt'

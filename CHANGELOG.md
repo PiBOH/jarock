@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.79-beta] - 2026-08-08
+
+### Added
+
+- Added the verified Better Multiplayer Sleep 1.1.0 datapack for Minecraft 26.2. Jarock downloads it with a pinned Modrinth URL and SHA-512, validates the ZIP structure, and installs it in the configured world's `datapacks/` folder for Fabric and NeoForge without replacing the world or other datapacks.
+- Extended the Windows bootstrap test to verify the datapack manifest, download, checksum and configured-world installation.
+- Updated the English, Italian and localized technical documentation with datapack behavior and `/reload` guidance.
+
+
 ## [0.0.78-beta] - 2026-08-08
 
 ### Added
