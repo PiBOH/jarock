@@ -33,19 +33,18 @@ if not exist "%SETTINGS%" (
     copy /y "%TEMPLATE%" "%SETTINGS%" >nul
 )
 
-findstr /i /r /c:"^AUTO_UPDATE_MODE=install$" "%SETTINGS%" >nul
-if not errorlevel 1 call :startup_update_auto
+rem Read the setting value through FOR /F so CRLF and LF files behave identically.
+rem Comparing the value separately also prevents invalid prefixes such as installXYZ.
+set "STARTUP_UPDATE_MODE="
+for /f "tokens=1,* delims==" %%A in ('findstr /i /b /c:"AUTO_UPDATE_MODE=" "%SETTINGS%"') do if /i "%%A"=="AUTO_UPDATE_MODE" set "STARTUP_UPDATE_MODE=%%B"
+if /i "%STARTUP_UPDATE_MODE%"=="install" call :startup_update_auto
 rem Backward compatibility for the former AUTO_UPDATE_MODE=auto value.
-findstr /i /r /c:"^AUTO_UPDATE_MODE=auto$" "%SETTINGS%" >nul
-if not errorlevel 1 call :startup_update_auto
-findstr /i /r /c:"^AUTO_UPDATE_MODE=check$" "%SETTINGS%" >nul
-if not errorlevel 1 call :startup_update_check_only
-findstr /i /r /c:"^AUTO_UPDATE_MODE=never$" "%SETTINGS%" >nul
-if not errorlevel 1 call :startup_update_never
+if /i "%STARTUP_UPDATE_MODE%"=="auto" call :startup_update_auto
+if /i "%STARTUP_UPDATE_MODE%"=="check" call :startup_update_check_only
+if /i "%STARTUP_UPDATE_MODE%"=="never" call :startup_update_never
 rem Backward compatibility for older local settings files that have no mode yet.
-findstr /i /r /c:"^AUTO_UPDATE_MODE=" "%SETTINGS%" >nul
-if errorlevel 1 (
-    findstr /i /r /c:"^AUTO_UPDATE_CHECK=true$" "%SETTINGS%" >nul
+if not defined STARTUP_UPDATE_MODE (
+    findstr /i /b /c:"AUTO_UPDATE_CHECK=true" "%SETTINGS%" >nul
     if not errorlevel 1 call :startup_update_auto
 )
 

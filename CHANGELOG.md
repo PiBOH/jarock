@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.70-beta] - 2026-08-08
+
+### Fixed
+
+- Fixed startup update mode detection in `start-server.bat` on Windows CRLF settings files. `install`, legacy `auto`, `check`, `never`, and legacy `AUTO_UPDATE_CHECK=true` values are now matched from the beginning of the line without the CRLF-sensitive end-of-line regex, so enabled startup checks actually run.
+- Added `.github/workflows/test-startup-updates.yml` and `scripts/test-startup-update-settings.ps1` to verify all startup update modes with both CRLF and LF settings files without contacting GitHub or changing the installation.
+
 ## [0.0.69-beta] - 2026-08-08
 
 ### Added
@@ -617,7 +624,9 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.68-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.70-beta...HEAD
+[0.0.70-beta]: https://github.com/PiBOH/jarock/compare/0.0.69-beta...0.0.70-beta
+[0.0.69-beta]: https://github.com/PiBOH/jarock/compare/0.0.68-beta...0.0.69-beta
 [0.0.68-beta]: https://github.com/PiBOH/jarock/compare/0.0.67-beta...0.0.68-beta
 [0.0.67-beta]: https://github.com/PiBOH/jarock/compare/0.0.66-beta...0.0.67-beta
 [0.0.66-beta]: https://github.com/PiBOH/jarock/compare/0.0.65-beta...0.0.66-beta

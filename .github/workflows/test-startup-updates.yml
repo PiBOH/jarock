@@ -1,0 +1,28 @@
+name: test-startup-updates.yml
+
+'on':
+  push:
+    branches: [ main ]
+    paths:
+      - 'start-server.bat'
+      - 'scripts/test-startup-update-settings.ps1'
+      - '.github/workflows/test-startup-updates.yml'
+      - 'parameter-manager.bat'
+      - 'scripts/server-launch-settings.ini.template'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  startup-update-settings:
+    name: Windows startup update mode matching
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Test CRLF and LF startup update settings
+        shell: pwsh
+        run: ./scripts/test-startup-update-settings.ps1
