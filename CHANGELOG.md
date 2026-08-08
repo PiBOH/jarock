@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.78-beta] - 2026-08-08
+
+### Added
+
+- Added the server-side Fabric mod Welcome AWA 2.4 for Minecraft 26.2 (`welcome_awa-fabric-26.2-2.4.jar`). The pinned Modrinth download is verified with SHA-512 during bootstrap and provides configurable colored join messages using `%player%`, `&` color codes, `\n` line breaks and the `welcome reload` command. Fabric API is already included as its required dependency; clients do not need to install the mod.
+- Documented Welcome AWA in the complete English and Italian Fabric guides, plus the localized technical summaries and fallback notes for all supported languages.
+
 ## [0.0.77-beta] - 2026-08-08
 
 ### Added
@@ -672,7 +679,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.77-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.78-beta...HEAD
+[0.0.78-beta]: https://github.com/PiBOH/jarock/compare/0.0.77-beta...0.0.78-beta
 [0.0.77-beta]: https://github.com/PiBOH/jarock/compare/0.0.76-beta...0.0.77-beta
 [0.0.76-beta]: https://github.com/PiBOH/jarock/compare/0.0.75-beta...0.0.76-beta
 [0.0.72-beta]: https://github.com/PiBOH/jarock/compare/0.0.71-beta...0.0.72-beta

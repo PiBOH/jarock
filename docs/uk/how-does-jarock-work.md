@@ -9,7 +9,7 @@
 Цей документ пояснює, що відбувається після завантаження Jarock.
 
 
-> Technical fallback note: DedicatedPower is a Fabric-only mod: it is updated automatically from its latest GitHub release, while the other server mods are pinned and verified with SHA-512. Links In Chat is also included as a verified server-side Fabric 26.2 mod; it makes chat URLs clickable and adds `/link` and `/linkwhisper`, without requiring client installation.
+> Technical fallback note: DedicatedPower is a Fabric-only mod: it is updated automatically from its latest GitHub release, while the other server mods are pinned and verified with SHA-512. Links In Chat is also included as a verified server-side Fabric 26.2 mod; it makes chat URLs clickable and adds `/link` and `/linkwhisper`, without requiring client installation. Welcome AWA is also included as a verified server-side Fabric 26.2 mod; it sends configurable colored join messages using `%player%` and supports `welcome reload`.
 
 > Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Примітка з обслуговування:** засіб запуску тепер шукає сумісне 64-бітне Java 25+, а не довіряє лише першому `java.exe` в `PATH`. Він використовує `scripts/java-runtime.ps1`, зберігає вибраний виконуваний файл у `server/java-path.txt` і перевіряє його перед запуском. Java 8 можна залишити встановленою.

@@ -22,6 +22,15 @@ function Assert([bool]$Condition, [string]$Name) {
     if ($Condition) { $script:Pass++; Write-Host "PASS: $Name" -ForegroundColor Green }
     else { $script:Fail++; Write-Host "FAIL: $Name" -ForegroundColor Red }
 }
+function Get-Sha512([string]$Path) {
+    $Stream = [IO.File]::OpenRead($Path)
+    try {
+        $Hasher = [Security.Cryptography.SHA512]::Create()
+        try { return ([BitConverter]::ToString($Hasher.ComputeHash($Stream)) -replace '-', '').ToLowerInvariant() }
+        finally { $Hasher.Dispose() }
+    }
+    finally { $Stream.Dispose() }
+}
 
 # Save every Java source so the environment can be restored exactly. The discovery also
 # reads java-home.txt and JAROCK_JAVA_HOME first, so those are masked too. Note that the
@@ -142,8 +151,16 @@ try {
     $LinksInChatPath = Join-Path $Root 'server\mods\linksinchat-1.3.1+26.2.jar'
     Assert (Test-Path -LiteralPath $LinksInChatPath -PathType Leaf) 'Links In Chat was downloaded into server/mods'
     if (Test-Path -LiteralPath $LinksInChatPath -PathType Leaf) {
-        $LinksInChatHash = (Get-FileHash -Algorithm SHA512 -LiteralPath $LinksInChatPath).Hash.ToLowerInvariant()
+        $LinksInChatHash = Get-Sha512 $LinksInChatPath
         Assert ($LinksInChatHash -eq '9cbd4eb2b26b518920a2df78c22c95c998ded2f36b6a524881f96f22a2f1a111790791283d32613db8eb71f48e71b30625114c3eaf9d134cd57b776163290067') 'Downloaded Links In Chat SHA-512 matches the pinned hash'
+    }
+    Assert ($FabricManifest -match 'welcome_awa-fabric-26\.2-2\.4\.jar') 'Fabric manifest contains Welcome AWA for Minecraft 26.2'
+    Assert ($FabricManifest -match '981c813ae53a230b49b8e2a33f83cb6fac810847baffaef43369f3caeccace19b7d5f578093277d656f5e5817ec18139485b8d76bee8ec6329279cc6eaa388c5') 'Welcome AWA SHA-512 is pinned'
+    $WelcomeAwaPath = Join-Path $Root 'server\mods\welcome_awa-fabric-26.2-2.4.jar'
+    Assert (Test-Path -LiteralPath $WelcomeAwaPath -PathType Leaf) 'Welcome AWA was downloaded into server/mods'
+    if (Test-Path -LiteralPath $WelcomeAwaPath -PathType Leaf) {
+        $WelcomeAwaHash = Get-Sha512 $WelcomeAwaPath
+        Assert ($WelcomeAwaHash -eq '981c813ae53a230b49b8e2a33f83cb6fac810847baffaef43369f3caeccace19b7d5f578093277d656f5e5817ec18139485b8d76bee8ec6329279cc6eaa388c5') 'Downloaded Welcome AWA SHA-512 matches the pinned hash'
     }
 
     # 6. Accept the EULA and boot the real server; stop it automatically after the ready banner.
@@ -209,6 +226,8 @@ try {
     $ServerExitCode = $ServerProc.ExitCode
     Assert $script:ServerStopped 'Ready banner appeared (server finished loading)'
     Assert ($ServerExitCode -eq 0) "Server shut down cleanly (exit code $ServerExitCode)"
+    $WelcomeConfigPath = Join-Path $Root 'server\config\welcome-mod.json'
+    Assert (Test-Path -LiteralPath $WelcomeConfigPath -PathType Leaf) 'Welcome AWA generated config/welcome-mod.json'
 
     # 7. Summary.
     Write-Host ''

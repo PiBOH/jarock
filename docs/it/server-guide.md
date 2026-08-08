@@ -31,6 +31,7 @@ Componenti:
 - **Lithium, FerriteCore, Krypton:** ottimizzazione iniziale consigliata.
 - **Fabric Carpet:** strumenti tecnici, regole e test per redstone.
 - **Links In Chat:** mod server-side che rende cliccabili gli URL nella chat e aggiunge i comandi `/link` e `/linkwhisper`; i client non devono installarla.
+- **Welcome AWA:** mod server-side che invia messaggi colorati quando entra un giocatore; usa `%player%`, i codici colore `&`, le interruzioni `\n` e il comando `welcome reload`.
 - **ServerCore, Carpet Extra e Carpet TIS Addition:** opzionali; installali solo se esiste una build compatibile con 26.2.
 
 ### Cosa non installare sul server
@@ -188,6 +189,7 @@ Inserisci nella cartella soltanto file `.jar` compatibili con **Fabric e Minecra
 fabric-api-<compatible-version>.jar
 Geyser-Fabric-<compatible-version>.jar
 floodgate-fabric-<compatible-version>.jar
+welcome_awa-fabric-26.2-2.4.jar
 ```
 
 Non scompattare i `.jar` e non usare siti che ricaricano file modificati.
@@ -262,6 +264,7 @@ Controlla sempre nella pagina ufficiale della mod: versione **26.2**, loader **F
 | Krypton | Ottimizzazione della rete | Testala insieme a Geyser |
 | ServerCore | Controlli aggiuntivi sulle prestazioni | Impostazioni conservative |
 | Fabric Carpet | Regole, diagnostica e strumenti tecnici | Base consigliata per redstone |
+| Welcome AWA | Messaggi colorati all'ingresso | `%player%`, `&`, `\n` e `welcome reload` |
 | Carpet Extra | Estensioni di Carpet | Deve corrispondere alla versione di Carpet |
 | Carpet TIS Addition | Strumenti tecnici avanzati | Opzionale, verifica 26.2 |
 

@@ -67,6 +67,13 @@ $Mods = @(
         Purpose = 'Clickable links and link whisper commands in server chat'
     }
     [pscustomobject]@{
+        Name = 'welcome_awa-fabric-26.2-2.4.jar'
+        Url = 'https://cdn.modrinth.com/data/fC8CQ1bz/versions/Y8JZbT7F/welcome_awa-fabric-26.2-2.4.jar'
+        Sha512 = '981c813ae53a230b49b8e2a33f83cb6fac810847baffaef43369f3caeccace19b7d5f578093277d656f5e5817ec18139485b8d76bee8ec6329279cc6eaa388c5'
+        Required = $true
+        Purpose = 'Colored server-side join welcome messages with player placeholders'
+    }
+    [pscustomobject]@{
         Name = 'imfast-FABRIC-26.2-1.0.3.jar'
         Url = 'https://cdn.modrinth.com/data/PaUMOeP0/versions/nD5sET2x/imfast-FABRIC-26.2-1.0.3.jar'
         Sha512 = '664606eb41dbf13385ec82545c30a7b118bd263393325c29a6a6eef6e0a390555c194e0c15df64c18d7f477344c423e518e67b481d5c9171fd5c7fb36795341b'
