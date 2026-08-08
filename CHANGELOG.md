@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.67-beta] - 2026-08-08
+
+### Changed
+
+- Made the three startup update modes explicit in `start-server.bat`: `install` contacts GitHub and installs a verified compatible Lite package before bootstrap, `check` contacts GitHub and reports updates without changing files, and `never` skips GitHub entirely and proceeds directly to startup.
+
 ## [0.0.66-beta] - 2026-08-08
 
 ### Added
@@ -597,7 +603,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.66-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.67-beta...HEAD
+[0.0.67-beta]: https://github.com/PiBOH/jarock/compare/0.0.66-beta...0.0.67-beta
 [0.0.66-beta]: https://github.com/PiBOH/jarock/compare/0.0.65-beta...0.0.66-beta
 [0.0.65-beta]: https://github.com/PiBOH/jarock/compare/0.0.64-beta...0.0.65-beta
 [0.0.64-beta]: https://github.com/PiBOH/jarock/compare/0.0.63-beta...0.0.64-beta

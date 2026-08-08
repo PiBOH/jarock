@@ -40,6 +40,8 @@ findstr /i /r /c:"^AUTO_UPDATE_MODE=auto$" "%SETTINGS%" >nul
 if not errorlevel 1 call :startup_update_auto
 findstr /i /r /c:"^AUTO_UPDATE_MODE=check$" "%SETTINGS%" >nul
 if not errorlevel 1 call :startup_update_check_only
+findstr /i /r /c:"^AUTO_UPDATE_MODE=never$" "%SETTINGS%" >nul
+if not errorlevel 1 call :startup_update_never
 rem Backward compatibility for older local settings files that have no mode yet.
 findstr /i /r /c:"^AUTO_UPDATE_MODE=" "%SETTINGS%" >nul
 if errorlevel 1 (
@@ -148,9 +150,16 @@ exit /b 0
 :startup_update_check_only
 echo.
 echo ==> Checking for Jarock updates (no installation)
+echo This read-only check runs before the server bootstrap and never changes files.
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-jarock.ps1" -CheckOnly
 set "UPDATE_CHECK_EXIT_CODE=%errorlevel%"
 if "%UPDATE_CHECK_EXIT_CODE%"=="1" echo WARNING: The read-only startup update check could not complete.
 if "%UPDATE_CHECK_EXIT_CODE%"=="1" echo Suggested fix: verify Internet access, or choose Do not check updates in parameter-manager.bat.
 if "%UPDATE_CHECK_EXIT_CODE%"=="2" echo A newer release was found, but no files were changed.
+exit /b 0
+
+:startup_update_never
+echo.
+echo ==> Startup update check disabled
+echo GitHub will not be contacted and no update will be installed before startup.
 exit /b 0
