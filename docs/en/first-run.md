@@ -73,7 +73,7 @@ Run `start-server.bat` again. Jarock verifies the loader, Java, templates, mods 
 
 The server may create the world during this startup. Let it finish completely. When Geyser is installed, Jarock waits for the final Geyser startup message before showing the optional ready banner. Immediately after the ready message, it prints the LAN address for Java players (`server-port`, TCP) and the LAN address for Bedrock players (Geyser's `bedrock.port`, UDP). If Geyser is not installed, the Bedrock address is reported as unavailable. If `Show ready banner` is disabled, the ASCII art is hidden but these connection addresses are still printed.
 
-If the server reports a world-generation error, do not repeatedly restart it. Stop safely, inspect `server/logs/latest.log` and `server/crash-reports/`, and restore a backup if necessary. Jarock may move clearly incomplete first-run world data aside as `world-corrupt-<timestamp>` so it is not overwritten.
+If the server reports a world-generation or world-integrity error, do not repeatedly restart it. Jarock never moves, renames, deletes or replaces an existing world automatically. Stop safely, inspect `server/logs/latest.log` and `server/crash-reports/`, and restore the world from a known-good backup. A new world is generated only when the configured `level-name` folder from `server.properties` is absent and no other possible old world folder remains. Java stores the Nether and End inside that world folder (`DIM-1` and `DIM1`). Jarock checks for possible old world folders even when the configured world exists; after a `level-name` change, it refuses to start instead of silently mixing or replacing worlds.
 
 ## Step 7: stop safely
 

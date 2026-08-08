@@ -488,7 +488,7 @@ Always enter `stop` in the server console and wait. Do not click the window's X,
 
 ### The server stops with "Overworld settings missing" or does not load the world
 
-The world folder is incomplete, usually because an earlier startup was interrupted during world generation (for example by a crash, a timeout, or a power loss). Jarock detects this automatically, moves the incomplete folder aside (for example to `server\world-corrupt-20260807-100428`), and generates a fresh world on the next start. If the moved folder contains data you need, stop the server and restore it from a backup. Never re-use a world that Minecraft refuses to load.
+The world folder may be incomplete, usually because an earlier startup was interrupted during world generation (for example by a crash, a timeout, or a power loss). Jarock does not move, rename, delete or replace an existing world automatically. It leaves Minecraft's error visible and stops. Inspect `server\logs\latest.log` and the newest crash report, then restore the world from a known-good backup. A fresh world is generated only when the configured `level-name` folder from `server.properties` is absent and no other possible old world folder remains. Java stores the Nether and End inside that world folder (`DIM-1` and `DIM1`). Jarock checks for possible old world folders even when the configured world exists; after a `level-name` change, it refuses to start instead of silently mixing or replacing worlds.
 
 ### Java works but Bedrock cannot connect
 

@@ -317,7 +317,7 @@ Apri `logs/latest.log` e l'ultimo file in `crash-reports/`. Cerca la prima riga 
 
 ### Il server si ferma con "Overworld settings missing" o non carica il mondo
 
-La cartella del mondo è incompleta, di solito perché un avvio precedente è stato interrotto durante la generazione del mondo (per esempio da un crash, un timeout o un calo di corrente). Jarock lo rileva automaticamente: sposta da parte la cartella incompleta, per esempio in `server\world-corrupt-20260807-100428`, e genera un mondo nuovo al prossimo avvio. Se la cartella spostata contiene dati che ti servono, ferma il server e ripristinala da un backup. Non riutilizzare mai un mondo che Minecraft rifiuta di caricare.
+La cartella del mondo potrebbe essere incompleta, per esempio perché un avvio precedente è stato interrotto durante la generazione. Jarock non sposta, rinomina, elimina o sostituisce automaticamente un mondo esistente. Lascia visibile l’errore di Minecraft e interrompe l’avvio. Controlla `server\logs\latest.log` e l’ultimo crash report, poi ripristina il mondo da un backup funzionante. Un mondo nuovo viene generato soltanto quando la cartella configurata da `level-name` in `server.properties` non esiste e non rimane nessun’altra cartella che possa contenere un vecchio mondo. In Java il Nether e l’End sono salvati dentro quella cartella (`DIM-1` e `DIM1`). Jarock controlla eventuali vecchi mondi anche quando quello configurato esiste; dopo un cambio di `level-name`, rifiuta di avviarsi invece di mescolare o sostituire silenziosamente i mondi.
 
 ### Java funziona ma Bedrock no
 

@@ -82,6 +82,46 @@ function Get-ConfiguredBedrockPort([string]$ServerDirectory, [string]$Loader) {
 function Test-GeyserReadyLine([string]$Line) {
     return $Line -match '(?i)(geyser\s+help|geyser.*(?:started|avviato|fatto).*udp|geyser.*udp|udp.*geyser)'
 }
+function Get-ConfiguredLevelName([string]$PropertiesPath) {
+    if (Test-Path -LiteralPath $PropertiesPath -PathType Leaf) {
+        $Content = Get-Content -LiteralPath $PropertiesPath -Raw
+        if ($Content -match '(?m)^\s*level-name\s*=\s*([^\r\n#]+?)\s*(?:#.*)?$') {
+            $Name = $Matches[1].Trim()
+            if (-not [string]::IsNullOrWhiteSpace($Name) -and $Name -notmatch '[\\/:*?"<>|]') { return $Name }
+        }
+    }
+    return 'world'
+}
+function Get-WorldLikeDirectories([string]$ServerDirectory, [string[]]$KnownWorldNames) {
+    $Ignored = @('config','crash-reports','libraries','logs','mods','versions')
+    return @(Get-ChildItem -LiteralPath $ServerDirectory -Directory -ErrorAction SilentlyContinue | Where-Object {
+        $KnownWorldNames -notcontains $_.Name -and
+        $Ignored -notcontains $_.Name -and
+        ((Test-Path -LiteralPath (Join-Path $_.FullName 'level.dat') -PathType Leaf) -or
+         (Test-Path -LiteralPath (Join-Path $_.FullName 'region') -PathType Container))
+    })
+}
+function Assert-WorldDirectoriesConsistent([string]$ServerDirectory, [string]$PropertiesPath) {
+    # Java stores the Nether and End inside the configured overworld folder
+    # (DIM-1 and DIM1). Do not require sibling folders such as world_nether.
+    # If the configured level-name exists, leave it completely untouched and
+    # let Minecraft load it or report its own integrity error.
+    $LevelName = Get-ConfiguredLevelName $PropertiesPath
+    $ConfiguredWorld = Join-Path $ServerDirectory $LevelName
+
+    # Always inspect for old world data first, even when the configured world
+    # exists. This prevents a level-name change from silently leaving an old
+    # world beside the new one.
+    $OrphanWorlds = @(Get-WorldLikeDirectories $ServerDirectory @($LevelName))
+    if ($OrphanWorlds.Count -gt 0) {
+        $Names = ($OrphanWorlds | ForEach-Object { $_.Name }) -join ', '
+        throw "Possible previous world data was found under another name ($Names). Jarock will not silently mix or replace worlds. Restore the intended world or deliberately remove the old world data yourself, then start again."
+    }
+
+    # A missing configured world is a legitimate first-run/new-world case only
+    # when no other likely world folder remains after a level-name change.
+    if (Test-Path -LiteralPath $ConfiguredWorld -PathType Container) { return }
+}
 function Show-ReadyStatus([bool]$ShowBanner, [object[]]$ReadyBanner) {
     Write-Host ''
     if($ShowBanner -and $ReadyBanner.Count -gt 0){
@@ -106,31 +146,6 @@ function Set-NeoForgeJvmArgs([string]$Path,[string]$Xms,[string]$Xmx,[string]$Gc
     $Output=@($Filtered + $Managed)
     [IO.File]::WriteAllLines($Path,$Output,(New-Object Text.UTF8Encoding($false)))
 }
-function Repair-IncompleteWorld([string]$ServerDirectory) {
-    # A completed world always has a reasonably large level.dat and the world
-    # generation settings data file. An interrupted first generation leaves a
-    # tiny level.dat and no world_gen_settings.dat, and Minecraft then refuses
-    # to load the world with 'Overworld settings missing'.
-    $WorldDir = Join-Path $ServerDirectory 'world'
-    $LevelDat = Join-Path $WorldDir 'level.dat'
-    if (-not (Test-Path -LiteralPath $LevelDat -PathType Leaf)) { return }
-    $Length = (Get-Item -LiteralPath $LevelDat).Length
-    $SettingsFile = Join-Path $WorldDir 'data\minecraft\world_gen_settings.dat'
-    $HasSettings = Test-Path -LiteralPath $SettingsFile -PathType Leaf
-    if ($HasSettings -and $Length -ge 1024) { return }
-    $Stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
-    $Backup = Join-Path $ServerDirectory "world-corrupt-$Stamp"
-    New-Item -ItemType Directory -Path $Backup -Force | Out-Null
-    foreach ($WorldName in @('world','world_nether','world_the_end')) {
-        $Source = Join-Path $ServerDirectory $WorldName
-        if (Test-Path -LiteralPath $Source) { Move-Item -LiteralPath $Source -Destination (Join-Path $Backup $WorldName) -Force }
-    }
-    Write-Host ''
-    Write-Host 'WARNING: The world data is incomplete (level.dat is too small or world generation settings are missing).' -ForegroundColor Yellow
-    Write-Host 'Jarock moved the incomplete world folder aside to keep it safe:' -ForegroundColor Yellow
-    Write-Host "  $Backup" -ForegroundColor Cyan
-    Write-Host 'A fresh world will be generated during this start. If the moved folder contains data you need, stop the server and restore it from a backup; never re-use a world that Minecraft refuses to load.' -ForegroundColor Yellow
-}
 try {
     $ServerDirectory=[IO.Path]::GetFullPath($ServerDirectory)
     $Settings=Read-Settings
@@ -154,7 +169,7 @@ try {
     }
     $Properties=Join-Path $ServerDirectory 'server.properties'; if(-not(Test-Path -LiteralPath $Properties -PathType Leaf)){throw "The Minecraft properties file was not found: $Properties"}
     Set-ServerOnlineMode $Properties $Online
-    Repair-IncompleteWorld $ServerDirectory
+    Assert-WorldDirectoriesConsistent $ServerDirectory $Properties
     Write-Host "Loader=$Loader; Java=$($Runtime.Version); memory=$InitialMemory/$MaximumMemory; mode=$GuiMode; GC=$GcProfile" -ForegroundColor Green
     $ShowBanner=$true
     if($Settings.ContainsKey('SHOW_READY_BANNER')){$ShowBanner=([string]$Settings['SHOW_READY_BANNER']) -notmatch '^(?i:false|no|0)$'}
