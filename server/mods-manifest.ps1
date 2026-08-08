@@ -32,6 +32,13 @@ $Mods = @(
         Purpose = 'Server-side inventory and ender-chest administration tools for Fabric 26.2'
     }
     [pscustomobject]@{
+        Name = 'OfflineCommands-1.0.3+26.1-rc-3.jar'
+        Url = 'https://cdn.modrinth.com/data/rkgXkDl7/versions/YfBIpokm/OfflineCommands-1.0.3%2B26.1-rc-3.jar'
+        Sha512 = '735f64794ea53a995d804d85d2c924fa76e882f469b76b57dafb23379c80d97c533cb83e56da0d878350b0e4e149efc500c3d4f000934b3606349a6768214ec9'
+        Required = $true
+        Purpose = 'Run commands on offline players for Fabric 26.2'
+    }
+    [pscustomobject]@{
         Name = 'Geyser-Fabric-2.11.1-b1209.jar'
         Url = 'https://cdn.modrinth.com/data/wKkoqHrH/versions/qx0y8XK1/Geyser-Fabric-2.11.1-b1209.jar'
         Sha512 = '4f894794ae3d3e6ffc1dfc43a231bcc13767958ba2c922018065faab737d2d34a8c65b33355cdb8a8759a760909634bd611acb6cbb37a0651a52d27aa4d32511'

@@ -158,6 +158,13 @@ try {
     Assert ($RealCode -eq 0) "Bootstrap completes successfully (exit code $RealCode)"
     Assert (Test-Path -LiteralPath (Join-Path $Root 'server\java-path.txt') -PathType Leaf) 'Selected Java executable was stored'
     $FabricManifest = Get-Content -LiteralPath (Join-Path $Root 'server\mods-manifest.ps1') -Raw
+    Assert ($FabricManifest -match 'OfflineCommands-1\.0\.3\+26\.1-rc-3\.jar') 'Fabric manifest contains OfflineCommands for Minecraft 26.2'
+    Assert ($FabricManifest -match '735f64794ea53a995d804d85d2c924fa76e882f469b76b57dafb23379c80d97c533cb83e56da0d878350b0e4e149efc500c3d4f000934b3606349a6768214ec9') 'OfflineCommands SHA-512 is pinned'
+    $OfflineCommandsPath = Join-Path $Root 'server\\mods\\OfflineCommands-1.0.3+26.1-rc-3.jar'
+    Assert (Test-Path -LiteralPath $OfflineCommandsPath -PathType Leaf) 'OfflineCommands was downloaded into server/mods'
+    if (Test-Path -LiteralPath $OfflineCommandsPath -PathType Leaf) {
+        Assert ((Get-Sha512 $OfflineCommandsPath) -eq '735f64794ea53a995d804d85d2c924fa76e882f469b76b57dafb23379c80d97c533cb83e56da0d878350b0e4e149efc500c3d4f000934b3606349a6768214ec9') 'Downloaded OfflineCommands SHA-512 matches the pinned hash'
+    }
     Assert ($FabricManifest -match 'InvView-1\.4\.21-26\.2\+\.jar') 'Fabric manifest contains InvView for Minecraft 26.2'
     Assert ($FabricManifest -match '6eec7e7831316f9768b42daa441af83442ec9d30cfe2a963b51d77339805e4c8cdd8283ae758ec73ce4bfbce2a6454c0a6389683e830acb6ff1fb0dcef2534ea') 'InvView SHA-512 is pinned'
     $InvViewPath = Join-Path $Root 'server\\mods\\InvView-1.4.21-26.2+.jar'
@@ -212,7 +219,7 @@ try {
     }
     Assert ($RealText -match 'datapacks|BetterMultiplayerSleep') 'Bootstrap reports configured datapack installation support'
     $NeoForgeManifest = Get-Content -LiteralPath (Join-Path $Root 'server\\mods-manifest-neoforge.ps1') -Raw
-    Assert ($NeoForgeManifest -notmatch '(?i)essential_commands|ec-core') 'NeoForge manifest excludes Fabric-only Essential Commands'
+    Assert ($NeoForgeManifest -notmatch '(?i)essential_commands|ec-core|offlinecommands') 'NeoForge manifest excludes Fabric-only Essential Commands and OfflineCommands'
     Assert ($NeoForgeManifest -match 'NoChatReports-NEOFORGE-26\\.2-v2\\.20\\.1\\.jar') 'NeoForge manifest contains No Chat Reports for Minecraft 26.2'
     Assert ($NeoForgeManifest -match '782b4b081c5d8bdd19139894feacc9c48b6fb025856e904c2bb9ee84438734de96eb5540f471e57830ecb92df8f18f6da20a1b619c4806b16f06780250999d03') 'NeoForge No Chat Reports SHA-512 is pinned'
     $NoChatReportsNeoForgeTemp = Join-Path ([IO.Path]::GetTempPath()) ("jarock-NoChatReports-NEOFORGE-26.2-v2.20.1-$PID.jar")
@@ -300,6 +307,7 @@ try {
     $ServerExitCode = $ServerProc.ExitCode
     $LatestLogPath = Join-Path $Root 'server\\logs\\latest.log'
     $LatestLogText = if (Test-Path -LiteralPath $LatestLogPath -PathType Leaf) { Get-Content -LiteralPath $LatestLogPath -Raw } else { '' }
+    Assert ($LatestLogText -match '(?i)offline[_-]?commands') 'Fabric server log includes OfflineCommands'
     Assert ($LatestLogText -match '(?i)inv[_-]?view') 'Fabric server log includes InvView'
     Assert ($LatestLogText -match 'essential_commands') 'Fabric server log includes Essential Commands'
     Assert ($LatestLogText -match 'ec[_-]?core') 'Fabric server log includes the Essential Commands core dependency'

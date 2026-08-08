@@ -79,6 +79,8 @@ Hiba után olvasd el az `ERROR:` vagy `WARNING:` sort, és kövesd a `Suggested 
 
 > InvView 1.4.21 is a verified Minecraft 26.2 server-side Fabric mod. It requires Fabric API and lets authorized operators inspect and manage online or offline player inventories and ender chests; no compatible NeoForge 26.2 build is available, so NeoForge does not install it.
 
+> OfflineCommands 1.0.3 is a verified Minecraft 26.2 server-side Fabric mod for running commands on offline players. No compatible NeoForge 26.2 build is available, so NeoForge does not install it.
+
 <!-- jarock-safe-shutdown -->
 
 ## Biztonságos leállítás
