@@ -11,6 +11,8 @@ ONLINE_MODE=true
 GC_PROFILE=default
 # Set to false to hide the ASCII-art banner that is shown when the server finishes loading.
 SHOW_READY_BANNER=true
-# When true, startup checks GitHub for a newer release and asks before installing it.
-# y installs the verified Lite update; N or Enter skips it. It never updates silently.
-AUTO_UPDATE_CHECK=false
+# Startup update mode: auto = check and install a verified update automatically;
+# check = check only and never install; never = do not contact GitHub.
+AUTO_UPDATE_MODE=never
+# Legacy AUTO_UPDATE_CHECK is still understood for older local settings:
+# true maps to auto and false maps to never when AUTO_UPDATE_MODE is absent.

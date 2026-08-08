@@ -6,7 +6,7 @@ Zainstaluj 64-bitowy JDK Java 25 lub nowszy, w instalatorze Temurin włącz JAVA
 
 ## Instalacja i EULA
 
-Uruchom `start-server.bat` i wybierz Fabric (zalecany), NeoForge (awaryjny) lub Forge (obecnie niedostępny dla Minecraft 26.2). `parameter-manager.bat` ustawia RAM, GUI/konsolę, GC, `online-mode`, baner i `AUTO_UPDATE_CHECK`. **Exit without saving** anuluje bez zapisywania.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## Bezpieczne zatrzymanie
 

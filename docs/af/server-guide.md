@@ -40,4 +40,4 @@ Technical note: after startup, Jarock prints the local LAN IPv4 address. Java pl
 
 ## Kontrole vir opdaterings tydens opstart
 
-Stel AUTO_UPDATE_CHECK=true in parameter-manager.bat sodat start-server.bat tydens opstart 'n leesalleen-GitHub-kontrole uitvoer. Dit meld 'n versoenbare nuwer Jarock-weergawe, vra eers bevestiging voordat dit installeer. Kies y of tik yes om die Lite-opdatering te installeer, of N/Enter om voort te gaan met die huidige weergawe. Die verstek is AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.

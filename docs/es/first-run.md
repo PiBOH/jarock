@@ -6,7 +6,7 @@ Esta guía explica el primer uso de un repositorio Jarock nuevo. Ejecuta siempre
 
 ## Elegir el loader
 
-Ejecuta `start-server.bat`. Jarock comprueba Java, rutas y `scripts/server-launch-settings.ini`, migra la configuración antigua y permite elegir Fabric (recomendado), NeoForge (alternativa) o Forge (no disponible actualmente para Minecraft 26.2). Usa `parameter-manager.bat` para RAM, GUI/consola, GC, `online-mode`, banner y `AUTO_UPDATE_CHECK`; **Exit without saving** cancela sin guardar.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## Instalación y EULA
 

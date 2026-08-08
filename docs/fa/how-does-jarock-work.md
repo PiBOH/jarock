@@ -90,4 +90,4 @@ Java معمولاً از TCP `25565` و Bedrock از UDP `19132` استفاده 
 
 ## بررسی به‌روزرسانی هنگام شروع
 
-در parameter-manager.bat مقدار AUTO_UPDATE_CHECK=true را تنظیم کنید تا start-server.bat انتشارهای GitHub را فقط خواندنی بررسی کند. نسخه سازگار جدیدتر را گزارش می‌کند، اما خودکار چیزی نصب نمی‌کند. سرور را ایمن متوقف کنید، منتظر SAFE TO CLOSE بمانید و scripts/update-jarock.bat را اجرا کنید. مقدار پیش‌فرض AUTO_UPDATE_CHECK=false است. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.

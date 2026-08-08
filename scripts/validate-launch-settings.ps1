@@ -18,7 +18,7 @@ try {
     foreach ($Line in (Get-Content -LiteralPath $SettingsPath)) {
         if ($Line -match '^\s*([A-Z_]+)=(.*?)\s*$') { $Values[$Matches[1]] = $Matches[2] }
     }
-    foreach ($Name in @('LOADER_TYPE','RAM_INITIAL','RAM_MAX','GUI_MODE','AUTO_CONFIGURE_JAVA','ONLINE_MODE','GC_PROFILE','SHOW_READY_BANNER','AUTO_UPDATE_CHECK')) {
+    foreach ($Name in @('LOADER_TYPE','RAM_INITIAL','RAM_MAX','GUI_MODE','AUTO_CONFIGURE_JAVA','ONLINE_MODE','GC_PROFILE','SHOW_READY_BANNER','AUTO_UPDATE_MODE')) {
         if (-not $Values.ContainsKey($Name)) {
             if ($Name -eq 'ONLINE_MODE') {
                 $Values[$Name] = 'true'
@@ -32,8 +32,11 @@ try {
                 $Values[$Name] = 'true'
                 continue
             }
-            if ($Name -eq 'AUTO_UPDATE_CHECK') {
-                $Values[$Name] = 'false'
+            if ($Name -eq 'AUTO_UPDATE_MODE') {
+                # Older settings used AUTO_UPDATE_CHECK; migrate their meaning in memory.
+                if ($Values.ContainsKey('AUTO_UPDATE_CHECK')) {
+                    $Values[$Name] = if ([string]$Values['AUTO_UPDATE_CHECK'] -eq 'true') { 'auto' } else { 'never' }
+                } else { $Values[$Name] = 'never' }
                 continue
             }
             throw "Missing setting: $Name"
@@ -58,7 +61,7 @@ try {
     if ([string]$Values['AUTO_CONFIGURE_JAVA'] -notin @('true','false')) { throw 'AUTO_CONFIGURE_JAVA must be true or false.' }
     if ([string]$Values['ONLINE_MODE'] -notin @('true','false')) { throw 'ONLINE_MODE must be true or false.' }
     if ([string]$Values['SHOW_READY_BANNER'] -notin @('true','false')) { throw 'SHOW_READY_BANNER must be true or false.' }
-    if ([string]$Values['AUTO_UPDATE_CHECK'] -notin @('true','false')) { throw 'AUTO_UPDATE_CHECK must be true or false.' }
+    if ([string]$Values['AUTO_UPDATE_MODE'] -notin @('auto','check','never')) { throw 'AUTO_UPDATE_MODE must be auto, check or never.' }
     Write-Host 'Launch settings are valid.' -ForegroundColor Green
     exit 0
 }

@@ -117,4 +117,4 @@ Jarock no modifica router, firewall, port forwarding, IP pública, permisos de o
 
 ## Comprobación de actualizaciones al iniciar
 
-Establece AUTO_UPDATE_CHECK=true en parameter-manager.bat para que start-server.bat compruebe GitHub en modo de solo lectura. Informará de una versión compatible más reciente, pero pedirá confirmación antes de instalar. Elige y o escribe yes para instalar la actualización Lite o N/Enter para continuar con la versión actual. El valor predeterminado es AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.

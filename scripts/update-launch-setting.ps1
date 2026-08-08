@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)] [string]$SettingsPath,
-    [Parameter(Mandatory = $true)] [ValidateSet('LOADER_TYPE','GUI_MODE','GC_PROFILE','AUTO_CONFIGURE_JAVA','ONLINE_MODE','SHOW_READY_BANNER','AUTO_UPDATE_CHECK')] [string]$Name,
+    [Parameter(Mandatory = $true)] [ValidateSet('LOADER_TYPE','GUI_MODE','GC_PROFILE','AUTO_CONFIGURE_JAVA','ONLINE_MODE','SHOW_READY_BANNER','AUTO_UPDATE_CHECK','AUTO_UPDATE_MODE')] [string]$Name,
     [Parameter(Mandatory = $true)] [string]$Value
 )
 
@@ -17,6 +17,7 @@ try {
         'ONLINE_MODE' { if ($Value -notin @('true','false')) { throw 'ONLINE_MODE must be true or false.' } }
         'SHOW_READY_BANNER' { if ($Value -notin @('true','false')) { throw 'SHOW_READY_BANNER must be true or false.' } }
         'AUTO_UPDATE_CHECK' { if ($Value -notin @('true','false')) { throw 'AUTO_UPDATE_CHECK must be true or false.' } }
+        'AUTO_UPDATE_MODE' { if ($Value -notin @('auto','check','never')) { throw 'AUTO_UPDATE_MODE must be auto, check or never.' } }
     }
     $Content = Get-Content -LiteralPath $SettingsPath -Raw
     $SettingPattern = "(?m)^$Name=.*$"

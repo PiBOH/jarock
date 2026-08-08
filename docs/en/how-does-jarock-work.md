@@ -46,7 +46,7 @@ It can configure:
 - `GC_PROFILE=default` or the tested `low-pause` profile;
 - `LOADER_TYPE=none`, `fabric`, `neoforge` or the unavailable `forge` option;
 - `AUTO_CONFIGURE_JAVA=true` or `false`;
-- `AUTO_UPDATE_CHECK=true` or `false`; when enabled, startup checks GitHub and asks before installing a newer compatible release. `y`/`yes` installs the verified Lite package; `N`/Enter skips it.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 RAM values are validated, must be at least `1G`, and initial RAM cannot exceed maximum RAM. Jarock does not silently give all physical memory to Java. The user should still leave enough memory for Windows, backups and other programs.
 
@@ -155,7 +155,7 @@ Jarock does not open router ports, modify firewall rules, configure port forward
 
 ## 10. Updating Jarock itself
 
-The `scripts/version.txt` contains the installed Jarock version. If `AUTO_UPDATE_CHECK=true`, `start-server.bat` checks releases before startup. When a compatible newer release exists, it asks `Download and install it now? (y/N)`: `y` installs the verified Lite package, while `N` or Enter skips it and continues with the current version. Startup never updates silently. You can also stop the server and wait for `SAFE TO CLOSE`, then run `scripts/update-jarock.bat` manually. The updater compares the local version with GitHub releases in the same channel: beta installations look for newer beta releases, while stable installations look for newer stable releases. Draft releases and releases without the expected package are ignored.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 After confirmation, it downloads the matching `jarock-lite` package (`jarock-lite.zip` for stable releases or `jarock-lite-<version>.zip` for beta releases) and its published SHA-512 checksum, verifies the archive before extraction, checks the package version and excludes `.github/` and `.website/`. The Lite package is used intentionally because an existing installation already has its Java prerequisites; the updater does not download or reinstall them. It updates only the project files from the package. It preserves the generated `server/` directory, world data, mods, libraries, server properties, EULA, Geyser/Floodgate keys, local launch settings, Java selection, logs and the updater cache. A rollback copy of overwritten project files is stored under `.cache/update-backups/`.
 
@@ -173,4 +173,4 @@ Type `stop` in the server console and leave the window open. Wait for Jarock to 
 
 ## Optional startup update check
 
-Set AUTO_UPDATE_CHECK=true in parameter-manager.bat to make start-server.bat check GitHub at startup. If a compatible newer Jarock release is found, it asks `Download and install it now? (y/N)`. Choose y to install the verified Lite package, or N/Enter to continue without updating. It never updates silently. The default is AUTO_UPDATE_CHECK=false; you can also use scripts/update-jarock.bat manually after a safe stop.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.

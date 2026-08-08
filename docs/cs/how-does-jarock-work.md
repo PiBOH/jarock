@@ -90,4 +90,4 @@ Po chybě si přečtěte `ERROR:` nebo `WARNING:` a postupujte podle `Suggested 
 
 ## Kontrola aktualizací při spuštění
 
-Nastav AUTO_UPDATE_CHECK=true v parameter-manager.bat, aby start-server.bat provedl kontrolu vydání GitHub pouze pro čtení. Oznámí kompatibilní novější verzi, ale nic nenainstaluje automaticky. Bezpečně server zastav, počkej na SAFE TO CLOSE a spusť scripts/update-jarock.bat. Výchozí hodnota je AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.

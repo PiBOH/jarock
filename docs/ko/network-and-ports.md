@@ -25,4 +25,4 @@
 
 ## 시작 시 업데이트 확인
 
-parameter-manager.bat에서 AUTO_UPDATE_CHECK=true로 설정하면 start-server.bat이 GitHub 릴리스를 읽기 전용으로 확인합니다. 호환되는 최신 Jarock을 알려 주지만 자동 설치는 하지 않습니다. 서버를 중지하고 SAFE TO CLOSE를 기다린 뒤 scripts/update-jarock.bat을 실행하세요. 기본값은 AUTO_UPDATE_CHECK=false입니다. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.

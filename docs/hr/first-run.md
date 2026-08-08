@@ -6,7 +6,7 @@ Instaliraj 64-bitni JDK Java 25 ili noviji, uključi JAVA_HOME u Temurin instala
 
 ## Instalacija i EULA
 
-Pokreni `start-server.bat` i odaberi Fabric (preporučeno), NeoForge (rezervno) ili Forge (trenutačno nije dostupan za Minecraft 26.2). `parameter-manager.bat` podešava RAM, GUI/konzolu, GC, `online-mode`, banner i `AUTO_UPDATE_CHECK`. **Exit without saving** otkazuje bez spremanja.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## Sigurno zaustavljanje
 

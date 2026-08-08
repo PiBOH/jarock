@@ -33,8 +33,16 @@ if not exist "%SETTINGS%" (
     copy /y "%TEMPLATE%" "%SETTINGS%" >nul
 )
 
-findstr /i /r /c:"^AUTO_UPDATE_CHECK=true$" "%SETTINGS%" >nul
-if not errorlevel 1 call :startup_update_check
+findstr /i /r /c:"^AUTO_UPDATE_MODE=auto$" "%SETTINGS%" >nul
+if not errorlevel 1 call :startup_update_auto
+findstr /i /r /c:"^AUTO_UPDATE_MODE=check$" "%SETTINGS%" >nul
+if not errorlevel 1 call :startup_update_check_only
+rem Backward compatibility for older local settings files that have no mode yet.
+findstr /i /r /c:"^AUTO_UPDATE_MODE=" "%SETTINGS%" >nul
+if errorlevel 1 (
+    findstr /i /r /c:"^AUTO_UPDATE_CHECK=true$" "%SETTINGS%" >nul
+    if not errorlevel 1 call :startup_update_auto
+)
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\bootstrap-server.ps1"
 set "BOOTSTRAP_EXIT_CODE=%errorlevel%"
@@ -123,14 +131,23 @@ if "%EXIT_CODE%"=="0" (
 pause
 exit /b %EXIT_CODE%
 
-:startup_update_check
+:startup_update_auto
 echo.
-echo ==> Checking for a newer Jarock release
-echo If a newer release is available, Jarock will ask whether to install it now.
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-jarock.ps1" -PromptForUpdate
+echo ==> Checking for and installing Jarock updates automatically
+echo The verified Lite package will be installed before the server starts when a newer compatible release exists.
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-jarock.ps1" -NonInteractive
 set "UPDATE_CHECK_EXIT_CODE=%errorlevel%"
-if "%UPDATE_CHECK_EXIT_CODE%"=="1" echo WARNING: The startup update check could not complete.
-if "%UPDATE_CHECK_EXIT_CODE%"=="1" echo Suggested fix: verify Internet access, or run scripts\update-jarock.bat manually when the server is stopped.
-if "%UPDATE_CHECK_EXIT_CODE%"=="1" echo Continuing with the current Jarock version.
-if "%UPDATE_CHECK_EXIT_CODE%"=="2" echo Update skipped. Continuing with the current Jarock version.
+if "%UPDATE_CHECK_EXIT_CODE%"=="1" echo WARNING: The automatic startup update could not complete.
+if "%UPDATE_CHECK_EXIT_CODE%"=="1" echo Suggested fix: verify Internet access and repository safety, or choose Check updates only in parameter-manager.bat.
+if "%UPDATE_CHECK_EXIT_CODE%"=="2" echo Update was not applied. Continuing with the current Jarock version.
+exit /b 0
+
+:startup_update_check_only
+echo.
+echo ==> Checking for Jarock updates (no installation)
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-jarock.ps1" -CheckOnly
+set "UPDATE_CHECK_EXIT_CODE=%errorlevel%"
+if "%UPDATE_CHECK_EXIT_CODE%"=="1" echo WARNING: The read-only startup update check could not complete.
+if "%UPDATE_CHECK_EXIT_CODE%"=="1" echo Suggested fix: verify Internet access, or choose Do not check updates in parameter-manager.bat.
+if "%UPDATE_CHECK_EXIT_CODE%"=="2" echo A newer release was found, but no files were changed.
 exit /b 0

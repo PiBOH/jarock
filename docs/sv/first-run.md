@@ -6,7 +6,7 @@ Installera ett 64-bitars Java 25+-JDK, aktivera JAVA_HOME i Temurin-installation
 
 ## Installation och EULA
 
-Kör `start-server.bat` och välj Fabric (rekommenderas), NeoForge (reserv) eller Forge (inte tillgängligt för Minecraft 26.2 just nu). `parameter-manager.bat` ställer in RAM, GUI/konsol, GC, `online-mode`, banner och `AUTO_UPDATE_CHECK`. **Exit without saving** avbryter utan att spara.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## Säker avstängning
 

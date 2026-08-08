@@ -23,4 +23,4 @@ Installa Java 25 a 64 bit (abilita "Set JAVA_HOME variable" nell'installer Temur
 
 ## Controllo aggiornamenti all'avvio
 
-Imposta AUTO_UPDATE_CHECK=true in parameter-manager.bat per fare in modo che start-server.bat esegua un controllo GitHub in sola lettura. Segnalerà una versione compatibile più recente, ma non installerà nulla automaticamente. Arresta il server, attendi SAFE TO CLOSE ed esegui scripts/update-jarock.bat. Il valore predefinito è AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.

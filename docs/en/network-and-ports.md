@@ -164,4 +164,4 @@ If you complete this guide and the server is still unreachable, open a [GitHub i
 
 ## Optional startup update check
 
-Set AUTO_UPDATE_CHECK=true in parameter-manager.bat to make start-server.bat check GitHub at startup. If a compatible newer Jarock release is found, it asks `Download and install it now? (y/N)`: choose `y` or type `yes` to install the verified Lite package, or press Enter / choose `N` to continue with the current version. It never updates silently. Stop safely, wait for SAFE TO CLOSE, and use scripts/update-jarock.bat manually when needed. The default is AUTO_UPDATE_CHECK=false.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.

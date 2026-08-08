@@ -6,7 +6,7 @@ Instalează un JDK Java 25+ pe 64 de biți, activează JAVA_HOME în instalatoru
 
 ## Instalare și EULA
 
-Rulează `start-server.bat` și alege Fabric (recomandat), NeoForge (alternativă) sau Forge (indisponibil momentan pentru Minecraft 26.2). `parameter-manager.bat` configurează RAM, GUI/consolă, GC, `online-mode`, bannerul și `AUTO_UPDATE_CHECK`. **Exit without saving** anulează fără salvare.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## Oprire sigură
 

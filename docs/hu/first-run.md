@@ -6,7 +6,7 @@ Telepíts 64 bites Java 25 vagy újabb JDK-t, a Temurin telepítőben engedélye
 
 ## Telepítés és EULA
 
-Futtasd a `start-server.bat` fájlt, majd válaszd a Fabricet (ajánlott), a NeoForge-ot (tartalék) vagy a Forge-ot (Minecraft 26.2-höz jelenleg nem érhető el). A `parameter-manager.bat` a RAM-ot, GUI/konzolt, GC-t, `online-mode`-ot, bannert és `AUTO_UPDATE_CHECK` értéket állítja. Az **Exit without saving** mentés nélkül megszakítja a műveletet.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## Biztonságos leállítás
 

@@ -90,4 +90,4 @@ Despois dun erro, le `ERROR:` ou `WARNING:` e segue `Suggested fix:`. Se Java se
 
 ## Comprobación de actualizacións ao iniciar
 
-Establece AUTO_UPDATE_CHECK=true en parameter-manager.bat para que start-server.bat comprobe GitHub en modo de só lectura. Informará dunha versión compatible máis recente, pero non instalará nada automaticamente. Detén o servidor, agarda por SAFE TO CLOSE e executa scripts/update-jarock.bat. O valor predeterminado é AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.

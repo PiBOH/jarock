@@ -540,4 +540,4 @@ Always prefer the project's current documentation and download page over a copie
 
 ## Optional startup update check
 
-Set AUTO_UPDATE_CHECK=true in parameter-manager.bat to make start-server.bat check GitHub at startup. If a compatible newer release is found, it asks `Download and install it now? (y/N)`: choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently. Stop safely before any manual update. The default is AUTO_UPDATE_CHECK=false.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.

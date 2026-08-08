@@ -90,4 +90,4 @@ Java 通常使用 TCP `25565`，Bedrock 通常使用 UDP `19132`。Jarock 不会
 
 ## 启动时检查更新
 
-在 parameter-manager.bat 中将 AUTO_UPDATE_CHECK=true，可让 start-server.bat 以只读方式检查 GitHub 发布版本。它会报告兼容的新版本 Jarock，但不会自动安装。请停止服务器，等待 SAFE TO CLOSE，然后运行 scripts/update-jarock.bat。默认值为 AUTO_UPDATE_CHECK=false。 When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.

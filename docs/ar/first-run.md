@@ -6,7 +6,7 @@
 
 ## اختيار محمّل الخادم
 
-شغّل `start-server.bat`. سيفحص Jarock Java والمسارات و`‏scripts/server-launch-settings.ini`، وينقل إعدادات الجذر القديمة تلقائيًا. اختر Fabric (موصى به)، أو NeoForge (بديل)، أو Forge (غير متاح حاليًا لـ Minecraft 26.2). يتيح `parameter-manager.bat` ضبط الذاكرة وGUI/console وGC و`online-mode` واللافتة و`AUTO_UPDATE_CHECK`. خيار **Exit without saving** يلغي دون حفظ.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## التثبيت وقبول EULA
 

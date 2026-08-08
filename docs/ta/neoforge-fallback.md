@@ -23,4 +23,4 @@ Fabric பொருந்தாதபோது மட்டும் NeoForge-�
 
 ## தொடக்கத்தில் புதுப்பிப்பு சரிபார்ப்பு
 
-GitHub வெளியீடுகளை படிக்க மட்டும் சரிபார்க்க start-server.bat செய்ய parameter-manager.bat இல் AUTO_UPDATE_CHECK=true அமைக்கவும். இணக்கமான புதிய Jarock பதிப்பு தெரிவிக்கப்படும்; தானாக நிறுவப்படாது. சேவையகத்தை நிறுத்தி SAFE TO CLOSE வரும் வரை காத்திருந்து scripts/update-jarock.bat இயக்கவும். இயல்புநிலை AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.

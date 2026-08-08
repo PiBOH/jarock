@@ -6,7 +6,7 @@ Pasang JDK Java 25+ 64-bit, aktifkan JAVA_HOME dalam pemasang Temurin dan buka s
 
 ## Pemasangan dan EULA
 
-Jalankan `start-server.bat` dan pilih Fabric (disyorkan), NeoForge (sandaran) atau Forge (kini tidak tersedia untuk Minecraft 26.2). `parameter-manager.bat` mengkonfigurasi RAM, GUI/konsol, GC, `online-mode`, banner dan `AUTO_UPDATE_CHECK`. **Exit without saving** membatalkan tanpa menyimpan.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## Penutupan selamat
 

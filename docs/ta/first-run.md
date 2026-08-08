@@ -6,7 +6,7 @@
 
 ## Loader-ஐத் தேர்ந்தெடுத்தல்
 
-`start-server.bat`-ஐ இயக்கி Fabric (பரிந்துரை), NeoForge (மாற்று) அல்லது Forge (Minecraft 26.2-க்கு தற்போது கிடைக்காது) என்பதைத் தேர்ந்தெடுக்கவும். `parameter-manager.bat` மூலம் RAM, GUI/console, GC, `online-mode`, banner மற்றும் `AUTO_UPDATE_CHECK` அமைக்கலாம். **Exit without saving** சேமிக்காமல் ரத்து செய்கிறது.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## நிறுவல் மற்றும் EULA
 

@@ -6,7 +6,7 @@ Hierdie gids verduidelik die eerste gebruik van 'n vars Jarock-bewaarplek. Gebru
 
 ## Eerste loader-keuse
 
-Begin `start-server.bat`. Jarock kontroleer Java, paaie en `scripts/server-launch-settings.ini`. As die ou wortelinstellings bestaan, word hulle na `scripts/` gemigreer. Kies Fabric (aanbeveel), NeoForge (terugval) of Forge (tans nie beskikbaar vir Minecraft 26.2 nie). `parameter-manager.bat` kan RAM, GUI/konsole, GC, `online-mode`, die banier en `AUTO_UPDATE_CHECK` instel. **Exit without saving** kanselleer sonder om veranderinge te stoor.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## Installasie en EULA
 

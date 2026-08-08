@@ -25,4 +25,4 @@ Installera 64-bitars Java 25, kör `start-server. (enable "Set JAVA_HOME variabl
 
 ## Sök efter uppdateringar vid start
 
-Ställ in AUTO_UPDATE_CHECK=true i parameter-manager.bat så att start-server.bat gör en skrivskyddad GitHub-kontroll. En kompatibel nyare Jarock-version rapporteras, men inget installeras automatiskt. Stoppa servern, vänta på SAFE TO CLOSE och kör scripts/update-jarock.bat. Standardvärdet är AUTO_UPDATE_CHECK=false. When a compatible newer release is found at startup, Jarock asks `Download and install it now? (y/N)`; choose y to install the verified Lite package, or N/Enter to continue with the current version. It never updates silently.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.

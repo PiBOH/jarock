@@ -6,7 +6,7 @@
 
 ## Установка и EULA
 
-Запустите `start-server.bat` и выберите Fabric (рекомендуется), NeoForge (резервный вариант) или Forge (сейчас недоступен для Minecraft 26.2). В `parameter-manager.bat` настраиваются RAM, GUI/консоль, GC, `online-mode`, баннер и `AUTO_UPDATE_CHECK`. **Exit without saving** отменяет изменения без сохранения.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## Безопасная остановка
 

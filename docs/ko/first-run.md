@@ -6,7 +6,7 @@
 
 ## 설치 및 EULA
 
-`start-server.bat`을 실행하고 Fabric(권장), NeoForge(대체) 또는 Forge(Minecraft 26.2에서 현재 사용 불가)를 선택하세요. `parameter-manager.bat`에서 RAM, GUI/콘솔, GC, `online-mode`, 배너와 `AUTO_UPDATE_CHECK`를 설정할 수 있습니다. **Exit without saving**은 저장하지 않고 취소합니다.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## 안전한 종료
 

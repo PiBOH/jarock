@@ -59,7 +59,7 @@ echo   %OPT4%%PAD:~0,14%[%GC_PROFILE%]
 echo   %OPT5%%PAD:~0,3%[%AUTO_CONFIGURE_JAVA%]
 echo   %OPT6%%PAD:~0,29%[%ONLINE_MODE%]
 echo   %OPT7%%PAD:~0,28%[%SHOW_READY_BANNER%]
-echo   %OPTY%%PAD:~0,30%[%AUTO_UPDATE_CHECK%]
+echo   %OPTY%%PAD:~0,30%[%AUTO_UPDATE_MODE%]
 echo.
 echo   %OPT8%%PAD:~0,22%[starts the server]
 echo   %OPT9%%PAD:~0,34%[saves settings]
@@ -201,19 +201,29 @@ goto menu
 
 :auto_update_toggle
 cls
-call :read_value AUTO_UPDATE_CHECK false
-if /i "%AUTO_UPDATE_CHECK%"=="true" (
-    set "NEW_AUTO_UPDATE=false"
-    echo Run startup update check will be disabled.
-echo Jarock will not contact GitHub during startup.
-) else (
-    set "NEW_AUTO_UPDATE=true"
-echo Run startup update check will be enabled.
-echo Jarock will ask for confirmation when a newer release is found.
-echo y installs the verified Lite update; N or Enter skips it. It never updates silently.
-echo You can also install manually with scripts\update-jarock.bat while the server is stopped.
-)
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name AUTO_UPDATE_CHECK -Value "%NEW_AUTO_UPDATE%"
+echo Startup update behavior:
+echo 1. Check and install updates automatically
+ echo    Contacts GitHub and installs a verified compatible Lite package before startup.
+echo 2. Check updates only
+ echo    Contacts GitHub and reports updates, but never installs anything.
+echo 3. Do not check updates ^& do not install updates
+ echo    Does not contact GitHub during startup.
+echo.
+choice /c 123 /n /m "Choose update mode: "
+if errorlevel 3 goto update_mode_never
+if errorlevel 2 goto update_mode_check
+if errorlevel 1 goto update_mode_auto
+goto menu
+:update_mode_auto
+set "NEW_UPDATE_MODE=auto"
+goto update_mode_save
+:update_mode_check
+set "NEW_UPDATE_MODE=check"
+goto update_mode_save
+:update_mode_never
+set "NEW_UPDATE_MODE=never"
+:update_mode_save
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name AUTO_UPDATE_MODE -Value "%NEW_UPDATE_MODE%"
 if errorlevel 1 pause
 pause
 goto menu
@@ -305,7 +315,7 @@ set "OPT8=8. Save and start the server"
 set "OPT9=9. Save and exit"
 set "OPT0=0. Exit without saving"
 set "OPTX=X. Reset safe defaults"
-set "OPTY=Y. Run startup update check"
+set "OPTY=Y. Choose startup update mode"
 call :read_value LOADER_TYPE none
 call :read_value RAM_INITIAL 4G
 call :read_value RAM_MAX 4G
@@ -315,6 +325,10 @@ call :read_value AUTO_CONFIGURE_JAVA true
 call :read_value ONLINE_MODE true
 call :read_value SHOW_READY_BANNER true
 call :read_value AUTO_UPDATE_CHECK false
+call :read_value AUTO_UPDATE_MODE never
+if /i "%AUTO_UPDATE_MODE%"=="never" if /i "%AUTO_UPDATE_CHECK%"=="true" set "AUTO_UPDATE_MODE=auto"
+if /i "%AUTO_UPDATE_MODE%"=="false" set "AUTO_UPDATE_MODE=never"
+if /i "%AUTO_UPDATE_MODE%"=="true" set "AUTO_UPDATE_MODE=auto"
 exit /b 0
 
 :read_value

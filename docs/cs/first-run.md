@@ -6,7 +6,7 @@ Tato příručka popisuje první použití čerstvého repozitáře Jarock. Vžd
 
 ## Výběr loaderu
 
-Spusť `start-server.bat`. Jarock zkontroluje Javu, cesty a `scripts/server-launch-settings.ini` a případně automaticky přesune staré nastavení z kořene. Vyber Fabric (doporučeno), NeoForge (záložní volba) nebo Forge (pro Minecraft 26.2 momentálně není dostupný). `parameter-manager.bat` nastavuje RAM, GUI/konzoli, GC, `online-mode`, banner a `AUTO_UPDATE_CHECK`. **Exit without saving** zruší změny bez uložení.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## Instalace a EULA
 

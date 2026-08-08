@@ -7,9 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.60-beta] - 2026-08-08
+
 ### Added
 
 - Print the configured LAN connection addresses immediately after the ready banner: Java players receive the `server-port` TCP address and Bedrock players receive Geyser's `bedrock.port` UDP address. The launcher does not change router or firewall settings.
+- Add three explicit startup update modes to `parameter-manager.bat`: check and install automatically, check updates only, or do not check/install updates.
+
+### Fixed
+
+- Make `SAFE TO CLOSE` conservative: a previous startup save message no longer counts. Jarock now requires shutdown-specific save output after Minecraft begins stopping, in both GUI and `--nogui` modes, before reporting a normal close.
 
 ## [0.0.59-beta] - 2026-08-07
 
@@ -27,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Added the optional `AUTO_UPDATE_CHECK` setting to `parameter-manager.bat`. When enabled, `start-server.bat` checks GitHub before startup and asks `Download and install it now? (y/N)` if a newer compatible release exists. Lowercase `y` or `yes` installs the verified Lite package; `N` or Enter continues with the current version, and no update is ever installed silently.
+- Replaced the old boolean startup update setting with `AUTO_UPDATE_MODE`: `auto` checks and installs verified updates automatically, `check` checks without installing, and `never` disables the startup check. Older `AUTO_UPDATE_CHECK=true/false` local settings remain readable for compatibility.
 - Replaced the fragile exact-line EULA check with a tolerant PowerShell validator, so harmless whitespace, casing and Windows/Unix line-ending differences do not make a valid `eula=true` appear to be rejected.
 - Changed `scripts/update-jarock.ps1` to update existing installations from the matching Lite release package (`jarock-lite.zip` or `jarock-lite-<version>.zip`) while retaining SHA-512, version, channel, process, Git-safety and rollback checks. Existing Java prerequisites are preserved and are not reinstalled during updates.
 - Clarified the parameter manager: `Show ready banner` controls the startup banner, while `Run startup update check` asks for confirmation when a newer compatible release is found. Lowercase `y` or `yes` installs the verified Lite package; `N` or Enter skips it. You can also use `scripts/update-jarock.bat` after safely stopping the server.
@@ -570,7 +577,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.59-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.60-beta...HEAD
+[0.0.60-beta]: https://github.com/PiBOH/jarock/compare/0.0.59-beta...0.0.60-beta
 [0.0.59-beta]: https://github.com/PiBOH/jarock/compare/0.0.58-beta...0.0.59-beta
 [0.0.58-beta]: https://github.com/PiBOH/jarock/compare/0.0.57-beta...0.0.58-beta
 [0.0.57-beta]: https://github.com/PiBOH/jarock/compare/0.0.56-beta...0.0.57-beta

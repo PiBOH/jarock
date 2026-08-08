@@ -6,7 +6,7 @@ Instalējiet 64 bitu Java 25 vai jaunāku JDK, Temurin instalētājā ieslēdzie
 
 ## Instalēšana un EULA
 
-Palaidiet `start-server.bat` un izvēlieties Fabric (ieteicams), NeoForge (rezerves variants) vai Forge (Minecraft 26.2 pašlaik nav pieejams). `parameter-manager.bat` konfigurē RAM, GUI/konsole režīmu, GC, `online-mode`, reklāmkarogu un `AUTO_UPDATE_CHECK`. **Exit without saving** atceļ bez saglabāšanas.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## Droša apturēšana
 

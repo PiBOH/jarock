@@ -6,7 +6,7 @@
 
 ## انتخاب loader
 
-اجرای `start-server.bat` Java، مسیرها و `scripts/server-launch-settings.ini` را بررسی می‌کند و تنظیمات قدیمی ریشه را منتقل می‌کند. Fabric (پیشنهادی)، NeoForge (جایگزین) یا Forge (فعلاً برای Minecraft 26.2 موجود نیست) را انتخاب کنید. `parameter-manager.bat` برای RAM، GUI، GC، `online-mode`، بنر و `AUTO_UPDATE_CHECK` است؛ **Exit without saving** بدون ذخیره لغو می‌کند.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## نصب و EULA
 

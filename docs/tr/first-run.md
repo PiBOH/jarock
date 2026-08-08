@@ -6,7 +6,7 @@
 
 ## Loader seçimi
 
-`start-server.bat` dosyasını çalıştırıp Fabric (önerilen), NeoForge (yedek) veya Forge (Minecraft 26.2 için şu anda kullanılamıyor) seçin. `parameter-manager.bat` RAM, GUI/console, GC, `online-mode`, banner ve `AUTO_UPDATE_CHECK` ayarlarını yönetir. **Exit without saving** kaydetmeden iptal eder.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## Kurulum ve EULA
 

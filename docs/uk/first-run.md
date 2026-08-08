@@ -6,7 +6,7 @@
 
 ## Вибір loader
 
-Запустіть `start-server.bat` і виберіть Fabric (рекомендовано), NeoForge (запасний варіант) або Forge (зараз недоступний для Minecraft 26.2). У `parameter-manager.bat` можна налаштувати RAM, GUI/console, GC, `online-mode`, банер і `AUTO_UPDATE_CHECK`. **Exit without saving** скасовує зміни без збереження.
+Startup update modes: AUTO_UPDATE_MODE=auto checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
 
 ## Встановлення та EULA
 
