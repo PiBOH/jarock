@@ -9,7 +9,7 @@
 이 문서는 Jarock을 다운로드한 뒤 실제로 어떤 일이 일어나는지 설명합니다.
 
 
-> DedicatedPower is a Fabric-only mod: it is updated automatically from its latest GitHub release, while the other server mods are pinned and verified with SHA-512.
+> Technical fallback note: DedicatedPower is a Fabric-only mod: it is updated automatically from its latest GitHub release, while the other server mods are pinned and verified with SHA-512. Links In Chat is also included as a verified server-side Fabric 26.2 mod; it makes chat URLs clickable and adds `/link` and `/linkwhisper`, without requiring client installation.
 
 > Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **유지 관리 참고:** 실행기는 `PATH`의 첫 번째 `java.exe`만 사용하지 않고 호환되는 64비트 Java 25 이상 런타임을 검색합니다. `scripts/java-runtime.ps1`을 사용하고 선택한 실행 파일을 `server/java-path.txt`에 저장하며 시작 전에 다시 확인합니다. Java 8은 설치된 상태로 둘 수 있습니다.

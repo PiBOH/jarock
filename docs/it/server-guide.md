@@ -30,6 +30,7 @@ Componenti:
 - **Floodgate-Fabric:** permette agli utenti Bedrock autenticati di entrare senza un account Java a pagamento.
 - **Lithium, FerriteCore, Krypton:** ottimizzazione iniziale consigliata.
 - **Fabric Carpet:** strumenti tecnici, regole e test per redstone.
+- **Links In Chat:** mod server-side che rende cliccabili gli URL nella chat e aggiunge i comandi `/link` e `/linkwhisper`; i client non devono installarla.
 - **ServerCore, Carpet Extra e Carpet TIS Addition:** opzionali; installali solo se esiste una build compatibile con 26.2.
 
 ### Cosa non installare sul server

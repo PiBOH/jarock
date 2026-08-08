@@ -10,6 +10,7 @@ Jarock never moves, renames, deletes or replaces an existing world automatically
 > Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > The whitelist is disabled by default (white-list=false, enforce-whitelist=false in server.properties). Before opening the server to the public, set both to true and add players with: whitelist add <name>.
 > The parameter manager also has a "Show ready banner" option: it shows or hides the ASCII-art banner printed when the server finishes loading. See the [full English guide](../en/server-guide.md).
+> Technical fallback note: Links In Chat is included in the pinned Fabric 26.2 server stack. It makes URLs in server chat clickable and adds `/link` and `/linkwhisper`; clients do not need to install it.
 > If no compatible Java 25+ is found, start-server.bat launches the bundled Java installers in order: the legacy Java 8 runtime (jre-8-windows-x64.exe) first, then the Eclipse Temurin JDK 25 MSI (OpenJDK25U-jdk_x64_windows_hotspot.msi). Accept each UAC prompt and let the installers finish.
 > **หมายเหตุทางเทคนิค: ใช้ `start-server.bat` ที่อยู่ในโฟลเดอร์รากของ repository เสมอ อย่าดับเบิลคลิก `server.jar` เพราะ Windows อาจใช้ Java 8 หรือ Java 21 ขณะที่ Minecraft 26.2 ต้องใช้ Java 25+ แบบ 64 บิต ดู[คู่มือภาษาอังกฤษฉบับเต็ม](../en/server-guide.md)**
 

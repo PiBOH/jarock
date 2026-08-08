@@ -60,6 +60,13 @@ $Mods = @(
         Purpose = 'Technical and redstone tools'
     }
     [pscustomobject]@{
+        Name = 'linksinchat-1.3.1+26.2.jar'
+        Url = 'https://cdn.modrinth.com/data/klpvLefw/versions/UjY4hWon/linksinchat-1.3.1%2B26.2.jar'
+        Sha512 = '9cbd4eb2b26b518920a2df78c22c95c998ded2f36b6a524881f96f22a2f1a111790791283d32613db8eb71f48e71b30625114c3eaf9d134cd57b776163290067'
+        Required = $true
+        Purpose = 'Clickable links and link whisper commands in server chat'
+    }
+    [pscustomobject]@{
         Name = 'imfast-FABRIC-26.2-1.0.3.jar'
         Url = 'https://cdn.modrinth.com/data/PaUMOeP0/versions/nD5sET2x/imfast-FABRIC-26.2-1.0.3.jar'
         Sha512 = '664606eb41dbf13385ec82545c30a7b118bd263393325c29a6a6eef6e0a390555c194e0c15df64c18d7f477344c423e518e67b481d5c9171fd5c7fb36795341b'

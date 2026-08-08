@@ -10,7 +10,7 @@ Always use the repository-root `start-server.bat` entry point. Do **not** double
 
 1. Run `start-server.bat` once.
 2. If no loader is configured, choose Fabric, Forge or NeoForge. You may open `parameter-manager.bat` during this first-run flow.
-3. The bootstrap installs the selected loader and downloads only its matching pinned server mods.
+3. The bootstrap installs the selected loader and downloads only its matching pinned server mods. Fabric also installs the server-side Links In Chat mod for clickable chat URLs and the `/link`/`/linkwhisper` commands; clients do not need to install it.
 4. Read `eula.txt` and set `eula=true` only if you accept the Minecraft EULA.
 5. Run `start-server.bat` again.
 6. Geyser generates its complete loader-specific configuration on the first server start.

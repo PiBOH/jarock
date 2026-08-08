@@ -38,6 +38,7 @@ Bedrock players ─ Geyser ───┘ │
 | Krypton | Optimizes networking | `mods/` |
 | ServerCore | Server performance controls | `mods/`, only if a 26.2 build exists |
 | Fabric Carpet | Technical tools, rules and redstone testing | `mods/` |
+| Links In Chat | Server-side clickable links and `/link` or `/linkwhisper` chat commands | `mods/` |
 | Carpet Extra / Carpet TIS Addition | Optional Carpet extensions | `mods/`, only if compatible |
 
 This guide intentionally starts with a small stack. Add one mod at a time, start the server, and test it before adding another.
@@ -257,6 +258,7 @@ Put these files inside it:
 fabric-api-<compatible-version>.jar
 Geyser-Fabric-<compatible-version>.jar
 floodgate-fabric-<compatible-version>.jar
+linksinchat-1.3.1+26.2.jar
 ```
 
 The exact filenames and versions will change. The important checks are:
@@ -351,6 +353,7 @@ Only install a mod after checking its current project page for **Minecraft 26.2*
 | Krypton | Server-side or both | Networking optimization; test with Geyser |
 | ServerCore | Server-side | Optional; enable conservative settings first |
 | Fabric Carpet | Server-side or both | Technical rules, diagnostics and redstone testing |
+| Links In Chat | Server-side | Makes URLs in server chat clickable; no client installation is required |
 | Carpet Extra | Server-side | Optional extension; match its Carpet dependency |
 | Carpet TIS Addition | Server-side or both | Optional advanced technical tools; verify 26.2 support |
 
@@ -456,7 +459,8 @@ Use this list in order:
 - [ ] Geyser `auth-type` is `floodgate`.
 - [ ] Java TCP and Bedrock UDP ports are distinct and reachable.
 - [ ] No client-only mod is in the server `mods/` folder.
-- [ ] Every optimization mod lists Fabric and Minecraft 26.2.
+- [ ] Every optimization and utility mod lists Fabric and Minecraft 26.2.
+- [ ] Links In Chat is installed from the pinned Fabric 26.2 manifest when clickable server-chat links are desired.
 - [ ] A backup exists before adding technical mods.
 - [ ] Java can connect.
 - [ ] Bedrock can connect.

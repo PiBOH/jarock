@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.77-beta] - 2026-08-08
+
+### Added
+
+- Added the server-side Fabric mod Links In Chat for Minecraft 26.2 (`linksinchat-1.3.1+26.2.jar`). The pinned Modrinth download is verified with SHA-512 during bootstrap and provides clickable URLs plus `/link` and `/linkwhisper` commands without requiring client installation.
+- Documented Links In Chat in the complete English and Italian Fabric guides, plus the localized technical summaries and fallback notes for all supported languages.
+
 ## [0.0.76-beta] - 2026-08-08
 
 ### Fixed
@@ -665,7 +672,9 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.72-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.77-beta...HEAD
+[0.0.77-beta]: https://github.com/PiBOH/jarock/compare/0.0.76-beta...0.0.77-beta
+[0.0.76-beta]: https://github.com/PiBOH/jarock/compare/0.0.75-beta...0.0.76-beta
 [0.0.72-beta]: https://github.com/PiBOH/jarock/compare/0.0.71-beta...0.0.72-beta
 [0.0.71-beta]: https://github.com/PiBOH/jarock/compare/0.0.70-beta...0.0.71-beta
 [0.0.70-beta]: https://github.com/PiBOH/jarock/compare/0.0.69-beta...0.0.70-beta
