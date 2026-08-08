@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.74-beta] - 2026-08-08
+
+### Fixed
+
+- Fixed startup self-updates corrupting the still-running `start-server.bat`: the launcher now executes from an isolated `.cache/start-server-runner.bat` copy, so the updater can replace the real launcher without causing fragments such as `Internet` or `install` to be executed as commands. If the isolated runner cannot be created, startup stops instead of attempting an unsafe automatic update.
+- Fixed mojibake in the ready ASCII banner under Windows PowerShell 5.1 by reading `server-ready-banner.txt` explicitly as UTF-8.
+- Fixed the first update from older Jarock releases: startup updates now defer replacing `start-server.bat` until the current launcher process exits, so even an older launcher cannot be corrupted while it is executing. Lite packages now require the deferred-launcher helper, and its replacement waits for the parent command process to exit with a bounded ten-minute timeout.
+
 ## [0.0.73-beta] - 2026-08-08
 
 ### Changed

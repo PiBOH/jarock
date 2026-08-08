@@ -1,7 +1,30 @@
 @echo off
 setlocal EnableExtensions DisableDelayedExpansion
+
+rem Run from an isolated copy so a startup self-update can safely replace this file.
+rem cmd.exe reads batch files by position; replacing the active file otherwise makes
+rem it execute random fragments of the new file (for example, "Internet" or "install").
+if /i "%~nx0"=="start-server-runner.bat" if defined _JAROCK_RUNNER_ROOT goto :runner_start
 set "ROOT=%~dp0"
 if "%ROOT:~-1%"=="\" set "ROOT=%ROOT:~0,-1%"
+if not exist "%ROOT%\.cache" mkdir "%ROOT%\.cache" >nul 2>&1
+if exist "%ROOT%\.cache\start-server-runner.bat" del /q "%ROOT%\.cache\start-server-runner.bat" >nul 2>&1
+copy /y "%~f0" "%ROOT%\.cache\start-server-runner.bat" >nul 2>&1
+if not exist "%ROOT%\.cache\start-server-runner.bat" goto :runner_fallback
+set "_JAROCK_RUNNER_ROOT=%ROOT%"
+"%ROOT%\.cache\start-server-runner.bat" %*
+set "RUNNER_EXIT_CODE=%errorlevel%"
+exit /b %RUNNER_EXIT_CODE%
+
+:runner_fallback
+echo ERROR: Could not create the isolated startup runner.
+echo Suggested fix: check that the repository is writable and that antivirus software is not blocking the .cache folder, then run start-server.bat again.
+echo The server was not started because automatic updates cannot be made safe without the isolated runner.
+pause
+exit /b 1
+
+:runner_start
+if defined _JAROCK_RUNNER_ROOT set "ROOT=%_JAROCK_RUNNER_ROOT%"
 
 where powershell.exe >nul 2>&1
 if errorlevel 1 (
@@ -151,7 +174,7 @@ exit /b %EXIT_CODE%
 echo.
 echo ^==^> Checking for and installing Jarock updates automatically
 echo The verified Lite package will be installed before the server starts when a newer compatible release exists.
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-jarock.ps1" -NonInteractive
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-jarock.ps1" -NonInteractive -StartupUpdate
 set "UPDATE_CHECK_EXIT_CODE=%errorlevel%"
 if "%UPDATE_CHECK_EXIT_CODE%"=="1" echo WARNING: The automatic startup update could not complete.
 if "%UPDATE_CHECK_EXIT_CODE%"=="1" echo Suggested fix: verify Internet access and repository safety, or choose Check updates only in parameter-manager.bat.

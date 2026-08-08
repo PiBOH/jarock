@@ -28,6 +28,17 @@ function Invoke-ModeParser([string]$SettingsPath, [string]$HelperPath) {
 try {
     Assert (Test-Path -LiteralPath $BatchPath -PathType Leaf) 'start-server.bat is present'
     $Batch = Get-Content -LiteralPath $BatchPath -Raw
+    Assert ($Batch.Contains('_JAROCK_RUNNER_ROOT')) 'start-server.bat isolates execution for safe self-updates'
+    Assert ($Batch.Contains('start-server-runner.bat')) 'start-server.bat uses a temporary runner copy'
+    Assert ($Batch.Contains('-NonInteractive -StartupUpdate')) 'startup updates use deferred launcher replacement mode'
+    $Updater = Get-Content -LiteralPath (Join-Path $Root 'scripts/update-jarock.ps1') -Raw
+    Assert ($Updater.Contains('Schedule-DeferredLauncherApply')) 'updater schedules the launcher replacement after startup exits'
+    $PendingHelper = Get-Content -LiteralPath (Join-Path $Root 'scripts/apply-pending-launcher.ps1') -Raw
+    Assert (Test-Path -LiteralPath (Join-Path $Root 'scripts/apply-pending-launcher.ps1') -PathType Leaf) 'deferred launcher helper is present'
+    Assert ($Updater.Contains('apply-pending-launcher.ps1')) 'update packages require the deferred launcher helper'
+    Assert ($PendingHelper.Contains('AddMinutes(10)')) 'deferred launcher helper has a bounded wait'
+    $RunServer = Get-Content -LiteralPath (Join-Path $Root 'scripts/run-server.ps1') -Raw
+    Assert ($RunServer.Contains('Get-Content -LiteralPath $ReadyBannerPath -Encoding UTF8')) 'run-server.ps1 reads the ready banner as UTF-8'
     Assert ($Batch.Contains('set "STARTUP_UPDATE_MODE="')) 'start-server.bat initializes the startup update mode'
     Assert ($Batch.Contains('tokens=1,* delims==')) 'start-server.bat splits the setting key from its value'
     Assert ($Batch.Contains('AUTO_UPDATE_MODE=" "%SETTINGS%"')) 'start-server.bat reads AUTO_UPDATE_MODE without an end-of-line regex'

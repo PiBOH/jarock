@@ -4,6 +4,7 @@ param(
     [switch]$CheckOnly,
     [switch]$PromptForUpdate,
     [switch]$AllowLocalChanges,
+    [switch]$StartupUpdate,
     [string]$ReleaseApiUrl = 'https://api.github.com/repos/PiBOH/jarock/releases?per_page=100'
 )
 
@@ -21,6 +22,18 @@ $BackupRoot = Join-Path $CacheRoot 'update-backups'
 $VersionPath = Join-Path $PSScriptRoot 'version.txt'
 $UserAgent = 'Jarock-updater'
 $script:TrackedFilesCache = $null
+$script:DeferredLauncherPath = Join-Path $CacheRoot 'pending-start-server.bat'
+
+function Test-StartupInvocation {
+    try {
+        $Current = Get-CimInstance Win32_Process -Filter "ProcessId = $PID" -ErrorAction Stop
+        if ($null -eq $Current -or $null -eq $Current.ParentProcessId) { return $false }
+        $Parent = Get-CimInstance Win32_Process -Filter "ProcessId = $($Current.ParentProcessId)" -ErrorAction Stop
+        return ([string]$Parent.CommandLine -match '(?i)(start-server(?:-runner)?\.bat)')
+    }
+    catch { return $false }
+}
+if (-not $StartupUpdate -and (Test-StartupInvocation)) { $StartupUpdate = $true }
 
 function Show-ErrorGuidance([string]$Message, [string]$Action) {
     Write-Host "`nERROR: $Message" -ForegroundColor Red
@@ -216,7 +229,8 @@ function Test-Package([string]$ZipPath, $ExpectedVersion) {
         $StartEntry = $Archive.GetEntry('start-server.bat')
         $UpdateEntry = $Archive.GetEntry('scripts/update-jarock.ps1')
         $UpdateLauncherEntry = $Archive.GetEntry('scripts/update-jarock.bat')
-        if ($null -eq $VersionEntry -or $null -eq $StartEntry -or $null -eq $UpdateEntry -or $null -eq $UpdateLauncherEntry) { throw 'The downloaded Lite package is missing required Jarock updater files.' }
+        $DeferredLauncherEntry = $Archive.GetEntry('scripts/apply-pending-launcher.ps1')
+        if ($null -eq $VersionEntry -or $null -eq $StartEntry -or $null -eq $UpdateEntry -or $null -eq $UpdateLauncherEntry -or $null -eq $DeferredLauncherEntry) { throw 'The downloaded Lite package is missing required Jarock updater files.' }
         $Reader = New-Object IO.StreamReader($VersionEntry.Open())
         try { $PackageVersion = Parse-SemVer $Reader.ReadToEnd() } finally { $Reader.Dispose() }
         if ((Compare-SemVer $PackageVersion $ExpectedVersion) -ne 0) { throw "The package version ($($PackageVersion.Text)) does not match the release version ($($ExpectedVersion.Text))." }
@@ -271,6 +285,27 @@ function Test-ProtectedProjectPath([string]$Relative) {
     return $false
 }
 
+function Schedule-DeferredLauncherApply {
+    if (-not $StartupUpdate -or -not (Test-Path -LiteralPath $script:DeferredLauncherPath -PathType Leaf)) { return }
+    try {
+        $Current = Get-CimInstance Win32_Process -Filter "ProcessId = $PID" -ErrorAction Stop
+        $ParentProcessId = [int]$Current.ParentProcessId
+        $Helper = Join-Path $Root 'scripts/apply-pending-launcher.ps1'
+        if (-not (Test-Path -LiteralPath $Helper -PathType Leaf)) { throw 'The deferred launcher helper is missing.' }
+        Start-Process -FilePath 'powershell.exe' -WindowStyle Hidden -ArgumentList @(
+            '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $Helper,
+            '-ParentProcessId', [string]$ParentProcessId,
+            '-PendingPath', $script:DeferredLauncherPath,
+            '-DestinationPath', (Join-Path $Root 'start-server.bat')
+        ) | Out-Null
+        Write-Host 'The updated start-server.bat launcher is queued and will be applied after this startup window closes.' -ForegroundColor Cyan
+    }
+    catch {
+        Write-Host "WARNING: The updated start-server.bat could not be queued automatically: $($_.Exception.Message)" -ForegroundColor Yellow
+        Write-Host 'Suggested fix: close this startup window normally, then run the updater again if the launcher was not updated.' -ForegroundColor Yellow
+    }
+}
+
 function Backup-AndApply([string]$Stage, $NewVersion) {
     $Stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
     $Backup = Join-Path $BackupRoot "jarock-$Stamp-$($NewVersion.Text)"
@@ -302,6 +337,10 @@ function Backup-AndApply([string]$Stage, $NewVersion) {
             $Relative = $File.FullName.Substring($Stage.Length).TrimStart('\','/').Replace('\','/')
             if (Test-ProtectedProjectPath $Relative) { continue }
             $Destination = Join-Path $Root $Relative
+            if ($StartupUpdate -and $Relative -ieq 'start-server.bat') {
+                Copy-Item -LiteralPath $File.FullName -Destination $script:DeferredLauncherPath -Force
+                continue
+            }
             New-Item -ItemType Directory -Force -Path (Split-Path -Parent $Destination) | Out-Null
             Copy-Item -LiteralPath $File.FullName -Destination $Destination -Force
         }
@@ -378,7 +417,12 @@ try {
     Write-Host "Jarock was updated from $($LocalVersion.Text) to $($Candidate.Version.Text)." -ForegroundColor Green
     Write-Host "Local runtime, world, settings and secrets were preserved." -ForegroundColor Green
     Write-Host "Rollback backup: $Backup" -ForegroundColor Cyan
-    Write-Host 'Run start-server.bat to verify the updated installation.' -ForegroundColor Cyan
+    if ($StartupUpdate) {
+        Schedule-DeferredLauncherApply
+    }
+    else {
+        Write-Host 'Run start-server.bat to verify the updated installation.' -ForegroundColor Cyan
+    }
     exit 0
 }
 catch {
