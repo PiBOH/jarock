@@ -74,3 +74,6 @@ The guides explain installation from zero, Java and Bedrock networking, Geyser/F
 ## License
 
 This project is released under the [MIT License](LICENSE).
+<!-- jarock-console-close-protection -->
+
+> **Windows console close protection:** While Jarock is running, the classic Windows console shows a warning MsgBox if you click `X`, telling you to type `stop` (or close the Minecraft GUI normally) and wait for `SAFE TO CLOSE`. This is best effort only: Windows can force-terminate a console process after its control-handler timeout, and Windows Terminal/Alacritty pseudoconsole tabs may not deliver the close event. Always use `stop` and wait for `SAFE TO CLOSE`; never force-close while the world is saving.

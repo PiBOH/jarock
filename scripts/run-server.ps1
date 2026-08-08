@@ -13,6 +13,9 @@ Set-StrictMode -Version Latest
 $Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $JavaRuntimeScript = Join-Path $PSScriptRoot 'java-runtime.ps1'
 . $JavaRuntimeScript
+$CloseProtectionScript = Join-Path $PSScriptRoot 'console-close-protection.ps1'
+$CloseProtectionEnabled = $false
+$CloseProtectionLoaded = $false
 
 function Show-ErrorGuidance([string]$Message, [string]$Action) {
     Write-Host "ERROR: $Message" -ForegroundColor Red
@@ -187,6 +190,22 @@ try {
     $script:LanIPv4 = Get-LanIPv4
     $script:JavaPort = Get-ConfiguredServerPort $Properties
     $script:BedrockPort = Get-ConfiguredBedrockPort $ServerDirectory $Loader
+    if (Test-Path -LiteralPath $CloseProtectionScript -PathType Leaf) {
+        try {
+            . $CloseProtectionScript
+            $CloseProtectionLoaded = $true
+            $CloseProtectionEnabled = Enable-JarockConsoleCloseProtection
+            if ($CloseProtectionEnabled) {
+                Write-Host 'Console close protection is active while the server is running.' -ForegroundColor Cyan
+                Write-Host 'Use stop (or close the Minecraft GUI normally) and wait for SAFE TO CLOSE before closing this window.' -ForegroundColor Yellow
+            } else {
+                Write-Host 'WARNING: Console close protection could not be enabled; use stop and wait for SAFE TO CLOSE.' -ForegroundColor Yellow
+            }
+        } catch {
+            Write-Host "WARNING: Console close protection could not be initialized: $($_.Exception.Message)" -ForegroundColor Yellow
+            Write-Host 'Use stop and wait for SAFE TO CLOSE before closing this window.' -ForegroundColor Yellow
+        }
+    }
     Push-Location -LiteralPath $ServerDirectory
     try {
         if($Loader -eq 'fabric') {
@@ -267,3 +286,8 @@ try {
     }
     exit $FinalExitCode
 } catch { Show-ErrorGuidance $_.Exception.Message 'Open parameter-manager.bat, select a supported loader and valid settings, then run start-server.bat again.'; exit 1 }
+finally {
+    if ($CloseProtectionLoaded) {
+        try { Disable-JarockConsoleCloseProtection } catch { }
+    }
+}

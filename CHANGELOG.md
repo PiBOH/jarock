@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.68-beta] - 2026-08-08
+
+### Added
+
+- Added best-effort Windows console close protection to the managed server process. On the classic console host, clicking `X` can show a MsgBox instructing the operator to type `stop` or close the Minecraft GUI normally and wait for `SAFE TO CLOSE`. The protection is removed after shutdown, while the documentation explains the Windows timeout and Windows Terminal/Alacritty pseudoconsole limitations.
+- Added the console-close warning and safe-shutdown limitation note to the root documentation and all localized guides that describe server shutdown.
+
 ## [0.0.67-beta] - 2026-08-08
 
 ### Changed
@@ -603,7 +610,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.67-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.68-beta...HEAD
+[0.0.68-beta]: https://github.com/PiBOH/jarock/compare/0.0.67-beta...0.0.68-beta
 [0.0.67-beta]: https://github.com/PiBOH/jarock/compare/0.0.66-beta...0.0.67-beta
 [0.0.66-beta]: https://github.com/PiBOH/jarock/compare/0.0.65-beta...0.0.66-beta
 [0.0.65-beta]: https://github.com/PiBOH/jarock/compare/0.0.64-beta...0.0.65-beta

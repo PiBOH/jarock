@@ -24,3 +24,7 @@ See the [English NeoForge fallback guide](../en/neoforge-fallback.md) for the co
 ## 启动时检查更新
 
 Startup update modes: AUTO_UPDATE_MODE=install checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
+
+<!-- jarock-console-close-protection -->
+
+> **Windows 控制台关闭保护:** While Jarock is running, the classic Windows console may show a warning when X is clicked. 请输入 stop 并等待 SAFE TO CLOSE。世界保存时不要强制关闭。 This is best effort only: Windows Terminal and Alacritty pseudoconsole tabs may not deliver the close event, and Windows can force-terminate the process after its short handler timeout.

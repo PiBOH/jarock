@@ -541,3 +541,7 @@ Always prefer the project's current documentation and download page over a copie
 ## Optional startup update check
 
 Startup update modes: AUTO_UPDATE_MODE=install checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
+
+<!-- jarock-console-close-protection -->
+
+> **Windows console close protection:** While Jarock is running, the classic Windows console may show a warning when X is clicked. Type stop and wait for SAFE TO CLOSE. Never force-close while the world is saving. This is best effort only: Windows Terminal and Alacritty pseudoconsole tabs may not deliver the close event, and Windows can force-terminate the process after its short handler timeout.

@@ -99,6 +99,8 @@ echo Type "stop" in the server console to shut it down safely.
 echo IMPORTANT: after typing "stop", do not close this window yet.
 echo Wait for the final "SAFE TO CLOSE" message after Minecraft finishes saving the world.
 echo Do not double-click server\server.jar directly: Windows may use an older Java association.
+echo The classic console close button is protected while Jarock is running.
+echo Type "stop" (or close the Minecraft GUI normally) and wait for "SAFE TO CLOSE" before closing this window.
 echo.
 pushd "%ROOT%\server"
 if errorlevel 1 (
@@ -138,7 +140,7 @@ exit /b %EXIT_CODE%
 
 :startup_update_auto
 echo.
-echo ==> Checking for and installing Jarock updates automatically
+echo ^==^> Checking for and installing Jarock updates automatically
 echo The verified Lite package will be installed before the server starts when a newer compatible release exists.
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-jarock.ps1" -NonInteractive
 set "UPDATE_CHECK_EXIT_CODE=%errorlevel%"
@@ -149,7 +151,7 @@ exit /b 0
 
 :startup_update_check_only
 echo.
-echo ==> Checking for Jarock updates (no installation)
+echo ^==^> Checking for Jarock updates (no installation)
 echo This read-only check runs before the server bootstrap and never changes files.
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-jarock.ps1" -CheckOnly
 set "UPDATE_CHECK_EXIT_CODE=%errorlevel%"
@@ -160,6 +162,6 @@ exit /b 0
 
 :startup_update_never
 echo.
-echo ==> Startup update check disabled
+echo ^==^> Startup update check disabled
 echo GitHub will not be contacted and no update will be installed before startup.
 exit /b 0
