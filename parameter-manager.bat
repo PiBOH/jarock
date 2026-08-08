@@ -69,7 +69,7 @@ echo.
 if /i "%ONLINE_MODE%"=="false" echo  WARNING: online-mode=false disables Mojang authentication. Keep it for private testing only.
 echo.
 choice /c 1234567890XY /n /m "Choose an option: "
-if errorlevel 12 goto auto_update_toggle
+if errorlevel 12 goto update_mode_menu
 if errorlevel 11 goto reset
 if errorlevel 10 goto cancel_exit
 if errorlevel 9 goto save_exit
@@ -199,7 +199,7 @@ if errorlevel 1 pause
 pause
 goto menu
 
-:auto_update_toggle
+:update_mode_menu
 cls
 echo Startup update behavior:
 echo 1. Check and install updates automatically
@@ -212,9 +212,9 @@ echo.
 choice /c 123 /n /m "Choose update mode: "
 if errorlevel 3 goto update_mode_never
 if errorlevel 2 goto update_mode_check
-if errorlevel 1 goto update_mode_auto
+if errorlevel 1 goto update_mode_install
 goto menu
-:update_mode_auto
+:update_mode_install
 set "NEW_UPDATE_MODE=install"
 goto update_mode_save
 :update_mode_check
@@ -348,9 +348,8 @@ if /i "%HAS_AUTO_UPDATE_MODE%"=="false" (
     if /i "%HAS_AUTO_UPDATE_CHECK%"=="true" if /i "%AUTO_UPDATE_CHECK%"=="true" set "AUTO_UPDATE_MODE=install"
     if /i "%HAS_AUTO_UPDATE_CHECK%"=="true" if /i "%AUTO_UPDATE_CHECK%"=="false" set "AUTO_UPDATE_MODE=never"
 )
-if /i "%AUTO_UPDATE_MODE%"=="auto" (
+if /i not "%AUTO_UPDATE_MODE%"=="install" if /i not "%AUTO_UPDATE_MODE%"=="check" if /i not "%AUTO_UPDATE_MODE%"=="never" (
     set "AUTO_UPDATE_MODE=install"
-    rem Persist the old value migration when the user later chooses Save and exit/start.
     powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name AUTO_UPDATE_MODE -Value install >nul
 )
 rem An explicit AUTO_UPDATE_MODE always wins over the legacy boolean setting.

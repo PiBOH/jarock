@@ -32,13 +32,14 @@ try {
     Assert ($Batch.Contains('tokens=1,* delims==')) 'start-server.bat splits the setting key from its value'
     Assert ($Batch.Contains('AUTO_UPDATE_MODE=" "%SETTINGS%"')) 'start-server.bat reads AUTO_UPDATE_MODE without an end-of-line regex'
     Assert ($Batch.Contains('set "STARTUP_UPDATE_MODE=%%B"')) 'start-server.bat stores the parsed startup update value'
-    Assert ($Batch.Contains('if /i "%STARTUP_UPDATE_MODE%"=="install" call :startup_update_auto')) 'install mode calls the automatic updater'
-    Assert ($Batch.Contains('if /i "%STARTUP_UPDATE_MODE%"=="auto" call :startup_update_auto')) 'legacy auto mode calls the automatic updater'
+    Assert ($Batch.Contains('if /i "%STARTUP_UPDATE_MODE%"=="install" call :startup_update_install')) 'install mode calls the install updater'
+    Assert (-not $Batch.Contains('STARTUP_UPDATE_MODE%"=="auto"')) 'active startup logic no longer uses the auto mode name'
+    Assert (-not $Batch.Contains(':startup_update_auto')) 'startup updater label uses the install mode name'
     Assert ($Batch.Contains('if /i "%STARTUP_UPDATE_MODE%"=="check" call :startup_update_check_only')) 'check mode calls the read-only updater'
     Assert ($Batch.Contains('if /i "%STARTUP_UPDATE_MODE%"=="never" call :startup_update_never')) 'never mode calls the disabled-update path'
     Assert ($Batch.Contains('set "LEGACY_AUTO_UPDATE_CHECK="')) 'legacy AUTO_UPDATE_CHECK compatibility remains'
     Assert ($Batch.Contains('set "LEGACY_AUTO_UPDATE_CHECK=%%B"')) 'legacy AUTO_UPDATE_CHECK value is parsed safely'
-    Assert ($Batch.Contains('if not defined LEGACY_AUTO_UPDATE_CHECK call :startup_update_auto')) 'missing mode uses the install default'
+    Assert ($Batch.Contains('if not defined LEGACY_AUTO_UPDATE_CHECK call :startup_update_install')) 'missing mode uses the install default'
     Assert ($Batch.Contains('Invalid AUTO_UPDATE_MODE')) 'invalid explicit mode is reported'
     Assert (-not $Batch.Contains('^AUTO_UPDATE_MODE=install$')) 'start-server.bat no longer uses the CRLF-sensitive install regex'
 
@@ -53,10 +54,9 @@ set "LEGACY_AUTO_UPDATE_CHECK="
 for /f "tokens=1,* delims==" %%A in ('findstr /i /b /c:"AUTO_UPDATE_MODE=" "%SETTINGS%"') do if /i "%%A"=="AUTO_UPDATE_MODE" set "STARTUP_UPDATE_MODE=%%B"
 for /f "tokens=1,* delims==" %%A in ('findstr /i /b /c:"AUTO_UPDATE_CHECK=" "%SETTINGS%"') do if /i "%%A"=="AUTO_UPDATE_CHECK" set "LEGACY_AUTO_UPDATE_CHECK=%%B"
 if /i "%STARTUP_UPDATE_MODE%"=="install" echo MODE=install
-if /i "%STARTUP_UPDATE_MODE%"=="auto" echo MODE=auto
 if /i "%STARTUP_UPDATE_MODE%"=="check" echo MODE=check
 if /i "%STARTUP_UPDATE_MODE%"=="never" echo MODE=never
-if defined STARTUP_UPDATE_MODE if /i not "%STARTUP_UPDATE_MODE%"=="install" if /i not "%STARTUP_UPDATE_MODE%"=="auto" if /i not "%STARTUP_UPDATE_MODE%"=="check" if /i not "%STARTUP_UPDATE_MODE%"=="never" echo MODE=install
+if defined STARTUP_UPDATE_MODE if /i not "%STARTUP_UPDATE_MODE%"=="install" if /i not "%STARTUP_UPDATE_MODE%"=="check" if /i not "%STARTUP_UPDATE_MODE%"=="never" echo MODE=install
 if not defined STARTUP_UPDATE_MODE (
     if /i "%LEGACY_AUTO_UPDATE_CHECK%"=="true" echo MODE=legacy-install
     if /i "%LEGACY_AUTO_UPDATE_CHECK%"=="false" echo MODE=legacy-never
@@ -67,7 +67,7 @@ if not defined STARTUP_UPDATE_MODE (
 
     foreach ($NewLine in @("`r`n", "`n")) {
         $Label = if ($NewLine -eq "`r`n") { 'CRLF' } else { 'LF' }
-        foreach ($Mode in @('install','auto','check','never')) {
+        foreach ($Mode in @('install','check','never')) {
             $Path = Join-Path $TempRoot "$Label-$Mode.ini"
             Write-Settings $Path $Mode $NewLine
             $Output = Invoke-ModeParser $Path $HelperPath
@@ -103,12 +103,16 @@ if not defined STARTUP_UPDATE_MODE (
     Assert ($ExplicitCheckOutput -contains 'MODE=check') 'explicit check overrides legacy AUTO_UPDATE_CHECK=true'
     Assert (@($ExplicitCheckOutput | Where-Object { $_ -like 'MODE=*' }).Count -eq 1) 'explicit check activates exactly one mode'
 
-    foreach ($InvalidMode in @('installXYZ','check-extra','never-old')) {
+    foreach ($InvalidMode in @('auto','installXYZ','check-extra','never-old')) {
         $InvalidPath = Join-Path $TempRoot "$InvalidMode.ini"
         Write-Settings $InvalidPath $InvalidMode "`r`n"
         $InvalidOutput = Invoke-ModeParser $InvalidPath $HelperPath
         Assert ($InvalidOutput -contains 'MODE=install') "batch parser falls back to install for invalid mode '$InvalidMode'"
     }
+    $LegacyAutoPath = Join-Path $TempRoot 'legacy-auto.ini'
+    [IO.File]::WriteAllText($LegacyAutoPath, "LOADER_TYPE=fabric`r`nAUTO_UPDATE_MODE=auto`r`n", (New-Object Text.UTF8Encoding($false)))
+    $LegacyAutoOutput = Invoke-ModeParser $LegacyAutoPath $HelperPath
+    Assert ($LegacyAutoOutput -contains 'MODE=install') 'obsolete auto mode falls back to install'
 
     Write-Host "Test summary: $Pass passed, $Fail failed." -ForegroundColor Cyan
     if ($Fail -gt 0) { exit 1 }

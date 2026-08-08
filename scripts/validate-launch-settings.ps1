@@ -61,7 +61,6 @@ try {
     if ([string]$Values['AUTO_CONFIGURE_JAVA'] -notin @('true','false')) { throw 'AUTO_CONFIGURE_JAVA must be true or false.' }
     if ([string]$Values['ONLINE_MODE'] -notin @('true','false')) { throw 'ONLINE_MODE must be true or false.' }
     if ([string]$Values['SHOW_READY_BANNER'] -notin @('true','false')) { throw 'SHOW_READY_BANNER must be true or false.' }
-    if ([string]$Values['AUTO_UPDATE_MODE'] -eq 'auto') { $Values['AUTO_UPDATE_MODE'] = 'install' }
     if ([string]$Values['AUTO_UPDATE_MODE'] -notin @('install','check','never')) { throw 'AUTO_UPDATE_MODE must be install, check or never.' }
     Write-Host 'Launch settings are valid.' -ForegroundColor Green
     exit 0

@@ -41,24 +41,21 @@ set "STARTUP_UPDATE_MODE_RECOGNIZED=false"
 for /f "tokens=1,* delims==" %%A in ('findstr /i /b /c:"AUTO_UPDATE_MODE=" "%SETTINGS%"') do if /i "%%A"=="AUTO_UPDATE_MODE" set "STARTUP_UPDATE_MODE=%%B"
 for /f "tokens=1,* delims==" %%A in ('findstr /i /b /c:"AUTO_UPDATE_CHECK=" "%SETTINGS%"') do if /i "%%A"=="AUTO_UPDATE_CHECK" set "LEGACY_AUTO_UPDATE_CHECK=%%B"
 if /i "%STARTUP_UPDATE_MODE%"=="install" set "STARTUP_UPDATE_MODE_RECOGNIZED=true"
-if /i "%STARTUP_UPDATE_MODE%"=="auto" set "STARTUP_UPDATE_MODE_RECOGNIZED=true"
 if /i "%STARTUP_UPDATE_MODE%"=="check" set "STARTUP_UPDATE_MODE_RECOGNIZED=true"
 if /i "%STARTUP_UPDATE_MODE%"=="never" set "STARTUP_UPDATE_MODE_RECOGNIZED=true"
-if /i "%STARTUP_UPDATE_MODE%"=="install" call :startup_update_auto
-rem Backward compatibility for the former AUTO_UPDATE_MODE=auto value.
-if /i "%STARTUP_UPDATE_MODE%"=="auto" call :startup_update_auto
+if /i "%STARTUP_UPDATE_MODE%"=="install" call :startup_update_install
 if /i "%STARTUP_UPDATE_MODE%"=="check" call :startup_update_check_only
 if /i "%STARTUP_UPDATE_MODE%"=="never" call :startup_update_never
 rem A legacy boolean is honored only when AUTO_UPDATE_MODE is absent.
 if not defined STARTUP_UPDATE_MODE (
-    if /i "%LEGACY_AUTO_UPDATE_CHECK%"=="true" call :startup_update_auto
+    if /i "%LEGACY_AUTO_UPDATE_CHECK%"=="true" call :startup_update_install
     if /i "%LEGACY_AUTO_UPDATE_CHECK%"=="false" call :startup_update_never
-    if not defined LEGACY_AUTO_UPDATE_CHECK call :startup_update_auto
+    if not defined LEGACY_AUTO_UPDATE_CHECK call :startup_update_install
 )
 rem A malformed explicit mode must not silently skip the update check.
 if defined STARTUP_UPDATE_MODE if /i "%STARTUP_UPDATE_MODE_RECOGNIZED%"=="false" (
     echo WARNING: Invalid AUTO_UPDATE_MODE "%STARTUP_UPDATE_MODE%"; using the safe default install mode.
-    call :startup_update_auto
+    call :startup_update_install
 )
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\bootstrap-server.ps1"
@@ -150,7 +147,7 @@ if "%EXIT_CODE%"=="0" (
 pause
 exit /b %EXIT_CODE%
 
-:startup_update_auto
+:startup_update_install
 echo.
 echo ^==^> Checking for and installing Jarock updates automatically
 echo The verified Lite package will be installed before the server starts when a newer compatible release exists.
