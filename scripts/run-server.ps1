@@ -203,7 +203,7 @@ try {
                         if([string]::IsNullOrWhiteSpace($Line)){return}
                     } else { $Line=[string]$_ }
                     Write-Host $Line
-                    if($Line -match '(?i)(Stopping (?:Minecraft )?server|Server is stopping|Stopping server|Arr[ée]t du serveur|Fermata del server|Deteniendo el servidor|Остановка сервера|サーバーを停止)'){
+                    if($Line -match '(?i)(Stopping( Minecraft)? server|Server is stopping|Arr\u00eat du serveur|Fermata del server|Deteniendo el servidor|\u041e\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0430|\u30b5\u30fc\u30d0\u30fc\u3092\u505c\u6b62)'){
                         # Only an explicit server-stop message starts the trusted
                         # shutdown sequence. Autosaves/manual saves never authorize
                         # SAFE TO CLOSE.
@@ -237,7 +237,7 @@ try {
                         if([string]::IsNullOrWhiteSpace($Line)){return}
                     } else { $Line=[string]$_ }
                     Write-Host $Line
-                    if($Line -match '(?i)(Stopping (?:Minecraft )?server|Server is stopping|Stopping server|Arr[ée]t du serveur|Fermata del server|Deteniendo el servidor|Остановка сервера|サーバーを停止)'){
+                    if($Line -match '(?i)(Stopping( Minecraft)? server|Server is stopping|Arr\u00eat du serveur|Fermata del server|Deteniendo el servidor|\u041e\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0430|\u30b5\u30fc\u30d0\u30fc\u3092\u505c\u6b62)'){
                         # Only an explicit server-stop message starts the trusted
                         # shutdown sequence. Autosaves/manual saves never authorize
                         # SAFE TO CLOSE.

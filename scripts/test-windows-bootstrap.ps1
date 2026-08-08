@@ -164,7 +164,10 @@ try {
     $OutTask = $ServerProc.StandardOutput.ReadLineAsync()
     $ErrTask = $ServerProc.StandardError.ReadLineAsync()
     $Deadline = [DateTime]::UtcNow.AddMinutes(15)
-    while (-not $ServerProc.HasExited -and -not $TimedOut) {
+    # Keep draining both redirected streams after the child exits. A PowerShell
+    # parse/runtime failure can close the process before its final error lines have
+    # been consumed; stopping at HasExited would hide the useful diagnostic.
+    while ((-not $OutEof -or -not $ErrEof) -and -not $TimedOut) {
         $OutReady = $OutTask.Wait(1000)
         if ($OutReady) {
             # Guard the Result access: if the child hard-crashes and its pipe faults
