@@ -31,6 +31,7 @@ Componenti:
 - **Lithium, FerriteCore, Krypton:** ottimizzazione iniziale consigliata.
 - **Fabric Carpet:** strumenti tecnici, regole e test per redstone.
 - **Essential Commands:** comandi utili per il server, con il componente obbligatorio `ec-core`; disponibile per Fabric 26.2, non per NeoForge.
+- **InvView:** consente agli operatori autorizzati di visualizzare e gestire gli inventari e i bauli dell'End dei giocatori online o offline; disponibile per Fabric 26.2, non per NeoForge.
 - **Links In Chat:** mod server-side che rende cliccabili gli URL nella chat e aggiunge i comandi `/link` e `/linkwhisper`; i client non devono installarla.
 - **Welcome AWA:** mod server-side che invia messaggi colorati quando entra un giocatore; usa `%player%`, i codici colore `&`, le interruzioni `\n` e il comando `welcome reload`.
 - **No Chat Reports:** mod server-side inclusa per Fabric e NeoForge 26.2 che impedisce al server di inoltrare dati firmati per la segnalazione della chat. I client vanilla possono comunque mostrare l'avviso dei messaggi non firmati.
@@ -108,7 +109,7 @@ In questo repository non devi creare manualmente `start.bat`. Avvia `parameter-m
 - configurazione automatica dell'ambiente Java dell'utente;
 - banner di fine caricamento del server: mostra o nasconde l'avviso ASCII-art quando il server ha terminato l'avvio (opzione "Show ready banner").
 
-Le impostazioni vengono salvate in `scripts/server-launch-settings.ini`, un file locale ignorato da Git. Essential Commands 0.41.0 e il componente obbligatorio `ec-core` 1.3.0 vengono installati per Fabric 26.2; non esiste una build NeoForge 26.2 compatibile, quindi NeoForge non la installa. No Chat Reports viene installata automaticamente dal manifest del loader selezionato; non viene modificato `enforce-secure-profile`, quindi il comportamento deve essere verificato con i client che userai.
+Le impostazioni vengono salvate in `scripts/server-launch-settings.ini`, un file locale ignorato da Git. Essential Commands 0.41.0 e il componente obbligatorio `ec-core` 1.3.0 vengono installati per Fabric 26.2. InvView 1.4.21 viene installata per Fabric e permette agli operatori autorizzati di gestire inventari e bauli dell'End dei giocatori online o offline. Non esistono build NeoForge 26.2 compatibili per queste due mod, quindi NeoForge non le installa. No Chat Reports viene installata automaticamente dal manifest del loader selezionato; non viene modificato `enforce-secure-profile`, quindi il comportamento deve essere verificato con i client che userai.
  Il programma controlla che la RAM sia valida, che sia almeno `1G`, che la RAM iniziale non superi quella massima e che non superi la memoria fisica rilevata.
 
 Dopo aver salvato, scegli **Save and start the server** oppure esegui `start-server.bat`. Jarock trova automaticamente un Java 25 a 64 bit compatibile e usa quel percorso, anche se Java 8 è il primo elemento del `PATH`.

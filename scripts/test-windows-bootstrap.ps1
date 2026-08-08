@@ -158,6 +158,13 @@ try {
     Assert ($RealCode -eq 0) "Bootstrap completes successfully (exit code $RealCode)"
     Assert (Test-Path -LiteralPath (Join-Path $Root 'server\java-path.txt') -PathType Leaf) 'Selected Java executable was stored'
     $FabricManifest = Get-Content -LiteralPath (Join-Path $Root 'server\mods-manifest.ps1') -Raw
+    Assert ($FabricManifest -match 'InvView-1\.4\.21-26\.2\+\.jar') 'Fabric manifest contains InvView for Minecraft 26.2'
+    Assert ($FabricManifest -match '6eec7e7831316f9768b42daa441af83442ec9d30cfe2a963b51d77339805e4c8cdd8283ae758ec73ce4bfbce2a6454c0a6389683e830acb6ff1fb0dcef2534ea') 'InvView SHA-512 is pinned'
+    $InvViewPath = Join-Path $Root 'server\\mods\\InvView-1.4.21-26.2+.jar'
+    Assert (Test-Path -LiteralPath $InvViewPath -PathType Leaf) 'InvView was downloaded into server/mods'
+    if (Test-Path -LiteralPath $InvViewPath -PathType Leaf) {
+        Assert ((Get-Sha512 $InvViewPath) -eq '6eec7e7831316f9768b42daa441af83442ec9d30cfe2a963b51d77339805e4c8cdd8283ae758ec73ce4bfbce2a6454c0a6389683e830acb6ff1fb0dcef2534ea') 'Downloaded InvView SHA-512 matches the pinned hash'
+    }
     Assert ($FabricManifest -match 'linksinchat-1\.3\.1\+26\.2\.jar') 'Fabric manifest contains Links In Chat for Minecraft 26.2'
     Assert ($FabricManifest -match '9cbd4eb2b26b518920a2df78c22c95c998ded2f36b6a524881f96f22a2f1a111790791283d32613db8eb71f48e71b30625114c3eaf9d134cd57b776163290067') 'Links In Chat SHA-512 is pinned'
     $LinksInChatPath = Join-Path $Root 'server\mods\linksinchat-1.3.1+26.2.jar'
@@ -293,6 +300,7 @@ try {
     $ServerExitCode = $ServerProc.ExitCode
     $LatestLogPath = Join-Path $Root 'server\\logs\\latest.log'
     $LatestLogText = if (Test-Path -LiteralPath $LatestLogPath -PathType Leaf) { Get-Content -LiteralPath $LatestLogPath -Raw } else { '' }
+    Assert ($LatestLogText -match '(?i)inv[_-]?view') 'Fabric server log includes InvView'
     Assert ($LatestLogText -match 'essential_commands') 'Fabric server log includes Essential Commands'
     Assert ($LatestLogText -match 'ec[_-]?core') 'Fabric server log includes the Essential Commands core dependency'
     Assert $script:ServerStopped 'Ready banner appeared (server finished loading)'

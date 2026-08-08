@@ -77,6 +77,8 @@ Java 通常使用 TCP `25565`，Bedrock 通常使用 UDP `19132`。Jarock 不會
 
 > Essential Commands 0.41.0 with its required `ec-core` 1.3.0 component is verified for Minecraft 26.2 on Fabric only. It adds useful server commands; no compatible NeoForge 26.2 build is available, so NeoForge does not install it.
 
+> InvView 1.4.21 is a verified Minecraft 26.2 server-side Fabric mod. It requires Fabric API and lets authorized operators inspect and manage online or offline player inventories and ender chests; no compatible NeoForge 26.2 build is available, so NeoForge does not install it.
+
 <!-- jarock-safe-shutdown -->
 
 ## 安全停止

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.82-beta] - 2026-08-08
+
+### Added
+
+- Added InvView 1.4.21 for Minecraft 26.2 Fabric. The server-side mod allows authorized operators to inspect and manage online or offline player inventories and ender chests; its pinned Modrinth artifact is verified with SHA-512 during bootstrap. No compatible NeoForge 26.2 build is available, so NeoForge does not install InvView.
+- Extended the Windows bootstrap regression test and updated the English, Italian and localized documentation with InvView's Fabric-only scope and administrative behavior.
+
+
 ## [0.0.81-beta] - 2026-08-08
 
 ### Added
@@ -704,7 +712,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.81-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.82-beta...HEAD
+[0.0.82-beta]: https://github.com/PiBOH/jarock/compare/0.0.81-beta...0.0.82-beta
 [0.0.81-beta]: https://github.com/PiBOH/jarock/compare/0.0.80-beta...0.0.81-beta
 [0.0.78-beta]: https://github.com/PiBOH/jarock/compare/0.0.77-beta...0.0.78-beta
 [0.0.77-beta]: https://github.com/PiBOH/jarock/compare/0.0.76-beta...0.0.77-beta

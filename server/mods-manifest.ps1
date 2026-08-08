@@ -25,6 +25,13 @@ $Mods = @(
         Purpose = 'Required Essential Commands core dependency'
     }
     [pscustomobject]@{
+        Name = 'InvView-1.4.21-26.2+.jar'
+        Url = 'https://cdn.modrinth.com/data/jrDKjZP7/versions/WL9M9WOP/InvView-1.4.21-26.2%2B.jar'
+        Sha512 = '6eec7e7831316f9768b42daa441af83442ec9d30cfe2a963b51d77339805e4c8cdd8283ae758ec73ce4bfbce2a6454c0a6389683e830acb6ff1fb0dcef2534ea'
+        Required = $true
+        Purpose = 'Server-side inventory and ender-chest administration tools for Fabric 26.2'
+    }
+    [pscustomobject]@{
         Name = 'Geyser-Fabric-2.11.1-b1209.jar'
         Url = 'https://cdn.modrinth.com/data/wKkoqHrH/versions/qx0y8XK1/Geyser-Fabric-2.11.1-b1209.jar'
         Sha512 = '4f894794ae3d3e6ffc1dfc43a231bcc13767958ba2c922018065faab737d2d34a8c65b33355cdb8a8759a760909634bd611acb6cbb37a0651a52d27aa4d32511'
