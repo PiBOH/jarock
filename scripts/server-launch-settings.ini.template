@@ -13,6 +13,7 @@ GC_PROFILE=default
 SHOW_READY_BANNER=true
 # Startup update mode: install = check and install a verified update automatically;
 # check = check only and never install; never = do not contact GitHub.
-AUTO_UPDATE_MODE=never
+# The default is install. Choose check or never in parameter-manager.bat to override it.
+AUTO_UPDATE_MODE=install
 # Legacy AUTO_UPDATE_CHECK is still understood for older local settings:
 # true maps to install and false maps to never when AUTO_UPDATE_MODE is absent.

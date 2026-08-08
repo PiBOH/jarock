@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.72-beta] - 2026-08-08
+
+### Changed
+
+- Changed the default startup update mode from `never` to `install`. New installations and legacy settings without an explicit update choice now check GitHub and install a verified compatible Lite package before startup. Users can still select `check` or `never` in `parameter-manager.bat`; explicit legacy `AUTO_UPDATE_CHECK=false` remains disabled for compatibility.
+- Updated the English and localized documentation, settings template, parameter-manager fallback, startup parser, validator and regression test to describe and enforce `install` as the default.
+
 ## [0.0.71-beta] - 2026-08-08
 
 ### Fixed
@@ -630,7 +637,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.71-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.72-beta...HEAD
+[0.0.72-beta]: https://github.com/PiBOH/jarock/compare/0.0.71-beta...0.0.72-beta
 [0.0.71-beta]: https://github.com/PiBOH/jarock/compare/0.0.70-beta...0.0.71-beta
 [0.0.70-beta]: https://github.com/PiBOH/jarock/compare/0.0.69-beta...0.0.70-beta
 [0.0.69-beta]: https://github.com/PiBOH/jarock/compare/0.0.68-beta...0.0.69-beta

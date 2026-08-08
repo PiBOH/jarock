@@ -36,7 +36,7 @@ try {
                 # Older settings used AUTO_UPDATE_CHECK; migrate their meaning in memory.
                 if ($Values.ContainsKey('AUTO_UPDATE_CHECK')) {
                     $Values[$Name] = if ([string]$Values['AUTO_UPDATE_CHECK'] -eq 'true') { 'install' } else { 'never' }
-                } else { $Values[$Name] = 'never' }
+                } else { $Values[$Name] = 'install' }
                 continue
             }
             throw "Missing setting: $Name"

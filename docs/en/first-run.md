@@ -98,7 +98,7 @@ Only then close the window. Force-closing the console while the world is saving 
 - Configure router, firewall and port forwarding manually only after completing the security checklist in `TODO.md` and `docs/<locale>/network-and-ports.md`.
 - Back up the world before changing loaders, mods or server settings.
 - Run `parameter-manager.bat` when you need to change launch settings.
-Startup update modes: AUTO_UPDATE_MODE=install checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=never.
+Startup update modes: AUTO_UPDATE_MODE=install checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=install; choose check or never in parameter-manager.bat to override it.
 - Keep the generated `server/` runtime private and do not commit worlds, logs, libraries, downloaded jars, keys or local settings.
 
 ## Common first-run problems

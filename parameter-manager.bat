@@ -315,7 +315,13 @@ set "AUTO_CONFIGURE_JAVA=true"
 set "ONLINE_MODE=true"
 set "SHOW_READY_BANNER=true"
 set "AUTO_UPDATE_CHECK=false"
-set "AUTO_UPDATE_MODE=never"
+set "HAS_AUTO_UPDATE_CHECK=false"
+set "HAS_AUTO_UPDATE_MODE=false"
+findstr /i /b /c:"AUTO_UPDATE_CHECK=" "%TEMP_SETTINGS%" >nul
+if not errorlevel 1 set "HAS_AUTO_UPDATE_CHECK=true"
+findstr /i /b /c:"AUTO_UPDATE_MODE=" "%TEMP_SETTINGS%" >nul
+if not errorlevel 1 set "HAS_AUTO_UPDATE_MODE=true"
+set "AUTO_UPDATE_MODE=install"
 set "OPT1=1. Choose server mod loader"
 set "OPT2=2. Configure RAM"
 set "OPT3=3. Choose GUI or console mode"
@@ -337,14 +343,18 @@ call :read_value AUTO_CONFIGURE_JAVA true
 call :read_value ONLINE_MODE true
 call :read_value SHOW_READY_BANNER true
 call :read_value AUTO_UPDATE_CHECK false
-call :read_value AUTO_UPDATE_MODE never
+call :read_value AUTO_UPDATE_MODE install
+if /i "%HAS_AUTO_UPDATE_MODE%"=="false" (
+    if /i "%HAS_AUTO_UPDATE_CHECK%"=="true" if /i "%AUTO_UPDATE_CHECK%"=="true" set "AUTO_UPDATE_MODE=install"
+    if /i "%HAS_AUTO_UPDATE_CHECK%"=="true" if /i "%AUTO_UPDATE_CHECK%"=="false" set "AUTO_UPDATE_MODE=never"
+)
 if /i "%AUTO_UPDATE_MODE%"=="auto" (
     set "AUTO_UPDATE_MODE=install"
     rem Persist the old value migration when the user later chooses Save and exit/start.
     powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name AUTO_UPDATE_MODE -Value install >nul
 )
-if /i "%AUTO_UPDATE_MODE%"=="never" if /i "%AUTO_UPDATE_CHECK%"=="true" set "AUTO_UPDATE_MODE=install"
-if /i "%AUTO_UPDATE_MODE%"=="false" set "AUTO_UPDATE_MODE=never"
+rem An explicit AUTO_UPDATE_MODE always wins over the legacy boolean setting.
+if /i "%HAS_AUTO_UPDATE_MODE%"=="false" if /i "%AUTO_UPDATE_MODE%"=="false" set "AUTO_UPDATE_MODE=never"
 if /i "%AUTO_UPDATE_MODE%"=="true" set "AUTO_UPDATE_MODE=install"
 exit /b 0
 
