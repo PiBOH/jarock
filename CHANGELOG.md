@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.80-beta] - 2026-08-08
+
+### Added
+
+- Added No Chat Reports v2.20.1 for Minecraft 26.2 to both the Fabric and NeoForge manifests, with pinned Modrinth URLs and SHA-512 verification. The server-side mod prevents forwarding signed chat-reporting data; Jarock does not automatically change `enforce-secure-profile`, and vanilla clients may still show unsigned-chat warnings.
+- Updated the Windows bootstrap regression test and all supported documentation languages with the loader-specific installation and security caveats.
+
+
 ## [0.0.79-beta] - 2026-08-08
 
 ### Added

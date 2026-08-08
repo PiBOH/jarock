@@ -74,6 +74,13 @@ $Mods = @(
         Purpose = 'Colored server-side join welcome messages with player placeholders'
     }
     [pscustomobject]@{
+        Name = 'NoChatReports-FABRIC-26.2-v2.20.1.jar'
+        Url = 'https://cdn.modrinth.com/data/qQyHxfxd/versions/uiY9tUaj/NoChatReports-FABRIC-26.2-v2.20.1.jar'
+        Sha512 = '139dd09e04cc66fe4745264ddfbe3249be6e956326c931eb9707f9a640bbc011a4f1fd5684d04ca90e1b473be55772b0279e5c2f935c2f2e85d054e2ab0a6923'
+        Required = $true
+        Purpose = 'Prevents chat reporting and removes secure-chat signing requirements on the server'
+    }
+    [pscustomobject]@{
         Name = 'imfast-FABRIC-26.2-1.0.3.jar'
         Url = 'https://cdn.modrinth.com/data/PaUMOeP0/versions/nD5sET2x/imfast-FABRIC-26.2-1.0.3.jar'
         Sha512 = '664606eb41dbf13385ec82545c30a7b118bd263393325c29a6a6eef6e0a390555c194e0c15df64c18d7f477344c423e518e67b481d5c9171fd5c7fb36795341b'

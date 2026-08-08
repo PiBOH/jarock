@@ -31,6 +31,18 @@ function Get-Sha512([string]$Path) {
     }
     finally { $Stream.Dispose() }
 }
+function Invoke-TestDownload([string]$Url, [string]$Path) {
+    $Curl = Get-Command curl.exe -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($null -ne $Curl) {
+        for ($Attempt = 1; $Attempt -le 3; $Attempt++) {
+            & $Curl.Source -sS -L --fail --connect-timeout 30 --max-time 600 --retry 3 --retry-delay 2 -A 'Jarock-bootstrap-test' -o $Path $Url
+            if ($LASTEXITCODE -eq 0) { return }
+            if ($Attempt -lt 3) { Start-Sleep -Seconds 3 }
+        }
+        throw "curl.exe failed downloading the isolated test artifact (exit code $LASTEXITCODE)."
+    }
+    Invoke-WebRequest -Uri $Url -OutFile $Path -Headers @{ 'User-Agent' = 'Jarock-bootstrap-test' } -UseBasicParsing
+}
 
 # Save every Java source so the environment can be restored exactly. The discovery also
 # reads java-home.txt and JAROCK_JAVA_HOME first, so those are masked too. Note that the
@@ -156,6 +168,13 @@ try {
     }
     Assert ($FabricManifest -match 'welcome_awa-fabric-26\.2-2\.4\.jar') 'Fabric manifest contains Welcome AWA for Minecraft 26.2'
     Assert ($FabricManifest -match '981c813ae53a230b49b8e2a33f83cb6fac810847baffaef43369f3caeccace19b7d5f578093277d656f5e5817ec18139485b8d76bee8ec6329279cc6eaa388c5') 'Welcome AWA SHA-512 is pinned'
+    Assert ($FabricManifest -match 'NoChatReports-FABRIC-26\.2-v2\.20\.1\.jar') 'Fabric manifest contains No Chat Reports for Minecraft 26.2'
+    Assert ($FabricManifest -match '139dd09e04cc66fe4745264ddfbe3249be6e956326c931eb9707f9a640bbc011a4f1fd5684d04ca90e1b473be55772b0279e5c2f935c2f2e85d054e2ab0a6923') 'Fabric No Chat Reports SHA-512 is pinned'
+    $NoChatReportsFabricPath = Join-Path $Root 'server\\mods\\NoChatReports-FABRIC-26.2-v2.20.1.jar'
+    Assert (Test-Path -LiteralPath $NoChatReportsFabricPath -PathType Leaf) 'Fabric No Chat Reports was downloaded into server/mods'
+    if (Test-Path -LiteralPath $NoChatReportsFabricPath -PathType Leaf) {
+        Assert ((Get-Sha512 $NoChatReportsFabricPath) -eq '139dd09e04cc66fe4745264ddfbe3249be6e956326c931eb9707f9a640bbc011a4f1fd5684d04ca90e1b473be55772b0279e5c2f935c2f2e85d054e2ab0a6923') 'Downloaded Fabric No Chat Reports SHA-512 matches the pinned hash'
+    }
     $WelcomeAwaPath = Join-Path $Root 'server\mods\welcome_awa-fabric-26.2-2.4.jar'
     Assert (Test-Path -LiteralPath $WelcomeAwaPath -PathType Leaf) 'Welcome AWA was downloaded into server/mods'
     if (Test-Path -LiteralPath $WelcomeAwaPath -PathType Leaf) {
@@ -172,6 +191,20 @@ try {
         Assert ($DatapackHash -eq '8ecadc28a73bbe12dade19d5dfa0840dc8d28b2bd80c0ef154779063375fb5c96cc7c877c55c627909f2aea2907a30b2a8f2038769d269443f0e1689f7f3017a') 'Downloaded Better Multiplayer Sleep SHA-512 matches the pinned hash'
     }
     Assert ($RealText -match 'datapacks|BetterMultiplayerSleep') 'Bootstrap reports configured datapack installation support'
+    $NeoForgeManifest = Get-Content -LiteralPath (Join-Path $Root 'server\\mods-manifest-neoforge.ps1') -Raw
+    Assert ($NeoForgeManifest -match 'NoChatReports-NEOFORGE-26\\.2-v2\\.20\\.1\\.jar') 'NeoForge manifest contains No Chat Reports for Minecraft 26.2'
+    Assert ($NeoForgeManifest -match '782b4b081c5d8bdd19139894feacc9c48b6fb025856e904c2bb9ee84438734de96eb5540f471e57830ecb92df8f18f6da20a1b619c4806b16f06780250999d03') 'NeoForge No Chat Reports SHA-512 is pinned'
+    $NoChatReportsNeoForgeTemp = Join-Path ([IO.Path]::GetTempPath()) ("jarock-NoChatReports-NEOFORGE-26.2-v2.20.1-$PID.jar")
+    try {
+        Invoke-TestDownload -Url 'https://cdn.modrinth.com/data/qQyHxfxd/versions/k9fqrSE6/NoChatReports-NEOFORGE-26.2-v2.20.1.jar' -Path $NoChatReportsNeoForgeTemp
+        Assert (Test-Path -LiteralPath $NoChatReportsNeoForgeTemp -PathType Leaf) 'NeoForge No Chat Reports downloaded to an isolated temporary path'
+        if (Test-Path -LiteralPath $NoChatReportsNeoForgeTemp -PathType Leaf) {
+            Assert ((Get-Item -LiteralPath $NoChatReportsNeoForgeTemp).Length -eq 237914) 'NeoForge No Chat Reports size matches the pinned artifact'
+            Assert ((Get-Sha512 $NoChatReportsNeoForgeTemp) -eq '782b4b081c5d8bdd19139894feacc9c48b6fb025856e904c2bb9ee84438734de96eb5540f471e57830ecb92df8f18f6da20a1b619c4806b16f06780250999d03') 'Downloaded NeoForge No Chat Reports SHA-512 matches the pinned hash'
+        }
+    } finally {
+        Remove-Item -LiteralPath $NoChatReportsNeoForgeTemp -Force -ErrorAction SilentlyContinue
+    }
     $DatapackConfigRoot = Join-Path $Root 'server\\config'
     $DatapackMarkerPath = Join-Path $DatapackConfigRoot '.jarock-datapacks'
     Assert (Test-Path -LiteralPath $DatapackMarkerPath -PathType Leaf) 'Jarock datapack marker was created'

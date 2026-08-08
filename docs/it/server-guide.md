@@ -32,6 +32,7 @@ Componenti:
 - **Fabric Carpet:** strumenti tecnici, regole e test per redstone.
 - **Links In Chat:** mod server-side che rende cliccabili gli URL nella chat e aggiunge i comandi `/link` e `/linkwhisper`; i client non devono installarla.
 - **Welcome AWA:** mod server-side che invia messaggi colorati quando entra un giocatore; usa `%player%`, i codici colore `&`, le interruzioni `\n` e il comando `welcome reload`.
+- **No Chat Reports:** mod server-side inclusa per Fabric e NeoForge 26.2 che impedisce al server di inoltrare dati firmati per la segnalazione della chat. I client vanilla possono comunque mostrare l'avviso dei messaggi non firmati.
 - **Better Multiplayer Sleep:** datapack verificato che permette a un solo giocatore di dormire per saltare la notte; viene installato nella cartella `datapacks` del mondo configurato, sia con Fabric sia con NeoForge.
 - **ServerCore, Carpet Extra e Carpet TIS Addition:** opzionali; installali solo se esiste una build compatibile con 26.2.
 
@@ -106,7 +107,8 @@ In questo repository non devi creare manualmente `start.bat`. Avvia `parameter-m
 - configurazione automatica dell'ambiente Java dell'utente;
 - banner di fine caricamento del server: mostra o nasconde l'avviso ASCII-art quando il server ha terminato l'avvio (opzione "Show ready banner").
 
-Le impostazioni vengono salvate in `scripts/server-launch-settings.ini`, un file locale ignorato da Git. Il programma controlla che la RAM sia valida, che sia almeno `1G`, che la RAM iniziale non superi quella massima e che non superi la memoria fisica rilevata.
+Le impostazioni vengono salvate in `scripts/server-launch-settings.ini`, un file locale ignorato da Git. No Chat Reports viene installata automaticamente dal manifest del loader selezionato; non viene modificato `enforce-secure-profile`, quindi il comportamento deve essere verificato con i client che userai.
+ Il programma controlla che la RAM sia valida, che sia almeno `1G`, che la RAM iniziale non superi quella massima e che non superi la memoria fisica rilevata.
 
 Dopo aver salvato, scegli **Save and start the server** oppure esegui `start-server.bat`. Jarock trova automaticamente un Java 25 a 64 bit compatibile e usa quel percorso, anche se Java 8 è il primo elemento del `PATH`.
 
@@ -353,6 +355,7 @@ Non installare dieci mod subito. Controlla CPU, entità, generazione dei chunk, 
 - [ ] `auth-type: floodgate` è configurato.
 - [ ] Porta Java TCP e porta Bedrock UDP sono corrette e diverse.
 - [ ] Nessuna mod client-only è nella cartella server `mods/`.
+- [ ] No Chat Reports è caricata dal loader selezionato senza errori.
 - [ ] Better Multiplayer Sleep è presente nella cartella `datapacks` del mondo configurato e non produce errori.
 - [ ] Esiste un backup.
 - [ ] Java riesce a entrare.

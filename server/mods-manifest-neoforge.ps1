@@ -39,6 +39,13 @@ $Mods = @(
         Purpose = 'Server performance controls'
     }
     [pscustomobject]@{
+        Name = 'NoChatReports-NEOFORGE-26.2-v2.20.1.jar'
+        Url = 'https://cdn.modrinth.com/data/qQyHxfxd/versions/k9fqrSE6/NoChatReports-NEOFORGE-26.2-v2.20.1.jar'
+        Sha512 = '782b4b081c5d8bdd19139894feacc9c48b6fb025856e904c2bb9ee84438734de96eb5540f471e57830ecb92df8f18f6da20a1b619c4806b16f06780250999d03'
+        Required = $true
+        Purpose = 'Prevents chat reporting and removes secure-chat signing requirements on the server'
+    }
+    [pscustomobject]@{
         Name = 'imfast-NEOFORGE-26.2-1.0.3.jar'
         Url = 'https://cdn.modrinth.com/data/PaUMOeP0/versions/Hu3Yov2Y/imfast-NEOFORGE-26.2-1.0.3.jar'
         Sha512 = '01280a82eb092551d996d60b6520e84849c1f79812fce689119276fa9fa7118e976f07bc244f94bb54f16d9c354ba10590dec699e6d5c10c271484bead0b8c06'

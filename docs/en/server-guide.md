@@ -40,6 +40,7 @@ Bedrock players ─ Geyser ───┘ │
 | Fabric Carpet | Technical tools, rules and redstone testing | `mods/` |
 | Links In Chat | Server-side clickable links and `/link` or `/linkwhisper` chat commands | `mods/` |
 | Welcome AWA | Server-side colored join messages with `%player%` placeholder | `mods/`, Fabric 26.2 |
+| No Chat Reports | Disables server-side chat-reporting signatures | `mods/`, Fabric or NeoForge 26.2 |
 | Better Multiplayer Sleep | Lets one player sleep through the night | configured world's `datapacks/`, Fabric or NeoForge |
 | Carpet Extra / Carpet TIS Addition | Optional Carpet extensions | `mods/`, only if compatible |
 
@@ -148,6 +149,8 @@ After choosing a loader, do not mix its mods with another loader. To change load
 ## 6. Configure and start Jarock
 
 For this repository, use `parameter-manager.bat` instead of creating a separate `start.bat`. It safely configures RAM, GUI/console mode, the GC profile, online-mode, the ready banner and optional user-scoped Java environment setup. The manager works on a temporary copy: choose Save and exit or Save and start to commit changes, or choose Exit without saving to discard every change and keep the previous settings. The settings are stored locally in `scripts/server-launch-settings.ini`.
+
+No Chat Reports is installed server-side for both supported loaders. It prevents the server from forwarding signed chat-reporting data, but vanilla clients may still show an unsigned-chat warning unless they also use a compatible client-side setup. Jarock does not change `enforce-secure-profile` automatically; keep the server policy explicit and test the clients you use.
 
 The online-mode menu controls `server.properties`:
 
@@ -466,6 +469,7 @@ Use this list in order:
 - [ ] Every optimization and utility mod lists Fabric and Minecraft 26.2.
 - [ ] Links In Chat is installed from the pinned Fabric 26.2 manifest when clickable server-chat links are desired.
 - [ ] Welcome AWA is installed from the pinned Fabric 26.2 manifest when configurable join messages are desired.
+- [ ] No Chat Reports is loaded for the selected loader and Minecraft 26.2.
 - [ ] Better Multiplayer Sleep is present in the configured world's `datapacks/` folder and loads without errors.
 - [ ] A backup exists before adding technical mods.
 - [ ] Java can connect.

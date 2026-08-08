@@ -73,6 +73,8 @@ Bir hatadan sonra `ERROR:` veya `WARNING:` satırını okuyun ve `Suggested fix:
 
 > Better Multiplayer Sleep is a verified Minecraft 26.2 datapack. Jarock installs it into the configured world's `datapacks` folder for Fabric and NeoForge without replacing the world or other datapacks; use `/reload` after manual changes.
 
+> No Chat Reports is a verified Minecraft 26.2 server-side mod for Fabric and NeoForge. It prevents the server from forwarding signed chat-reporting data; vanilla clients may still show unsigned-chat warnings, and Jarock does not automatically change `enforce-secure-profile`.
+
 <!-- jarock-safe-shutdown -->
 
 ## Güvenli kapatma
