@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Renamed the automatic startup-install update mode from `auto` to `install` so its behavior is explicit. Existing local `auto` values and legacy `AUTO_UPDATE_CHECK=true/false` settings are still migrated for compatibility.
+
 ### Fixed
 
 - Stop automatically moving or replacing existing worlds after an apparent integrity problem. Jarock now leaves the world in place and stops with guidance; a new world is generated only after the owner deliberately deletes all configured world folders and no possible old world data remains under another name.
@@ -39,7 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Replaced the old boolean startup update setting with `AUTO_UPDATE_MODE`: `auto` checks and installs verified updates automatically, `check` checks without installing, and `never` disables the startup check. Older `AUTO_UPDATE_CHECK=true/false` local settings remain readable for compatibility.
+- Replaced the old boolean startup update setting with `AUTO_UPDATE_MODE`: `install` checks and installs verified updates automatically, `check` checks without installing, and `never` disables the startup check. Older `AUTO_UPDATE_CHECK=true/false` local settings remain readable for compatibility.
 - Replaced the fragile exact-line EULA check with a tolerant PowerShell validator, so harmless whitespace, casing and Windows/Unix line-ending differences do not make a valid `eula=true` appear to be rejected.
 - Changed `scripts/update-jarock.ps1` to update existing installations from the matching Lite release package (`jarock-lite.zip` or `jarock-lite-<version>.zip`) while retaining SHA-512, version, channel, process, Git-safety and rollback checks. Existing Java prerequisites are preserved and are not reinstalled during updates.
 - Clarified the parameter manager: `Show ready banner` controls the startup banner, while `Run startup update check` asks for confirmation when a newer compatible release is found. Lowercase `y` or `yes` installs the verified Lite package; `N` or Enter skips it. You can also use `scripts/update-jarock.bat` after safely stopping the server.

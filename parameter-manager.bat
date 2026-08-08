@@ -215,7 +215,7 @@ if errorlevel 2 goto update_mode_check
 if errorlevel 1 goto update_mode_auto
 goto menu
 :update_mode_auto
-set "NEW_UPDATE_MODE=auto"
+set "NEW_UPDATE_MODE=install"
 goto update_mode_save
 :update_mode_check
 set "NEW_UPDATE_MODE=check"
@@ -326,9 +326,14 @@ call :read_value ONLINE_MODE true
 call :read_value SHOW_READY_BANNER true
 call :read_value AUTO_UPDATE_CHECK false
 call :read_value AUTO_UPDATE_MODE never
-if /i "%AUTO_UPDATE_MODE%"=="never" if /i "%AUTO_UPDATE_CHECK%"=="true" set "AUTO_UPDATE_MODE=auto"
+if /i "%AUTO_UPDATE_MODE%"=="auto" (
+    set "AUTO_UPDATE_MODE=install"
+    rem Persist the old value migration when the user later chooses Save and exit/start.
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name AUTO_UPDATE_MODE -Value install >nul
+)
+if /i "%AUTO_UPDATE_MODE%"=="never" if /i "%AUTO_UPDATE_CHECK%"=="true" set "AUTO_UPDATE_MODE=install"
 if /i "%AUTO_UPDATE_MODE%"=="false" set "AUTO_UPDATE_MODE=never"
-if /i "%AUTO_UPDATE_MODE%"=="true" set "AUTO_UPDATE_MODE=auto"
+if /i "%AUTO_UPDATE_MODE%"=="true" set "AUTO_UPDATE_MODE=install"
 exit /b 0
 
 :read_value

@@ -11,8 +11,8 @@ ONLINE_MODE=true
 GC_PROFILE=default
 # Set to false to hide the ASCII-art banner that is shown when the server finishes loading.
 SHOW_READY_BANNER=true
-# Startup update mode: auto = check and install a verified update automatically;
+# Startup update mode: install = check and install a verified update automatically;
 # check = check only and never install; never = do not contact GitHub.
 AUTO_UPDATE_MODE=never
 # Legacy AUTO_UPDATE_CHECK is still understood for older local settings:
-# true maps to auto and false maps to never when AUTO_UPDATE_MODE is absent.
+# true maps to install and false maps to never when AUTO_UPDATE_MODE is absent.

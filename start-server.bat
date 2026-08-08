@@ -33,6 +33,9 @@ if not exist "%SETTINGS%" (
     copy /y "%TEMPLATE%" "%SETTINGS%" >nul
 )
 
+findstr /i /r /c:"^AUTO_UPDATE_MODE=install$" "%SETTINGS%" >nul
+if not errorlevel 1 call :startup_update_auto
+rem Backward compatibility for the former AUTO_UPDATE_MODE=auto value.
 findstr /i /r /c:"^AUTO_UPDATE_MODE=auto$" "%SETTINGS%" >nul
 if not errorlevel 1 call :startup_update_auto
 findstr /i /r /c:"^AUTO_UPDATE_MODE=check$" "%SETTINGS%" >nul
