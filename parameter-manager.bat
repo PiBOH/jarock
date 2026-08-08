@@ -304,6 +304,18 @@ del /q "%TEMP_SETTINGS%" >nul 2>&1
 exit /b 0
 
 :read_menu_values
+rem Initialize every displayed value before reading the temporary settings copy.
+rem This keeps the menu usable even if a legacy or damaged settings file omits a key.
+set "LOADER_TYPE=none"
+set "RAM_INITIAL=4G"
+set "RAM_MAX=4G"
+set "GUI_MODE=nogui"
+set "GC_PROFILE=default"
+set "AUTO_CONFIGURE_JAVA=true"
+set "ONLINE_MODE=true"
+set "SHOW_READY_BANNER=true"
+set "AUTO_UPDATE_CHECK=false"
+set "AUTO_UPDATE_MODE=never"
 set "OPT1=1. Choose server mod loader"
 set "OPT2=2. Configure RAM"
 set "OPT3=3. Choose GUI or console mode"
@@ -337,6 +349,7 @@ if /i "%AUTO_UPDATE_MODE%"=="true" set "AUTO_UPDATE_MODE=install"
 exit /b 0
 
 :read_value
+rem Read one key from the temporary INI and keep the supplied default if absent.
+set "%~1=%~2"
 for /f "tokens=1,* delims==" %%A in ('findstr /b /c:"%~1=" "%TEMP_SETTINGS%" 2^>nul') do set "%~1=%%B"
-if not defined %~1 set "%~1=%~2"
 exit /b 0

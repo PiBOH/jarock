@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed the Windows parameter manager when checked out with Unix line endings: `parameter-manager.bat` now keeps CRLF line endings, initializes missing settings safely, and no longer leaves `RAM_MAX` blank when reading the current configuration. Legacy update mode values are normalized to the official `install` value before display.
 - Stop automatically moving or replacing existing worlds after an apparent integrity problem. Jarock now leaves the world in place and stops with guidance; a new world is generated only after the owner deliberately deletes all configured world folders and no possible old world data remains under another name.
 - Protect custom `level-name` configurations and reject partial or orphaned world-directory layouts so Minecraft cannot silently mix old dimensions with a newly generated world.
 
@@ -586,7 +587,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.61-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.62-beta...HEAD
+[0.0.62-beta]: https://github.com/PiBOH/jarock/compare/0.0.61-beta...0.0.62-beta
 [0.0.61-beta]: https://github.com/PiBOH/jarock/compare/0.0.60-beta...0.0.61-beta
 [0.0.60-beta]: https://github.com/PiBOH/jarock/compare/0.0.59-beta...0.0.60-beta
 [0.0.59-beta]: https://github.com/PiBOH/jarock/compare/0.0.58-beta...0.0.59-beta

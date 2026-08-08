@@ -1,2 +1,5 @@
+# Windows batch launchers must keep CRLF so cmd.exe resolves labels reliably.
+*.bat text eol=crlf
+
 prerequisites/*.msi filter=lfs diff=lfs merge=lfs -text
 prerequisites/*.exe filter=lfs diff=lfs merge=lfs -text
