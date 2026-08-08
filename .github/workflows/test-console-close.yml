@@ -1,0 +1,34 @@
+name: test-console-close
+
+'on':
+  push:
+    branches: [ main ]
+    paths:
+      - 'scripts/console-close-protection.ps1'
+      - 'scripts/test-console-close-protection.ps1'
+      - 'scripts/run-server.ps1'
+      - 'start-server.bat'
+      - '.github/workflows/test-console-close.yml'
+      - 'CHANGELOG.md'
+      - 'scripts/version.txt'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  console-close-protection:
+    name: Windows console-close protection test
+    runs-on: windows-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        shell: [powershell, pwsh]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run safe console-close protection smoke test
+        shell: ${{ matrix.shell }}
+        run: ./scripts/test-console-close-protection.ps1

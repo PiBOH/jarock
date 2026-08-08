@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.69-beta] - 2026-08-08
+
+### Added
+
+- Added `.github/workflows/test-console-close.yml`, a manually runnable and push-triggered Windows matrix test for Windows PowerShell 5.1 and PowerShell 7.
+- Added `scripts/test-console-close-protection.ps1`, which safely verifies the embedded native handler compiles, registers, remains idempotent, and unregisters without sending a destructive close event or opening a CI-blocking MsgBox. The workflow intentionally tests registration and lifecycle only; it does not simulate a real console close in CI.
+
 ## [0.0.68-beta] - 2026-08-08
 
 ### Added
