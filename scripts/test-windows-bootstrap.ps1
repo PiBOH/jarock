@@ -146,6 +146,10 @@ try {
     Assert ($BootCode -eq 1) 'Bootstrap stops cleanly with exit code 1 after the simulated install'
 
     # 5. Restore Java and run the REAL bootstrap: the loader and the mods must install.
+    # Seed the known replaced welcome artifact so the bootstrap's migration cleanup is tested.
+    $LegacyWelcomePath = Join-Path $Root 'server\mods\welcome_awa-fabric-26.2-2.4.jar'
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $LegacyWelcomePath) | Out-Null
+    [IO.File]::WriteAllBytes($LegacyWelcomePath, [byte[]](1, 2, 3))
     Restore-Java
     Write-Host '==> Java environment restored; running the real bootstrap' -ForegroundColor Cyan
     $RealOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'bootstrap-server.ps1') 2>&1)
@@ -180,8 +184,21 @@ try {
         $LinksInChatHash = Get-Sha512 $LinksInChatPath
         Assert ($LinksInChatHash -eq '9cbd4eb2b26b518920a2df78c22c95c998ded2f36b6a524881f96f22a2f1a111790791283d32613db8eb71f48e71b30625114c3eaf9d134cd57b776163290067') 'Downloaded Links In Chat SHA-512 matches the pinned hash'
     }
-    Assert ($FabricManifest -match 'welcome_awa-fabric-26\.2-2\.4\.jar') 'Fabric manifest contains Welcome AWA for Minecraft 26.2'
-    Assert ($FabricManifest -match '981c813ae53a230b49b8e2a33f83cb6fac810847baffaef43369f3caeccace19b7d5f578093277d656f5e5817ec18139485b8d76bee8ec6329279cc6eaa388c5') 'Welcome AWA SHA-512 is pinned'
+    Assert ($FabricManifest -match 'collective-26\.2\.0-8\.39\.jar') 'Fabric manifest contains Collective for Minecraft 26.2'
+    Assert ($FabricManifest -match 'e27620080ae53460b00cabacaff409a960e0d6c6811b7e3519d5461cb62654e0016161eed914352171af56191b70a97c79320b3ef29c0636b74a0471c2398055') 'Collective SHA-512 is pinned'
+    $CollectivePath = Join-Path $Root 'server\\mods\\collective-26.2.0-8.39.jar'
+    Assert (Test-Path -LiteralPath $CollectivePath -PathType Leaf) 'Collective was downloaded into server/mods'
+    if (Test-Path -LiteralPath $CollectivePath -PathType Leaf) {
+        Assert ((Get-Sha512 $CollectivePath) -eq 'e27620080ae53460b00cabacaff409a960e0d6c6811b7e3519d5461cb62654e0016161eed914352171af56191b70a97c79320b3ef29c0636b74a0471c2398055') 'Downloaded Collective SHA-512 matches the pinned hash'
+    }
+    Assert ($FabricManifest -match 'welcomemessage-26\.2\.0-2\.8\.jar') 'Fabric manifest contains Welcome Message for Minecraft 26.2'
+    Assert (-not (Test-Path -LiteralPath $LegacyWelcomePath -PathType Leaf)) 'Replaced welcome artifact was removed during bootstrap'
+    Assert ($FabricManifest -match 'c4e6aca35e5da10f1a3a7e9432a1946bc0e5c8e36c8357bd6c7cbb66cb0c7d99402bb55a9679828223d0353b356ec05ee998e6035c165b03318fe93a6fe3d113') 'Welcome Message SHA-512 is pinned'
+    $WelcomeMessagePath = Join-Path $Root 'server\\mods\\welcomemessage-26.2.0-2.8.jar'
+    Assert (Test-Path -LiteralPath $WelcomeMessagePath -PathType Leaf) 'Welcome Message was downloaded into server/mods'
+    if (Test-Path -LiteralPath $WelcomeMessagePath -PathType Leaf) {
+        Assert ((Get-Sha512 $WelcomeMessagePath) -eq 'c4e6aca35e5da10f1a3a7e9432a1946bc0e5c8e36c8357bd6c7cbb66cb0c7d99402bb55a9679828223d0353b356ec05ee998e6035c165b03318fe93a6fe3d113') 'Downloaded Welcome Message SHA-512 matches the pinned hash'
+    }
     Assert ($FabricManifest -match 'essential_commands-0\.41\.0-mc26\.2\.jar') 'Fabric manifest contains Essential Commands for Minecraft 26.2'
     Assert ($FabricManifest -match 'ec-core-1\.3\.0-mc26\.2\.jar') 'Fabric manifest contains the Essential Commands core dependency'
     Assert ($FabricManifest -match 'e70b62784e5dd0e41477cd0d9184a6da11c62f9f53899dd5309742a43ccf6c0abd4faddbc942799e94edb37daf88d09a0af66f99202c8e199ee465f98732c919') 'Essential Commands SHA-512 is pinned'
@@ -202,12 +219,6 @@ try {
     if (Test-Path -LiteralPath $NoChatReportsFabricPath -PathType Leaf) {
         Assert ((Get-Sha512 $NoChatReportsFabricPath) -eq '139dd09e04cc66fe4745264ddfbe3249be6e956326c931eb9707f9a640bbc011a4f1fd5684d04ca90e1b473be55772b0279e5c2f935c2f2e85d054e2ab0a6923') 'Downloaded Fabric No Chat Reports SHA-512 matches the pinned hash'
     }
-    $WelcomeAwaPath = Join-Path $Root 'server\mods\welcome_awa-fabric-26.2-2.4.jar'
-    Assert (Test-Path -LiteralPath $WelcomeAwaPath -PathType Leaf) 'Welcome AWA was downloaded into server/mods'
-    if (Test-Path -LiteralPath $WelcomeAwaPath -PathType Leaf) {
-        $WelcomeAwaHash = Get-Sha512 $WelcomeAwaPath
-        Assert ($WelcomeAwaHash -eq '981c813ae53a230b49b8e2a33f83cb6fac810847baffaef43369f3caeccace19b7d5f578093277d656f5e5817ec18139485b8d76bee8ec6329279cc6eaa388c5') 'Downloaded Welcome AWA SHA-512 matches the pinned hash'
-    }
     $DatapackManifest = Get-Content -LiteralPath (Join-Path $Root 'server\\datapacks-manifest.ps1') -Raw
     Assert ($DatapackManifest -match 'BetterMultiplayerSleep-1\.1\.0-1\.21\.11\+\.zip') 'Datapack manifest contains Better Multiplayer Sleep for Minecraft 26.2'
     Assert ($DatapackManifest -match '8ecadc28a73bbe12dade19d5dfa0840dc8d28b2bd80c0ef154779063375fb5c96cc7c877c55c627909f2aea2907a30b2a8f2038769d269443f0e1689f7f3017a') 'Better Multiplayer Sleep SHA-512 is pinned'
@@ -219,7 +230,11 @@ try {
     }
     Assert ($RealText -match 'datapacks|BetterMultiplayerSleep') 'Bootstrap reports configured datapack installation support'
     $NeoForgeManifest = Get-Content -LiteralPath (Join-Path $Root 'server\\mods-manifest-neoforge.ps1') -Raw
-    Assert ($NeoForgeManifest -notmatch '(?i)essential_commands|ec-core|offlinecommands') 'NeoForge manifest excludes Fabric-only Essential Commands and OfflineCommands'
+    Assert ($NeoForgeManifest -notmatch '(?i)essential_commands|ec-core|offlinecommands|InvView') 'NeoForge manifest excludes Fabric-only Essential Commands, InvView and OfflineCommands'
+    Assert ($NeoForgeManifest -match 'collective-26\\.2\\.0-8\\.39\\.jar') 'NeoForge manifest contains Collective for Minecraft 26.2'
+    Assert ($NeoForgeManifest -match 'e27620080ae53460b00cabacaff409a960e0d6c6811b7e3519d5461cb62654e0016161eed914352171af56191b70a97c79320b3ef29c0636b74a0471c2398055') 'NeoForge Collective SHA-512 is pinned'
+    Assert ($NeoForgeManifest -match 'welcomemessage-26\\.2\\.0-2\\.8\\.jar') 'NeoForge manifest contains Welcome Message for Minecraft 26.2'
+    Assert ($NeoForgeManifest -match 'c4e6aca35e5da10f1a3a7e9432a1946bc0e5c8e36c8357bd6c7cbb66cb0c7d99402bb55a9679828223d0353b356ec05ee998e6035c165b03318fe93a6fe3d113') 'NeoForge Welcome Message SHA-512 is pinned'
     Assert ($NeoForgeManifest -match 'NoChatReports-NEOFORGE-26\\.2-v2\\.20\\.1\\.jar') 'NeoForge manifest contains No Chat Reports for Minecraft 26.2'
     Assert ($NeoForgeManifest -match '782b4b081c5d8bdd19139894feacc9c48b6fb025856e904c2bb9ee84438734de96eb5540f471e57830ecb92df8f18f6da20a1b619c4806b16f06780250999d03') 'NeoForge No Chat Reports SHA-512 is pinned'
     $NoChatReportsNeoForgeTemp = Join-Path ([IO.Path]::GetTempPath()) ("jarock-NoChatReports-NEOFORGE-26.2-v2.20.1-$PID.jar")
@@ -307,14 +322,18 @@ try {
     $ServerExitCode = $ServerProc.ExitCode
     $LatestLogPath = Join-Path $Root 'server\\logs\\latest.log'
     $LatestLogText = if (Test-Path -LiteralPath $LatestLogPath -PathType Leaf) { Get-Content -LiteralPath $LatestLogPath -Raw } else { '' }
+    Assert ($LatestLogText -match '(?i)welcomemessage|welcome message') 'Fabric server log includes Welcome Message'
     Assert ($LatestLogText -match '(?i)offline[_-]?commands') 'Fabric server log includes OfflineCommands'
     Assert ($LatestLogText -match '(?i)inv[_-]?view') 'Fabric server log includes InvView'
     Assert ($LatestLogText -match 'essential_commands') 'Fabric server log includes Essential Commands'
     Assert ($LatestLogText -match 'ec[_-]?core') 'Fabric server log includes the Essential Commands core dependency'
     Assert $script:ServerStopped 'Ready banner appeared (server finished loading)'
     Assert ($ServerExitCode -eq 0) "Server shut down cleanly (exit code $ServerExitCode)"
-    $WelcomeConfigPath = Join-Path $Root 'server\config\welcome-mod.json'
-    Assert (Test-Path -LiteralPath $WelcomeConfigPath -PathType Leaf) 'Welcome AWA generated config/welcome-mod.json'
+    $WelcomeMessageConfigCandidates = @(
+        (Join-Path $Root 'server\config\welcomemessage.json'),
+        (Join-Path $Root 'server\config\welcome-message.json')
+    )
+    Assert (@($WelcomeMessageConfigCandidates | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf }).Count -gt 0) 'Welcome Message generated its configuration'
 
     # 7. Summary.
     Write-Host ''

@@ -42,7 +42,7 @@ Bedrock players ─ Geyser ───┘ │
 | InvView | Opens and manages online/offline player inventories and ender chests | `mods/`, Fabric 26.2 only |
 | OfflineCommands | Runs supported commands on offline players; restrict access to trusted operators | `mods/`, Fabric 26.2 only |
 | Links In Chat | Server-side clickable links and `/link` or `/linkwhisper` chat commands | `mods/` |
-| Welcome AWA | Server-side colored join messages with `%player%` placeholder | `mods/`, Fabric 26.2 |
+| Welcome Message | Configurable server-side welcome messages; requires Collective | `mods/`, Fabric or NeoForge 26.2 |
 | No Chat Reports | Disables server-side chat-reporting signatures | `mods/`, Fabric or NeoForge 26.2 |
 | Better Multiplayer Sleep | Lets one player sleep through the night | configured world's `datapacks/`, Fabric or NeoForge |
 | Carpet Extra / Carpet TIS Addition | Optional Carpet extensions | `mods/`, only if compatible |
@@ -267,7 +267,8 @@ fabric-api-<compatible-version>.jar
 Geyser-Fabric-<compatible-version>.jar
 floodgate-fabric-<compatible-version>.jar
 linksinchat-1.3.1+26.2.jar
-welcome_awa-fabric-26.2-2.4.jar
+collective-26.2.0-8.39.jar
+welcomemessage-26.2.0-2.8.jar
 ```
 
 The exact filenames and versions will change. The important checks are:
@@ -363,7 +364,7 @@ Only install a mod after checking its current project page for **Minecraft 26.2*
 | ServerCore | Server-side | Optional; enable conservative settings first |
 | Fabric Carpet | Server-side or both | Technical rules, diagnostics and redstone testing |
 | Links In Chat | Server-side | Makes URLs in server chat clickable; no client installation is required |
-| Welcome AWA | Server-side | Sends configurable colored join messages; `%player%` is replaced by the joining player's name, and `welcome reload` reloads `config/welcome-mod.json` |
+| Welcome Message | Server-side | Sends configurable welcome messages; Collective provides shared configuration support |
 | Carpet Extra | Server-side | Optional extension; match its Carpet dependency |
 | Carpet TIS Addition | Server-side or both | Optional advanced technical tools; verify 26.2 support |
 
@@ -471,7 +472,7 @@ Use this list in order:
 - [ ] No client-only mod is in the server `mods/` folder.
 - [ ] Every optimization and utility mod lists Fabric and Minecraft 26.2.
 - [ ] Links In Chat is installed from the pinned Fabric 26.2 manifest when clickable server-chat links are desired.
-- [ ] Welcome AWA is installed from the pinned Fabric 26.2 manifest when configurable join messages are desired.
+- [ ] Welcome Message and Collective are installed from the pinned loader manifest and the welcome configuration is customized.
 - [ ] Essential Commands and `ec-core` are loaded without errors on Fabric 26.2 when the Fabric loader is selected.
 - [ ] No Chat Reports is loaded for the selected loader and Minecraft 26.2.
 - [ ] Better Multiplayer Sleep is present in the configured world's `datapacks/` folder and loads without errors.

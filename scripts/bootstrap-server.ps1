@@ -352,6 +352,13 @@ function Install-Mods([string]$Loader) {
     . $Manifest
     if (-not $Mods -or $Mods.Count -eq 0) { Stop-WithGuidance "The $Loader mod manifest is empty." 'Restore the loader-specific manifest and run start-server.bat again.' }
     New-Item -ItemType Directory -Force -Path $ModsDir | Out-Null
+    # Remove only the known replaced welcome artifact so an existing installation
+    # cannot load both the legacy and current welcome mods at once.
+    $LegacyWelcomeAwa = Join-Path $ModsDir 'welcome_awa-fabric-26.2-2.4.jar'
+    if (Test-Path -LiteralPath $LegacyWelcomeAwa -PathType Leaf) {
+        Remove-Item -LiteralPath $LegacyWelcomeAwa -Force
+        Write-Host 'Removed the replaced Welcome AWA artifact; Welcome Message will be used instead.' -ForegroundColor Yellow
+    }
     foreach ($Mod in $Mods) {
         $Destination = Join-Path $ModsDir $Mod.Name
         Download-AndVerify $Mod.Url $Destination $Mod.Sha512

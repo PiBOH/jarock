@@ -9,7 +9,7 @@
 本文件說明下載 Jarock 後實際會發生什麼事。
 
 
-> Technical fallback note: DedicatedPower is a Fabric-only mod: it is updated automatically from its latest GitHub release, while the other server mods are pinned and verified with SHA-512. Links In Chat is also included as a verified server-side Fabric 26.2 mod; it makes chat URLs clickable and adds `/link` and `/linkwhisper`, without requiring client installation. Welcome AWA is also included as a verified server-side Fabric 26.2 mod; it sends configurable colored join messages using `%player%` and supports `welcome reload`.
+> Technical fallback note: DedicatedPower is a Fabric-only mod: it is updated automatically from its latest GitHub release, while the other server mods are pinned and verified with SHA-512. Links In Chat is also included as a verified server-side Fabric 26.2 mod; it makes chat URLs clickable and adds `/link` and `/linkwhisper`, without requiring client installation. Welcome Message 2.8 with its required Collective library is included as a verified server-side Minecraft 26.2 mod for Fabric and NeoForge; it sends configurable join messages.
 
 > Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **維護說明：** 啟動器現在會尋找相容的 64 位元 Java 25+ 執行環境，而不是只信任 `PATH` 中第一個 `java.exe`。它使用 `scripts/java-runtime.ps1`，將選取的執行檔儲存到 `server/java-path.txt`，並在啟動前再次驗證。Java 8 可以繼續安裝。

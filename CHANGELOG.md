@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.84-beta] - 2026-08-08
+
+### Changed
+
+- Replaced the Fabric-only Welcome AWA mod with Welcome Message 2.8 for Minecraft 26.2 and its required Collective 8.39 library. Both pinned Modrinth artifacts are verified with SHA-512 during bootstrap and are installed for Fabric and NeoForge; clients do not need to install them.
+- Updated the bootstrap regression test, loader manifests, English, Italian and localized documentation, and TODO checklist to reflect Welcome Message configuration and the removal of the old Welcome AWA references.
+
 ## [0.0.83-beta] - 2026-08-08
 
 ### Added
@@ -720,7 +727,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.83-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.84-beta...HEAD
+[0.0.84-beta]: https://github.com/PiBOH/jarock/compare/0.0.83-beta...0.0.84-beta
 [0.0.83-beta]: https://github.com/PiBOH/jarock/compare/0.0.82-beta...0.0.83-beta
 [0.0.82-beta]: https://github.com/PiBOH/jarock/compare/0.0.81-beta...0.0.82-beta
 [0.0.81-beta]: https://github.com/PiBOH/jarock/compare/0.0.80-beta...0.0.81-beta

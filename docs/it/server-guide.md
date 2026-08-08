@@ -34,7 +34,8 @@ Componenti:
 - **InvView:** consente agli operatori autorizzati di visualizzare e gestire gli inventari e i bauli dell'End dei giocatori online o offline; disponibile per Fabric 26.2, non per NeoForge.
 - **OfflineCommands:** permette di eseguire i comandi supportati sui giocatori offline; disponibile per Fabric 26.2, non per NeoForge. Il file verificato si chiama `OfflineCommands-1.0.3+26.1-rc-3.jar`, ma i metadati Modrinth includono esplicitamente Minecraft 26.2. Limita l'accesso agli operatori fidati e verifica i permessi prima dell'uso pubblico.
 - **Links In Chat:** mod server-side che rende cliccabili gli URL nella chat e aggiunge i comandi `/link` e `/linkwhisper`; i client non devono installarla.
-- **Welcome AWA:** mod server-side che invia messaggi colorati quando entra un giocatore; usa `%player%`, i codici colore `&`, le interruzioni `\n` e il comando `welcome reload`.
+- **Welcome Message:** mod server-side che invia messaggi configurabili quando entra un giocatore; richiede la libreria Collective ed è disponibile per Fabric e NeoForge 26.2.
+
 - **No Chat Reports:** mod server-side inclusa per Fabric e NeoForge 26.2 che impedisce al server di inoltrare dati firmati per la segnalazione della chat. I client vanilla possono comunque mostrare l'avviso dei messaggi non firmati.
 - **Better Multiplayer Sleep:** datapack verificato che permette a un solo giocatore di dormire per saltare la notte; viene installato nella cartella `datapacks` del mondo configurato, sia con Fabric sia con NeoForge.
 - **ServerCore, Carpet Extra e Carpet TIS Addition:** opzionali; installali solo se esiste una build compatibile con 26.2.
@@ -195,7 +196,8 @@ Inserisci nella cartella soltanto file `.jar` compatibili con **Fabric e Minecra
 fabric-api-<compatible-version>.jar
 Geyser-Fabric-<compatible-version>.jar
 floodgate-fabric-<compatible-version>.jar
-welcome_awa-fabric-26.2-2.4.jar
+collective-26.2.0-8.39.jar
+welcomemessage-26.2.0-2.8.jar
 ```
 
 Non scompattare i `.jar` e non usare siti che ricaricano file modificati.
@@ -271,7 +273,8 @@ Controlla sempre nella pagina ufficiale della mod: versione **26.2**, loader **F
 | ServerCore | Controlli aggiuntivi sulle prestazioni | Impostazioni conservative |
 | Fabric Carpet | Regole, diagnostica e strumenti tecnici | Base consigliata per redstone |
 | Essential Commands | Comandi utili per il server e componente `ec-core` | Solo Fabric 26.2 |
-| Welcome AWA | Messaggi colorati all'ingresso | `%player%`, `&`, `\n` e `welcome reload` |
+| Welcome Message | Messaggi configurabili all'ingresso | Richiede Collective; Fabric e NeoForge 26.2 |
+
 | Carpet Extra | Estensioni di Carpet | Deve corrispondere alla versione di Carpet |
 | Carpet TIS Addition | Strumenti tecnici avanzati | Opzionale, verifica 26.2 |
 

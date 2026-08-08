@@ -95,11 +95,18 @@ $Mods = @(
         Purpose = 'Clickable links and link whisper commands in server chat'
     }
     [pscustomobject]@{
-        Name = 'welcome_awa-fabric-26.2-2.4.jar'
-        Url = 'https://cdn.modrinth.com/data/fC8CQ1bz/versions/Y8JZbT7F/welcome_awa-fabric-26.2-2.4.jar'
-        Sha512 = '981c813ae53a230b49b8e2a33f83cb6fac810847baffaef43369f3caeccace19b7d5f578093277d656f5e5817ec18139485b8d76bee8ec6329279cc6eaa388c5'
+        Name = 'collective-26.2.0-8.39.jar'
+        Url = 'https://cdn.modrinth.com/data/e0M1UDsY/versions/M75JwjyS/collective-26.2.0-8.39.jar'
+        Sha512 = 'e27620080ae53460b00cabacaff409a960e0d6c6811b7e3519d5461cb62654e0016161eed914352171af56191b70a97c79320b3ef29c0636b74a0471c2398055'
         Required = $true
-        Purpose = 'Colored server-side join welcome messages with player placeholders'
+        Purpose = 'Required Collective library for Welcome Message'
+    }
+    [pscustomobject]@{
+        Name = 'welcomemessage-26.2.0-2.8.jar'
+        Url = 'https://cdn.modrinth.com/data/DMK2eYu7/versions/HaUYHekm/welcomemessage-26.2.0-2.8.jar'
+        Sha512 = 'c4e6aca35e5da10f1a3a7e9432a1946bc0e5c8e36c8357bd6c7cbb66cb0c7d99402bb55a9679828223d0353b356ec05ee998e6035c165b03318fe93a6fe3d113'
+        Required = $true
+        Purpose = 'Configurable server-side welcome messages for Fabric 26.2'
     }
     [pscustomobject]@{
         Name = 'NoChatReports-FABRIC-26.2-v2.20.1.jar'

@@ -39,6 +39,20 @@ $Mods = @(
         Purpose = 'Server performance controls'
     }
     [pscustomobject]@{
+        Name = 'collective-26.2.0-8.39.jar'
+        Url = 'https://cdn.modrinth.com/data/e0M1UDsY/versions/M75JwjyS/collective-26.2.0-8.39.jar'
+        Sha512 = 'e27620080ae53460b00cabacaff409a960e0d6c6811b7e3519d5461cb62654e0016161eed914352171af56191b70a97c79320b3ef29c0636b74a0471c2398055'
+        Required = $true
+        Purpose = 'Required Collective library for Welcome Message'
+    }
+    [pscustomobject]@{
+        Name = 'welcomemessage-26.2.0-2.8.jar'
+        Url = 'https://cdn.modrinth.com/data/DMK2eYu7/versions/HaUYHekm/welcomemessage-26.2.0-2.8.jar'
+        Sha512 = 'c4e6aca35e5da10f1a3a7e9432a1946bc0e5c8e36c8357bd6c7cbb66cb0c7d99402bb55a9679828223d0353b356ec05ee998e6035c165b03318fe93a6fe3d113'
+        Required = $true
+        Purpose = 'Configurable server-side welcome messages for NeoForge 26.2'
+    }
+    [pscustomobject]@{
         Name = 'NoChatReports-NEOFORGE-26.2-v2.20.1.jar'
         Url = 'https://cdn.modrinth.com/data/qQyHxfxd/versions/k9fqrSE6/NoChatReports-NEOFORGE-26.2-v2.20.1.jar'
         Sha512 = '782b4b081c5d8bdd19139894feacc9c48b6fb025856e904c2bb9ee84438734de96eb5540f471e57830ecb92df8f18f6da20a1b619c4806b16f06780250999d03'
