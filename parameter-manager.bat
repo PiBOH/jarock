@@ -230,29 +230,25 @@ goto menu
 
 :manual_update_check
 cls
-echo ==^> Checking for Jarock updates
-echo The server will not be started. The updater will ask before installing a verified Lite package.
-set "MANUAL_UPDATE_VERSION_BEFORE="
-set /p "MANUAL_UPDATE_VERSION_BEFORE="<"%ROOT%\scripts\version.txt"
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-jarock.ps1" -PromptForUpdate
-set "MANUAL_UPDATE_EXIT_CODE=%errorlevel%"
-echo.
-if not "%MANUAL_UPDATE_EXIT_CODE%"=="0" goto manual_update_result
-set "MANUAL_UPDATE_VERSION_AFTER="
-set /p "MANUAL_UPDATE_VERSION_AFTER="<"%ROOT%\scripts\version.txt"
-if /i "%MANUAL_UPDATE_VERSION_BEFORE%"=="%MANUAL_UPDATE_VERSION_AFTER%" goto manual_update_no_change
-echo Jarock was updated. The parameter manager will close so the updated version can be used next time.
-del /q "%TEMP_SETTINGS%" >nul 2>&1
-pause
-exit /b 0
-
-:manual_update_no_change
-echo No newer release was installed; the parameter manager remains open.
-
-:manual_update_result
-if "%MANUAL_UPDATE_EXIT_CODE%"=="2" echo Update skipped or cancelled. No files were changed.
-if "%MANUAL_UPDATE_EXIT_CODE%"=="1" echo Update check failed. Read the error and Suggested fix above.
-pause
+echo ==^> Opening the Jarock updater in a new window
+echo The server will not be started. The updater will check GitHub and ask before installing a verified Lite package.
+if not exist "%ROOT%\scripts\update-jarock.bat" (
+    echo ERROR: The updater entry point is missing: scripts\update-jarock.bat
+    echo Suggested fix: restore scripts\update-jarock.bat from the Jarock repository or release package.
+    pause
+    goto menu
+)
+start "Jarock updater" "%ComSpec%" /d /c call "%ROOT%\scripts\update-jarock.bat"
+if errorlevel 1 (
+    echo ERROR: Windows could not open the updater window.
+    echo Suggested fix: verify that Windows can start its command processor and run this option again.
+    pause
+) else (
+    echo The Jarock updater is running in a separate window.
+    echo This parameter manager will close now; reopen it after the updater finishes.
+    del /q "%TEMP_SETTINGS%" >nul 2>&1
+    exit /b 0
+)
 goto menu
 
 :update_mode_menu

@@ -160,7 +160,7 @@ If you complete this guide and the server is still unreachable, open a [GitHub i
 - The router model and the port-forwarding screenshot (redact public IP).
 - The result of the test: LAN access works? Java works? Bedrock works?
 
-> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to run the same check without starting the server. If a verified compatible Lite package is available, the updater asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
+> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to open `scripts/update-jarock.bat` in a separate window without starting the server. The updater performs the check and asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
 
 <!-- jarock-auto-update-check -->
 

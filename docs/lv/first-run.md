@@ -25,7 +25,7 @@ Pabeidziet pirmo palaišanu ar `online-mode=true`, lai darbotos parastā autenti
 
 Lai instalētu atjauninājumu, droši apturiet serveri un palaidiet `scripts/update-jarock.bat`.
 
-> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to run the same check without starting the server. If a verified compatible Lite package is available, the updater asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
+> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to open `scripts/update-jarock.bat` in a separate window without starting the server. The updater performs the check and asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
 
 <!-- jarock-lan-addresses-lv -->
 

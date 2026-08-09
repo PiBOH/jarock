@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.100-beta] - 2026-08-10
+
+### Changed
+
+- Changed `U. Check for Jarock updates` in `parameter-manager.bat` to open `scripts/update-jarock.bat` in a separate window. The existing updater now owns the complete check, confirmation, checksum, backup and rollback flow without starting the server from the parameter manager; the old parameter-manager session closes after the updater window is launched so it cannot save stale settings after a self-update.
+- Updated the README and localized documentation to describe the separate updater window.
+
 ## [0.0.99-beta] - 2026-08-10
 
 ### Fixed

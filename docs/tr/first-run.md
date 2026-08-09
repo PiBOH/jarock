@@ -16,7 +16,7 @@ Jarock loader ile sabitlenmiş modları otomatik indirir. İlk çalıştırma `s
 
 Tekrar çalıştırın ve world, Geyser ile Floodgate'in tamamlanmasını bekleyin. `stop` yazın ve pencereyi kapatmadan önce `CLEAN SHUTDOWN COMPLETE` ile `SAFE TO CLOSE` mesajlarını bekleyin. Hatalarda Suggested fix'i uygulayın; loader'lar karıştıysa yedek alın ve `clean-server-runtime.bat` çalıştırın. Güncelleme için `scripts/update-jarock.bat` çalıştırın ve herkese açmadan önce `TODO.md` dosyasını okuyun.
 
-> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to run the same check without starting the server. If a verified compatible Lite package is available, the updater asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
+> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to open `scripts/update-jarock.bat` in a separate window without starting the server. The updater performs the check and asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
 > Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 <!-- jarock-lan-addresses-tr -->
