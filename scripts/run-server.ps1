@@ -126,8 +126,10 @@ function Read-NbtPayload([System.IO.BinaryReader]$Reader, [int]$Type, [string[]]
         3 { [void](Read-NbtInt32 $Reader); return }
         4 {
             $Value = Read-NbtInt64 $Reader
-            if ($Path.Count -gt 0 -and $Path[-1] -ieq 'seed' -and ($Path -contains 'WorldGenSettings')) {
-                $script:WorldSeed = [string]$Value
+            # Minecraft 26.2 stores the world seed in world_gen_settings.dat under
+            # data.seed; legacy worlds keep it in level.dat under Data.WorldGenSettings.seed.
+            if ($Path.Count -gt 0 -and $Path[-1] -ieq 'seed' -and ($Path -contains 'WorldGenSettings' -or $Path[0] -ieq 'data')) {
+                $script:DetectedSeed = [string]$Value
             }
             return
         }
@@ -155,27 +157,43 @@ function Read-NbtPayload([System.IO.BinaryReader]$Reader, [int]$Type, [string[]]
         default { throw "Unsupported NBT tag type $Type." }
     }
 }
-function Get-WorldSeed([string]$ServerDirectory, [string]$LevelName) {
-    $LevelPath = Join-Path (Join-Path $ServerDirectory $LevelName) 'level.dat'
-    if (-not (Test-Path -LiteralPath $LevelPath -PathType Leaf)) { return 'unavailable' }
+function Get-NbtSeedValue([string]$Path) {
+    # Reads the world seed from a single NBT file (gzip-compressed). Returns the seed
+    # as a string, or $null when the file is missing, unreadable or has no seed.
+    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) { return $null }
     $FileStream = $null; $Gzip = $null; $Reader = $null
     try {
-        $FileStream = [IO.File]::OpenRead($LevelPath)
+        $FileStream = [IO.File]::OpenRead($Path)
         $Gzip = New-Object IO.Compression.GzipStream($FileStream, [IO.Compression.CompressionMode]::Decompress)
         $Reader = New-Object IO.BinaryReader($Gzip)
-        $script:WorldSeed = 'unavailable'
+        $script:DetectedSeed = $null
         $RootType = $Reader.ReadByte()
-        if ($RootType -ne 10) { throw 'level.dat does not contain an NBT compound.' }
+        if ($RootType -ne 10) { return $null }
         [void](Read-NbtString $Reader)
         [void](Read-NbtPayload $Reader 10 @())
-        return [string]$script:WorldSeed
+        return $script:DetectedSeed
     }
-    catch { return 'unavailable' }
+    catch { return $null }
     finally {
         if ($null -ne $Reader) { $Reader.Dispose() }
         elseif ($null -ne $Gzip) { $Gzip.Dispose() }
         elseif ($null -ne $FileStream) { $FileStream.Dispose() }
     }
+}
+function Get-WorldSeed([string]$ServerDirectory, [string]$LevelName) {
+    # Minecraft 26.2 moved the world generation settings out of level.dat into
+    # world/data/minecraft/world_gen_settings.dat (data.seed). Legacy worlds keep
+    # the seed in level.dat under Data.WorldGenSettings.seed.
+    $LevelDir = Join-Path $ServerDirectory $LevelName
+    $Candidates = @(
+        (Join-Path (Join-Path (Join-Path $LevelDir 'data') 'minecraft') 'world_gen_settings.dat'),
+        (Join-Path $LevelDir 'level.dat')
+    )
+    foreach ($Candidate in $Candidates) {
+        $Value = Get-NbtSeedValue $Candidate
+        if ($null -ne $Value -and ([string]$Value) -ne '') { return [string]$Value }
+    }
+    return 'unavailable'
 }
 function Get-ConfiguredLevelName([string]$PropertiesPath) {
     if (Test-Path -LiteralPath $PropertiesPath -PathType Leaf) {
@@ -339,7 +357,8 @@ try {
                         if($script:GeyserPresent){$ReadyLine=Test-GeyserReadyLine $Line}
                         else{$ReadyLine=$Line -match 'Done \(\d+\.\d+s\)'}
                         if($ReadyLine){
-                            $script:WorldSeed=Get-WorldSeed $ServerDirectory (Get-ConfiguredLevelName $Properties)
+                            $NbtSeed=Get-WorldSeed $ServerDirectory (Get-ConfiguredLevelName $Properties)
+                            if($NbtSeed -ne 'unavailable'){$script:WorldSeed=$NbtSeed}
                             $script:BannerShown=$true
                             Show-ReadyStatus $ShowBanner $script:ReadyBanner
                         }
@@ -379,7 +398,8 @@ try {
                         if($script:GeyserPresent){$ReadyLine=Test-GeyserReadyLine $Line}
                         else{$ReadyLine=$Line -match 'Done \(\d+\.\d+s\)'}
                         if($ReadyLine){
-                            $script:WorldSeed=Get-WorldSeed $ServerDirectory (Get-ConfiguredLevelName $Properties)
+                            $NbtSeed=Get-WorldSeed $ServerDirectory (Get-ConfiguredLevelName $Properties)
+                            if($NbtSeed -ne 'unavailable'){$script:WorldSeed=$NbtSeed}
                             $script:BannerShown=$true
                             Show-ReadyStatus $ShowBanner $script:ReadyBanner
                         }

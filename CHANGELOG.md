@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.87-beta] - 2026-08-09
+
+### Fixed
+
+- The ready-status `seed:` line now works on Minecraft 26.2 worlds: the seed is read from `world/data/minecraft/world_gen_settings.dat` (`data.seed`), where 26.2 stores the world generation settings, with the legacy `level.dat` (`Data.WorldGenSettings.seed`) kept as a fallback for older worlds. Previously the launcher only looked inside `level.dat`, which no longer contains the seed in 26.2, so the banner always reported `unavailable`.
+- The ready banner no longer overwrites an already-detected seed with `unavailable` when the NBT fallback cannot be read: a seed captured from the server log is preserved in that case.
+- The Windows bootstrap regression test now asserts that the ready status prints a numeric `seed:` value.
+
 ## [0.0.86-beta] - 2026-08-09
 
 ### Added
@@ -749,7 +757,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.85-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.86-beta...HEAD
+[0.0.87-beta]: https://github.com/PiBOH/jarock/compare/0.0.86-beta...0.0.87-beta
 [0.0.86-beta]: https://github.com/PiBOH/jarock/compare/0.0.85-beta...0.0.86-beta
 [0.0.84-beta]: https://github.com/PiBOH/jarock/compare/0.0.83-beta...0.0.84-beta
 [0.0.83-beta]: https://github.com/PiBOH/jarock/compare/0.0.82-beta...0.0.83-beta

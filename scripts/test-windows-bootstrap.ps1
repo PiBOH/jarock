@@ -332,6 +332,7 @@ try {
     $CollectedText = $CollectedOutput -join "`n"
     Assert $script:ServerStopped 'Ready banner appeared (server finished loading)'
     Assert ($ServerExitCode -eq 0) "Server shut down cleanly (exit code $ServerExitCode)"
+    Assert ($CollectedText -match '(?m)seed:\s+(-?\d+)') 'The ready status shows the world seed read from world_gen_settings.dat'
     Assert ($CollectedText -match 'shutting down and saving the world') 'The server console warns that the world is being saved when stop is detected'
     Assert ($CollectedText -match 'SAFE TO CLOSE') 'The server console prints the SAFE TO CLOSE confirmation after the world save completes'
     $WelcomeMessageConfigCandidates = @(
