@@ -39,5 +39,8 @@ jobs:
           pwsh -NoLogo -NoProfile -File ./scripts/test-windows-bootstrap.ps1 *> bootstrap-test.log
           $code = $LASTEXITCODE
           Get-Content bootstrap-test.log
-          if ($code -ne 0) { Get-Content bootstrap-test.log -Tail 60 | ForEach-Object { "::error::$_" } }
+          if ($code -ne 0) {
+            $escaped = (Get-Content bootstrap-test.log -Tail 40 | ForEach-Object { $_.Replace('%','%25') }) -join '%0A'
+            Write-Output "::error::bootstrap test failed (exit $code):%0A$escaped"
+          }
           exit $code
