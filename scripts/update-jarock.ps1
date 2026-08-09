@@ -310,7 +310,7 @@ function Test-ProtectedProjectPath([string]$Relative) {
     # A downloaded release ZIP may be unpacked outside Git. Preserve the known
     # generated runtime paths while allowing committed templates and manifests,
     # including templates below server/config/, to be refreshed.
-    if ($Comparable -match '^server/(.+\.template|readme\.md|mods-manifest[^/]*\.ps1)$') { return $false }
+    if ($Comparable -match '^server/(.+\.template(?:-[^/]+)?|readme\.md|mods-manifest[^/]*\.ps1)$') { return $false }
     $FirstChild = if ($Comparable.Contains('/')) { $Comparable.Substring(7).Split('/')[0] } else { $Comparable.Substring(7) }
     if (@('world','world_nether','world_the_end','logs','crash-reports','libraries','mods','config') -contains $FirstChild) { return $true }
     if ($Comparable -match '^server/(server\.jar|vanilla-server\.jar|run\.bat|user_jvm_args\.txt|fabric-server-launcher\.properties|jarock-loader\.txt|eula\.txt|server\.properties|java-path\.txt)$') { return $true }

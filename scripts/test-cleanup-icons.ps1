@@ -29,6 +29,8 @@ try {
     New-Item -ItemType Directory -Force -Path (Join-Path $ServerDirectory 'config/Geyser-Fabric'), (Join-Path $ServerDirectory 'config/Geyser-NeoForge') | Out-Null
     Set-Content -LiteralPath (Join-Path $ServerDirectory 'config/Geyser-Fabric/config.yml.template') -Value 'template' -NoNewline
     Set-Content -LiteralPath (Join-Path $ServerDirectory 'config/Geyser-NeoForge/config.yml.template') -Value 'template' -NoNewline
+    $WelcomeTemplatePath = Join-Path $ServerDirectory 'config/welcomemessage.json5.template-jarock'
+    Set-Content -LiteralPath $WelcomeTemplatePath -Value 'Jarock welcome template' -NoNewline
 
     foreach ($FileName in @('icon.png', 'server-icon.png', 'logo.png')) {
         Set-Content -LiteralPath (Join-Path $ServerDirectory $FileName) -Value "preserve $FileName" -NoNewline
@@ -46,6 +48,7 @@ try {
     foreach ($FileName in @('icon.png', 'server-icon.png', 'logo.png')) {
         Assert (Test-Path -LiteralPath (Join-Path $ServerDirectory $FileName) -PathType Leaf) "server/$FileName is preserved"
     }
+    Assert (Test-Path -LiteralPath $WelcomeTemplatePath -PathType Leaf) 'Jarock Welcome Message template is preserved'
     foreach ($FileName in @('icon.png', 'logo.png')) {
         Assert (Test-Path -LiteralPath (Join-Path $TestRoot $FileName) -PathType Leaf) "root $FileName is preserved"
     }

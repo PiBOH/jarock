@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.104-beta] - 2026-08-10
+
+### Fixed
+
+- Preserved `server/config/welcomemessage.json5.template-jarock` during `clean-server-runtime.bat` cleanup.
+- Updated the Lite-package updater so the Welcome Message project template is refreshed during verified updates instead of being treated as generated runtime configuration. Added cleanup and update regression coverage.
+
 ## [0.0.103-beta] - 2026-08-10
 
 ### Fixed

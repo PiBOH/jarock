@@ -78,7 +78,8 @@ try {
         'eula.txt.template',
         'server.properties.template',
         'config\Geyser-Fabric\config.yml.template',
-        'config\Geyser-NeoForge\config.yml.template'
+        'config\Geyser-NeoForge\config.yml.template',
+        'config\welcomemessage.json5.template-jarock'
     )
     $PreservedPaths = @{}
     foreach ($RelativePath in $PreservedRelativePaths) {
@@ -99,7 +100,7 @@ try {
     }
 
     Write-Host "Cleaning generated runtime data under: $ServerDirectory" -ForegroundColor Cyan
-    Write-Host 'Preserving repository templates, README, loader-specific manifests and the tracked server icons. server.jar is generated locally for the selected loader.' -ForegroundColor Green
+    Write-Host 'Preserving repository templates, the Jarock Welcome Message template, README, loader-specific manifests and the tracked server icons. server.jar is generated locally for the selected loader.' -ForegroundColor Green
     Write-Host 'This removes worlds, player data, logs, generated configs, Floodgate keys, downloaded mods and libraries.' -ForegroundColor Yellow
 
     # Remove every file that is not explicitly part of the repository template.

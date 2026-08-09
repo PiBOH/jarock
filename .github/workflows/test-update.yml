@@ -7,6 +7,7 @@ name: test-update.yml
       - 'scripts/update-jarock.ps1'
       - 'scripts/update-jarock.bat'
       - 'scripts/version.txt'
+      - 'server/config/welcomemessage.json5.template-jarock'
       - 'start-server.bat'
       - 'parameter-manager.bat'
       - 'CHANGELOG.md'
@@ -143,13 +144,16 @@ jobs:
               $WorldPath = Join-Path $InstallRoot 'server/world/level.dat'
               $PropertiesPath = Join-Path $InstallRoot 'server/server.properties'
               $GeyserConfigPath = Join-Path $InstallRoot 'server/config/Geyser-Fabric/config.yml'
+              $WelcomeTemplatePath = Join-Path $InstallRoot 'server/config/welcomemessage.json5.template-jarock'
               $SettingsPath = Join-Path $InstallRoot 'scripts/server-launch-settings.ini'
-              New-Item -ItemType Directory -Force -Path (Split-Path -Parent $WorldPath), (Split-Path -Parent $PropertiesPath), (Split-Path -Parent $GeyserConfigPath), (Split-Path -Parent $SettingsPath) | Out-Null
+              New-Item -ItemType Directory -Force -Path (Split-Path -Parent $WorldPath), (Split-Path -Parent $PropertiesPath), (Split-Path -Parent $GeyserConfigPath), (Split-Path -Parent $WelcomeTemplatePath), (Split-Path -Parent $SettingsPath) | Out-Null
               Set-Content -LiteralPath $WorldPath -Value 'WORLD DATA MUST SURVIVE' -Encoding ascii
               Set-Content -LiteralPath $PropertiesPath -Value @('server-port=25565', 'online-mode=true') -Encoding ascii
               Set-Content -LiteralPath $GeyserConfigPath -Value 'auth-type: floodgate' -Encoding ascii
+              Set-Content -LiteralPath $WelcomeTemplatePath -Value 'OLD WELCOME TEMPLATE' -Encoding ascii
               Set-Content -LiteralPath $SettingsPath -Value @('LOADER_TYPE=fabric', 'RAM_INITIAL=1G', 'RAM_MAX=4G') -Encoding ascii
               $ExpectedReadmeHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'README.md')).Hash
+              $ExpectedWelcomeTemplateHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'server/config/welcomemessage.json5.template-jarock')).Hash
               $ExpectedUpdaterHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'scripts/update-jarock.ps1')).Hash
 
               Write-Host "Older isolated installation: $OldVersion" -ForegroundColor Cyan
@@ -168,6 +172,7 @@ jobs:
               Assert-Condition ((Get-Content -LiteralPath $WorldPath -Raw).Trim() -eq 'WORLD DATA MUST SURVIVE') 'World data was not preserved.'
               Assert-Condition ((Get-Content -LiteralPath $PropertiesPath -Raw).Trim() -like '*server-port=25565*') 'server.properties was not preserved.'
               Assert-Condition ((Get-Content -LiteralPath $GeyserConfigPath -Raw).Trim() -eq 'auth-type: floodgate') 'The Geyser configuration was not preserved.'
+              Assert-Condition ((Get-FileHash -Algorithm SHA256 -LiteralPath $WelcomeTemplatePath).Hash -eq $ExpectedWelcomeTemplateHash) 'The current Welcome Message template was not applied from the update package.'
               Assert-Condition ((Get-Content -LiteralPath $SettingsPath -Raw).Trim() -like '*LOADER_TYPE=fabric*') 'Local launch settings were not preserved.'
               Write-Host 'PASS: older package downloaded, Lite update applied, checksum verified, and runtime/settings/world data preserved.' -ForegroundColor Green
           }
