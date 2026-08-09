@@ -1,0 +1,38 @@
+name: test-world-transfer
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'scripts/world-transfer.ps1'
+      - 'scripts/test-world-transfer.ps1'
+      - 'scripts/bootstrap-server.ps1'
+      - 'scripts/run-server.ps1'
+      - 'scripts/update-launch-setting.ps1'
+      - 'scripts/validate-launch-settings.ps1'
+      - 'scripts/server-launch-settings.ini.template'
+      - 'parameter-manager.bat'
+      - '.github/workflows/test-world-transfer.yml'
+      - 'CHANGELOG.md'
+      - 'scripts/version.txt'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  world-transfer:
+    name: Windows world import/export test
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run world-transfer test with Windows PowerShell 5.1
+        shell: powershell
+        run: ./scripts/test-world-transfer.ps1
+
+      - name: Run world-transfer test with PowerShell 7
+        shell: pwsh
+        run: ./scripts/test-world-transfer.ps1

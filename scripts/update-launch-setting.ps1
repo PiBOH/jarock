@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)] [string]$SettingsPath,
-    [Parameter(Mandatory = $true)] [ValidateSet('LOADER_TYPE','GUI_MODE','GC_PROFILE','AUTO_CONFIGURE_JAVA','ONLINE_MODE','SHOW_READY_BANNER','AUTO_UPDATE_CHECK','AUTO_UPDATE_MODE')] [string]$Name,
+    [Parameter(Mandatory = $true)] [ValidateSet('LOADER_TYPE','GUI_MODE','GC_PROFILE','AUTO_CONFIGURE_JAVA','ONLINE_MODE','SHOW_READY_BANNER','AUTO_UPDATE_CHECK','AUTO_UPDATE_MODE','WORLD_IMPORT_SOURCE','WORLD_EXPORT_DEST')] [string]$Name,
     [Parameter(Mandatory = $true)] [string]$Value
 )
 

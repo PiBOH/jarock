@@ -29,6 +29,8 @@ $NeoForgeInstallerSha512 = '336b2010e133639b576a2848bf667a59e64e744bfce527d92620
 $LoaderMarkerPath = Join-Path $ServerDir 'jarock-loader.txt'
 $JavaRuntimeScript = Join-Path $PSScriptRoot 'java-runtime.ps1'
 . $JavaRuntimeScript
+$WorldTransferScript = Join-Path $PSScriptRoot 'world-transfer.ps1'
+. $WorldTransferScript
 
 function Write-Step([string]$Message) { Write-Host "`n==> $Message" -ForegroundColor Cyan }
 function Stop-WithGuidance([string]$Message, [string]$Action) {
@@ -508,6 +510,7 @@ try {
     Write-Step "Installing $Loader for Minecraft $MinecraftVersion"
     if ($Loader -eq 'fabric') { Install-Fabric $Java } else { Install-NeoForge $Java }
     Ensure-LocalTemplates
+    Invoke-WorldImport -ServerDirectory $ServerDir -SettingsPath $SettingsPath -LevelName (Get-ConfiguredLevelName (Join-Path $ServerDir 'server.properties'))
     Write-Step "Downloading and verifying $Loader server mods"
     Install-Mods $Loader
     if ($Loader -eq 'fabric') { Install-DedicatedPower }

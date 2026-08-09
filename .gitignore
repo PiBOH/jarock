@@ -23,6 +23,9 @@
 **/world/
 **/world_nether/
 **/world_the_end/
+# World-import backups created automatically before a configured import replaces a world
+**/world_originalbkp*/
+
 **/logs/
 **/crash-reports/
 **/libraries/

@@ -62,13 +62,13 @@ Fabric is the default stack and NeoForge is the fallback. Each loader receives o
 - [English first-run guide](docs/en/first-run.md)
 - [English NeoForge fallback guide](docs/en/neoforge-fallback.md)
 - [All installation and fallback translations (including clearly labeled English fallback summaries)](docs/README.md)
-- [Configure RAM, GUI, online-mode, startup update checks and safe launch options (including Exit without saving)](parameter-manager.bat)
+- [Configure RAM, GUI, online-mode, startup update checks, world import/export and safe launch options (including Exit without saving)](parameter-manager.bat)
 - [How Jarock works — English](docs/en/how-does-jarock-work.md)
 - [How Jarock works — all translations](docs/README.md)
 - [Documentation and translation roadmap](docs/README.md)
 - [Project maintenance and contribution guidelines](CONTRIBUTING.md)
 
-The guides explain installation from zero, Java and Bedrock networking, Geyser/Floodgate authentication, the LAN addresses printed after the ready banner, the verified Better Multiplayer Sleep datapack, optimization and redstone mods, backups, security, troubleshooting and the limitations of client-side mods. The parameter manager edits a temporary copy and commits settings only through Save and exit or Save and start; Exit without saving leaves the existing settings unchanged. It can also set Minecraft `online-mode`; keep it `true` by default, and use `false` only with a trusted authentication proxy because offline mode is unsafe on a public server. See [TODO.md](TODO.md) for the work that remains before public access.
+The guides explain installation from zero, Java and Bedrock networking, Geyser/Floodgate authentication, the LAN addresses printed after the ready banner, the verified Better Multiplayer Sleep datapack, optimization and redstone mods, world import and export, backups, security, troubleshooting and the limitations of client-side mods. The parameter manager edits a temporary copy and commits settings only through Save and exit or Save and start; Exit without saving leaves the existing settings unchanged. It can also set Minecraft `online-mode`; keep it `true` by default, and use `false` only with a trusted authentication proxy because offline mode is unsafe on a public server. World import (`I`) replaces the configured world on the next start after confirmation and an automatic `<name>_originalbkp` backup; world export (`E`) mirrors the world to a destination folder outside `server/` after every clean shutdown. See [TODO.md](TODO.md) for the work that remains before public access.
 
 ## License
 

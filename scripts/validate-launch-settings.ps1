@@ -62,6 +62,13 @@ try {
     if ([string]$Values['ONLINE_MODE'] -notin @('true','false')) { throw 'ONLINE_MODE must be true or false.' }
     if ([string]$Values['SHOW_READY_BANNER'] -notin @('true','false')) { throw 'SHOW_READY_BANNER must be true or false.' }
     if ([string]$Values['AUTO_UPDATE_MODE'] -notin @('install','check','never')) { throw 'AUTO_UPDATE_MODE must be install, check or never.' }
+    # Optional world-transfer settings: paths may point to folders that do not exist yet
+    # (the export destination is created after a clean shutdown), so only their presence
+    # and format are checked. Empty values disable the feature.
+    foreach ($OptionalName in @('WORLD_IMPORT_SOURCE','WORLD_EXPORT_DEST')) {
+        if (-not $Values.ContainsKey($OptionalName)) { $Values[$OptionalName] = ''; continue }
+        if ($Values[$OptionalName] -match '[\r\n]') { throw "$OptionalName must be a single-line path." }
+    }
     Write-Host 'Launch settings are valid.' -ForegroundColor Green
     exit 0
 }

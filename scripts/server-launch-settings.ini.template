@@ -15,5 +15,13 @@ SHOW_READY_BANNER=true
 # check = check only and never install; never = do not contact GitHub.
 # The default is install. Choose check or never in parameter-manager.bat to override it.
 AUTO_UPDATE_MODE=install
+# World import: set this to the full path of a world folder (containing level.dat)
+# or a .zip world archive to import it into the configured level-name at the next
+# start. If the world already exists you are asked for confirmation and a backup is
+# created first. After a successful import the value is cleared automatically.
+WORLD_IMPORT_SOURCE=
+# World export: set this to a folder outside server/ to copy the current world there
+# after every clean shutdown (the destination folder is overwritten).
+WORLD_EXPORT_DEST=
 # Legacy AUTO_UPDATE_CHECK is still understood for older local settings:
 # true maps to install and false maps to never when AUTO_UPDATE_MODE is absent.

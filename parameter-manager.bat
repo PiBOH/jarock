@@ -59,6 +59,8 @@ echo   %OPT4%%PAD:~0,14%[%GC_PROFILE%]
 echo   %OPT5%%PAD:~0,3%[%AUTO_CONFIGURE_JAVA%]
 echo   %OPT6%%PAD:~0,29%[%ONLINE_MODE%]
 echo   %OPT7%%PAD:~0,28%[%SHOW_READY_BANNER%]
+echo   %OPTI%%PAD:~0,31%[%IMPORT_SHOW%]
+echo   %OPTE%%PAD:~0,31%[%EXPORT_SHOW%]
 echo   %OPTY%%PAD:~0,30%[%AUTO_UPDATE_MODE%]
 echo.
 echo   %OPT8%%PAD:~0,22%[starts the server]
@@ -68,7 +70,9 @@ echo   %OPTX%%PAD:~0,28%[restores defaults]
 echo.
 if /i "%ONLINE_MODE%"=="false" echo  WARNING: online-mode=false disables Mojang authentication. Keep it for private testing only.
 echo.
-choice /c 1234567890XY /n /m "Choose an option: "
+choice /c 1234567890XYIE /n /m "Choose an option: "
+if errorlevel 14 goto export_world_menu
+if errorlevel 13 goto import_world_menu
 if errorlevel 12 goto update_mode_menu
 if errorlevel 11 goto reset
 if errorlevel 10 goto cancel_exit
@@ -243,6 +247,71 @@ if errorlevel 1 pause
 pause
 goto menu
 
+:import_world_menu
+cls
+call :read_value WORLD_IMPORT_SOURCE ""
+echo Current world import source: [%WORLD_IMPORT_SOURCE%]
+echo.
+echo Paste the full path of a world folder (containing level.dat) or a .zip world archive
+echo that you want to import on the next start-server.bat run.
+echo Leave empty and press Enter to open a folder picker.
+echo Type CLEAR and press Enter to remove the import request.
+set "NEW_IMPORT="
+set /p "NEW_IMPORT=Import source: "
+if /i "%NEW_IMPORT%"=="CLEAR" (
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name WORLD_IMPORT_SOURCE -Value ""
+    if errorlevel 1 pause
+    echo World import request removed.
+    pause
+    goto menu
+)
+if not defined NEW_IMPORT (
+    for /f "delims=" %%P in ('powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\pick-folder.ps1" -Description "Select the world folder to import"') do set "NEW_IMPORT=%%P"
+)
+if not defined NEW_IMPORT (
+    echo No folder was selected; the world import source was left unchanged.
+    pause
+    goto menu
+)
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name WORLD_IMPORT_SOURCE -Value "%NEW_IMPORT%"
+if errorlevel 1 pause
+echo World import source set. The world will be imported on the next start-server.bat run; if the world already exists you will be asked to confirm and a backup is created first.
+pause
+goto menu
+
+:export_world_menu
+cls
+call :read_value WORLD_EXPORT_DEST ""
+echo Current world export destination: [%WORLD_EXPORT_DEST%]
+echo.
+echo Paste the full path of a folder where the world should be copied after every
+echo clean shutdown. The destination folder is overwritten (mirror copy) and must
+echo be outside the server folder.
+echo Leave empty and press Enter to open a folder picker.
+echo Type CLEAR and press Enter to remove the export request.
+set "NEW_EXPORT="
+set /p "NEW_EXPORT=Export destination: "
+if /i "%NEW_EXPORT%"=="CLEAR" (
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name WORLD_EXPORT_DEST -Value ""
+    if errorlevel 1 pause
+    echo World export request removed.
+    pause
+    goto menu
+)
+if not defined NEW_EXPORT (
+    for /f "delims=" %%P in ('powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\pick-folder.ps1" -Description "Select the world export folder"') do set "NEW_EXPORT=%%P"
+)
+if not defined NEW_EXPORT (
+    echo No folder was selected; the world export destination was left unchanged.
+    pause
+    goto menu
+)
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name WORLD_EXPORT_DEST -Value "%NEW_EXPORT%"
+if errorlevel 1 pause
+echo World export destination set. The world will be copied there after every clean shutdown.
+pause
+goto menu
+
 :reset
 copy /y "%TEMPLATE%" "%TEMP_SETTINGS%" >nul
 if errorlevel 1 (
@@ -329,11 +398,17 @@ set "OPT4=4. Choose garbage-collection profile"
 set "OPT5=5. Toggle automatic user Java environment setup"
 set "OPT6=6. Choose online-mode"
 set "OPT7=7. Show ready banner"
+set "OPTI=I. Import world"
+set "OPTE=E. Export world"
 set "OPT8=8. Save and start the server"
 set "OPT9=9. Save and exit"
 set "OPT0=0. Exit without saving"
 set "OPTX=X. Reset safe defaults"
 set "OPTY=Y. Choose startup update mode"
+set "WORLD_IMPORT_SOURCE="
+set "WORLD_EXPORT_DEST="
+set "IMPORT_SHOW=none"
+set "EXPORT_SHOW=none"
 call :read_value LOADER_TYPE none
 call :read_value RAM_INITIAL 4G
 call :read_value RAM_MAX 4G
@@ -344,6 +419,10 @@ call :read_value ONLINE_MODE true
 call :read_value SHOW_READY_BANNER true
 call :read_value AUTO_UPDATE_CHECK false
 call :read_value AUTO_UPDATE_MODE install
+call :read_value WORLD_IMPORT_SOURCE ""
+call :read_value WORLD_EXPORT_DEST ""
+if defined WORLD_IMPORT_SOURCE (set "IMPORT_SHOW=%WORLD_IMPORT_SOURCE%") else (set "IMPORT_SHOW=none")
+if defined WORLD_EXPORT_DEST (set "EXPORT_SHOW=%WORLD_EXPORT_DEST%") else (set "EXPORT_SHOW=none")
 if /i "%HAS_AUTO_UPDATE_MODE%"=="false" (
     if /i "%HAS_AUTO_UPDATE_CHECK%"=="true" if /i "%AUTO_UPDATE_CHECK%"=="true" set "AUTO_UPDATE_MODE=install"
     if /i "%HAS_AUTO_UPDATE_CHECK%"=="true" if /i "%AUTO_UPDATE_CHECK%"=="false" set "AUTO_UPDATE_MODE=never"

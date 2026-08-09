@@ -13,6 +13,8 @@ Set-StrictMode -Version Latest
 $Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $JavaRuntimeScript = Join-Path $PSScriptRoot 'java-runtime.ps1'
 . $JavaRuntimeScript
+$WorldTransferScript = Join-Path $PSScriptRoot 'world-transfer.ps1'
+. $WorldTransferScript
 $CloseProtectionScript = Join-Path $PSScriptRoot 'console-close-protection.ps1'
 $CloseProtectionEnabled = $false
 $CloseProtectionLoaded = $false
@@ -190,6 +192,7 @@ function Get-WorldLikeDirectories([string]$ServerDirectory, [string[]]$KnownWorl
     return @(Get-ChildItem -LiteralPath $ServerDirectory -Directory -ErrorAction SilentlyContinue | Where-Object {
         $KnownWorldNames -notcontains $_.Name -and
         $Ignored -notcontains $_.Name -and
+        $_.Name -notmatch '(?i)_originalbkp' -and
         ((Test-Path -LiteralPath (Join-Path $_.FullName 'level.dat') -PathType Leaf) -or
          (Test-Path -LiteralPath (Join-Path $_.FullName 'region') -PathType Container))
     })
@@ -401,6 +404,19 @@ try {
             Write-Host 'Review server\logs\latest.log before restarting if this exit code is unexpected.' -ForegroundColor Yellow
         }
         $FinalExitCode=0
+        # Export the world after a clean shutdown when the operator configured a destination.
+        if($Settings.ContainsKey('WORLD_EXPORT_DEST')){
+            $ExportDestination=([string]$Settings['WORLD_EXPORT_DEST']).Trim()
+            if(-not [string]::IsNullOrWhiteSpace($ExportDestination)){
+                try {
+                    Export-WorldFolder -ServerDirectory $ServerDirectory -LevelName (Get-ConfiguredLevelName $Properties) -Destination $ExportDestination
+                }
+                catch {
+                    Write-Host "WARNING: The world could not be exported: $($_.Exception.Message)" -ForegroundColor Yellow
+                    Write-Host 'Fix the WORLD_EXPORT_DEST path in parameter-manager.bat and try again after the next clean shutdown.' -ForegroundColor Yellow
+                }
+            }
+        }
     } elseif($ExitCode -eq 0){
         Write-Host 'WARNING: The server process exited normally, but Jarock did not observe this shutdown complete its world save.' -ForegroundColor Yellow
         Write-Host 'NOT SAFE TO CLOSE: do not assume it is safe to close or restart; inspect the server log and use a known-good backup if needed.' -ForegroundColor Yellow

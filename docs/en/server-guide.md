@@ -452,6 +452,18 @@ config/floodgate/key.pem
 logs/
 ```
 
+### 14.1 World import and export
+
+Jarock can import and export worlds from `parameter-manager.bat`.
+
+**Import a world** (`I. Import world`): type the full path of a world folder (containing `level.dat`) or of a `.zip` world archive, or leave the input empty to open a Windows folder picker; type `CLEAR` to remove the request. On the next `start-server.bat` run, Jarock imports the world into the configured `level-name` folder (`server\world` by default) before the server starts. If a world already exists there, Jarock asks for confirmation and first moves it aside as `server\<name>_originalbkp` (with a timestamp suffix when that name is already taken), so no data is lost. After a successful import the request is cleared automatically and is never repeated on later starts. The imported world is a fresh copy: the source folder or archive is never modified.
+
+**Export a world** (`E. Export world`): type the full path of a destination folder outside `server/`, or leave the input empty to open a Windows folder picker; type `CLEAR` to remove the request. After every clean shutdown (`stop` and the final `SAFE TO CLOSE` confirmation) Jarock mirrors the current world into that destination folder, overwriting it. The destination must stay outside `server/`: a world folder inside the server directory would be detected as possible previous world data on the next start. The export runs only after a clean shutdown, never after a crash or a forced close.
+
+Both paths are stored locally in `scripts/server-launch-settings.ini` (`WORLD_IMPORT_SOURCE` and `WORLD_EXPORT_DEST`) and are ignored by Git.
+
+<!-- jarock-world-transfer -->
+
 ---
 
 ## 15. First-start checklist
