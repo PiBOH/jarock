@@ -21,6 +21,8 @@ Reinicia, agarda polo mundo, Geyser e Floodgate, escribe `stop` e espera `CLEAN 
 
 Completa a primeira execución con `online-mode=true` para que a autenticación normal funcione. Para instalar unha actualización, detén o servidor con seguridade e executa `scripts/update-jarock.bat`.
 
+> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to run the same check without starting the server. If a verified compatible Lite package is available, the updater asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
+
 <!-- jarock-lan-addresses-gl -->
 
 ## LAN connection addresses

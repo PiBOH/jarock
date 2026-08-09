@@ -25,6 +25,8 @@ Si Java manque, installez Java 25 64 bits. Suivez Suggested fix en cas d’erreu
 
 Pour installer une mise à jour, arrêtez le serveur correctement et exécutez `scripts/update-jarock.bat`.
 
+> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to run the same check without starting the server. If a verified compatible Lite package is available, the updater asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
+
 <!-- jarock-lan-addresses-fr -->
 
 ## LAN connection addresses

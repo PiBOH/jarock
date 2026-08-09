@@ -25,6 +25,8 @@ Voltooi de eerste run met `online-mode=true` zodat normale authenticatie werkt.
 
 Stop de server veilig en voer `scripts/update-jarock.bat` uit om een update te installeren.
 
+> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to run the same check without starting the server. If a verified compatible Lite package is available, the updater asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
+
 <!-- jarock-lan-addresses-nl -->
 
 ## LAN connection addresses

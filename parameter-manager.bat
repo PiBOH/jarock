@@ -1,7 +1,29 @@
 @echo off
 setlocal EnableExtensions DisableDelayedExpansion
+
+rem Run from an isolated copy so an update can safely replace this batch file.
+rem cmd.exe reads batch files by position; replacing the active file otherwise can
+rem execute fragments of the new file while this parameter manager is still open.
+if /i "%~nx0"=="parameter-manager-runner.bat" if defined _JAROCK_PARAMETER_MANAGER_ROOT goto :runner_start
 set "ROOT=%~dp0"
 if "%ROOT:~-1%"=="\" set "ROOT=%ROOT:~0,-1%"
+if not exist "%ROOT%\.cache" mkdir "%ROOT%\.cache" >nul 2>&1
+if exist "%ROOT%\.cache\parameter-manager-runner.bat" del /q "%ROOT%\.cache\parameter-manager-runner.bat" >nul 2>&1
+copy /y "%~f0" "%ROOT%\.cache\parameter-manager-runner.bat" >nul 2>&1
+if not exist "%ROOT%\.cache\parameter-manager-runner.bat" goto :runner_fallback
+set "_JAROCK_PARAMETER_MANAGER_ROOT=%ROOT%"
+call "%ROOT%\.cache\parameter-manager-runner.bat" %*
+set "RUNNER_EXIT_CODE=%errorlevel%"
+del /q "%ROOT%\.cache\parameter-manager-runner.bat" >nul 2>&1
+exit /b %RUNNER_EXIT_CODE%
+
+:runner_fallback
+echo ERROR: Could not create the isolated parameter-manager runner.
+echo Suggested fix: check that the repository is writable and that antivirus software is not blocking the .cache folder, then run parameter-manager.bat again.
+exit /b 1
+
+:runner_start
+if defined _JAROCK_PARAMETER_MANAGER_ROOT set "ROOT=%_JAROCK_PARAMETER_MANAGER_ROOT%"
 set "SETTINGS=%ROOT%\scripts\server-launch-settings.ini"
 set "TEMPLATE=%ROOT%\scripts\server-launch-settings.ini.template"
 set "TEMP_SETTINGS=%TEMP%\Jarock-parameter-manager-%RANDOM%-%RANDOM%.ini"
@@ -63,6 +85,7 @@ echo   %OPTI%%PAD:~0,35%[%IMPORT_SHOW%]
 echo   Import remembered?%PAD:~0,32%[%IMPORT_REMEMBER_SHOW%]
 echo   %OPTE%%PAD:~0,35%[%EXPORT_SHOW%]
 echo   %OPTY%%PAD:~0,21%[%AUTO_UPDATE_MODE%]
+echo   %OPTU%%PAD:~0,23%[checks GitHub now]
 echo.
 echo   %OPT8%%PAD:~0,22%[starts the server]
 echo   %OPT9%%PAD:~0,34%[saves settings]
@@ -71,7 +94,8 @@ echo   %OPTX%%PAD:~0,28%[restores defaults]
 echo.
 if /i "%ONLINE_MODE%"=="false" echo  WARNING: online-mode=false disables Mojang authentication. Keep it for private testing only.
 echo.
-choice /c 1234567890XYIE /n /m "Choose an option: "
+choice /c 1234567890XYIEU /n /m "Choose an option: "
+if errorlevel 15 goto manual_update_check
 if errorlevel 14 goto export_world_menu
 if errorlevel 13 goto import_world_menu
 if errorlevel 12 goto update_mode_menu
@@ -201,6 +225,33 @@ if /i "%AUTO_CONFIGURE_JAVA%"=="true" (
 )
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name AUTO_CONFIGURE_JAVA -Value "%NEW_JAVA%"
 if errorlevel 1 pause
+pause
+goto menu
+
+:manual_update_check
+cls
+echo ==^> Checking for Jarock updates
+echo The server will not be started. The updater will ask before installing a verified Lite package.
+set "MANUAL_UPDATE_VERSION_BEFORE="
+set /p "MANUAL_UPDATE_VERSION_BEFORE="<"%ROOT%\scripts\version.txt"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-jarock.ps1" -PromptForUpdate
+set "MANUAL_UPDATE_EXIT_CODE=%errorlevel%"
+echo.
+if not "%MANUAL_UPDATE_EXIT_CODE%"=="0" goto manual_update_result
+set "MANUAL_UPDATE_VERSION_AFTER="
+set /p "MANUAL_UPDATE_VERSION_AFTER="<"%ROOT%\scripts\version.txt"
+if /i "%MANUAL_UPDATE_VERSION_BEFORE%"=="%MANUAL_UPDATE_VERSION_AFTER%" goto manual_update_no_change
+echo Jarock was updated. The parameter manager will close so the updated version can be used next time.
+del /q "%TEMP_SETTINGS%" >nul 2>&1
+pause
+exit /b 0
+
+:manual_update_no_change
+echo No newer release was installed; the parameter manager remains open.
+
+:manual_update_result
+if "%MANUAL_UPDATE_EXIT_CODE%"=="2" echo Update skipped or cancelled. No files were changed.
+if "%MANUAL_UPDATE_EXIT_CODE%"=="1" echo Update check failed. Read the error and Suggested fix above.
 pause
 goto menu
 
@@ -433,6 +484,7 @@ set "OPT9=9. Save and exit"
 set "OPT0=0. Exit without saving"
 set "OPTX=X. Reset safe defaults"
 set "OPTY=Y. Choose startup update mode"
+set "OPTU=U. Check for Jarock updates"
 set "WORLD_IMPORT_SOURCE="
 set "WORLD_IMPORT_REMEMBER=false"
 set "WORLD_IMPORT_APPLIED=false"

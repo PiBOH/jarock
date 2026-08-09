@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.97-beta] - 2026-08-10
+
+### Added
+
+- Added `U. Check for Jarock updates` to `parameter-manager.bat`. It checks GitHub without starting the server and asks `Download and install it now? (y/N)` before applying a verified compatible Lite package; Enter or `N` leaves the installation unchanged. The manager runs through an isolated runner so a self-update cannot corrupt the open batch session.
+
 ### Fixed
 
 - Fixed the `parameter-manager.bat` main menu alignment so the current-value brackets line up in one consistent column for loader, RAM, banner, world import/export and startup update settings, including the longer option labels.

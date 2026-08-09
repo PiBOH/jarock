@@ -398,6 +398,8 @@ Measure before adding more mods. Check CPU, entity counts, chunk generation, vie
 - Floodgate setup: <https://geysermc.org/wiki/floodgate/setup/>
 - Minecraft EULA: <https://www.minecraft.net/eula>
 
+> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to run the same check without starting the server. If a verified compatible Lite package is available, the updater asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
+
 <!-- jarock-auto-update-check -->
 
 ## Optional startup update check

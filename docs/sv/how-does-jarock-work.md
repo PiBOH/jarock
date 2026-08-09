@@ -97,6 +97,8 @@ Efter ett fel, läs `ERROR:` eller `WARNING:` och följ `Suggested fix:`. Om Jav
 
 > Hela paketet och dess publicerade SHA-512-kontrollsumma verifieras före installationen.
 
+> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to run the same check without starting the server. If a verified compatible Lite package is available, the updater asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
+
 <!-- jarock-auto-update-check -->
 
 ## Sök efter uppdateringar vid start

@@ -15,6 +15,8 @@ Jarock 會自動下載 loader 與固定版本的 mod。第一次執行會建立 
 ## 安全停止
 
 再次執行並等待 world、Geyser 與 Floodgate 完成載入。輸入 `stop`，等到出現 `CLEAN SHUTDOWN COMPLETE` 和 `SAFE TO CLOSE` 後再關閉視窗。發生錯誤時依照 Suggested fix 操作；若 loader 混用，請備份並執行 `clean-server-runtime.bat`。安裝更新時執行 `scripts/update-jarock.bat`，公開伺服器前閱讀 `TODO.md`。
+
+> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to run the same check without starting the server. If a verified compatible Lite package is available, the updater asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
 > Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 <!-- jarock-lan-addresses-zh-TW -->

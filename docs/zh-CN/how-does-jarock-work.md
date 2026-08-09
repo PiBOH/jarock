@@ -97,6 +97,8 @@ Java 通常使用 TCP `25565`，Bedrock 通常使用 UDP `19132`。Jarock 不会
 
 > 完整软件包及其发布的 SHA-512 校验和会在安装前进行验证。
 
+> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to run the same check without starting the server. If a verified compatible Lite package is available, the updater asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
+
 <!-- jarock-auto-update-check -->
 
 ## 启动时检查更新

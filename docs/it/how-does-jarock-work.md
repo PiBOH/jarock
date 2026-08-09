@@ -141,6 +141,8 @@ Jarock non modifica router, firewall, port forwarding, IP pubblico, permessi ope
 
 > Il pacchetto completo e il relativo checksum SHA-512 pubblicato vengono verificati prima dell'installazione.
 
+> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to run the same check without starting the server. If a verified compatible Lite package is available, the updater asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
+
 <!-- jarock-auto-update-check -->
 
 ## Controllo aggiornamenti all'avvio

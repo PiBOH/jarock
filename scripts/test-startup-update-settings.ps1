@@ -30,6 +30,16 @@ try {
     $Batch = Get-Content -LiteralPath $BatchPath -Raw
     Assert ($Batch.Contains('_JAROCK_RUNNER_ROOT')) 'start-server.bat isolates execution for safe self-updates'
     Assert ($Batch.Contains('start-server-runner.bat')) 'start-server.bat uses a temporary runner copy'
+    $ParameterManager = Get-Content -LiteralPath (Join-Path $Root 'parameter-manager.bat') -Raw
+    Assert ($ParameterManager.Contains('_JAROCK_PARAMETER_MANAGER_ROOT')) 'parameter-manager.bat isolates execution for safe self-updates'
+    Assert ($ParameterManager.Contains('parameter-manager-runner.bat')) 'parameter-manager.bat uses a temporary runner copy'
+    Assert ($ParameterManager.Contains('call "%ROOT%\.cache\parameter-manager-runner.bat" %*')) 'parameter-manager.bat returns from the isolated runner safely'
+    Assert ($ParameterManager.Contains('del /q "%ROOT%\.cache\parameter-manager-runner.bat"')) 'parameter-manager.bat cleans up the isolated runner after exit'
+    Assert ($ParameterManager.Contains('U. Check for Jarock updates')) 'parameter-manager.bat exposes the manual update-check option'
+    Assert ($ParameterManager.Contains('choice /c 1234567890XYIEU')) 'parameter-manager.bat includes U in the menu choices'
+    $ParameterManagerBytes = [IO.File]::ReadAllBytes((Join-Path $Root 'parameter-manager.bat'))
+    Assert (($ParameterManagerBytes -contains 13) -and (($ParameterManagerBytes | Where-Object { $_ -eq 13 }).Count -eq (($ParameterManagerBytes | Where-Object { $_ -eq 10 }).Count))) 'parameter-manager.bat keeps CRLF line endings'
+    Assert ($ParameterManager.Contains('update-jarock.ps1" -PromptForUpdate')) 'the manual update option uses the interactive updater prompt'
     Assert ($Batch.Contains('-NonInteractive -StartupUpdate')) 'startup updates use deferred launcher replacement mode'
     $Updater = Get-Content -LiteralPath (Join-Path $Root 'scripts/update-jarock.ps1') -Raw
     Assert ($Updater.Contains('Schedule-DeferredLauncherApply')) 'updater schedules the launcher replacement after startup exits'
@@ -62,6 +72,17 @@ try {
     Assert ($Updater.Contains('A rename involving any project file must remain blocking')) 'the updater keeps project-file renames blocking'
     Assert ($Updater.Contains('local scripts/server-launch-settings.ini file is preserved')) 'the updater explains that local settings do not block updates'
     Assert ($Updater.Contains('IsNullOrWhiteSpace($_)')) 'the updater ignores empty NUL-separated Git status records'
+
+    New-Item -ItemType Directory -Force -Path $TempRoot | Out-Null
+    $ChoiceHelperPath = Join-Path $TempRoot 'choice-u.bat'
+    $ChoiceHelper = @'
+@echo off
+choice /c 1234567890XYIEU /n >nul
+echo CHOICE=%errorlevel%
+'@
+    [IO.File]::WriteAllText($ChoiceHelperPath, $ChoiceHelper, (New-Object Text.UTF8Encoding($false)))
+    $ChoiceOutput = @(& cmd.exe /d /c ('echo U|"' + $ChoiceHelperPath + '"') 2>&1 | ForEach-Object { [string]$_ })
+    Assert ($ChoiceOutput -contains 'CHOICE=15') 'pressing U maps to the manual update-check branch'
 
     New-Item -ItemType Directory -Force -Path $TempRoot | Out-Null
     $HelperPath = Join-Path $TempRoot 'parse-settings.bat'

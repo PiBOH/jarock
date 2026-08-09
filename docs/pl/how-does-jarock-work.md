@@ -97,6 +97,8 @@ Po błędzie przeczytaj `ERROR:` lub `WARNING:` i wykonaj `Suggested fix:`. Jeś
 
 > Pełny pakiet i opublikowana suma kontrolna SHA-512 są sprawdzane przed instalacją.
 
+> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to run the same check without starting the server. If a verified compatible Lite package is available, the updater asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
+
 <!-- jarock-auto-update-check -->
 
 ## Sprawdzanie aktualizacji przy uruchamianiu

@@ -56,6 +56,8 @@ Technical note: after startup, Jarock prints the local LAN IPv4 address. Java pl
 
 > O pacote completo e o respetivo checksum SHA-512 publicado são verificados antes da instalação.
 
+> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to run the same check without starting the server. If a verified compatible Lite package is available, the updater asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
+
 <!-- jarock-auto-update-check -->
 
 ## Verificação de atualizações na inicialização

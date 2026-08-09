@@ -25,6 +25,8 @@ Prvi zagon dokončajte z `online-mode=true`, da bo običajno preverjanje pristno
 
 Za namestitev posodobitve varno ustavite strežnik in zaženite `scripts/update-jarock.bat`.
 
+> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to run the same check without starting the server. If a verified compatible Lite package is available, the updater asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
+
 <!-- jarock-lan-addresses-sl -->
 
 ## LAN connection addresses

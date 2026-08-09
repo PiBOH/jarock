@@ -124,6 +124,8 @@ Jarock ne modifie pas le routeur, le pare-feu, le port forwarding, l’adresse I
 
 > Le paquet complet et son empreinte SHA-512 publiée sont vérifiés avant l’installation.
 
+> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to run the same check without starting the server. If a verified compatible Lite package is available, the updater asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
+
 <!-- jarock-auto-update-check -->
 
 ## Vérification des mises à jour au démarrage

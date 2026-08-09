@@ -567,6 +567,8 @@ Do not immediately install ten optimization mods. First check the server's tick 
 
 Always prefer the project's current documentation and download page over a copied command from an old video or blog post.
 
+> You can also choose `U. Check for Jarock updates` in `parameter-manager.bat` to run the same check without starting the server. If a verified compatible Lite package is available, the updater asks `Download and install it now? (y/N)`; Enter or `N` leaves the installation unchanged.
+
 <!-- jarock-auto-update-check -->
 
 ## Optional startup update check
