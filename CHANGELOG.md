@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.94-beta] - 2026-08-09
+
+### Added
+
+- Added Jarock icon defaults: the tracked root `icon.png` is copied to a new world's `icon.png` only when the world does not already have a custom icon, while the tracked `server/server-icon.png` is used for the Minecraft multiplayer server-list icon.
+- The auto-release workflow now requires both icon files to be tracked and packages them in both Full and Lite ZIPs. Added bootstrap regression coverage and documented the icon behavior.
+
 ## [0.0.93-beta] - 2026-08-09
 
 ### Added
@@ -794,7 +801,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.93-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.94-beta...HEAD
+[0.0.94-beta]: https://github.com/PiBOH/jarock/compare/0.0.93-beta...0.0.94-beta
 [0.0.93-beta]: https://github.com/PiBOH/jarock/compare/0.0.92-beta...0.0.93-beta
 [0.0.92-beta]: https://github.com/PiBOH/jarock/compare/0.0.91-beta...0.0.92-beta
 [0.0.87-beta]: https://github.com/PiBOH/jarock/compare/0.0.86-beta...0.0.87-beta

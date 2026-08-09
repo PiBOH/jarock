@@ -135,10 +135,15 @@ jobs:
           FULL_STAGE="$(mktemp -d)"
           LITE_STAGE="$(mktemp -d)"
           # Package the indispensable tracked files only: code, templates, manifests,
-          # scripts, .bat launchers and the documentation in every language. The full
-          # package also bundles the Java installers from prerequisites/ (LFS); the
-          # lite package does not. Workflows (.github), the website (.website) and
-          # version-control metadata (.gitattributes, .gitignore) are excluded.
+          # scripts, .bat launchers, both project icons and the documentation in every
+          # language. The full package also bundles the Java installers from
+          # prerequisites/ (LFS); the lite package does not. Workflows (.github), the
+          # website (.website) and version-control metadata (.gitattributes, .gitignore)
+          # are excluded.
+          for required in icon.png server/server-icon.png; do
+            git ls-files --error-unmatch "$required" >/dev/null
+            test -f "$required"
+          done
           git ls-files -z | while IFS= read -r -d '' f; do
             case "$f" in
               .github/*|.website/*|.gitattributes|.gitignore) continue ;;
@@ -158,6 +163,17 @@ jobs:
           python3 - "$LITE_STAGE" "$LITE_NAME" <<'PY'
           import shutil, sys
           shutil.make_archive(sys.argv[2][:-4], 'zip', sys.argv[1])
+          PY
+          python3 - "$FULL_NAME" "$LITE_NAME" <<'PY'
+          import sys, zipfile
+          required = {'icon.png', 'server/server-icon.png'}
+          for archive_name in sys.argv[1:]:
+              with zipfile.ZipFile(archive_name) as archive:
+                  names = set(archive.namelist())
+              missing = required - names
+              if missing:
+                  raise SystemExit(f'{archive_name} is missing packaged icon(s): {sorted(missing)}')
+              print(f'{archive_name}: both Jarock icons are packaged')
           PY
           sha512sum "$FULL_NAME" > "$FULL_NAME.sha512"
           sha512sum "$LITE_NAME" > "$LITE_NAME.sha512"

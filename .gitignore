@@ -7,6 +7,7 @@
 !/server/server.properties.template
 !/server/eula.txt.template
 !/server/README.md
+!/server/server-icon.png
 !/server/config/
 /server/config/*
 !/server/config/Geyser-Fabric/

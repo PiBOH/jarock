@@ -2,7 +2,9 @@
 
 This folder is the local Minecraft runtime created by `start-server.bat`.
 
-The repository stores templates, the loader marker reference and loader-specific pinned manifests. `server/server.jar` is generated locally for the selected loader and remains ignored by Git. Fabric also retains the local vanilla engine as `server/vanilla-server.jar`; NeoForge uses its official generated `run.bat` and libraries.
+The repository stores templates, the loader marker reference, loader-specific pinned manifests and the tracked Jarock server icon at `server/server-icon.png`. Minecraft uses that file for the icon shown in the multiplayer server list. `server/server.jar` is generated locally for the selected loader and remains ignored by Git. Fabric also retains the local vanilla engine as `server/vanilla-server.jar`; NeoForge uses its official generated `run.bat` and libraries.
+
+The tracked root `icon.png` is the default Jarock world icon. During bootstrap it is copied to `server/<level-name>/icon.png` only when that world does not already have an icon, so an imported or customized world icon is never overwritten.
 
 ## First run
 

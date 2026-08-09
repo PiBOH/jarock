@@ -31,6 +31,7 @@ try {
         New-Item -ItemType Directory -Force -Path (Join-Path $Source1 'region') | Out-Null
         New-Item -ItemType Directory -Force -Path (Join-Path $Source2 'region') | Out-Null
         [IO.File]::WriteAllText((Join-Path $Source1 'level.dat'), 'SOURCE-1')
+        [IO.File]::WriteAllBytes((Join-Path $Source1 'icon.png'), [byte[]](4, 3, 2, 1))
         [IO.File]::WriteAllText((Join-Path $Source2 'level.dat'), 'SOURCE-2')
         [IO.File]::WriteAllText((Join-Path (Join-Path $Source1 'region') 'r.0.0.mca'), 'R1')
         [IO.File]::WriteAllText((Join-Path (Join-Path $Source2 'region') 'r.0.0.mca'), 'R2')
@@ -48,6 +49,8 @@ try {
         $Level = Join-Path $ServerDir 'world'
         Assert (Test-Path -LiteralPath (Join-Path $Level 'level.dat') -PathType Leaf) 'Folder import copies level.dat'
         Assert ((Get-Content -LiteralPath (Join-Path $Level 'level.dat') -Raw) -eq 'SOURCE-1') 'Folder import content matches'
+        $ImportedIconBytes = [IO.File]::ReadAllBytes((Join-Path $Level 'icon.png'))
+        Assert (($ImportedIconBytes.Length -eq 4) -and ($ImportedIconBytes[0] -eq 4) -and ($ImportedIconBytes[1] -eq 3) -and ($ImportedIconBytes[2] -eq 2) -and ($ImportedIconBytes[3] -eq 1)) 'Folder import preserves a custom world icon'
         Assert ((Get-Content -LiteralPath $SettingsPath -Raw) -notmatch 'WORLD_IMPORT_SOURCE=[^\r\n]') 'Import clears the source setting'
 
         # A remembered source is retained and does not overwrite the active world on

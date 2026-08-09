@@ -379,6 +379,23 @@ function Get-ConfiguredLevelName([string]$PropertiesPath) {
     }
     return 'world'
 }
+function Ensure-DefaultWorldIcon([string]$LevelName) {
+    $DefaultIcon = Join-Path $Root 'icon.png'
+    if (-not (Test-Path -LiteralPath $DefaultIcon -PathType Leaf)) {
+        Write-Host "WARNING: The tracked default world icon icon.png is missing; the world will keep Minecraft's default icon." -ForegroundColor Yellow
+        return
+    }
+    $WorldDirectory = Join-Path $ServerDir $LevelName
+    New-Item -ItemType Directory -Force -Path $WorldDirectory | Out-Null
+    $WorldIcon = Join-Path $WorldDirectory 'icon.png'
+    if (-not (Test-Path -LiteralPath $WorldIcon -PathType Leaf)) {
+        Copy-Item -LiteralPath $DefaultIcon -Destination $WorldIcon -Force
+        Write-Host "Applied the default Jarock world icon to $LevelName/icon.png." -ForegroundColor Green
+    }
+    else {
+        Write-Host "Preserved the existing world icon at $LevelName/icon.png." -ForegroundColor Cyan
+    }
+}
 function Read-DatapackMarker([string]$Path) {
     $Values = @{}
     if (Test-Path -LiteralPath $Path -PathType Leaf) {
@@ -514,7 +531,9 @@ try {
     Write-Step "Installing $Loader for Minecraft $MinecraftVersion"
     if ($Loader -eq 'fabric') { Install-Fabric $Java } else { Install-NeoForge $Java }
     Ensure-LocalTemplates
-    Invoke-WorldImport -ServerDirectory $ServerDir -SettingsPath $SettingsPath -LevelName (Get-ConfiguredLevelName (Join-Path $ServerDir 'server.properties'))
+    $LevelName = Get-ConfiguredLevelName (Join-Path $ServerDir 'server.properties')
+    Invoke-WorldImport -ServerDirectory $ServerDir -SettingsPath $SettingsPath -LevelName $LevelName
+    Ensure-DefaultWorldIcon $LevelName
     Write-Step "Downloading and verifying $Loader server mods"
     Install-Mods $Loader
     if ($Loader -eq 'fabric') { Install-DedicatedPower }

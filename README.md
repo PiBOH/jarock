@@ -70,7 +70,7 @@ Neither Fabric nor NeoForge automatically runs Bukkit/Spigot/Paper plugins. If t
 5. Read the generated `server/eula.txt` and, if you accept the Minecraft EULA, change `eula=false` to `eula=true`.
 6. On bootstrap, Jarock verifies and installs Better Multiplayer Sleep as a datapack in the configured world's `datapacks/` folder. It never replaces the world or other datapacks; use `/reload` after a manual datapack change.
 7. Double-click `start-server.bat` again.
-8. When the server finishes loading, Jarock prints the LAN connection addresses: Java uses the configured `server-port` over TCP, and Bedrock uses the configured Geyser UDP port. This address message remains visible even when `Show ready banner` is disabled; only the ASCII art is hidden.
+8. When the server finishes loading, Jarock prints the LAN connection addresses: Java uses the configured `server-port` over TCP, and Bedrock uses the configured Geyser UDP port. This address message remains visible even when `Show ready banner` is disabled; only the ASCII art is hidden. The multiplayer list uses the tracked `server/server-icon.png`; new worlds receive the tracked root `icon.png` as their default world icon without replacing a custom world icon.
 9. Type `stop` in the server console to shut it down safely.
 10. **Do not close the window immediately after typing `stop`.** Wait until Minecraft finishes saving and Jarock prints `SAFE TO CLOSE`. If that message does not appear, treat the shutdown as abnormal and inspect the logs before restarting.
 

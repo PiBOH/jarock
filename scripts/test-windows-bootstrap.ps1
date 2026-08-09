@@ -160,6 +160,20 @@ try {
     $RealOutput | Select-Object -Last 20 | ForEach-Object { Write-Host $_ }
     Write-Host '--------------------------------------'
     Assert ($RealCode -eq 0) "Bootstrap completes successfully (exit code $RealCode)"
+    Assert (Test-Path -LiteralPath (Join-Path $Root 'icon.png') -PathType Leaf) 'Jarock default world icon is present'
+    $ServerIconPath = Join-Path $Root 'server\server-icon.png'
+    Assert (Test-Path -LiteralPath $ServerIconPath -PathType Leaf) 'Jarock server icon is present in the server runtime'
+    $DefaultWorldIconPath = Join-Path $Root 'server\world\icon.png'
+    Assert (Test-Path -LiteralPath $DefaultWorldIconPath -PathType Leaf) 'Default Jarock icon was applied to the world'
+    if ((Test-Path -LiteralPath $DefaultWorldIconPath -PathType Leaf) -and (Test-Path -LiteralPath (Join-Path $Root 'icon.png') -PathType Leaf)) {
+        Assert ((Get-Sha512 $DefaultWorldIconPath) -eq (Get-Sha512 (Join-Path $Root 'icon.png'))) 'World icon matches the root Jarock icon'
+    }
+    # A world supplied by the operator may have its own icon. The next bootstrap must
+    # preserve that custom file instead of replacing it with Jarock's default.
+    $CustomWorldIconBytes = [byte[]](9, 8, 7, 6, 5)
+    [IO.File]::WriteAllBytes($DefaultWorldIconPath, $CustomWorldIconBytes)
+    $CustomWorldIconHash = Get-Sha512 $DefaultWorldIconPath
+    Assert (Test-Path -LiteralPath $DefaultWorldIconPath -PathType Leaf) 'Custom world icon test fixture was created'
     Assert (Test-Path -LiteralPath (Join-Path $Root 'server\java-path.txt') -PathType Leaf) 'Selected Java executable was stored'
     $FabricManifest = Get-Content -LiteralPath (Join-Path $Root 'server\mods-manifest.ps1') -Raw
     Assert ($FabricManifest -match 'OfflineCommands-1\.0\.3\+26\.1-rc-3\.jar') 'Fabric manifest contains OfflineCommands for Minecraft 26.2'
@@ -256,6 +270,7 @@ try {
     $SecondBootstrapOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'bootstrap-server.ps1') 2>&1)
     $SecondBootstrapCode = $LASTEXITCODE
     Assert ($SecondBootstrapCode -eq 0) 'A second bootstrap remains idempotent'
+    Assert ((Test-Path -LiteralPath $DefaultWorldIconPath -PathType Leaf) -and ((Get-Sha512 $DefaultWorldIconPath) -eq $CustomWorldIconHash)) 'Second bootstrap preserves a custom world icon'
     Assert ((Test-Path -LiteralPath $DatapackPath -PathType Leaf) -and ((Get-Item -LiteralPath $DatapackPath).FullName -eq $DatapackPathBefore)) 'Second bootstrap preserves the managed datapack path'
     Assert ((Get-Content -LiteralPath $DatapackMarkerPath -Raw) -eq $DatapackMarkerBefore) 'Second bootstrap preserves the datapack marker'
 
