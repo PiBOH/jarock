@@ -18,7 +18,7 @@ try {
     foreach ($Line in (Get-Content -LiteralPath $SettingsPath)) {
         if ($Line -match '^\s*([A-Z_]+)=(.*?)\s*$') { $Values[$Matches[1]] = $Matches[2] }
     }
-    foreach ($Name in @('LOADER_TYPE','RAM_INITIAL','RAM_MAX','GUI_MODE','AUTO_CONFIGURE_JAVA','ONLINE_MODE','GC_PROFILE','SHOW_READY_BANNER','AUTO_UPDATE_MODE')) {
+    foreach ($Name in @('LOADER_TYPE','RAM_INITIAL','RAM_MAX','GUI_MODE','AUTO_CONFIGURE_JAVA','ONLINE_MODE','GC_PROFILE','SHOW_READY_BANNER','AUTO_UPDATE_MODE','WORLD_IMPORT_REMEMBER','WORLD_IMPORT_APPLIED')) {
         if (-not $Values.ContainsKey($Name)) {
             if ($Name -eq 'ONLINE_MODE') {
                 $Values[$Name] = 'true'
@@ -39,6 +39,8 @@ try {
                 } else { $Values[$Name] = 'install' }
                 continue
             }
+            if ($Name -eq 'WORLD_IMPORT_REMEMBER') { $Values[$Name] = 'false'; continue }
+            if ($Name -eq 'WORLD_IMPORT_APPLIED') { $Values[$Name] = 'false'; continue }
             throw "Missing setting: $Name"
         }
     }
@@ -62,6 +64,8 @@ try {
     if ([string]$Values['ONLINE_MODE'] -notin @('true','false')) { throw 'ONLINE_MODE must be true or false.' }
     if ([string]$Values['SHOW_READY_BANNER'] -notin @('true','false')) { throw 'SHOW_READY_BANNER must be true or false.' }
     if ([string]$Values['AUTO_UPDATE_MODE'] -notin @('install','check','never')) { throw 'AUTO_UPDATE_MODE must be install, check or never.' }
+    if ([string]$Values['WORLD_IMPORT_REMEMBER'] -notin @('true','false')) { throw 'WORLD_IMPORT_REMEMBER must be true or false.' }
+    if ([string]$Values['WORLD_IMPORT_APPLIED'] -notin @('true','false')) { throw 'WORLD_IMPORT_APPLIED must be true or false.' }
     # Optional world-transfer settings: paths may point to folders that do not exist yet
     # (the export destination is created after a clean shutdown), so only their presence
     # and format are checked. Empty values disable the feature.

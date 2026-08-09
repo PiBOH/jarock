@@ -18,8 +18,13 @@ AUTO_UPDATE_MODE=install
 # World import: set this to the full path of a world folder (containing level.dat)
 # or a .zip world archive to import it into the configured level-name at the next
 # start. If the world already exists you are asked for confirmation and a backup is
-# created first. After a successful import the value is cleared automatically.
+# created first. WORLD_IMPORT_REMEMBER=true keeps the source for future starts and
+# restores it only when the configured world folder is later deleted. With false,
+# the source is cleared after the one-shot import.
 WORLD_IMPORT_SOURCE=
+WORLD_IMPORT_REMEMBER=false
+# Internal state: do not edit manually; Jarock sets this after applying a remembered source.
+WORLD_IMPORT_APPLIED=false
 # World export: set this to a folder outside server/ to copy the current world there
 # after every clean shutdown (the destination folder is overwritten).
 WORLD_EXPORT_DEST=

@@ -50,8 +50,20 @@ try {
         Assert ((Get-Content -LiteralPath (Join-Path $Level 'level.dat') -Raw) -eq 'SOURCE-1') 'Folder import content matches'
         Assert ((Get-Content -LiteralPath $SettingsPath -Raw) -notmatch 'WORLD_IMPORT_SOURCE=[^\r\n]') 'Import clears the source setting'
 
+        # A remembered source is retained and does not overwrite the active world on
+        # the next start. If the active world is deliberately removed, the same source
+        # is imported again automatically.
+        Remove-Item -LiteralPath $Level -Recurse -Force
+        [IO.File]::WriteAllText($SettingsPath, "LOADER_TYPE=fabric`r`nWORLD_IMPORT_SOURCE=$Source1`r`nWORLD_IMPORT_REMEMBER=true`r`nWORLD_IMPORT_APPLIED=true`r`n")
+        Invoke-WorldImport -ServerDirectory $ServerDir -SettingsPath $SettingsPath -LevelName 'world'
+        Assert ((Get-Content -LiteralPath (Join-Path $Level 'level.dat') -Raw) -eq 'SOURCE-1') 'Remembered source restores a deleted world'
+        Assert ((Get-Content -LiteralPath $SettingsPath -Raw) -match 'WORLD_IMPORT_SOURCE=.*source-world-1') 'Remembered source remains saved after restore'
+        [IO.File]::WriteAllText((Join-Path $Level 'level.dat'), 'ACTIVE-CHANGES')
+        Invoke-WorldImport -ServerDirectory $ServerDir -SettingsPath $SettingsPath -LevelName 'world'
+        Assert ((Get-Content -LiteralPath (Join-Path $Level 'level.dat') -Raw) -eq 'ACTIVE-CHANGES') 'Remembered source does not overwrite an existing world'
+
         # Replacing an existing world creates the backup first.
-        [IO.File]::WriteAllText($SettingsPath, "LOADER_TYPE=fabric`r`nWORLD_IMPORT_SOURCE=$Source2`r`n")
+        [IO.File]::WriteAllText($SettingsPath, "LOADER_TYPE=fabric`r`nWORLD_IMPORT_SOURCE=$Source2`r`nWORLD_IMPORT_REMEMBER=false`r`nWORLD_IMPORT_APPLIED=false`r`n")
         Invoke-WorldImport -ServerDirectory $ServerDir -SettingsPath $SettingsPath -LevelName 'world'
         Assert (Test-Path -LiteralPath (Join-Path $ServerDir 'world_originalbkp') -PathType Container) 'Replacement import creates the world_originalbkp backup'
         Assert ((Get-Content -LiteralPath (Join-Path (Join-Path $ServerDir 'world') 'level.dat') -Raw) -eq 'SOURCE-2') 'Replacement import copies the new world'

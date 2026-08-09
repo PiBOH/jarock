@@ -59,7 +59,8 @@ echo   %OPT4%%PAD:~0,14%[%GC_PROFILE%]
 echo   %OPT5%%PAD:~0,3%[%AUTO_CONFIGURE_JAVA%]
 echo   %OPT6%%PAD:~0,29%[%ONLINE_MODE%]
 echo   %OPT7%%PAD:~0,28%[%SHOW_READY_BANNER%]
-echo   %OPTI%%PAD:~0,31%[%IMPORT_SHOW%]
+echo   %OPTI%%PAD:~0,25%[%IMPORT_SHOW%]
+echo   Import remembered?%PAD:~0,11%[%IMPORT_REMEMBER_SHOW%]
 echo   %OPTE%%PAD:~0,31%[%EXPORT_SHOW%]
 echo   %OPTY%%PAD:~0,30%[%AUTO_UPDATE_MODE%]
 echo.
@@ -250,7 +251,9 @@ goto menu
 :import_world_menu
 cls
 call :read_value WORLD_IMPORT_SOURCE ""
+call :read_value WORLD_IMPORT_REMEMBER false
 echo Current world import source: [%WORLD_IMPORT_SOURCE%]
+echo Remembered for future starts: [%WORLD_IMPORT_REMEMBER%]
 echo.
 echo Paste the full path of a world folder (containing level.dat) or a .zip world archive
 echo that you want to import on the next start-server.bat run.
@@ -261,7 +264,11 @@ set /p "NEW_IMPORT=Import source: "
 if /i "%NEW_IMPORT%"=="CLEAR" (
     powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name WORLD_IMPORT_SOURCE -Value ""
     if errorlevel 1 pause
-    echo World import request removed.
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name WORLD_IMPORT_REMEMBER -Value false
+    if errorlevel 1 pause
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name WORLD_IMPORT_APPLIED -Value false
+    if errorlevel 1 pause
+    echo World import request removed and its remembered-world setting was cleared.
     pause
     goto menu
 )
@@ -275,7 +282,28 @@ if not defined NEW_IMPORT (
 )
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name WORLD_IMPORT_SOURCE -Value "%NEW_IMPORT%"
 if errorlevel 1 pause
-echo World import source set. The world will be imported on the next start-server.bat run; if the world already exists you will be asked to confirm and a backup is created first.
+:import_remember_prompt
+set "REMEMBER_INPUT="
+set "NEW_REMEMBER="
+set /p "REMEMBER_INPUT=Remember this world for future starts? (Y/n): "
+if not defined REMEMBER_INPUT set "NEW_REMEMBER=true"
+if /i "%REMEMBER_INPUT%"=="Y" set "NEW_REMEMBER=true"
+if /i "%REMEMBER_INPUT%"=="YES" set "NEW_REMEMBER=true"
+if /i "%REMEMBER_INPUT%"=="N" set "NEW_REMEMBER=false"
+if /i "%REMEMBER_INPUT%"=="NO" set "NEW_REMEMBER=false"
+if not defined NEW_REMEMBER (
+    echo Please answer Y or N. Press Enter to choose the default Y.
+    goto import_remember_prompt
+)
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name WORLD_IMPORT_REMEMBER -Value "%NEW_REMEMBER%"
+if errorlevel 1 pause
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name WORLD_IMPORT_APPLIED -Value false
+if errorlevel 1 pause
+if /i "%NEW_REMEMBER%"=="true" (
+    echo World import source set and remembered. It will be reused if the configured world is later deleted.
+) else (
+    echo World import source set for the next start only.
+)
 pause
 goto menu
 
@@ -406,8 +434,11 @@ set "OPT0=0. Exit without saving"
 set "OPTX=X. Reset safe defaults"
 set "OPTY=Y. Choose startup update mode"
 set "WORLD_IMPORT_SOURCE="
+set "WORLD_IMPORT_REMEMBER=false"
+set "WORLD_IMPORT_APPLIED=false"
 set "WORLD_EXPORT_DEST="
 set "IMPORT_SHOW=none"
+set "IMPORT_REMEMBER_SHOW=false"
 set "EXPORT_SHOW=none"
 call :read_value LOADER_TYPE none
 call :read_value RAM_INITIAL 4G
@@ -420,8 +451,11 @@ call :read_value SHOW_READY_BANNER true
 call :read_value AUTO_UPDATE_CHECK false
 call :read_value AUTO_UPDATE_MODE install
 call :read_value WORLD_IMPORT_SOURCE ""
+call :read_value WORLD_IMPORT_REMEMBER false
+call :read_value WORLD_IMPORT_APPLIED false
 call :read_value WORLD_EXPORT_DEST ""
 if defined WORLD_IMPORT_SOURCE (set "IMPORT_SHOW=%WORLD_IMPORT_SOURCE%") else (set "IMPORT_SHOW=none")
+set "IMPORT_REMEMBER_SHOW=%WORLD_IMPORT_REMEMBER%"
 if defined WORLD_EXPORT_DEST (set "EXPORT_SHOW=%WORLD_EXPORT_DEST%") else (set "EXPORT_SHOW=none")
 if /i "%HAS_AUTO_UPDATE_MODE%"=="false" (
     if /i "%HAS_AUTO_UPDATE_CHECK%"=="true" if /i "%AUTO_UPDATE_CHECK%"=="true" set "AUTO_UPDATE_MODE=install"

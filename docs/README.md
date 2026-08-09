@@ -11,7 +11,7 @@ The English guides are the source of truth for the technical procedure. The curr
 
 ## Runtime and launch configuration
 
-- `parameter-manager.bat` configures the loader, RAM, GUI/console mode, a conservative GC profile, online-mode, the ready banner, world import/export (`I` imports a world folder or `.zip` on the next start; `E` exports the world to a destination folder after every clean shutdown), the optional interactive startup update check and user-scoped Java environment setup. It edits a temporary copy and includes `Exit without saving` to discard all pending changes.
+- `parameter-manager.bat` configures the loader, RAM, GUI/console mode, a conservative GC profile, online-mode, the ready banner, world import/export (`I` imports a world folder or `.zip` on the next start and asks `Remember this world for future starts? (Y/n)`; `E` exports the world to a destination folder after every clean shutdown), the optional interactive startup update check and user-scoped Java environment setup. A remembered source is reused only when the configured world is later deleted; normal restarts keep the active world. It edits a temporary copy and includes `Exit without saving` to discard all pending changes.
 - `scripts/server-launch-settings.ini.template` is the tracked safe default.
 - `scripts/server-launch-settings.ini` is local and ignored by Git.
 - `java-home.txt` is an optional local override for a custom JDK folder and is ignored by Git; `JAROCK_JAVA_HOME` is the advanced equivalent.

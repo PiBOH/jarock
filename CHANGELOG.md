@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.93-beta] - 2026-08-09
+
+### Added
+
+- Added a persistent world-import choice to `parameter-manager.bat`: after selecting a folder or `.zip`, Jarock asks `Remember this world for future starts? (Y/n)` with Yes as the default. When remembered, `WORLD_IMPORT_SOURCE` remains saved and restores the world only after the configured world is later deleted; normal restarts keep the active world and never overwrite it. Answering `n` preserves the previous one-shot import behavior.
+- Extended the world-transfer regression test and all world-import documentation with remembered-source behavior, including `WORLD_IMPORT_REMEMBER` and the internal `WORLD_IMPORT_APPLIED` state.
+
 ## [0.0.92-beta] - 2026-08-09
 
 ### Fixed
@@ -50,7 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **World import and export** from `parameter-manager.bat`:
-  - `I. Import world` accepts the full path of a world folder (containing `level.dat`) or of a `.zip` world archive. On the next `start-server.bat` run the world is imported into the configured `level-name` folder before the server starts. If a world already exists there, the operator is asked for confirmation and the existing world is first moved aside as `server/<name>_originalbkp` (with a timestamp suffix when that name is already taken); after a successful import the request is cleared automatically so it never repeats. The source folder or archive is never modified.
+  - `I. Import world` accepts the full path of a world folder (containing `level.dat`) or of a `.zip` world archive. On the next `start-server.bat` run the world is imported into the configured `level-name` folder before the server starts. If a world already exists there, the operator is asked for confirmation and the existing world is first moved aside as `server/<name>_originalbkp` (with a timestamp suffix when that name is already taken); for a non-remembered import the request is cleared automatically so it never repeats; the new `Remember this world for future starts? (Y/n)` choice keeps the source when requested without overwriting an existing world on normal restarts. The source folder or archive is never modified.
   - `E. Export world` accepts a destination folder outside `server/`; after every clean shutdown (`stop` + `SAFE TO CLOSE`) the world is mirrored into that destination, overwriting it. Exports are refused for destinations inside the server folder so an export can never be mistaken for local world data.
   - Paths can be typed manually, removed with `CLEAR`, or picked with a Windows folder dialog when the input is left empty. They are stored locally in `scripts/server-launch-settings.ini` (`WORLD_IMPORT_SOURCE`, `WORLD_EXPORT_DEST`), which is ignored by Git and recognized by the settings validator and updater.
 - Added `scripts/world-transfer.ps1` (shared import/export helpers with zip-traversal and destination safety checks), `scripts/pick-folder.ps1` (folder dialog helper), `scripts/test-world-transfer.ps1` and the `test-world-transfer.yml` workflow that exercises folder, zip, backup and export behavior on Windows PowerShell 5.1 and PowerShell 7 without Java or network access.
@@ -787,7 +794,9 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.86-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.93-beta...HEAD
+[0.0.93-beta]: https://github.com/PiBOH/jarock/compare/0.0.92-beta...0.0.93-beta
+[0.0.92-beta]: https://github.com/PiBOH/jarock/compare/0.0.91-beta...0.0.92-beta
 [0.0.87-beta]: https://github.com/PiBOH/jarock/compare/0.0.86-beta...0.0.87-beta
 [0.0.86-beta]: https://github.com/PiBOH/jarock/compare/0.0.85-beta...0.0.86-beta
 [0.0.84-beta]: https://github.com/PiBOH/jarock/compare/0.0.83-beta...0.0.84-beta

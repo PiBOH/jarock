@@ -11,8 +11,9 @@ param()
 #   - if the configured world already exists, the operator is asked for confirmation
 #     and the existing world is first moved aside as <name>_originalbkp
 #     (or <name>_originalbkp_<timestamp> when that name is already taken);
-#   - after a successful import the WORLD_IMPORT_SOURCE setting is cleared, so the
-#     import is a one-shot request and does not repeat on the next start.
+#   - WORLD_IMPORT_REMEMBER=true keeps the source after a successful import and
+#     restores it only when the configured world folder is later deleted;
+#   - WORLD_IMPORT_REMEMBER=false clears the source after the one-shot import.
 #
 # Export behavior:
 #   - destination is a fixed folder that is overwritten (mirror copy) after a clean
@@ -87,6 +88,8 @@ function Invoke-WorldImport {
     if (-not $Settings.ContainsKey('WORLD_IMPORT_SOURCE')) { return }
     $SourceValue = ([string]$Settings['WORLD_IMPORT_SOURCE']).Trim()
     if ([string]::IsNullOrWhiteSpace($SourceValue)) { return }
+    $RememberSource = $Settings.ContainsKey('WORLD_IMPORT_REMEMBER') -and ([string]$Settings['WORLD_IMPORT_REMEMBER']).Trim() -match '^(?i:true|yes|1)$'
+    $ImportApplied = $Settings.ContainsKey('WORLD_IMPORT_APPLIED') -and ([string]$Settings['WORLD_IMPORT_APPLIED']).Trim() -match '^(?i:true|yes|1)$'
 
     $Resolved = Resolve-ImportSource $SourceValue
     # Never import from inside the server folder: the source copy would remain there
@@ -100,6 +103,14 @@ function Invoke-WorldImport {
     $Target = Join-Path $ServerDirectory $SafeName
 
     if (Test-Path -LiteralPath $Target -PathType Container) {
+        # A remembered source is a recovery/template source, not an instruction to
+        # overwrite the live world on every startup. Once it has been applied, leave
+        # the existing world untouched; if the owner deletes it deliberately, the
+        # missing-target path below imports the remembered source again.
+        if ($RememberSource -and $ImportApplied) {
+            Write-Host "Remembered world source is configured; the existing '$SafeName' world was kept." -ForegroundColor Cyan
+            return
+        }
         $Confirmed = $false
         if (-not [string]::IsNullOrWhiteSpace($env:JAROCK_WORLD_TRANSFER_ASSUME_YES)) {
             # Test hook (same pattern as JAROCK_PREREQ_DRY_RUN): lets the regression
@@ -111,10 +122,18 @@ function Invoke-WorldImport {
             $Confirmed = ($Confirm -match '^(?i:y|yes)$')
         }
         if (-not $Confirmed) {
-            # The operator declined to replace the existing world: keep it untouched,
-            # clear the one-shot request and continue starting instead of aborting.
-            Set-SettingsValue $SettingsPath 'WORLD_IMPORT_SOURCE' ''
-            Write-Host 'World import skipped: the existing world was kept and the import request was cleared.' -ForegroundColor Yellow
+            # The operator declined to replace the existing world: keep it untouched.
+            # A remembered source remains available for a later deliberate deletion of
+            # the active world; a one-shot request is cleared as before.
+            if ($RememberSource) {
+                Set-SettingsValue $SettingsPath 'WORLD_IMPORT_APPLIED' 'false'
+                Write-Host 'World import skipped: the existing world was kept; the remembered source remains configured.' -ForegroundColor Yellow
+            }
+            else {
+                Set-SettingsValue $SettingsPath 'WORLD_IMPORT_SOURCE' ''
+                Set-SettingsValue $SettingsPath 'WORLD_IMPORT_APPLIED' 'false'
+                Write-Host 'World import skipped: the existing world was kept and the import request was cleared.' -ForegroundColor Yellow
+            }
             return
         }
         $BackupName = $SafeName + '_originalbkp'
@@ -157,9 +176,18 @@ function Invoke-WorldImport {
         throw "The imported world in '$SafeName' has no level.dat; the import was incomplete."
     }
 
-    Set-SettingsValue $SettingsPath 'WORLD_IMPORT_SOURCE' ''
-    Write-Host "Imported the world from '$SourceValue' into server\$SafeName." -ForegroundColor Green
-    Write-Host 'The import request was cleared after the successful import; it will not repeat on the next start.' -ForegroundColor Cyan
+    if ($RememberSource) {
+        Set-SettingsValue $SettingsPath 'WORLD_IMPORT_REMEMBER' 'true'
+        Set-SettingsValue $SettingsPath 'WORLD_IMPORT_APPLIED' 'true'
+        Write-Host "Imported the world from '$SourceValue' into server\$SafeName." -ForegroundColor Green
+        Write-Host 'The world source was remembered. It will be reused only if the configured world is later deleted; the existing world will not be overwritten on normal restarts.' -ForegroundColor Cyan
+    }
+    else {
+        Set-SettingsValue $SettingsPath 'WORLD_IMPORT_SOURCE' ''
+        Set-SettingsValue $SettingsPath 'WORLD_IMPORT_APPLIED' 'false'
+        Write-Host "Imported the world from '$SourceValue' into server\$SafeName." -ForegroundColor Green
+        Write-Host 'The import request was cleared after the successful import; it will not repeat on the next start.' -ForegroundColor Cyan
+    }
 }
 
 function Export-WorldFolder {
