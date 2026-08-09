@@ -277,6 +277,8 @@ Se una mod viene rifiutata, probabilmente è per Fabric, Forge classico, un'altr
 - <https://geysermc.org/wiki/floodgate/setup/>
 - <https://www.minecraft.net/eula>
 
+> Technical note: Async is an experimental server-side Minecraft 26.2 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
+
 <!-- jarock-safe-shutdown -->
 
 ## Arresto sicuro

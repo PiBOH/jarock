@@ -110,6 +110,8 @@ $WelcomeMessageOriginalConfigExists = $false
 $WelcomeMessageOriginalConfigBytes = $null
 $WelcomeMessageOriginalMarkerExists = $false
 $WelcomeMessageOriginalMarkerBytes = $null
+$WelcomeMessageWasValidated = $false
+$WelcomeMessageConfigText = ''
 
 try {
     Write-Host '==> Simulating a Windows PC that does not have the Java prerequisites installed' -ForegroundColor Cyan
@@ -250,6 +252,13 @@ try {
     if (Test-Path -LiteralPath $NoChatReportsFabricPath -PathType Leaf) {
         Assert ((Get-Sha512 $NoChatReportsFabricPath) -eq '139dd09e04cc66fe4745264ddfbe3249be6e956326c931eb9707f9a640bbc011a4f1fd5684d04ca90e1b473be55772b0279e5c2f935c2f2e85d054e2ab0a6923') 'Downloaded Fabric No Chat Reports SHA-512 matches the pinned hash'
     }
+    Assert ($FabricManifest -match 'async-fabric-0\.2\.4\+alpha-26\.2\.jar') 'Fabric manifest contains Async for Minecraft 26.2'
+    Assert ($FabricManifest -match '72111329b268954d2c05c80a066e9c9c57ddbe8c9595e0f569cf3d45c70ba03c488ff31159deed0ae6b15a1352b91f9a15de3786fe570f77bc26fff8ed050d7a') 'Fabric Async SHA-512 is pinned'
+    $AsyncFabricPath = Join-Path $Root 'server\\mods\\async-fabric-0.2.4+alpha-26.2.jar'
+    Assert (Test-Path -LiteralPath $AsyncFabricPath -PathType Leaf) 'Async Fabric was downloaded into server/mods'
+    if (Test-Path -LiteralPath $AsyncFabricPath -PathType Leaf) {
+        Assert ((Get-Sha512 $AsyncFabricPath) -eq '72111329b268954d2c05c80a066e9c9c57ddbe8c9595e0f569cf3d45c70ba03c488ff31159deed0ae6b15a1352b91f9a15de3786fe570f77bc26fff8ed050d7a') 'Downloaded Fabric Async SHA-512 matches the pinned hash'
+    }
     $DatapackManifest = Get-Content -LiteralPath (Join-Path $Root 'server\\datapacks-manifest.ps1') -Raw
     Assert ($DatapackManifest -match 'BetterMultiplayerSleep-1\.1\.0-1\.21\.11\+\.zip') 'Datapack manifest contains Better Multiplayer Sleep for Minecraft 26.2'
     Assert ($DatapackManifest -match '8ecadc28a73bbe12dade19d5dfa0840dc8d28b2bd80c0ef154779063375fb5c96cc7c877c55c627909f2aea2907a30b2a8f2038769d269443f0e1689f7f3017a') 'Better Multiplayer Sleep SHA-512 is pinned'
@@ -266,6 +275,19 @@ try {
     Assert ($NeoForgeManifest -match 'e27620080ae53460b00cabacaff409a960e0d6c6811b7e3519d5461cb62654e0016161eed914352171af56191b70a97c79320b3ef29c0636b74a0471c2398055') 'NeoForge Collective SHA-512 is pinned'
     Assert ($NeoForgeManifest -match 'welcomemessage-26\.2\.0-2\.8\.jar') 'NeoForge manifest contains Welcome Message for Minecraft 26.2'
     Assert ($NeoForgeManifest -match 'c4e6aca35e5da10f1a3a7e9432a1946bc0e5c8e36c8357bd6c7cbb66cb0c7d99402bb55a9679828223d0353b356ec05ee998e6035c165b03318fe93a6fe3d113') 'NeoForge Welcome Message SHA-512 is pinned'
+    Assert ($NeoForgeManifest -match 'async-neoforge-0\.2\.4\+alpha-26\.2\.jar') 'NeoForge manifest contains Async for Minecraft 26.2'
+    Assert ($NeoForgeManifest -match '8940c6746b2b399863c540a4c6c88c3a32caeb698f375e4ce086dab1ecad548f4a66c8b891dd48f02d4e90eaf3ec30c72653d5e66dff87ad04c858ca0c7b8c8d') 'NeoForge Async SHA-512 is pinned'
+    $AsyncNeoForgeTemp = Join-Path ([IO.Path]::GetTempPath()) ("jarock-Async-NEOFORGE-26.2-$PID.jar")
+    try {
+        Invoke-TestDownload -Url 'https://cdn.modrinth.com/data/vEC2jm6I/versions/RLPdO4sl/async-neoforge-0.2.4%2Balpha-26.2.jar' -Path $AsyncNeoForgeTemp
+        Assert (Test-Path -LiteralPath $AsyncNeoForgeTemp -PathType Leaf) 'NeoForge Async downloaded to an isolated temporary path'
+        if (Test-Path -LiteralPath $AsyncNeoForgeTemp -PathType Leaf) {
+            Assert ((Get-Item -LiteralPath $AsyncNeoForgeTemp).Length -eq 356252) 'NeoForge Async size matches the pinned artifact'
+            Assert ((Get-Sha512 $AsyncNeoForgeTemp) -eq '8940c6746b2b399863c540a4c6c88c3a32caeb698f375e4ce086dab1ecad548f4a66c8b891dd48f02d4e90eaf3ec30c72653d5e66dff87ad04c858ca0c7b8c8d') 'Downloaded NeoForge Async SHA-512 matches the pinned hash'
+        }
+    } finally {
+        Remove-Item -LiteralPath $AsyncNeoForgeTemp -Force -ErrorAction SilentlyContinue
+    }
     Assert ($NeoForgeManifest -match 'NoChatReports-NEOFORGE-26\.2-v2\.20\.1\.jar') 'NeoForge manifest contains No Chat Reports for Minecraft 26.2'
     Assert ($NeoForgeManifest -match '782b4b081c5d8bdd19139894feacc9c48b6fb025856e904c2bb9ee84438734de96eb5540f471e57830ecb92df8f18f6da20a1b619c4806b16f06780250999d03') 'NeoForge No Chat Reports SHA-512 is pinned'
     $NoChatReportsNeoForgeTemp = Join-Path ([IO.Path]::GetTempPath()) ("jarock-NoChatReports-NEOFORGE-26.2-v2.20.1-$PID.jar")
@@ -371,6 +393,7 @@ try {
     Assert ($LatestLogText -match '(?i)welcomemessage|welcome message') 'Fabric server log includes Welcome Message'
     Assert ($LatestLogText -match '(?i)offline[_-]?commands') 'Fabric server log includes OfflineCommands'
     Assert ($LatestLogText -match '(?i)inv[_-]?view') 'Fabric server log includes InvView'
+    Assert ($LatestLogText -match '(?i)async') 'Fabric server log includes Async'
     Assert ($LatestLogText -match 'essential_commands') 'Fabric server log includes Essential Commands'
     Assert ($LatestLogText -match 'ec[_-]?core') 'Fabric server log includes the Essential Commands core dependency'
     $CollectedText = $CollectedOutput -join "`n"

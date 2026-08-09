@@ -81,6 +81,13 @@ $Mods = @(
         Purpose = 'Server performance controls'
     }
     [pscustomobject]@{
+        Name = 'async-fabric-0.2.4+alpha-26.2.jar'
+        Url = 'https://cdn.modrinth.com/data/vEC2jm6I/versions/T6OSY8vJ/async-fabric-0.2.4%2Balpha-26.2.jar'
+        Sha512 = '72111329b268954d2c05c80a066e9c9c57ddbe8c9595e0f569cf3d45c70ba03c488ff31159deed0ae6b15a1352b91f9a15de3786fe570f77bc26fff8ed050d7a'
+        Required = $true
+        Purpose = 'Experimental asynchronous entity processing; test carefully for compatibility'
+    }
+    [pscustomobject]@{
         Name = 'fabric-carpet-26.2+v260616.jar'
         Url = 'https://cdn.modrinth.com/data/TQTTVgYE/versions/bGrLxJ8v/fabric-carpet-26.2%2Bv260616.jar'
         Sha512 = '8b8fac6979bd3153f5cfb4faa6bab52e1357eab814492a6658f3c0e1ac2856ad37a626c0a03a0839c39abb7bf56661f77b09d05d10ac01173bcdd373a33c6265'

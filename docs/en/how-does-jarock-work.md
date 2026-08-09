@@ -164,6 +164,8 @@ The updater does not silently reinstall dependencies. The next `start-server.bat
 
 That is Jarock: a reproducible, verified, local loader-aware server bootstrap with Fabric as the first choice, NeoForge as fallback, configurable safe launch parameters, visible Java/Bedrock LAN addresses after startup and clear safety boundaries. The address message is still printed when `SHOW_READY_BANNER=false`; that setting hides only the ASCII art.
 
+> Technical note: Async is an experimental server-side Minecraft 26.2 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
+
 <!-- jarock-safe-shutdown -->
 
 ## Safe shutdown

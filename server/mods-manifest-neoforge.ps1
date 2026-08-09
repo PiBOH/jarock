@@ -39,6 +39,13 @@ $Mods = @(
         Purpose = 'Server performance controls'
     }
     [pscustomobject]@{
+        Name = 'async-neoforge-0.2.4+alpha-26.2.jar'
+        Url = 'https://cdn.modrinth.com/data/vEC2jm6I/versions/RLPdO4sl/async-neoforge-0.2.4%2Balpha-26.2.jar'
+        Sha512 = '8940c6746b2b399863c540a4c6c88c3a32caeb698f375e4ce086dab1ecad548f4a66c8b891dd48f02d4e90eaf3ec30c72653d5e66dff87ad04c858ca0c7b8c8d'
+        Required = $true
+        Purpose = 'Experimental asynchronous entity processing; test carefully for compatibility'
+    }
+    [pscustomobject]@{
         Name = 'collective-26.2.0-8.39.jar'
         Url = 'https://cdn.modrinth.com/data/e0M1UDsY/versions/M75JwjyS/collective-26.2.0-8.39.jar'
         Sha512 = 'e27620080ae53460b00cabacaff409a960e0d6c6811b7e3519d5461cb62654e0016161eed914352171af56191b70a97c79320b3ef29c0636b74a0471c2398055'

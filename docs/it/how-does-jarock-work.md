@@ -125,6 +125,8 @@ Dopo ogni errore leggere `ERROR:` o `WARNING:` e seguire `Suggested fix:`. Se il
 
 Jarock non modifica router, firewall, port forwarding, IP pubblico, permessi operatori o repository GitHub. Le attività mancanti sono in `TODO.md`.
 
+> Technical note: Async is an experimental server-side Minecraft 26.2 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
+
 <!-- jarock-safe-shutdown -->
 
 ## Arresto sicuro

@@ -1,3 +1,5 @@
+> Technical note: Async is an experimental server-side Minecraft 26.2 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
+
 # Jarock first run
 
 This guide explains exactly what happens the first time you use a freshly downloaded Jarock repository. Follow the steps in order. You do not need to download the Minecraft loader or the pinned server mods manually.

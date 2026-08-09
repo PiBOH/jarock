@@ -4,6 +4,8 @@ Fabric이 맞지 않을 때만 NeoForge를 마지막 대안으로 사용합니�
 
 영어 전체 안내서를 참조하세요: [../en/neoforge-fallback.md](../en/neoforge-fallback.md)
 
+> Technical note: Async is an experimental server-side Minecraft 26.2 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
+
 <!-- jarock-safe-shutdown -->
 
 ## 안전한 종료

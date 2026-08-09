@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.101-beta] - 2026-08-10
+
+### Added
+
+- Added the experimental server-side `Async` mod for Minecraft 26.2 to both the Fabric and NeoForge manifests, with pinned Modrinth downloads and SHA-512 verification. Fabric uses the compatible build with its required Fabric API; NeoForge uses its dedicated build. Because Async is alpha software and can cause crashes or incorrect entity behavior, the localized documentation now warns operators to test it with a backup and remove it if the server becomes unstable.
+- Fixed the Windows bootstrap regression harness so its Welcome Message validation state is initialized before idempotency checks run.
+
 ## [0.0.100-beta] - 2026-08-10
 
 ### Changed

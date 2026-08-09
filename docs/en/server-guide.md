@@ -462,6 +462,8 @@ Jarock can import and export worlds from `parameter-manager.bat`.
 
 Both paths are stored locally in `scripts/server-launch-settings.ini` (`WORLD_IMPORT_SOURCE` and `WORLD_EXPORT_DEST`) and are ignored by Git. The remembered-world choice is stored as `WORLD_IMPORT_REMEMBER`; `WORLD_IMPORT_APPLIED` is an internal state marker maintained by Jarock.
 
+> Technical note: Async is an experimental server-side Minecraft 26.2 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
+
 <!-- jarock-world-transfer -->
 
 ---
