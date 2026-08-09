@@ -1,4 +1,30 @@
-# Jarock
+<p align="center">
+  <img src="logo.png" alt="Jarock" width="180">
+</p>
+
+<h1 align="center">Jarock</h1>
+
+<p align="center">
+  <a href="https://github.com/PiBOH/jarock/releases"><img src="https://img.shields.io/github/v/release/PiBOH/jarock?include_prereleases&label=release" alt="Release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/PiBOH/jarock" alt="License"></a>
+  <a href="https://piboh.github.io/jarock/"><img src="https://img.shields.io/badge/website-piboh.github.io%2Fjarock-1F6FEB" alt="Website"></a>
+  <a href="https://github.com/PiBOH/jarock/commits/main"><img src="https://img.shields.io/github/last-commit/PiBOH/jarock" alt="Last commit"></a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Minecraft-26.2-00AA00" alt="Minecraft 26.2">
+  <img src="https://img.shields.io/badge/Java-25-ED8B00" alt="Java 25">
+  <img src="https://img.shields.io/badge/Java%20%2B%20Bedrock%20cross--play-Geyser-6F42C1" alt="Java and Bedrock cross-play">
+  <img src="https://img.shields.io/badge/Loaders-Fabric%20%26%20NeoForge-4B8BBE" alt="Fabric and NeoForge loaders">
+</p>
+
+<p align="center">
+  <a href="https://github.com/PiBOH/jarock/actions/workflows/test.yml"><img src="https://github.com/PiBOH/jarock/actions/workflows/test.yml/badge.svg" alt="Windows bootstrap test"></a>
+  <a href="https://github.com/PiBOH/jarock/actions/workflows/test-update.yml"><img src="https://github.com/PiBOH/jarock/actions/workflows/test-update.yml/badge.svg" alt="Update test"></a>
+  <a href="https://github.com/PiBOH/jarock/actions/workflows/test-world-transfer.yml"><img src="https://github.com/PiBOH/jarock/actions/workflows/test-world-transfer.yml/badge.svg" alt="World transfer test"></a>
+  <a href="https://github.com/PiBOH/jarock/actions/workflows/test-console-close.yml"><img src="https://github.com/PiBOH/jarock/actions/workflows/test-console-close.yml/badge.svg" alt="Console close protection test"></a>
+  <a href="https://github.com/PiBOH/jarock/actions/workflows/test-startup-updates.yml"><img src="https://github.com/PiBOH/jarock/actions/workflows/test-startup-updates.yml/badge.svg" alt="Startup update test"></a>
+</p>
 
 Beginner-friendly template and documentation for a professional Minecraft Java 26.2 server.
 

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.88-beta] - 2026-08-09
+
+### Added
+
+- The repository README now shows the Jarock logo (`logo.png`) and a set of status badges: latest release (beta channel), MIT license, the live GitHub Pages website, last commit, Minecraft 26.2 / Java 25 / Geyser cross-play / loader tags, and build status for the Windows bootstrap, update, world-transfer, console-close-protection and startup-update test workflows.
+
 ## [0.0.87-beta] - 2026-08-09
 
 ### Fixed
