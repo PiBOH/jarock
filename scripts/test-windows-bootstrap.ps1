@@ -336,8 +336,7 @@ try {
     Assert ($CollectedText -match 'shutting down and saving the world') 'The server console warns that the world is being saved when stop is detected'
     Assert ($CollectedText -match 'SAFE TO CLOSE') 'The server console prints the SAFE TO CLOSE confirmation after the world save completes'
     $WelcomeMessageConfigCandidates = @(
-        (Join-Path $Root 'server\config\welcomemessage.json'),
-        (Join-Path $Root 'server\config\welcome-message.json')
+        (Join-Path $Root 'server\config\welcomemessage.json5')
     )
     Assert (@($WelcomeMessageConfigCandidates | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf }).Count -gt 0) 'Welcome Message generated its configuration'
 
