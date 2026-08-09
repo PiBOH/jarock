@@ -147,6 +147,18 @@ jobs:
             git ls-files --error-unmatch "$required" >/dev/null
             test -f "$required"
           done
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct
+          path = Path('server/server-icon.png')
+          data = path.read_bytes()
+          if data[:8] != b'\x89PNG\r\n\x1a\n':
+              raise SystemExit('server/server-icon.png is not a valid PNG file')
+          width, height = struct.unpack('>II', data[16:24])
+          if (width, height) != (64, 64):
+              raise SystemExit(f'server/server-icon.png must be exactly 64x64, found {width}x{height}')
+          print('server/server-icon.png: validated as 64x64 PNG')
+          PY
           git ls-files -z | while IFS= read -r -d '' f; do
             case "$f" in
               .github/*|.website/*|.gitattributes|.gitignore) continue ;;

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.99-beta] - 2026-08-10
+
+### Fixed
+
+- Recreated `server/server-icon.png` as an optimized 64×64 RGB PNG, the native Minecraft multiplayer server-list icon resolution, while preserving the existing Jarock artwork.
+
 ## [0.0.98-beta] - 2026-08-10
 
 ### Fixed
