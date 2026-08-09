@@ -62,8 +62,6 @@ Fabric is the default stack and NeoForge is the fallback. Each loader receives o
 - [English first-run guide](docs/en/first-run.md)
 - [English NeoForge fallback guide](docs/en/neoforge-fallback.md)
 - [All installation and fallback translations (including clearly labeled English fallback summaries)](docs/README.md)
-- [Guida italiana Fabric](docs/it/server-guide.md)
-- [Guida italiana NeoForge](docs/it/neoforge-fallback.md)
 - [Configure RAM, GUI, online-mode, startup update checks and safe launch options (including Exit without saving)](parameter-manager.bat)
 - [How Jarock works — English](docs/en/how-does-jarock-work.md)
 - [How Jarock works — all translations](docs/README.md)
