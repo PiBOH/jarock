@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.0.95-beta] - 2026-08-09
+### Fixed
+
+- Fixed the `parameter-manager.bat` main menu alignment so the current-value brackets line up in one consistent column for loader, RAM, banner, world import/export and startup update settings, including the longer option labels.
+
+## [0.0.96-beta] - 2026-08-10
 
 ### Added
 
