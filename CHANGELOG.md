@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.90-beta] - 2026-08-09
+
+### Fixed
+
+- The Windows first-run bootstrap test no longer fails on a fresh checkout: `Confirm-LoaderChange` in `bootstrap-server.ps1` now keys the "previous runtime without a loader marker" guard on loader engine artifacts only (`server.jar`, `vanilla-server.jar`, `fabric-server-launch.jar`, `run.bat`, `libraries`). A stray `server/mods` folder or leftover jar no longer blocks startup, because the pinned mod manifest is re-verified and overwritten deterministically anyway. This also lets the CI harness seed the legacy `welcome_awa` artifact on a clean tree to verify its removal.
+
 ## [0.0.89-beta] - 2026-08-09
 
 ### Changed

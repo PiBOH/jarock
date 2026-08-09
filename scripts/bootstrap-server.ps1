@@ -209,13 +209,17 @@ function Download-AndVerify([string]$Url, [string]$Path, [string]$Hash) {
     catch { Stop-WithGuidance $_.Exception.Message 'Check Internet access, disk permissions and antivirus/proxy interference, then run start-server.bat again.' }
 }
 function Confirm-LoaderChange([string]$Loader) {
+    # Only loader ENGINE artifacts count as a previous runtime: a stray mods folder
+    # (or a single leftover jar) must not block startup, because the pinned manifest is
+    # re-verified and overwritten deterministically anyway. Keying the guard on the
+    # loader engine also keeps the CI first-run test working, where the harness seeds a
+    # legacy welcome artifact into server/mods on a fresh checkout to test its removal.
     $RuntimeArtifacts = @(
         (Join-Path $ServerDir 'server.jar'),
         (Join-Path $ServerDir 'vanilla-server.jar'),
         (Join-Path $ServerDir 'fabric-server-launch.jar'),
         (Join-Path $ServerDir 'run.bat'),
-        (Join-Path $ServerDir 'libraries'),
-        (Join-Path $ServerDir 'mods')
+        (Join-Path $ServerDir 'libraries')
     )
     $HasRuntimeArtifacts = @($RuntimeArtifacts | Where-Object { Test-Path -LiteralPath $_ }).Count -gt 0
     if (-not (Test-Path -LiteralPath $LoaderMarkerPath -PathType Leaf) -and $HasRuntimeArtifacts) {
