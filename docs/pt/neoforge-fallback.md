@@ -9,6 +9,7 @@ Consulte o guia completo em inglês: [../en/neoforge-fallback.md](../en/neoforge
 ## Encerramento seguro
 
 > Digite `stop` e deixe a janela aberta. Antes de fechá-la, aguarde `CLEAN SHUTDOWN COMPLETE` e depois `SAFE TO CLOSE`. Se a segunda mensagem não aparecer, verifique o log e o relatório de falha e restaure um backup se necessário.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 <!-- jarock-updater -->
 

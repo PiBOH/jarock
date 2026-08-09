@@ -15,6 +15,7 @@ Jarock descarrega el loader i els mods fixats automàticament. El primer arrenca
 ## Aturada segura
 
 Torna a executar `start-server.bat` i deixa acabar la creació del món, Geyser i Floodgate. Per aturar-lo, escriu `stop` a la consola i no tanquis la finestra. Espera `CLEAN SHUTDOWN COMPLETE` i `SAFE TO CLOSE` abans de tancar-la.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## Després del primer arrencada
 

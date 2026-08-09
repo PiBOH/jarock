@@ -283,6 +283,7 @@ try {
     $script:ServerStopped = $false
     $TimedOut = $false
     $OutEof = $false; $ErrEof = $false
+    $CollectedOutput = New-Object System.Collections.Generic.List[string]
     $OutTask = $ServerProc.StandardOutput.ReadLineAsync()
     $ErrTask = $ServerProc.StandardError.ReadLineAsync()
     $Deadline = [DateTime]::UtcNow.AddMinutes(15)
@@ -297,6 +298,7 @@ try {
             try { $Line = $OutTask.Result } catch { $OutEof = $true; $Line = $null }
             if ($null -ne $Line) {
                 Write-Host $Line
+                $CollectedOutput.Add($Line)
                 if (-not $script:ServerStopped -and ($Line -match 'The Jarock server has finished loading' -or $Line -match 'Done \(\d+\.\d+s\)')) {
                     # Preferred trigger: the ready banner message. Fallback: the vanilla
                     # "Done (...)!" line, in case Geyser does not print its ready line on CI.
@@ -327,8 +329,11 @@ try {
     Assert ($LatestLogText -match '(?i)inv[_-]?view') 'Fabric server log includes InvView'
     Assert ($LatestLogText -match 'essential_commands') 'Fabric server log includes Essential Commands'
     Assert ($LatestLogText -match 'ec[_-]?core') 'Fabric server log includes the Essential Commands core dependency'
+    $CollectedText = $CollectedOutput -join "`n"
     Assert $script:ServerStopped 'Ready banner appeared (server finished loading)'
     Assert ($ServerExitCode -eq 0) "Server shut down cleanly (exit code $ServerExitCode)"
+    Assert ($CollectedText -match 'shutting down and saving the world') 'The server console warns that the world is being saved when stop is detected'
+    Assert ($CollectedText -match 'SAFE TO CLOSE') 'The server console prints the SAFE TO CLOSE confirmation after the world save completes'
     $WelcomeMessageConfigCandidates = @(
         (Join-Path $Root 'server\config\welcomemessage.json'),
         (Join-Path $Root 'server\config\welcome-message.json')

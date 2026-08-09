@@ -15,6 +15,7 @@ Il loader e le mod bloccate vengono scaricati automaticamente. Il primo avvio cr
 ## Arresto sicuro
 
 Avvia di nuovo `start-server.bat` e lascia completare mondo, Geyser e Floodgate. Per fermare il server scrivi `stop` e aspetta `CLEAN SHUTDOWN COMPLETE` e `SAFE TO CLOSE` prima di chiudere la finestra.
+> Nota: quando viene rilevato il comando `stop`, Jarock avvisa che il mondo sta venendo salvato e poi stampa la conferma finale `SAFE TO CLOSE` direttamente nella console del server, appena il salvataggio è completo, sia in modalità `gui` sia `nogui`. Tieni la finestra aperta fino a quando non appare quel messaggio.
 
 ## Dopo il primo avvio
 

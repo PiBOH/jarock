@@ -15,6 +15,7 @@ loader و modهای ثابت خودکار دانلود می‌شوند. اجرا
 ## خاموش‌کردن امن
 
 دوباره `start-server.bat` را اجرا کنید و منتظر پایان ساخت world، Geyser و Floodgate بمانید. برای توقف `stop` را وارد کنید و منتظر `CLEAN SHUTDOWN COMPLETE` و `SAFE TO CLOSE` بمانید.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## پس از اجرای نخست
 

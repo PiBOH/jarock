@@ -15,6 +15,7 @@ A Jarock automatikusan letölti a loadert és a rögzített modokat. Az első fu
 ## Biztonságos leállítás
 
 Indítsd újra, várd meg a világ, a Geyser és a Floodgate betöltését, írd be a `stop` parancsot, és várd meg a `CLEAN SHUTDOWN COMPLETE` és `SAFE TO CLOSE` üzeneteket. Hiba esetén kövesd a Suggested fix utasítást; kevert loaderek esetén készíts mentést és futtasd a `clean-server-runtime.bat` fájlt. Nyilvános hozzáférés előtt olvasd el a `TODO.md` fájlt.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## Biztonsági megjegyzés
 

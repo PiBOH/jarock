@@ -85,6 +85,15 @@ function Get-ConfiguredBedrockPort([string]$ServerDirectory, [string]$Loader) {
 function Test-GeyserReadyLine([string]$Line) {
     return $Line -match '(?i)(geyser\s+help|geyser.*(?:started|avviato|fatto).*udp|geyser.*udp|udp.*geyser)'
 }
+function Test-ShutdownStarted([string]$Line) {
+    # Matches the explicit server-stop message and its localized variants, plus the
+    # "Saving players"/"Saving worlds" lines that appear only in the shutdown path
+    # (never for save-all). The save-complete check below still gates SAFE TO CLOSE.
+    return $Line -match '(?i)(Stopping( Minecraft)? server|Stopping the server|Server is stopping|Server shutting down|Shutting down server|Saving players|Saving worlds|Arr\u00eat du serveur|Fermata del server|Deteniendo el servidor|\u041e\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0430|\u30b5\u30fc\u30d0\u30fc\u3092\u505c\u6b62)'
+}
+function Test-WorldSaveComplete([string]$Line) {
+    return $Line -match '(?i)All dimensions are saved'
+}
 function Read-NbtUInt16([System.IO.BinaryReader]$Reader) {
     $High = $Reader.ReadByte()
     $Low = $Reader.ReadByte()
@@ -220,6 +229,9 @@ function Show-ReadyStatus([bool]$ShowBanner, [object[]]$ReadyBanner) {
         Write-Host '  Bedrock Edition:       unavailable (Geyser is not installed)' -ForegroundColor Yellow
     }
     Write-Host '  Public access requires manual router/firewall or tunnel configuration.' -ForegroundColor DarkGray
+    if($GuiMode -eq 'gui'){
+        Write-Host '  GUI mode: type "stop" in the Minecraft GUI window (or use its Stop button); this console does not read commands in GUI mode.' -ForegroundColor Yellow
+    }
     Write-Host ''
 }
 function Set-NeoForgeJvmArgs([string]$Path,[string]$Xms,[string]$Xmx,[string]$Gc) {
@@ -267,6 +279,7 @@ try {
     # complete the world save, and then exit with code 0.
     $script:ShutdownStarted=$false
     $script:WorldSaveComplete=$false
+    $script:ShutdownNoticeShown=$false
     $script:GeyserPresent=$false
     $GeyserJar=Get-ChildItem -LiteralPath (Join-Path $ServerDirectory 'mods') -Filter 'Geyser-*.jar' -ErrorAction SilentlyContinue | Select-Object -First 1
     if($null -ne $GeyserJar){$script:GeyserPresent=$true}
@@ -306,14 +319,18 @@ try {
                     } else { $Line=[string]$_ }
                     Write-Host $Line
                     if($Line -match '(?i)\bseed\s*:\s*\[?(-?\d+)\]?'){$script:WorldSeed=$Matches[1]}
-                    if($Line -match '(?i)(Stopping( Minecraft)? server|Server is stopping|Arr\u00eat du serveur|Fermata del server|Deteniendo el servidor|\u041e\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0430|\u30b5\u30fc\u30d0\u30fc\u3092\u505c\u6b62)'){
+                    if(Test-ShutdownStarted $Line){
                         # Only an explicit server-stop message starts the trusted
                         # shutdown sequence. Autosaves/manual saves never authorize
                         # SAFE TO CLOSE.
                         $script:ShutdownStarted=$true
                         $script:WorldSaveComplete=$false
+                        if(-not $script:ShutdownNoticeShown){
+                            $script:ShutdownNoticeShown=$true
+                            Write-Host 'Jarock: the server is shutting down and saving the world. Do not close this window until the final SAFE TO CLOSE message.' -ForegroundColor Yellow
+                        }
                     }
-                    if($script:ShutdownStarted -and $Line -match '(?i)All dimensions are saved'){$script:WorldSaveComplete=$true}
+                    if($script:ShutdownStarted -and (Test-WorldSaveComplete $Line)){$script:WorldSaveComplete=$true}
                     if(-not $script:BannerShown){
                         $ReadyLine=$false
                         if($script:GeyserPresent){$ReadyLine=Test-GeyserReadyLine $Line}
@@ -342,14 +359,18 @@ try {
                     } else { $Line=[string]$_ }
                     Write-Host $Line
                     if($Line -match '(?i)\bseed\s*:\s*\[?(-?\d+)\]?'){$script:WorldSeed=$Matches[1]}
-                    if($Line -match '(?i)(Stopping( Minecraft)? server|Server is stopping|Arr\u00eat du serveur|Fermata del server|Deteniendo el servidor|\u041e\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0430|\u30b5\u30fc\u30d0\u30fc\u3092\u505c\u6b62)'){
+                    if(Test-ShutdownStarted $Line){
                         # Only an explicit server-stop message starts the trusted
                         # shutdown sequence. Autosaves/manual saves never authorize
                         # SAFE TO CLOSE.
                         $script:ShutdownStarted=$true
                         $script:WorldSaveComplete=$false
+                        if(-not $script:ShutdownNoticeShown){
+                            $script:ShutdownNoticeShown=$true
+                            Write-Host 'Jarock: the server is shutting down and saving the world. Do not close this window until the final SAFE TO CLOSE message.' -ForegroundColor Yellow
+                        }
                     }
-                    if($script:ShutdownStarted -and $Line -match '(?i)All dimensions are saved'){$script:WorldSaveComplete=$true}
+                    if($script:ShutdownStarted -and (Test-WorldSaveComplete $Line)){$script:WorldSaveComplete=$true}
                     if(-not $script:BannerShown){
                         $ReadyLine=$false
                         if($script:GeyserPresent){$ReadyLine=Test-GeyserReadyLine $Line}
@@ -366,10 +387,27 @@ try {
         }
     } finally { Pop-Location }
     $FinalExitCode=$ExitCode
-    if($ExitCode -eq 0 -and (-not $script:ShutdownStarted -or -not $script:WorldSaveComplete)){
+    if($null -eq $FinalExitCode){$FinalExitCode=1} # treat an undetectable exit as abnormal
+    $ExitCode=$FinalExitCode
+    Write-Host ''
+    if($script:ShutdownStarted -and $script:WorldSaveComplete){
+        # The completed world save is the authoritative safe-to-close signal: the
+        # world data is already on disk even if the process exit code is unusual.
+        Write-Host 'The world was saved and the server shut down.' -ForegroundColor Green
+        if($ExitCode -eq 0){
+            Write-Host 'SAFE TO CLOSE: you may now close this window.' -ForegroundColor Green
+        } else {
+            Write-Host "SAFE TO CLOSE: the world save completed before the process exited (exit code $ExitCode)." -ForegroundColor Green
+            Write-Host 'Review server\logs\latest.log before restarting if this exit code is unexpected.' -ForegroundColor Yellow
+        }
+        $FinalExitCode=0
+    } elseif($ExitCode -eq 0){
         Write-Host 'WARNING: The server process exited normally, but Jarock did not observe this shutdown complete its world save.' -ForegroundColor Yellow
-        Write-Host 'Do not assume it is safe to close or restart; inspect the server log and use a known-good backup if needed.' -ForegroundColor Yellow
+        Write-Host 'NOT SAFE TO CLOSE: do not assume it is safe to close or restart; inspect the server log and use a known-good backup if needed.' -ForegroundColor Yellow
         $FinalExitCode=10
+    } else {
+        Write-Host "NOT SAFE TO CLOSE: Minecraft exited with code $ExitCode before completing its world save." -ForegroundColor Red
+        Write-Host 'Inspect server\logs\latest.log and the newest crash report before restarting.' -ForegroundColor Yellow
     }
     exit $FinalExitCode
 } catch { Show-ErrorGuidance $_.Exception.Message 'Open parameter-manager.bat, select a supported loader and valid settings, then run start-server.bat again.'; exit 1 }

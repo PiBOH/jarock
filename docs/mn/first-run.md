@@ -15,6 +15,7 @@ Jarock loader болон тогтоосон mod-уудыг автоматаар 
 ## Аюулгүй зогсоох
 
 Дахин ажиллуулж world, Geyser, Floodgate-г дуусгахыг хүлээнэ. `stop` бичээд `CLEAN SHUTDOWN COMPLETE`, `SAFE TO CLOSE` хүртэл цонхыг бүү хаа. Алдаанд Suggested fix-ийг дагаж, loader холилдвол нөөцлөөд `clean-server-runtime.bat` ажиллуулж, нийтэд нээхээс өмнө `TODO.md`-г унш.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## Аюулгүй байдлын тэмдэглэл
 

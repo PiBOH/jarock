@@ -15,6 +15,7 @@ Le loader et les mods épinglés sont téléchargés automatiquement. Le premier
 ## Arrêt sécurisé
 
 Relancez `start-server.bat` et attendez la fin du monde, de Geyser et de Floodgate. Pour arrêter, saisissez `stop` et attendez `CLEAN SHUTDOWN COMPLETE` puis `SAFE TO CLOSE` avant de fermer.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## Après le premier démarrage
 

@@ -15,6 +15,7 @@ Jarock lädt den ausgewählten Loader und die festgelegten Server-Mods automatis
 ## Sicheres Beenden
 
 Starte `start-server.bat` erneut und lasse Welt, Geyser und Floodgate vollständig laden. Zum Beenden gib `stop` in der Konsole ein und schließe das Fenster nicht. Warte auf `CLEAN SHUTDOWN COMPLETE` und `SAFE TO CLOSE`, bevor du es schließt.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## Nach dem ersten Start
 

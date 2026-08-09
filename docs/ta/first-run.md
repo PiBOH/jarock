@@ -15,6 +15,7 @@ Jarock loader மற்றும் pin செய்யப்பட்ட mods-�
 ## பாதுகாப்பான நிறுத்தம்
 
 மீண்டும் இயக்கி world, Geyser மற்றும் Floodgate முடியும் வரை காத்திருக்கவும். `stop` என type செய்து `CLEAN SHUTDOWN COMPLETE` மற்றும் `SAFE TO CLOSE` தோன்றும் வரை சாளரத்தை மூட வேண்டாம். பிழையில் Suggested fix-ஐ பின்பற்றவும்; loader கலந்திருந்தால் backup எடுத்து `clean-server-runtime.bat` இயக்கவும். Update நிறுவ `scripts/update-jarock.bat` இயக்கவும்; பொதுவாக்குவதற்கு முன் `TODO.md` படிக்கவும்.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 <!-- jarock-lan-addresses-ta -->
 

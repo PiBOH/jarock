@@ -168,7 +168,7 @@ That is Jarock: a reproducible, verified, local loader-aware server bootstrap wi
 
 ## Safe shutdown
 
-Type `stop` in the server console and leave the window open. Wait for Jarock to print `CLEAN SHUTDOWN COMPLETE` and then `SAFE TO CLOSE`; only then close the window. If the second message does not appear, do not force the process to end: inspect `server\\logs\\latest.log` and the newest crash report, and restore a backup if necessary.
+Type `stop` in the server console and leave the window open. Jarock prints a world-saving notice when `stop` is detected, then the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Wait for `CLEAN SHUTDOWN COMPLETE` and then `SAFE TO CLOSE`; only then close the window. If the second message does not appear, do not force the process to end: inspect `server\\logs\\latest.log` and the newest crash report, and restore a backup if necessary.
 
 <!-- jarock-auto-update-check -->
 

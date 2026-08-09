@@ -15,6 +15,7 @@ Jarock は loader と固定された mod を自動でダウンロードします
 ## 安全な停止
 
 もう一度起動し、world、Geyser、Floodgate の読み込みを待ちます。停止するには `stop` と入力し、`CLEAN SHUTDOWN COMPLETE` と `SAFE TO CLOSE` が表示されるまでウィンドウを閉じないでください。エラー時は Suggested fix に従い、loader が混在したらバックアップ後 `clean-server-runtime.bat` を実行し、公開前に `TODO.md` を読んでください。
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## 安全に関する注意
 

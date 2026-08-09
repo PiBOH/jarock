@@ -83,7 +83,7 @@ To stop the server, type this in the server console:
 stop
 ```
 
-Do **not** close the window immediately after entering `stop`. Wait until Minecraft finishes saving and Jarock prints:
+Do **not** close the window immediately after entering `stop`. Jarock prints a notice that the world is being saved, and then — once Minecraft finishes saving — the final `SAFE TO CLOSE` confirmation directly in the server console (in both `gui` and `nogui` modes):
 
 ```text
 CLEAN SHUTDOWN COMPLETE

@@ -15,6 +15,7 @@ Jarock automaticky stáhne vybraný loader a připnuté serverové mody. První 
 ## Bezpečné ukončení
 
 Spusť `start-server.bat` znovu a nech dokončit tvorbu světa, Geyser a Floodgate. Pro ukončení napiš do konzole `stop` a okno nezavírej. Počkej na `CLEAN SHUTDOWN COMPLETE` a `SAFE TO CLOSE`, teprve potom okno zavři.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## Po prvním spuštění
 

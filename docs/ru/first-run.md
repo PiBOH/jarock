@@ -15,6 +15,7 @@ Jarock автоматически скачивает loader и закреплё�
 ## Безопасная остановка
 
 Запустите снова, дождитесь мира, Geyser и Floodgate, введите `stop` и ждите `CLEAN SHUTDOWN COMPLETE` и `SAFE TO CLOSE`. При ошибке следуйте Suggested fix; при смешанных loader сделайте резервную копию и запустите `clean-server-runtime.bat`. До публичного доступа прочитайте `TODO.md`.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## Примечание по безопасности
 

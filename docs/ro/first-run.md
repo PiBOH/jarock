@@ -15,6 +15,7 @@ Jarock descarcă automat loaderul și modurile fixate. Prima rulare creează `se
 ## Oprire sigură
 
 Rulează din nou, așteaptă lumea, Geyser și Floodgate, tastează `stop` și așteaptă `CLEAN SHUTDOWN COMPLETE` și `SAFE TO CLOSE`. Urmează Suggested fix la erori; dacă loaderele sunt amestecate, fă backup și rulează `clean-server-runtime.bat`. Citește `TODO.md` înainte de acces public.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## Notă de siguranță
 

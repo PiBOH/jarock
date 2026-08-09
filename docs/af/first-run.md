@@ -15,6 +15,7 @@ Jarock laai die gekose loader en vasgepinde bedienermods outomaties af. Die eers
 ## Veilige afskakeling
 
 Begin `start-server.bat` weer. Laat wêreldskepping, Geyser en Floodgate volledig klaarmaak. Om te stop, tik `stop` in die bedienerkonsole en moenie die venster sluit nie. Wag vir `CLEAN SHUTDOWN COMPLETE` en `SAFE TO CLOSE`; eers daarna is dit veilig om die venster te sluit.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## Na die eerste begin
 

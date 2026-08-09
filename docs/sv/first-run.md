@@ -15,6 +15,7 @@ Jarock laddar automatiskt ner loader och låsta mods. Första körningen skapar 
 ## Säker avstängning
 
 Kör igen, vänta på värld, Geyser och Floodgate, skriv `stop` och vänta på `CLEAN SHUTDOWN COMPLETE` och `SAFE TO CLOSE`. Följ Suggested fix vid fel; om loaders blandats, säkerhetskopiera och kör `clean-server-runtime.bat`. Läs `TODO.md` före offentlig åtkomst.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## Säkerhetsinformation
 

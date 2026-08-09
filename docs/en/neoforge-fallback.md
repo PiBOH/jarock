@@ -141,7 +141,7 @@ When the server is ready, stop it safely from the console with:
 stop
 ```
 
-Do not forcibly close the window while the world is saving.
+Do not forcibly close the window while the world is saving. When `stop` is detected, Jarock prints a world-saving notice and then the final `SAFE TO CLOSE` confirmation in the console once the save completes; keep the window open until then.
 
 ---
 

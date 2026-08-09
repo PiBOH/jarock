@@ -15,6 +15,7 @@ Jarock automātiski lejupielādē loader un piespraustos mod. Pirmā palaišana 
 ## Droša apturēšana
 
 Palaidiet vēlreiz, gaidiet world, Geyser un Floodgate pabeigšanu, ievadiet `stop` un gaidiet `CLEAN SHUTDOWN COMPLETE` un `SAFE TO CLOSE`. Kļūdas gadījumā sekojiet Suggested fix; ja loader sajaukti, dublējiet pasauli un palaidiet `clean-server-runtime.bat`. Pirms publiskas piekļuves izlasiet `TODO.md`.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## Drošības piezīme
 

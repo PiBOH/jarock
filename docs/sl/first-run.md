@@ -15,6 +15,7 @@ Jarock samodejno prenese loader in pripete mode. Prvi zagon ustvari `server/eula
 ## Varna zaustavitev
 
 Znova zaženite, počakajte na svet, Geyser in Floodgate, vnesite `stop` ter počakajte `CLEAN SHUTDOWN COMPLETE` in `SAFE TO CLOSE`. Pri napaki sledite Suggested fix; pri pomešanih loaderjih naredite varnostno kopijo in zaženite `clean-server-runtime.bat`. Pred javnim dostopom preberite `TODO.md`.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## Varnostna opomba
 

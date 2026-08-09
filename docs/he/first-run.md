@@ -15,6 +15,7 @@ Jarock מוריד אוטומטית את ה-loader ואת המודים המוצמ
 ## כיבוי בטוח
 
 הפעל שוב, המתן לסיום העולם, Geyser ו-Floodgate, כתוב `stop` והמתן ל-`CLEAN SHUTDOWN COMPLETE` ול-`SAFE TO CLOSE`. במקרה של שגיאה פעל לפי Suggested fix; אם ה-loaders מעורבבים, גבה והפעל `clean-server-runtime.bat`. קרא את `TODO.md` לפני גישה ציבורית.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## הערת בטיחות
 

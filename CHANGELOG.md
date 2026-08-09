@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.85-beta] - 2026-08-09
+
+### Fixed
+
+- The final `SAFE TO CLOSE` confirmation is now printed directly in the server console (in both `gui` and `nogui` modes) as soon as the world save completes, instead of relying only on the launcher window after the process exits. When `stop` is detected, Jarock first prints a notice that the world is being saved so the operator keeps the window open.
+- The shutdown detection now also recognizes additional Minecraft shutdown messages (`Saving players`, `Saving worlds`, `Stopping the server`) and still requires the completed `All dimensions are saved` save before authorizing a safe close. If the process exits with an unexpected code after the world save completed, Jarock still confirms the world is on disk and explains the exit code; if no completed save was observed, it prints `NOT SAFE TO CLOSE` with log guidance.
+- In `gui` mode the ready status now reminds operators to type `stop` in the Minecraft GUI window (or use its Stop button), because the terminal window does not read commands while the Minecraft GUI is shown.
+- The Windows bootstrap regression test now asserts that the server console prints the world-saving notice and the final `SAFE TO CLOSE` confirmation after a clean stop.
+- Documented the in-console shutdown confirmation and the "do not close while saving" notice in the English, Italian and all localized guides and README.
+
 ## [0.0.84-beta] - 2026-08-08
 
 ### Changed

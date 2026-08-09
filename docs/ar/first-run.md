@@ -15,6 +15,7 @@ Startup update modes: AUTO_UPDATE_MODE=install checks for a compatible release a
 ## الإيقاف الآمن
 
 شغّل `start-server.bat` مرة أخرى ودع إنشاء العالم وGeyser وFloodgate يكتمل. للإيقاف اكتب `stop` في وحدة التحكم ولا تغلق النافذة. انتظر `CLEAN SHUTDOWN COMPLETE` ثم `SAFE TO CLOSE`؛ عندها فقط أغلقها.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## بعد التشغيل الأول
 

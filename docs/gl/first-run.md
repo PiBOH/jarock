@@ -15,6 +15,7 @@ Jarock descarga o loader e os mods fixados automaticamente. O primeiro arranque 
 ## Parada segura
 
 Reinicia, agarda polo mundo, Geyser e Floodgate, escribe `stop` e espera `CLEAN SHUTDOWN COMPLETE` e `SAFE TO CLOSE`. Segue Suggested fix ante erros; se mesturas loaders, fai unha copia e executa `clean-server-runtime.bat`. Le `TODO.md` antes de publicar.
+> Technical fallback note: When `stop` is detected, Jarock prints a notice that the world is being saved, then prints the final `SAFE TO CLOSE` confirmation directly in the server console as soon as the save completes, in both `gui` and `nogui` modes. Keep the window open until that message appears.
 
 ## Nota de seguridade e actualizacións
 
