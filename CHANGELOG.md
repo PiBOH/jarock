@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.92-beta] - 2026-08-09
+
+### Fixed
+
+- Fixed the three NeoForge manifest assertions in the Windows bootstrap test. Their version patterns used double-escaped dots (`\\.`), which searched for a literal backslash; they now correctly match the `26.2` filenames for Collective, Welcome Message and No Chat Reports.
+
 ## [0.0.91-beta] - 2026-08-09
 
 ### Fixed

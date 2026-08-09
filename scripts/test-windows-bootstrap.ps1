@@ -231,11 +231,11 @@ try {
     Assert ($RealText -match 'datapacks|BetterMultiplayerSleep') 'Bootstrap reports configured datapack installation support'
     $NeoForgeManifest = Get-Content -LiteralPath (Join-Path $Root 'server\\mods-manifest-neoforge.ps1') -Raw
     Assert ($NeoForgeManifest -notmatch '(?i)essential_commands|ec-core|offlinecommands|InvView') 'NeoForge manifest excludes Fabric-only Essential Commands, InvView and OfflineCommands'
-    Assert ($NeoForgeManifest -match 'collective-26\\.2\\.0-8\\.39\\.jar') 'NeoForge manifest contains Collective for Minecraft 26.2'
+    Assert ($NeoForgeManifest -match 'collective-26\.2\.0-8\.39\.jar') 'NeoForge manifest contains Collective for Minecraft 26.2'
     Assert ($NeoForgeManifest -match 'e27620080ae53460b00cabacaff409a960e0d6c6811b7e3519d5461cb62654e0016161eed914352171af56191b70a97c79320b3ef29c0636b74a0471c2398055') 'NeoForge Collective SHA-512 is pinned'
-    Assert ($NeoForgeManifest -match 'welcomemessage-26\\.2\\.0-2\\.8\\.jar') 'NeoForge manifest contains Welcome Message for Minecraft 26.2'
+    Assert ($NeoForgeManifest -match 'welcomemessage-26\.2\.0-2\.8\.jar') 'NeoForge manifest contains Welcome Message for Minecraft 26.2'
     Assert ($NeoForgeManifest -match 'c4e6aca35e5da10f1a3a7e9432a1946bc0e5c8e36c8357bd6c7cbb66cb0c7d99402bb55a9679828223d0353b356ec05ee998e6035c165b03318fe93a6fe3d113') 'NeoForge Welcome Message SHA-512 is pinned'
-    Assert ($NeoForgeManifest -match 'NoChatReports-NEOFORGE-26\\.2-v2\\.20\\.1\\.jar') 'NeoForge manifest contains No Chat Reports for Minecraft 26.2'
+    Assert ($NeoForgeManifest -match 'NoChatReports-NEOFORGE-26\.2-v2\.20\.1\.jar') 'NeoForge manifest contains No Chat Reports for Minecraft 26.2'
     Assert ($NeoForgeManifest -match '782b4b081c5d8bdd19139894feacc9c48b6fb025856e904c2bb9ee84438734de96eb5540f471e57830ecb92df8f18f6da20a1b619c4806b16f06780250999d03') 'NeoForge No Chat Reports SHA-512 is pinned'
     $NoChatReportsNeoForgeTemp = Join-Path ([IO.Path]::GetTempPath()) ("jarock-NoChatReports-NEOFORGE-26.2-v2.20.1-$PID.jar")
     try {
