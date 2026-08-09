@@ -17,7 +17,7 @@ The script refuses to clean while any `java.exe` or `javaw.exe` process is runni
 
 ## What it removes
 
-The script uses an explicit preservation whitelist and removes every other file and directory below `server/`, including the generated loader marker and both local jar entry points. This also catches newly generated runtime files that are not listed here, including:
+The script uses an explicit preservation whitelist and removes every other file and directory below `server/`, including the generated loader marker and both local jar entry points. The tracked `server/icon.png` and `server/server-icon.png` are explicitly preserved; an optional `server/logo.png` is preserved too if an installation contains it. The tracked root `icon.png` and `logo.png` are outside `server/`, so this cleanup never touches them. This also catches newly generated runtime files that are not listed here, including:
 
 - worlds and player data such as `world/`, `world_nether/`, `world_the_end/`, `ops.json` and `whitelist.json`
 - `logs/` and `crash-reports/`
@@ -38,6 +38,10 @@ The script uses an explicit preservation whitelist and removes every other file 
 - `server/mods-manifest.ps1`
 - `server/eula.txt.template`
 - `server/server.properties.template`
+- `server/icon.png`
+- `server/server-icon.png`
+- `server/logo.png` when present
+- the repository-root `icon.png` and `logo.png` (the cleanup only scans `server/`)
 - `server/config/Geyser-Fabric/config.yml.template`
 - `server/config/Geyser-NeoForge/config.yml.template` when present
 

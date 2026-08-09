@@ -88,9 +88,18 @@ try {
         }
         $PreservedPaths[$AbsolutePath.ToLowerInvariant()] = $true
     }
+    # These tracked or operator-provided icons are optional across older and newer
+    # installations. Preserve each one when present without making an older package
+    # fail cleanup merely because it predates one of the icon files.
+    foreach ($RelativePath in @('icon.png', 'server-icon.png', 'logo.png')) {
+        $AbsolutePath = [IO.Path]::GetFullPath((Join-Path $ServerDirectory $RelativePath))
+        if (Test-Path -LiteralPath $AbsolutePath -PathType Leaf) {
+            $PreservedPaths[$AbsolutePath.ToLowerInvariant()] = $true
+        }
+    }
 
     Write-Host "Cleaning generated runtime data under: $ServerDirectory" -ForegroundColor Cyan
-    Write-Host 'Preserving repository templates, README and loader-specific manifests. server.jar is generated locally for the selected loader.' -ForegroundColor Green
+    Write-Host 'Preserving repository templates, README, loader-specific manifests and the tracked server icons. server.jar is generated locally for the selected loader.' -ForegroundColor Green
     Write-Host 'This removes worlds, player data, logs, generated configs, Floodgate keys, downloaded mods and libraries.' -ForegroundColor Yellow
 
     # Remove every file that is not explicitly part of the repository template.

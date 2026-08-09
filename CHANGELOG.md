@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.103-beta] - 2026-08-10
+
+### Fixed
+
+- Updated `clean-server-runtime.bat` and its PowerShell implementation so the tracked `server/icon.png` and `server/server-icon.png` are preserved during runtime cleanup; an optional `server/logo.png` is preserved too when present. The repository-root `icon.png` and `logo.png` remain outside the cleanup scope and are explicitly documented as preserved. Added a Windows regression test covering all server-scoped and root icon files while confirming generated runtime files are still removed.
+
 ## [0.0.102-beta] - 2026-08-10
 
 ### Added
