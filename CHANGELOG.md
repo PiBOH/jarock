@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.98-beta] - 2026-08-10
+
+### Fixed
+
+- Fixed the auto-release validation so a push release commit must change `scripts/version.txt` and the changelog must contain a matching `## [version]` section, without requiring both files to change in the same commit.
+
 ## [0.0.97-beta] - 2026-08-10
 
 ### Added

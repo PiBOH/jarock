@@ -42,7 +42,6 @@ jobs:
           set -euo pipefail
           if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
             git diff --quiet HEAD^ HEAD -- scripts/version.txt && { echo 'scripts/version.txt must change in a release commit.' >&2; exit 1; }
-            git diff --quiet HEAD^ HEAD -- CHANGELOG.md && { echo 'CHANGELOG.md must change in a release commit.' >&2; exit 1; }
           fi
           VERSION="$(tr -d '\r\n' < scripts/version.txt | xargs)"
           if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" && -n "${MANUAL_VERSION}" ]]; then
@@ -54,6 +53,10 @@ jobs:
           fi
           if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
             echo "Invalid semantic version: $VERSION. Enter a SemVer value without the v prefix." >&2
+            exit 1
+          fi
+          if ! awk -v version="$VERSION" 'index($0, "## [" version "]") == 1 { found = 1; exit } END { exit(found ? 0 : 1) }' CHANGELOG.md; then
+            echo "CHANGELOG.md is missing the ## [${VERSION}] release section." >&2
             exit 1
           fi
           TAG="${VERSION}"
