@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.95-beta] - 2026-08-09
+
+### Added
+
+- Added the Jarock Welcome Message configuration template at `server/config/welcomemessage.json5.template-jarock`. During the first Jarock-managed startup it replaces the mod's generic `welcomemessage.json5` with the configured Jarock welcome messages and links, then preserves later operator edits through a local marker.
+
 ## [0.0.94-beta] - 2026-08-09
 
 ### Added
@@ -801,7 +807,8 @@ The active prerelease channel is now `beta`; new prerelease versions use the `-b
 - Runtime worlds, logs, secrets, player lists and downloaded binaries are excluded from Git.
 - The bootstrap never opens router ports or changes firewall settings.
 
-[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.94-beta...HEAD
+[Unreleased]: https://github.com/PiBOH/jarock/compare/0.0.95-beta...HEAD
+[0.0.95-beta]: https://github.com/PiBOH/jarock/compare/0.0.94-beta...0.0.95-beta
 [0.0.94-beta]: https://github.com/PiBOH/jarock/compare/0.0.93-beta...0.0.94-beta
 [0.0.93-beta]: https://github.com/PiBOH/jarock/compare/0.0.92-beta...0.0.93-beta
 [0.0.92-beta]: https://github.com/PiBOH/jarock/compare/0.0.91-beta...0.0.92-beta

@@ -24,7 +24,7 @@ The repository intentionally does **not** open router ports, modify firewall rul
 - [ ] Test a Bedrock connection through Geyser from a second device when possible.
 - [ ] Test Java and Bedrock joining, movement, chat, commands, inventory, death/respawn, portals and server shutdown.
 - [ ] Test the redstone farms and technical mechanics that the community will actually use.
-- [x] Confirm that every downloaded mod is for Minecraft 26.2, the selected loader and the dedicated-server environment; Essential Commands, `ec-core`, InvView and OfflineCommands are Fabric-only, Welcome Message and Collective are verified for both Fabric and NeoForge, No Chat Reports is verified for both loaders, and the Better Multiplayer Sleep datapack is pinned separately and installed into the configured world.
+- [x] Confirm that every downloaded mod is for Minecraft 26.2, the selected loader and the dedicated-server environment; Essential Commands, `ec-core`, InvView and OfflineCommands are Fabric-only, Welcome Message and Collective are verified for both Fabric and NeoForge, No Chat Reports is verified for both loaders, and the Better Multiplayer Sleep datapack is pinned separately and installed into the configured world. The Jarock Welcome Message template is applied once on first setup and later edits are preserved.
 - [ ] Confirm that the Better Multiplayer Sleep datapack loads successfully in a live world and that one-player sleep behavior matches the server's intended rules.
 - [x] Confirm that no client-only mod was placed in `server/mods/`; No Chat Reports is the reviewed server-side build for both supported loaders.
 - [ ] Confirm that vanilla and modified clients display the intended unsigned-chat behavior with `enforce-secure-profile` kept explicit.

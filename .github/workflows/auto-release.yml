@@ -140,7 +140,7 @@ jobs:
           # prerequisites/ (LFS); the lite package does not. Workflows (.github), the
           # website (.website) and version-control metadata (.gitattributes, .gitignore)
           # are excluded.
-          for required in icon.png server/server-icon.png; do
+          for required in icon.png server/server-icon.png server/config/welcomemessage.json5.template-jarock; do
             git ls-files --error-unmatch "$required" >/dev/null
             test -f "$required"
           done
@@ -166,14 +166,14 @@ jobs:
           PY
           python3 - "$FULL_NAME" "$LITE_NAME" <<'PY'
           import sys, zipfile
-          required = {'icon.png', 'server/server-icon.png'}
+          required = {'icon.png', 'server/server-icon.png', 'server/config/welcomemessage.json5.template-jarock'}
           for archive_name in sys.argv[1:]:
               with zipfile.ZipFile(archive_name) as archive:
                   names = set(archive.namelist())
               missing = required - names
               if missing:
-                  raise SystemExit(f'{archive_name} is missing packaged icon(s): {sorted(missing)}')
-              print(f'{archive_name}: both Jarock icons are packaged')
+                  raise SystemExit(f'{archive_name} is missing required Jarock file(s): {sorted(missing)}')
+              print(f'{archive_name}: Jarock icons and Welcome Message template are packaged')
           PY
           sha512sum "$FULL_NAME" > "$FULL_NAME.sha512"
           sha512sum "$LITE_NAME" > "$LITE_NAME.sha512"

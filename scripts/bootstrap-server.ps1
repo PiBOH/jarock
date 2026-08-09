@@ -257,6 +257,54 @@ function Ensure-LocalTemplates {
         Write-Host 'Created server.properties from the tracked template.' -ForegroundColor Green
     }
 }
+function Ensure-WelcomeMessageConfig {
+    # Welcome Message reads this file during mod initialization. On the first
+    # Jarock-managed setup, replace only the mod's recognizable generic config with
+    # the project configuration supplied in the repository. A local marker makes
+    # this a one-time migration: later starts preserve the operator's edits.
+    $TemplatePath = Join-Path $ConfigDir 'welcomemessage.json5.template-jarock'
+    $ConfigPath = Join-Path $ConfigDir 'welcomemessage.json5'
+    $MarkerPath = Join-Path $ConfigDir '.jarock-welcomemessage-configured'
+    if (-not (Test-Path -LiteralPath $TemplatePath -PathType Leaf)) {
+        Stop-WithGuidance 'The Jarock Welcome Message template is missing.' 'Restore server/config/welcomemessage.json5.template-jarock and run start-server.bat again.'
+    }
+    New-Item -ItemType Directory -Force -Path $ConfigDir | Out-Null
+    if (-not (Test-Path -LiteralPath $MarkerPath -PathType Leaf)) {
+        $ApplyTemplate = -not (Test-Path -LiteralPath $ConfigPath -PathType Leaf)
+        if (-not $ApplyTemplate) {
+            $ExistingConfig = Get-Content -LiteralPath $ConfigPath -Raw
+            # Welcome Message 2.8 creates this recognizable first-run value. Do not
+            # classify an already customized file as generic just because the marker
+            # was introduced by a later Jarock release.
+            $ApplyTemplate = ($ExistingConfig -match '"onlyRunOnDedicatedServers"\s*:\s*true') -and
+                ($ExistingConfig -match '"sendEmptyLineBeforeFirstMessage"\s*:\s*false') -and
+                ($ExistingConfig -match '"messageOneText"\s*:\s*"Welcome to the server!"') -and
+                ($ExistingConfig -match '"messageOneColourIndex"\s*:\s*0') -and
+                ($ExistingConfig -match '"messageOneOptionalURL"\s*:\s*""') -and
+                ($ExistingConfig -match '"messageTwoText"\s*:\s*""') -and
+                ($ExistingConfig -match '"messageTwoColourIndex"\s*:\s*0') -and
+                ($ExistingConfig -match '"messageTwoOptionalURL"\s*:\s*""') -and
+                ($ExistingConfig -match '"messageThreeText"\s*:\s*""') -and
+                ($ExistingConfig -match '"messageThreeColourIndex"\s*:\s*0') -and
+                ($ExistingConfig -match '"messageThreeOptionalURL"\s*:\s*""')
+        }
+        if ($ApplyTemplate) {
+            Copy-Item -LiteralPath $TemplatePath -Destination $ConfigPath -Force
+            Write-Host 'Applied the Jarock Welcome Message configuration for the first startup.' -ForegroundColor Green
+        }
+        else {
+            Write-Host 'Preserved the existing customized Welcome Message configuration.' -ForegroundColor Cyan
+        }
+        [IO.File]::WriteAllText($MarkerPath, 'Jarock Welcome Message configuration checked once.', (New-Object Text.UTF8Encoding($false)))
+    }
+    elseif (-not (Test-Path -LiteralPath $ConfigPath -PathType Leaf)) {
+        Copy-Item -LiteralPath $TemplatePath -Destination $ConfigPath
+        Write-Host 'Restored the missing Welcome Message configuration from the Jarock template.' -ForegroundColor Yellow
+    }
+    else {
+        Write-Host 'Preserved the existing server/config/welcomemessage.json5 Welcome Message configuration.' -ForegroundColor Cyan
+    }
+}
 function Test-VanillaServerJar([string]$Path) {
     try {
         Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
@@ -536,6 +584,7 @@ try {
     Ensure-DefaultWorldIcon $LevelName
     Write-Step "Downloading and verifying $Loader server mods"
     Install-Mods $Loader
+    Ensure-WelcomeMessageConfig
     if ($Loader -eq 'fabric') { Install-DedicatedPower }
     Install-Datapacks
     Write-LoaderMarker $Loader

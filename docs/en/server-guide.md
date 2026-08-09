@@ -42,7 +42,7 @@ Bedrock players ─ Geyser ───┘ │
 | InvView | Opens and manages online/offline player inventories and ender chests | `mods/`, Fabric 26.2 only |
 | OfflineCommands | Runs supported commands on offline players; restrict access to trusted operators | `mods/`, Fabric 26.2 only |
 | Links In Chat | Server-side clickable links and `/link` or `/linkwhisper` chat commands | `mods/` |
-| Welcome Message | Configurable server-side welcome messages; requires Collective | `mods/`, Fabric or NeoForge 26.2 |
+| Welcome Message | Configurable server-side welcome messages; requires Collective | `mods/`, Fabric or NeoForge 26.2; Jarock applies `config/welcomemessage.json5.template-jarock` once on first setup and preserves later edits |
 | No Chat Reports | Disables server-side chat-reporting signatures | `mods/`, Fabric or NeoForge 26.2 |
 | Better Multiplayer Sleep | Lets one player sleep through the night | configured world's `datapacks/`, Fabric or NeoForge |
 | Carpet Extra / Carpet TIS Addition | Optional Carpet extensions | `mods/`, only if compatible |
@@ -153,7 +153,7 @@ After choosing a loader, do not mix its mods with another loader. To change load
 
 For this repository, use `parameter-manager.bat` instead of creating a separate `start.bat`. It safely configures RAM, GUI/console mode, the GC profile, online-mode, the ready banner and optional user-scoped Java environment setup. The manager works on a temporary copy: choose Save and exit or Save and start to commit changes, or choose Exit without saving to discard every change and keep the previous settings. The settings are stored locally in `scripts/server-launch-settings.ini`.
 
-Essential Commands 0.41.0 and its required `ec-core` 1.3.0 component are installed on Fabric for Minecraft 26.2 and provide useful server commands. InvView 1.4.21 is also installed on Fabric and allows authorized server operators to inspect and manage online or offline player inventories and ender chests. OfflineCommands 1.0.3 is installed on Fabric and runs supported commands on offline players. Its reviewed artifact is named `OfflineCommands-1.0.3+26.1-rc-3.jar`, but the Modrinth metadata explicitly includes Minecraft 26.2. Because it can affect offline players, restrict it to trusted operators and review command permissions before public use. No compatible NeoForge 26.2 builds are available for Essential Commands, InvView or OfflineCommands, so NeoForge does not install them. No Chat Reports is installed server-side for both supported loaders. It prevents the server from forwarding signed chat-reporting data, but vanilla clients may still show an unsigned-chat warning unless they also use a compatible client-side setup. Jarock does not change `enforce-secure-profile` automatically; keep the server policy explicit and test the clients you use.
+Essential Commands 0.41.0 and its required `ec-core` 1.3.0 component are installed on Fabric for Minecraft 26.2 and provide useful server commands. On the first Jarock-managed startup, Jarock applies the configured `server/config/welcomemessage.json5.template-jarock` as `server/config/welcomemessage.json5` before Minecraft starts; later starts preserve your edits. InvView 1.4.21 is also installed on Fabric and allows authorized server operators to inspect and manage online or offline player inventories and ender chests. OfflineCommands 1.0.3 is installed on Fabric and runs supported commands on offline players. Its reviewed artifact is named `OfflineCommands-1.0.3+26.1-rc-3.jar`, but the Modrinth metadata explicitly includes Minecraft 26.2. Because it can affect offline players, restrict it to trusted operators and review command permissions before public use. No compatible NeoForge 26.2 builds are available for Essential Commands, InvView or OfflineCommands, so NeoForge does not install them. No Chat Reports is installed server-side for both supported loaders. It prevents the server from forwarding signed chat-reporting data, but vanilla clients may still show an unsigned-chat warning unless they also use a compatible client-side setup. Jarock does not change `enforce-secure-profile` automatically; keep the server policy explicit and test the clients you use.
 
 The online-mode menu controls `server.properties`:
 
@@ -364,7 +364,7 @@ Only install a mod after checking its current project page for **Minecraft 26.2*
 | ServerCore | Server-side | Optional; enable conservative settings first |
 | Fabric Carpet | Server-side or both | Technical rules, diagnostics and redstone testing |
 | Links In Chat | Server-side | Makes URLs in server chat clickable; no client installation is required |
-| Welcome Message | Server-side | Sends configurable welcome messages; Collective provides shared configuration support |
+| Welcome Message | Server-side | Sends configurable welcome messages; Collective provides shared configuration support. Jarock applies its configured template once on first setup and preserves later edits. |
 | Carpet Extra | Server-side | Optional extension; match its Carpet dependency |
 | Carpet TIS Addition | Server-side or both | Optional advanced technical tools; verify 26.2 support |
 
