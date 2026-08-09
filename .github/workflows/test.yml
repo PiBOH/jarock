@@ -40,7 +40,7 @@ jobs:
           $code = $LASTEXITCODE
           Get-Content bootstrap-test.log
           if ($code -ne 0) {
-            $escaped = (Get-Content bootstrap-test.log -Tail 40 | ForEach-Object { $_.Replace('%','%25') }) -join '%0A'
+            $escaped = (Get-Content bootstrap-test.log -Tail 200 | ForEach-Object { $_.Replace('%','%25') }) -join '%0A'
             Write-Output "::error::bootstrap test failed (exit $code):%0A$escaped"
           }
           exit $code
