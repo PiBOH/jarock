@@ -138,26 +138,27 @@ jobs:
           FULL_STAGE="$(mktemp -d)"
           LITE_STAGE="$(mktemp -d)"
           # Package the indispensable tracked files only: code, templates, manifests,
-          # scripts, .bat launchers, both project icons and the documentation in every
+          # scripts, .bat launchers, all tracked project icons and the documentation in every
           # language. The full package also bundles the Java installers from
           # prerequisites/ (LFS); the lite package does not. Workflows (.github), the
           # website (.website) and version-control metadata (.gitattributes, .gitignore)
           # are excluded.
-          for required in icon.png server/server-icon.png server/config/welcomemessage.json5.template-jarock; do
+          for required in icon.png server/icon.png server/server-icon.png server/config/welcomemessage.json5.template-jarock; do
             git ls-files --error-unmatch "$required" >/dev/null
             test -f "$required"
           done
           python3 - <<'PY'
           from pathlib import Path
           import struct
-          path = Path('server/server-icon.png')
-          data = path.read_bytes()
-          if data[:8] != b'\x89PNG\r\n\x1a\n':
-              raise SystemExit('server/server-icon.png is not a valid PNG file')
-          width, height = struct.unpack('>II', data[16:24])
-          if (width, height) != (64, 64):
-              raise SystemExit(f'server/server-icon.png must be exactly 64x64, found {width}x{height}')
-          print('server/server-icon.png: validated as 64x64 PNG')
+          for name in ('server/icon.png', 'server/server-icon.png'):
+              path = Path(name)
+              data = path.read_bytes()
+              if data[:8] != b'\x89PNG\r\n\x1a\n':
+                  raise SystemExit(f'{name} is not a valid PNG file')
+              width, height = struct.unpack('>II', data[16:24])
+              if (width, height) != (64, 64):
+                  raise SystemExit(f'{name} must be exactly 64x64, found {width}x{height}')
+              print(f'{name}: validated as 64x64 PNG')
           PY
           git ls-files -z | while IFS= read -r -d '' f; do
             case "$f" in
@@ -181,7 +182,7 @@ jobs:
           PY
           python3 - "$FULL_NAME" "$LITE_NAME" <<'PY'
           import sys, zipfile
-          required = {'icon.png', 'server/server-icon.png', 'server/config/welcomemessage.json5.template-jarock'}
+          required = {'icon.png', 'server/icon.png', 'server/server-icon.png', 'server/config/welcomemessage.json5.template-jarock'}
           for archive_name in sys.argv[1:]:
               with zipfile.ZipFile(archive_name) as archive:
                   names = set(archive.namelist())

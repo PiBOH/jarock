@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.102-beta] - 2026-08-10
+
+### Added
+
+- Added the tracked `server/icon.png` runtime icon and included it in both Full and Lite automatic release ZIPs. The workflow now requires the root world icon and validates both server-scoped icons (`server/icon.png` and `server/server-icon.png`) as 64×64 PNG files; the Windows bootstrap test also verifies the runtime icon.
+
 ## [0.0.101-beta] - 2026-08-10
 
 ### Added

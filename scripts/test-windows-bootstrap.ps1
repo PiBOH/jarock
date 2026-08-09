@@ -181,7 +181,12 @@ try {
     Assert ($RealCode -eq 0) "Bootstrap completes successfully (exit code $RealCode)"
     Assert (Test-Path -LiteralPath (Join-Path $Root 'icon.png') -PathType Leaf) 'Jarock default world icon is present'
     $ServerIconPath = Join-Path $Root 'server\server-icon.png'
+    $ServerRuntimeIconPath = Join-Path $Root 'server\icon.png'
     Assert (Test-Path -LiteralPath $ServerIconPath -PathType Leaf) 'Jarock server icon is present in the server runtime'
+    Assert (Test-Path -LiteralPath $ServerRuntimeIconPath -PathType Leaf) 'Jarock runtime icon is present in the server runtime'
+    if ((Test-Path -LiteralPath $ServerIconPath -PathType Leaf) -and (Test-Path -LiteralPath $ServerRuntimeIconPath -PathType Leaf)) {
+        Assert ((Get-Sha512 $ServerRuntimeIconPath) -eq (Get-Sha512 $ServerIconPath)) 'Runtime icon matches the server-list icon'
+    }
     $DefaultWorldIconPath = Join-Path $Root 'server\world\icon.png'
     Assert (Test-Path -LiteralPath $DefaultWorldIconPath -PathType Leaf) 'Default Jarock icon was applied to the world'
     if ((Test-Path -LiteralPath $DefaultWorldIconPath -PathType Leaf) -and (Test-Path -LiteralPath (Join-Path $Root 'icon.png') -PathType Leaf)) {
