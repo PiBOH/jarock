@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.89-beta] - 2026-08-09
+
+### Changed
+
+- The `test.yml` and `test-world-transfer.yml` workflows now capture the full test output and, when a step fails, emit the last 60 log lines as workflow annotations so CI-only failures can be diagnosed from the run summary without downloading logs.
+
 ## [0.0.88-beta] - 2026-08-09
 
 ### Added

@@ -35,4 +35,9 @@ jobs:
           java-version: '25'
       - name: Run the first-run bootstrap test
         shell: pwsh
-        run: ./scripts/test-windows-bootstrap.ps1
+        run: |
+          pwsh -NoLogo -NoProfile -File ./scripts/test-windows-bootstrap.ps1 *> bootstrap-test.log
+          $code = $LASTEXITCODE
+          Get-Content bootstrap-test.log
+          if ($code -ne 0) { Get-Content bootstrap-test.log -Tail 60 | ForEach-Object { "::error::$_" } }
+          exit $code

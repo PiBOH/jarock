@@ -31,8 +31,18 @@ jobs:
 
       - name: Run world-transfer test with Windows PowerShell 5.1
         shell: powershell
-        run: ./scripts/test-world-transfer.ps1
+        run: |
+          powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-world-transfer.ps1 *> wt-51.log
+          $code = $LASTEXITCODE
+          Get-Content wt-51.log
+          if ($code -ne 0) { Get-Content wt-51.log -Tail 60 | ForEach-Object { "::error::$_" } }
+          exit $code
 
       - name: Run world-transfer test with PowerShell 7
         shell: pwsh
-        run: ./scripts/test-world-transfer.ps1
+        run: |
+          pwsh -NoLogo -NoProfile -File ./scripts/test-world-transfer.ps1 *> wt-7.log
+          $code = $LASTEXITCODE
+          Get-Content wt-7.log
+          if ($code -ne 0) { Get-Content wt-7.log -Tail 60 | ForEach-Object { "::error::$_" } }
+          exit $code
