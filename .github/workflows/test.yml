@@ -36,6 +36,9 @@ jobs:
       - name: Run cleanup icon preservation test
         shell: pwsh
         run: pwsh -NoLogo -NoProfile -File ./scripts/test-cleanup-icons.ps1
+      - name: Run updater project-template protection test
+        shell: pwsh
+        run: pwsh -NoLogo -NoProfile -File ./scripts/test-updater-protection.ps1
       - name: Run the first-run bootstrap test
         shell: pwsh
         run: |

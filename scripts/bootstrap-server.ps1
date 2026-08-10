@@ -266,9 +266,43 @@ function Ensure-WelcomeMessageConfig {
     $ConfigPath = Join-Path $ConfigDir 'welcomemessage.json5'
     $MarkerPath = Join-Path $ConfigDir '.jarock-welcomemessage-configured'
     if (-not (Test-Path -LiteralPath $TemplatePath -PathType Leaf)) {
-        Stop-WithGuidance 'The Jarock Welcome Message template is missing.' 'Restore server/config/welcomemessage.json5.template-jarock and run start-server.bat again.'
+        # An old installation may have been updated before the template existed or
+        # may have lost it. Restore the standard Jarock template automatically so
+        # the server can always start instead of failing with a missing file.
+        New-Item -ItemType Directory -Force -Path $ConfigDir | Out-Null
+        $FallbackTemplate = @'
+{
+	// If the mod should only run on dedicated servers. When enabled it's not sent when in a singleplayer world.
+	"onlyRunOnDedicatedServers": true,
+	// Whether an empty line should be send before to first message to separate the welcome from other chat messages that might be sent.
+	"sendEmptyLineBeforeFirstMessage": true,
+	// The first message a player will receive when joining the world. Can be left empty.
+	"messageOneText": "Welcome to the Jarock server!",
+	// 0: black, 1: dark_blue, 2: dark_green, 3: dark_aqua, 4: dark_red, 5: dark_purple, 6: gold, 7: gray, 8: dark_gray, 9: blue, 10: green, 11: aqua, 12: red, 13: light_purple, 14: yellow, 15: white
+	// min: 0, max: 15
+	"messageOneColourIndex": 2,
+	// If a link is entered here, the complete message will be clickable.
+	"messageOneOptionalURL": "https://piboh.github.io/jarock/index.html",
+	// The second message a player will receive when joining the world. Can be left empty.
+	"messageTwoText": "Thank you for downloading this.",
+	// 0: black, 1: dark_blue, 2: dark_green, 3: dark_aqua, 4: dark_red, 5: dark_purple, 6: gold, 7: gray, 8: dark_gray, 9: blue, 10: green, 11: aqua, 12: red, 13: light_purple, 14: yellow, 15: white
+	// min: 0, max: 15
+	"messageTwoColourIndex": 14,
+	// If a link is entered here, the complete message will be clickable.
+	"messageTwoOptionalURL": "https://piboh.github.io/jarock/downloads.html",
+	// The third message a player will receive when joining the world. Can be left empty.
+	"messageThreeText": "Click this [HERE] for reporting bugs or request a new feature",
+	// 0: black, 1: dark_blue, 2: dark_green, 3: dark_aqua, 4: dark_red, 5: dark_purple, 6: gold, 7: gray, 8: dark_gray, 9: blue, 10: green, 11: aqua, 12: red, 13: light_purple, 14: yellow, 15: white
+	// min: 0, max: 15
+	"messageThreeColourIndex": 7,
+	// If a link is entered here, the complete message will be clickable.
+	"messageThreeOptionalURL": "https://github.com/PiBOH/jarock/issues/new/choose"
+}
+'@
+        [IO.File]::WriteAllText($TemplatePath, $FallbackTemplate.Replace("`r`n", "`n").Replace("`n", "`r`n"), (New-Object Text.UTF8Encoding($false)))
+        Write-Host 'WARNING: The Jarock Welcome Message template was missing and was restored automatically.' -ForegroundColor Yellow
+        Write-Host 'Restore server/config/welcomemessage.json5.template-jarock from the repository to keep it in sync with future updates.' -ForegroundColor Yellow
     }
-    New-Item -ItemType Directory -Force -Path $ConfigDir | Out-Null
     if (-not (Test-Path -LiteralPath $MarkerPath -PathType Leaf)) {
         $ApplyTemplate = -not (Test-Path -LiteralPath $ConfigPath -PathType Leaf)
         if (-not $ApplyTemplate) {

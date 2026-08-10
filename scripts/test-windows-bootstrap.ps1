@@ -311,9 +311,16 @@ try {
     Assert (Test-Path -LiteralPath $DatapackMarkerPath -PathType Leaf) 'Jarock datapack marker was created'
     $DatapackMarkerBefore = if (Test-Path -LiteralPath $DatapackMarkerPath -PathType Leaf) { Get-Content -LiteralPath $DatapackMarkerPath -Raw } else { '' }
     $DatapackPathBefore = if (Test-Path -LiteralPath $DatapackPath -PathType Leaf) { (Get-Item -LiteralPath $DatapackPath).FullName } else { '' }
+    # The bootstrap must self-heal a missing Welcome Message template (for example
+    # an installation updated from a version created before the template existed)
+    # instead of failing startup. Delete the template and let the second bootstrap
+    # restore it automatically.
+    $WelcomeMessageTemplatePath = Join-Path $Root 'server\config\welcomemessage.json5.template-jarock'
+    if (Test-Path -LiteralPath $WelcomeMessageTemplatePath -PathType Leaf) { Remove-Item -LiteralPath $WelcomeMessageTemplatePath -Force }
     $SecondBootstrapOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'bootstrap-server.ps1') 2>&1)
     $SecondBootstrapCode = $LASTEXITCODE
     Assert ($SecondBootstrapCode -eq 0) 'A second bootstrap remains idempotent'
+    Assert (Test-Path -LiteralPath $WelcomeMessageTemplatePath -PathType Leaf) 'Bootstrap restores the missing Welcome Message template'
     Assert ((Test-Path -LiteralPath $DefaultWorldIconPath -PathType Leaf) -and ((Get-Sha512 $DefaultWorldIconPath) -eq $CustomWorldIconHash)) 'Second bootstrap preserves a custom world icon'
     if ($WelcomeMessageWasValidated) {
         $WelcomeMessageCustomizedText = $WelcomeMessageConfigText -replace '"messageOneText": "Welcome to the Jarock server!"', '"messageOneText": "My customized Jarock welcome!"'
@@ -408,7 +415,6 @@ try {
     Assert ($CollectedText -match 'shutting down and saving the world') 'The server console warns that the world is being saved when stop is detected'
     Assert ($CollectedText -match 'SAFE TO CLOSE') 'The server console prints the SAFE TO CLOSE confirmation after the world save completes'
     $WelcomeMessageConfigPath = Join-Path $Root 'server\config\welcomemessage.json5'
-    $WelcomeMessageTemplatePath = Join-Path $Root 'server\config\welcomemessage.json5.template-jarock'
     Assert (Test-Path -LiteralPath $WelcomeMessageConfigPath -PathType Leaf) 'Welcome Message generated its configuration'
     Assert (Test-Path -LiteralPath $WelcomeMessageTemplatePath -PathType Leaf) 'Jarock Welcome Message template is present'
     Assert (Test-Path -LiteralPath $WelcomeMessageMarkerPath -PathType Leaf) 'Jarock Welcome Message migration marker was created'

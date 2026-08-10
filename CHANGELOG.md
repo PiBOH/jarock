@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.105-beta] - 2026-08-10
+
+### Fixed
+
+- Ensured `server/config/welcomemessage.json5.template-jarock` is always applied when updating from older versions: the updater now treats committed server templates and manifests as project files even when the current installation predates them, so the Welcome Message template is no longer mistaken for generated runtime configuration and left missing after an update.
+- Made the server bootstrap self-healing: if the Welcome Message template is missing (for example after an update from a version created before the template existed), the bootstrap restores the standard Jarock template automatically at startup instead of failing.
+- Extended the Windows update regression test to cover an older installation without the template and the bootstrap test to verify automatic template restoration.
+
 ## [0.0.104-beta] - 2026-08-10
 
 ### Fixed

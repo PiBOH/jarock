@@ -302,15 +302,17 @@ function Test-ProtectedProjectPath([string]$Relative) {
     if ($Comparable -in @('.gitignore', '.gitattributes', 'scripts/server-launch-settings.ini', 'java-home.txt')) { return $true }
     if ($Top -ne 'server') { return $false }
 
-    # In a Git checkout, tracked server templates/manifests are project files and
-    # may be updated; all other server paths are generated runtime data.
+    # Committed project templates and manifests below server/ must ALWAYS be
+    # refreshed from the package, even when updating from an old checkout or old
+    # package that did not track them yet (e.g. the Welcome Message template added
+    # in 0.0.95). Without this guard they would be mistaken for generated runtime
+    # configuration and left missing after the update.
+    if ($Comparable -match '^server/(.+\.template(?:-[^/]+)?|readme\.md|mods-manifest[^/]*\.ps1)$') { return $false }
+
+    # In a Git checkout, tracked server files are project files and may be
+    # updated; all other server paths are generated runtime data.
     $Tracked = @(Get-TrackedFiles | ForEach-Object { ([string]$_).ToLowerInvariant() })
     if ($Tracked.Count -gt 0) { return -not ($Tracked -contains $Comparable) }
-
-    # A downloaded release ZIP may be unpacked outside Git. Preserve the known
-    # generated runtime paths while allowing committed templates and manifests,
-    # including templates below server/config/, to be refreshed.
-    if ($Comparable -match '^server/(.+\.template(?:-[^/]+)?|readme\.md|mods-manifest[^/]*\.ps1)$') { return $false }
     $FirstChild = if ($Comparable.Contains('/')) { $Comparable.Substring(7).Split('/')[0] } else { $Comparable.Substring(7) }
     if (@('world','world_nether','world_the_end','logs','crash-reports','libraries','mods','config') -contains $FirstChild) { return $true }
     if ($Comparable -match '^server/(server\.jar|vanilla-server\.jar|run\.bat|user_jvm_args\.txt|fabric-server-launcher\.properties|jarock-loader\.txt|eula\.txt|server\.properties|java-path\.txt)$') { return $true }

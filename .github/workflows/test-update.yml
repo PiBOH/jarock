@@ -150,8 +150,12 @@ jobs:
               Set-Content -LiteralPath $WorldPath -Value 'WORLD DATA MUST SURVIVE' -Encoding ascii
               Set-Content -LiteralPath $PropertiesPath -Value @('server-port=25565', 'online-mode=true') -Encoding ascii
               Set-Content -LiteralPath $GeyserConfigPath -Value 'auth-type: floodgate' -Encoding ascii
-              Set-Content -LiteralPath $WelcomeTemplatePath -Value 'OLD WELCOME TEMPLATE' -Encoding ascii
               Set-Content -LiteralPath $SettingsPath -Value @('LOADER_TYPE=fabric', 'RAM_INITIAL=1G', 'RAM_MAX=4G') -Encoding ascii
+              # Simulate an installation created before the Welcome Message template
+              # existed (the template was added in 0.0.95): remove the file entirely
+              # so the updater must CREATE it from the current package instead of
+              # mistaking it for protected runtime configuration.
+              Remove-Item -LiteralPath $WelcomeTemplatePath -Force -ErrorAction SilentlyContinue
               $ExpectedReadmeHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'README.md')).Hash
               $ExpectedWelcomeTemplateHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'server/config/welcomemessage.json5.template-jarock')).Hash
               $ExpectedUpdaterHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'scripts/update-jarock.ps1')).Hash
