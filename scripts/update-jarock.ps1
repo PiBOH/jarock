@@ -263,7 +263,11 @@ function Test-Package([string]$ZipPath, $ExpectedVersion) {
         $UpdateEntry = $Archive.GetEntry('scripts/update-jarock.ps1')
         $UpdateLauncherEntry = $Archive.GetEntry('scripts/update-jarock.bat')
         $DeferredLauncherEntry = $Archive.GetEntry('scripts/apply-pending-launcher.ps1')
-        if ($null -eq $VersionEntry -or $null -eq $StartEntry -or $null -eq $UpdateEntry -or $null -eq $UpdateLauncherEntry -or $null -eq $DeferredLauncherEntry) { throw 'The downloaded Lite package is missing required Jarock updater files.' }
+        # The Welcome Message template is a required project file: the server
+        # bootstrap needs it on the first start. A package without it would leave
+        # the installation broken, so reject it before anything is applied.
+        $WelcomeTemplateEntry = $Archive.GetEntry('server/config/welcomemessage.json5.template-jarock')
+        if ($null -eq $VersionEntry -or $null -eq $StartEntry -or $null -eq $UpdateEntry -or $null -eq $UpdateLauncherEntry -or $null -eq $DeferredLauncherEntry -or $null -eq $WelcomeTemplateEntry) { throw 'The downloaded Lite package is missing required Jarock files (updater launchers or server/config/welcomemessage.json5.template-jarock).' }
         $Reader = New-Object IO.StreamReader($VersionEntry.Open())
         try { $PackageVersion = Parse-SemVer $Reader.ReadToEnd() } finally { $Reader.Dispose() }
         if ((Compare-SemVer $PackageVersion $ExpectedVersion) -ne 0) { throw "The package version ($($PackageVersion.Text)) does not match the release version ($($ExpectedVersion.Text))." }
@@ -446,6 +450,23 @@ try {
     $Stage = Get-Stage $ZipPath
     try {
         $Backup = Backup-AndApply $Stage $Candidate.Version
+        # Defensive safety net: the Welcome Message template must exist after
+        # the update even if the destination never had it (e.g. updating from a
+        # version created before the template existed). Test-Package above
+        # already guarantees the entry, and Backup-AndApply copies every
+        # non-protected file (the template is never runtime-protected), so this
+        # branch normally never fires; keep it as a final guard anyway.
+        $WelcomeTemplateRel = 'server/config/welcomemessage.json5.template-jarock'
+        $WelcomeTemplateDest = Join-Path $Root $WelcomeTemplateRel
+        if (-not (Test-Path -LiteralPath $WelcomeTemplateDest -PathType Leaf)) {
+            $WelcomeTemplateSrc = Join-Path $Stage $WelcomeTemplateRel
+            if (-not (Test-Path -LiteralPath $WelcomeTemplateSrc -PathType Leaf)) {
+                throw 'The downloaded package is missing server/config/welcomemessage.json5.template-jarock after extraction.'
+            }
+            New-Item -ItemType Directory -Force -Path (Split-Path -Parent $WelcomeTemplateDest) | Out-Null
+            Copy-Item -LiteralPath $WelcomeTemplateSrc -Destination $WelcomeTemplateDest -Force
+            Write-Host 'Restored server/config/welcomemessage.json5.template-jarock from the package.' -ForegroundColor Cyan
+        }
     }
     finally { Remove-Item -LiteralPath $Stage -Recurse -Force -ErrorAction SilentlyContinue }
     Write-Host ''

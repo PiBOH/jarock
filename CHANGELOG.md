@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.106-beta] - 2026-08-10
+
+### Fixed
+
+- Guaranteed that updates download and install `server/config/welcomemessage.json5.template-jarock` even when the file is not present among the installed server files: the updater now rejects a Lite package that does not contain the template before applying anything, and verifies after application that the template exists, restoring it from the stage if it is missing for any reason.
+- Extended the committed updater regression test (`test-updater-protection.ps1`) to cover the package validation: a package containing the template is accepted, a package without it is rejected, and the rejection message identifies the missing template.
+
 ## [0.0.105-beta] - 2026-08-10
 
 ### Fixed

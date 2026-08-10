@@ -14,6 +14,8 @@ param()
 # committed implementation is tested without executing the whole updater script.
 
 $ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName System.IO.Compression
+Add-Type -AssemblyName System.IO.Compression.FileSystem
 $Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $Pass = 0
 $Fail = 0
@@ -81,6 +83,76 @@ if ($FallbackMatch.Success) {
     $TrackedNormalized = & $Normalize $TrackedTemplate
     Assert-T ($FallbackNormalized -eq $TrackedNormalized) 'The bootstrap fallback matches the tracked Welcome Message template'
 }
+
+# --- 3. Test-Package must require the Welcome Message template in the package ---
+# The version is derived from the real scripts/version.txt so the test stays
+# honest across version bumps instead of relying on a magic constant.
+$PackageVersionText = (Get-Content -LiteralPath (Join-Path $Root 'scripts/version.txt') -Raw).Trim()
+$TokenB = $null
+$ErrorB = $null
+$AstB = [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $Root 'scripts/update-jarock.ps1'), [ref]$TokenB, [ref]$ErrorB)
+if ($ErrorB -and $ErrorB.Count -gt 0) { throw 'scripts/update-jarock.ps1 failed to parse (second pass).' }
+
+$PackageFns = @{}
+foreach ($Name in @('Parse-SemVer', 'Compare-SemVer', 'Test-Package')) {
+    foreach ($Node in $AstB.FindAll({ param($N) $true }, $true)) {
+        if ($Node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $Node.Name -eq $Name) { $PackageFns[$Name] = $Node.Extent.Text; break }
+    }
+    if (-not $PackageFns.ContainsKey($Name)) { throw "$Name was not found in scripts/update-jarock.ps1." }
+}
+$PackageModule = New-Module -Name "jarock-package-$PID" -ScriptBlock ([scriptblock]::Create(($PackageFns.Values -join [Environment]::NewLine))) -Function @('Parse-SemVer', 'Compare-SemVer', 'Test-Package')
+
+function New-TestPackage([string]$Dir, [switch]$WithoutTemplate) {
+    $Scripts = Join-Path $Dir 'scripts'
+    New-Item -ItemType Directory -Force -Path $Scripts | Out-Null
+    New-Item -ItemType Directory -Force -Path (Join-Path $Dir 'server/config') | Out-Null
+    Set-Content -LiteralPath (Join-Path $Scripts 'version.txt') -Value $PackageVersionText -NoNewline -Encoding Ascii
+    Set-Content -LiteralPath (Join-Path $Dir 'start-server.bat') -Value '@echo off' -Encoding Ascii
+    Set-Content -LiteralPath (Join-Path $Scripts 'update-jarock.ps1') -Value '# updater' -Encoding Ascii
+    Set-Content -LiteralPath (Join-Path $Scripts 'update-jarock.bat') -Value '@echo off' -Encoding Ascii
+    Set-Content -LiteralPath (Join-Path $Scripts 'apply-pending-launcher.ps1') -Value '# launcher' -Encoding Ascii
+    if (-not $WithoutTemplate) {
+        Copy-Item -LiteralPath (Join-Path $Root 'server/config/welcomemessage.json5.template-jarock') -Destination (Join-Path $Dir 'server/config/welcomemessage.json5.template-jarock')
+    }
+    $ZipPath = Join-Path $Dir 'package.zip'
+    Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
+    $Zip = [IO.Compression.ZipFile]::Open($ZipPath, [IO.Compression.ZipArchiveMode]::Create)
+    try {
+        foreach ($Rel in @('scripts/version.txt', 'start-server.bat', 'scripts/update-jarock.ps1', 'scripts/update-jarock.bat', 'scripts/apply-pending-launcher.ps1')) {
+            $Entry = $Zip.CreateEntry($Rel)
+            $Writer = New-Object IO.StreamWriter($Entry.Open())
+            try { $Writer.Write((Get-Content -LiteralPath (Join-Path $Dir $Rel) -Raw)) } finally { $Writer.Dispose() }
+        }
+        if (-not $WithoutTemplate) {
+            $Entry = $Zip.CreateEntry('server/config/welcomemessage.json5.template-jarock')
+            $Writer = New-Object IO.StreamWriter($Entry.Open())
+            try { $Writer.Write((Get-Content -LiteralPath (Join-Path $Dir 'server/config/welcomemessage.json5.template-jarock') -Raw)) } finally { $Writer.Dispose() }
+        }
+    }
+    finally { $Zip.Dispose() }
+    return $ZipPath
+}
+
+$PackageTestDir = Join-Path $env:TEMP ("jarock-package-test-" + [guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Force -Path $PackageTestDir | Out-Null
+try {
+    $WithZip = New-TestPackage $PackageTestDir
+    $Expected = & $PackageModule Parse-SemVer $PackageVersionText
+    $Threw = $false
+    try { & $PackageModule Test-Package $WithZip $Expected } catch { $Threw = $true }
+    Assert-T (-not $Threw) 'Test-Package accepts a package that contains the Welcome Message template'
+
+    $WithoutDir = Join-Path $PackageTestDir 'without'
+    New-Item -ItemType Directory -Force -Path $WithoutDir | Out-Null
+    $WithoutZip = New-TestPackage $WithoutDir -WithoutTemplate
+    $Threw = $false
+    $Message = ''
+    try { & $PackageModule Test-Package $WithoutZip $Expected } catch { $Threw = $true; $Message = $_.Exception.Message }
+    Assert-T $Threw 'Test-Package rejects a package without the Welcome Message template'
+    Assert-T ($Message -match 'welcomemessage') 'The rejection message mentions the Welcome Message template'
+}
+finally { Remove-Item -LiteralPath $PackageTestDir -Recurse -Force -ErrorAction SilentlyContinue }
+Remove-Module $PackageModule
 
 Write-Host ''
 Write-Host "Updater protection test summary: $Pass passed, $Fail failed." -ForegroundColor Cyan
