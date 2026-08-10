@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.107-beta] - 2026-08-10
+
+### Fixed
+
+- Fixed remembered world imports prompting to overwrite the active world after the parameter manager saved the settings again. A remembered source is now always treated as a recovery source: it is used only when the configured world folder is absent, while an existing world is kept without a confirmation prompt. The regression test now covers the exact `WORLD_IMPORT_REMEMBER=true` and `WORLD_IMPORT_APPLIED=false` state produced by the parameter manager.
+
 ## [0.0.106-beta] - 2026-08-10
 
 ### Fixed

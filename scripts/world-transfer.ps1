@@ -89,7 +89,9 @@ function Invoke-WorldImport {
     $SourceValue = ([string]$Settings['WORLD_IMPORT_SOURCE']).Trim()
     if ([string]::IsNullOrWhiteSpace($SourceValue)) { return }
     $RememberSource = $Settings.ContainsKey('WORLD_IMPORT_REMEMBER') -and ([string]$Settings['WORLD_IMPORT_REMEMBER']).Trim() -match '^(?i:true|yes|1)$'
-    $ImportApplied = $Settings.ContainsKey('WORLD_IMPORT_APPLIED') -and ([string]$Settings['WORLD_IMPORT_APPLIED']).Trim() -match '^(?i:true|yes|1)$'
+    # A remembered source is never a recurring overwrite instruction. The source is
+    # used only when the configured world folder is absent, regardless of the legacy
+    # internal marker value left by parameter-manager.bat after editing settings.
 
     $Resolved = Resolve-ImportSource $SourceValue
     # Never import from inside the server folder: the source copy would remain there
@@ -107,8 +109,8 @@ function Invoke-WorldImport {
         # overwrite the live world on every startup. Once it has been applied, leave
         # the existing world untouched; if the owner deletes it deliberately, the
         # missing-target path below imports the remembered source again.
-        if ($RememberSource -and $ImportApplied) {
-            Write-Host "Remembered world source is configured; the existing '$SafeName' world was kept." -ForegroundColor Cyan
+        if ($RememberSource) {
+            Write-Host "Remembered world source is configured; the existing '$SafeName' world was kept. It will be reused only if this world folder is deliberately deleted." -ForegroundColor Cyan
             return
         }
         $Confirmed = $false
