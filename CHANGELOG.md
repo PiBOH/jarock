@@ -5,7 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.0.108-beta] - 2026-08-11
+
+### Added
+
+- Jarock now forces its launcher windows to open in the classic Windows Console Host (`cmd`) instead of Windows Terminal: when `start-server.bat`, `parameter-manager.bat`, `clean-server-runtime.bat` or `scripts/update-jarock.bat` detects that it is running inside Windows Terminal (the `WT_SESSION` variable), it temporarily points the documented `HKCU\Console\DelegationConsole` default-terminal value at the classic console CLSID, relaunches itself in a classic console window, and restores the previous value immediately. Windows that Jarock opens itself (the parameter manager from the first-run bootstrap, and the separate updater window) are created through the same mechanism. The console close-event protection therefore works reliably for Jarock windows; pseudo-terminals without a marker (for example Alacritty) are not auto-detected and are documented as such.
 
 ## [0.0.107-beta] - 2026-08-10
 

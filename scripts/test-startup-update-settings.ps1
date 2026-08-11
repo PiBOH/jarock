@@ -39,10 +39,25 @@ try {
     Assert ($ParameterManager.Contains('choice /c 1234567890XYIEU')) 'parameter-manager.bat includes U in the menu choices'
     $ParameterManagerBytes = [IO.File]::ReadAllBytes((Join-Path $Root 'parameter-manager.bat'))
     Assert (($ParameterManagerBytes -contains 13) -and (($ParameterManagerBytes | Where-Object { $_ -eq 13 }).Count -eq (($ParameterManagerBytes | Where-Object { $_ -eq 10 }).Count))) 'parameter-manager.bat keeps CRLF line endings'
-    Assert ($ParameterManager.Contains('start "Jarock updater" "%ComSpec%" /d /c call "%ROOT%\scripts\update-jarock.bat"')) 'the manual update option opens the updater batch in a new window'
+    Assert ($ParameterManager.Contains('call "%ROOT%\scripts\classic-console.bat" "Jarock updater" "%ROOT%\scripts\update-jarock.bat"')) 'the manual update option opens the updater batch in a classic console window'
     Assert ($ParameterManager.Contains('if not exist "%ROOT%\scripts\update-jarock.bat"')) 'the manual update option checks that the updater entry point exists'
     Assert ($ParameterManager.Contains('This parameter manager will close now; reopen it after the updater finishes.')) 'the manager closes after launching the separate updater'
     Assert (Test-Path -LiteralPath (Join-Path $Root 'scripts/update-jarock.bat') -PathType Leaf) 'the updater batch entry point is present'
+    $ClassicConsoleHelper = Get-Content -LiteralPath (Join-Path $Root 'scripts/classic-console.bat') -Raw
+    Assert (Test-Path -LiteralPath (Join-Path $Root 'scripts/classic-console.bat') -PathType Leaf) 'the classic-console helper is present'
+    Assert ($ClassicConsoleHelper.Contains('DelegationConsole')) 'the classic-console helper uses the default-terminal registry value'
+    Assert ($ClassicConsoleHelper.Contains('{B23D10C0-E52E-411E-9D5B-C09FDF709C7D}')) 'the classic-console helper pins the classic console CLSID'
+    Assert ($Batch.Contains('_JAROCK_CLASSIC_CONSOLE')) 'start-server.bat enforces the classic console when launched from Windows Terminal'
+    Assert ($Batch.Contains('if not defined WT_SESSION goto :classic_console_ok')) 'start-server.bat skips the relaunch when not running in Windows Terminal'
+    Assert ($Batch.Contains('call "%~dp0scripts\classic-console.bat" "Jarock classic console" "%~f0"')) 'start-server.bat relaunches itself through the classic-console helper'
+    Assert ($ParameterManager.Contains('_JAROCK_CLASSIC_CONSOLE')) 'parameter-manager.bat enforces the classic console when launched from Windows Terminal'
+    $CleanBatch = Get-Content -LiteralPath (Join-Path $Root 'clean-server-runtime.bat') -Raw
+    Assert ($CleanBatch.Contains('_JAROCK_CLASSIC_CONSOLE')) 'clean-server-runtime.bat enforces the classic console when launched from Windows Terminal'
+    $UpdaterBatch = Get-Content -LiteralPath (Join-Path $Root 'scripts/update-jarock.bat') -Raw
+    Assert ($UpdaterBatch.Contains('_JAROCK_CLASSIC_CONSOLE')) 'update-jarock.bat enforces the classic console when launched from Windows Terminal'
+    $BootstrapScript = Get-Content -LiteralPath (Join-Path $Root 'scripts/bootstrap-server.ps1') -Raw
+    Assert ($BootstrapScript.Contains('Start-InClassicConsole')) 'the bootstrap opens the parameter manager through the classic-console helper'
+    Assert ($BootstrapScript.Contains('{B23D10C0-E52E-411E-9D5B-C09FDF709C7D}')) 'the bootstrap pins the classic console CLSID'
     Assert ($Batch.Contains('-NonInteractive -StartupUpdate')) 'startup updates use deferred launcher replacement mode'
     $Updater = Get-Content -LiteralPath (Join-Path $Root 'scripts/update-jarock.ps1') -Raw
     Assert ($Updater.Contains('Schedule-DeferredLauncherApply')) 'updater schedules the launcher replacement after startup exits'

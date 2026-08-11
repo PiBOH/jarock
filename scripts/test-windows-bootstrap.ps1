@@ -130,6 +130,9 @@ try {
     # 2. The bundled installers must be present (the workflow checks out with Git LFS).
     Assert (Test-Path -LiteralPath (Join-Path $Root 'prerequisites\jre-8-windows-x64.exe') -PathType Leaf) 'The bundled JRE 8 installer is present'
     Assert (Test-Path -LiteralPath (Join-Path $Root 'prerequisites\OpenJDK25U-jdk_x64_windows_hotspot.msi') -PathType Leaf) 'The bundled Temurin JDK 25 MSI is present'
+    $BootstrapScript = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'bootstrap-server.ps1') -Raw
+    Assert ($BootstrapScript.Contains('Start-InClassicConsole')) 'bootstrap defines the classic-console spawn helper'
+    Assert ($BootstrapScript.Contains('DelegationConsole')) 'bootstrap uses the documented default-terminal registry value'
 
     # 3. Mask every Java source, then confirm the discovery finds nothing.
     Mask-Java

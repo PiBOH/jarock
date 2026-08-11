@@ -109,4 +109,4 @@ Startup update modes: AUTO_UPDATE_MODE=install checks for a compatible release a
 
 <!-- jarock-console-close-protection -->
 
-> **Ochrona przed zamknięciem konsoli Windows:** While Jarock is running, the classic Windows console may show a warning when X is clicked. Wpisz stop i poczekaj na SAFE TO CLOSE. Nie wymuszaj zamknięcia podczas zapisywania świata. This is best effort only: Windows Terminal and Alacritty pseudoconsole tabs may not deliver the close event, and Windows can force-terminate the process after its short handler timeout.
+> **Ochrona przed zamknięciem konsoli Windows:** While Jarock is running, the classic Windows console may show a warning when X is clicked. Wpisz stop i poczekaj na SAFE TO CLOSE. Nie wymuszaj zamknięcia podczas zapisywania świata. Jarock relaunches its launchers in the classic Windows Console Host when they are started from Windows Terminal, so the close-event protection works there; other pseudo-terminals without a marker (for example Alacritty) are not auto-detected, and Windows can still force-terminate a console process after its short handler timeout.

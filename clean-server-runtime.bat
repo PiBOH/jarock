@@ -5,6 +5,19 @@ if "%ROOT:~-1%"=="\" set "ROOT=%ROOT:~0,-1%"
 set "SERVER=%ROOT%\server"
 set "RESET_LOADER=false"
 
+rem Classic console guard: Windows Terminal hosts console apps in a pseudoconsole
+rem that cannot deliver the console close-event protection and can hide the
+rem SAFE TO CLOSE shutdown flow. When this launcher is started from Windows
+rem Terminal, restart it in the classic Windows Console Host first.
+if defined _JAROCK_CLASSIC_CONSOLE goto :classic_console_ok
+if not defined WT_SESSION goto :classic_console_ok
+if not exist "%ROOT%\scripts\classic-console.bat" goto :classic_console_ok
+set "_JAROCK_CLASSIC_CONSOLE=1"
+call "%ROOT%\scripts\classic-console.bat" "Jarock classic console" "%~f0"
+echo.
+echo Jarock was relaunched in the classic Windows console because it was started from Windows Terminal.
+exit /b 0
+:classic_console_ok
 where powershell.exe >nul 2>&1
 if errorlevel 1 (
     echo ERROR: Windows PowerShell was not found.

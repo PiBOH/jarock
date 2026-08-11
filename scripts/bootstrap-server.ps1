@@ -48,6 +48,41 @@ function Read-Settings {
     }
     return $Values
 }
+function Start-InClassicConsole {
+    # Windows Terminal hosts newly created console windows when it is the default
+    # terminal application (HKCU\Console\DelegationConsole points at the Windows
+    # Terminal CLSID). Point that value at the classic console CLSID for the
+    # duration of the spawn, then restore it, so the parameter-manager window
+    # always opens in the classic Windows Console Host.
+    param(
+        [Parameter(Mandatory = $true)] [string]$FilePath,
+        [string[]]$ArgumentList,
+        [string]$WorkingDirectory
+    )
+    $ConsoleKey = $null
+    $OriginalDelegation = $null
+    $HadDelegation = $false
+    try {
+        $ConsoleKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Console', $true)
+        if ($null -ne $ConsoleKey) {
+            $OriginalDelegation = $ConsoleKey.GetValue('DelegationConsole', $null)
+            $HadDelegation = ($null -ne $OriginalDelegation)
+            $ConsoleKey.SetValue('DelegationConsole', '{B23D10C0-E52E-411E-9D5B-C09FDF709C7D}', [Microsoft.Win32.RegistryValueKind]::String)
+            $ConsoleKey.Close()
+        }
+        return Start-Process -FilePath $FilePath -ArgumentList $ArgumentList -WorkingDirectory $WorkingDirectory -Wait -PassThru -ErrorAction Stop
+    }
+    finally {
+        if ($null -ne $ConsoleKey) {
+            $ConsoleKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Console', $true)
+            if ($null -ne $ConsoleKey) {
+                if ($HadDelegation) { $ConsoleKey.SetValue('DelegationConsole', $OriginalDelegation, [Microsoft.Win32.RegistryValueKind]::String) }
+                else { $ConsoleKey.DeleteValue('DelegationConsole', $false) }
+                $ConsoleKey.Close()
+            }
+        }
+    }
+}
 function Save-Loader([string]$Loader) {
     $Content = Get-Content -LiteralPath $SettingsPath -Raw
     $Pattern = '(?m)^LOADER_TYPE=.*$'
@@ -84,7 +119,7 @@ function Select-Loader {
         Write-Host 'Opening parameter-manager.bat in a separate Windows command window. Choose Save and exit to continue, or Exit without saving to cancel.' -ForegroundColor Cyan
         $ManagerCommand = 'call "' + $Manager.Replace('"', '""') + '" /configure-only'
         try {
-            $ManagerProcess = Start-Process -FilePath $env:ComSpec -ArgumentList @('/d', '/c', $ManagerCommand) -WorkingDirectory $Root -Wait -PassThru -ErrorAction Stop
+            $ManagerProcess = Start-InClassicConsole -FilePath $env:ComSpec -ArgumentList @('/d', '/c', $ManagerCommand) -WorkingDirectory $Root
         }
         catch {
             Set-Content -LiteralPath $SettingsPath -Value $OriginalSettingsContent -Encoding UTF8
