@@ -38,6 +38,8 @@ exit /b 1
 
 :runner_start
 if defined _JAROCK_RUNNER_ROOT set "ROOT=%_JAROCK_RUNNER_ROOT%"
+call :read_edition_marker
+if /i "%JAROCK_INTERFACE%"=="tui" if not defined JAROCK_TUI_BYPASS goto :tui_startup
 
 where powershell.exe >nul 2>&1
 if errorlevel 1 (
@@ -183,10 +185,45 @@ if "%EXIT_CODE%"=="0" (
 pause
 exit /b %EXIT_CODE%
 
+:read_edition_marker
+set "JAROCK_INTERFACE=cli"
+set "JAROCK_PACKAGE_TIER=lite"
+set "EDITION_MARKER=%ROOT%\scripts\jarock-edition.ini"
+if exist "%EDITION_MARKER%" (
+    for /f "tokens=1,* delims==" %%A in ('findstr /b /c:"JAROCK_INTERFACE=" /c:"JAROCK_PACKAGE_TIER=" "%EDITION_MARKER%" 2^>nul') do (
+        if /i "%%A"=="JAROCK_INTERFACE" set "JAROCK_INTERFACE=%%B"
+        if /i "%%A"=="JAROCK_PACKAGE_TIER" set "JAROCK_PACKAGE_TIER=%%B"
+    )
+)
+exit /b 0
+
+:tui_startup
+rem TUI editions keep the same startup update behavior as CLI editions, but the
+rem central menu itself is opened only after this optional check completes.
+set "TUI_STARTUP_MODE=install"
+for /f "tokens=1,* delims==" %%A in ('findstr /i /b /c:"AUTO_UPDATE_MODE=" "%ROOT%\scripts\server-launch-settings.ini" 2^>nul') do if /i "%%A"=="AUTO_UPDATE_MODE" set "TUI_STARTUP_MODE=%%B"
+if /i "%TUI_STARTUP_MODE%"=="install" call :startup_update_install
+if /i "%TUI_STARTUP_MODE%"=="check" call :startup_update_check_only
+if /i "%TUI_STARTUP_MODE%"=="never" call :startup_update_never
+goto :run_tui_interface
+
+:run_tui_interface
+set "TUI_EXE=%ROOT%\jarock-tui.exe"
+if not exist "%TUI_EXE%" (
+    echo ERROR: This TUI package is missing jarock-tui.exe.
+    echo Suggested fix: download a complete jarock-tui-full or jarock-tui-lite package, then run start-server.bat again.
+    pause
+    exit /b 1
+)
+set "JAROCK_ROOT=%ROOT%"
+"%TUI_EXE%" %*
+set "TUI_EXIT_CODE=%errorlevel%"
+exit /b %TUI_EXIT_CODE%
+
 :startup_update_install
 echo.
 echo ^==^> Checking for and installing Jarock updates automatically
-echo The verified Lite package will be installed before the server starts when a newer compatible release exists.
+echo The verified package matching the installed CLI/TUI and Full/Lite edition will be installed before the server starts when a newer compatible release exists.
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-jarock.ps1" -NonInteractive -StartupUpdate
 set "UPDATE_CHECK_EXIT_CODE=%errorlevel%"
 if "%UPDATE_CHECK_EXIT_CODE%"=="1" echo WARNING: The automatic startup update could not complete.

@@ -21,6 +21,9 @@
 
 # Local bootstrap and updater cache
 /.cache/
+/tui/node_modules/
+/tui/dist/
+/jarock-tui.exe
 
 # Generated runtime data if a user changes the server directory
 **/world/

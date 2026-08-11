@@ -80,18 +80,18 @@
       .then(list => {
         if (!Array.isArray(list) || !list.length) throw new Error('no releases');
         releaseSpans.forEach(span => {
-          const kind = span.dataset.releasePackage; // 'full' or 'lite'
+          const kind = span.dataset.releasePackage; // cli-full, cli-lite, tui-full, or tui-lite
           const prefix = 'jarock-' + kind;
           const rel = list.find(r => (r.assets || []).some(a => a.name.startsWith(prefix) && a.name.endsWith('.zip')));
           if (!rel) {
-            span.innerHTML = '<strong>No release package available yet.</strong> See the <a href="' + releasesFallback + '">releases page</a>.';
+            span.innerHTML = '<strong>No ' + esc(kind.toUpperCase()) + ' package available yet.</strong> See the <a href="' + releasesFallback + '">releases page</a>.';
             return;
           }
           const asset = rel.assets.find(a => a.name.startsWith(prefix) && a.name.endsWith('.zip'));
           const version = esc(rel.tag_name || 'latest');
           const url = esc(asset.browser_download_url);
           const sizeMb = asset.size ? ' (' + Math.max(1, Math.round(asset.size / 1048576)) + ' MB)' : '';
-          span.innerHTML = '<a class="download-link" href="' + url + '">Download ' + (kind === 'full' ? 'Full' : 'Lite') + ' package (' + version + ')' + sizeMb + '</a>';
+          span.innerHTML = '<a class="download-link" href="' + url + '">Download ' + esc(kind.toUpperCase()) + ' package (' + version + ')' + sizeMb + '</a>';
         });
       })
       .catch(() => {

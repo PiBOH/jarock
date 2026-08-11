@@ -1,0 +1,12 @@
+{
+  "name": "jarock-tui",
+  "private": true,
+  "version": "0.0.112",
+  "type": "module",
+  "engines": {
+    "bun": ">=1.3.0"
+  },
+  "dependencies": {
+    "@opentui/core": "0.5.1"
+  }
+}

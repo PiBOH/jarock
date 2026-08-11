@@ -20,8 +20,50 @@ permissions:
   contents: write
 
 jobs:
+  build-tui:
+    name: Build Windows TUI
+    runs-on: windows-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && startsWith(github.event.head_commit.message, 'v'))
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.0'
+      - name: Setup Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.15.1
+      - name: Install TUI dependencies
+        shell: pwsh
+        run: bun install --cwd tui
+      - name: Compile standalone Windows TUI
+        shell: pwsh
+        run: bun build --compile --target=bun-windows-x64 tui/index.ts --outfile jarock-tui.exe
+      - name: Smoke test TUI executable
+        shell: pwsh
+        run: |
+          $process = Start-Process -FilePath .\jarock-tui.exe -ArgumentList '--smoke' -PassThru -Wait -NoNewWindow
+          if ($process.ExitCode -ne 0) { throw "jarock-tui.exe smoke test failed with exit code $($process.ExitCode)." }
+      - name: Smoke test native OpenTUI renderer
+        shell: pwsh
+        run: |
+          bun build --compile --target=bun-windows-x64 tui/smoke.ts --outfile jarock-tui-smoke.exe
+          $process = Start-Process -FilePath .\jarock-tui-smoke.exe -PassThru -Wait -NoNewWindow
+          if ($process.ExitCode -ne 0) { throw "Native OpenTUI renderer smoke test failed with exit code $($process.ExitCode)." }
+      - name: Upload TUI executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: jarock-tui
+          path: jarock-tui.exe
+          if-no-files-found: error
+
   release:
     name: Create GitHub Release
+    needs: build-tui
     runs-on: ubuntu-latest
     if: >-
       github.event_name == 'workflow_dispatch' ||
@@ -122,6 +164,12 @@ jobs:
           print(f'Validated {len(files)} PowerShell files: ASCII-safe')
           PY
 
+      - name: Download TUI executable
+        uses: actions/download-artifact@v4
+        with:
+          name: jarock-tui
+          path: .tui-artifact
+
       - name: Build release packages
         id: package
         shell: bash
@@ -129,21 +177,28 @@ jobs:
           set -euo pipefail
           VERSION="${{ steps.version.outputs.version }}"
           if [[ "${{ steps.version.outputs.prerelease }}" == "true" ]]; then
-            FULL_NAME="jarock-full-${VERSION}.zip"
-            LITE_NAME="jarock-lite-${VERSION}.zip"
+            CLI_FULL_NAME="jarock-cli-full-${VERSION}.zip"
+            CLI_LITE_NAME="jarock-cli-lite-${VERSION}.zip"
+            TUI_FULL_NAME="jarock-tui-full-${VERSION}.zip"
+            TUI_LITE_NAME="jarock-tui-lite-${VERSION}.zip"
           else
-            FULL_NAME="jarock-full.zip"
-            LITE_NAME="jarock-lite.zip"
+            CLI_FULL_NAME="jarock-cli-full.zip"
+            CLI_LITE_NAME="jarock-cli-lite.zip"
+            TUI_FULL_NAME="jarock-tui-full.zip"
+            TUI_LITE_NAME="jarock-tui-lite.zip"
           fi
-          FULL_STAGE="$(mktemp -d)"
-          LITE_STAGE="$(mktemp -d)"
+          CLI_FULL_STAGE="$(mktemp -d)"
+          CLI_LITE_STAGE="$(mktemp -d)"
+          TUI_FULL_STAGE="$(mktemp -d)"
+          TUI_LITE_STAGE="$(mktemp -d)"
           # Package the indispensable tracked files only: code, templates, manifests,
           # scripts, .bat launchers, all tracked project icons and the documentation in every
           # language. The full package also bundles the Java installers from
           # prerequisites/ (LFS); the lite package does not. Workflows (.github), the
           # website (.website) and version-control metadata (.gitattributes, .gitignore)
-          # are excluded.
-          for required in icon.png server/icon.png server/server-icon.png server/config/welcomemessage.json5.jarock; do
+          # are excluded. The source TUI project is build-only; TUI release stages
+          # receive the compiled Windows executable instead.
+          for required in icon.png server/icon.png server/server-icon.png server/config/welcomemessage.json5.jarock scripts/jarock-edition.ini; do
             git ls-files --error-unmatch "$required" >/dev/null
             test -f "$required"
           done
@@ -164,49 +219,76 @@ jobs:
             case "$f" in
               .github/*|.website/*|.gitattributes|.gitignore) continue ;;
             esac
-            mkdir -p "$FULL_STAGE/$(dirname "$f")"
-            cp -p "$f" "$FULL_STAGE/$f"
+            case "$f" in
+              tui/*) continue ;;
+            esac
+            mkdir -p "$CLI_FULL_STAGE/$(dirname "$f")"
+            cp -p "$f" "$CLI_FULL_STAGE/$f"
             case "$f" in
               prerequisites/*) continue ;;
             esac
-            mkdir -p "$LITE_STAGE/$(dirname "$f")"
-            cp -p "$f" "$LITE_STAGE/$f"
+            mkdir -p "$CLI_LITE_STAGE/$(dirname "$f")"
+            cp -p "$f" "$CLI_LITE_STAGE/$f"
+            mkdir -p "$TUI_FULL_STAGE/$(dirname "$f")"
+            cp -p "$f" "$TUI_FULL_STAGE/$f"
+            mkdir -p "$TUI_LITE_STAGE/$(dirname "$f")"
+            cp -p "$f" "$TUI_LITE_STAGE/$f"
           done
-          # Compatibility alias for installers whose updater predates the
-          # welcomemessage.json5.jarock rename. It is generated only in the
-          # release archives; the repository keeps the new filename only.
-          for stage in "$FULL_STAGE" "$LITE_STAGE"; do
+          for stage in "$CLI_FULL_STAGE" "$CLI_LITE_STAGE" "$TUI_FULL_STAGE" "$TUI_LITE_STAGE"; do
             cp -p "$stage/server/config/welcomemessage.json5.jarock" \
               "$stage/server/config/welcomemessage.json5.template-jarock"
           done
-          python3 - "$FULL_STAGE" "$FULL_NAME" <<'PY'
+          printf 'JAROCK_INTERFACE=cli\nJAROCK_PACKAGE_TIER=full\n' > "$CLI_FULL_STAGE/scripts/jarock-edition.ini"
+          printf 'JAROCK_INTERFACE=cli\nJAROCK_PACKAGE_TIER=lite\n' > "$CLI_LITE_STAGE/scripts/jarock-edition.ini"
+          printf 'JAROCK_INTERFACE=tui\nJAROCK_PACKAGE_TIER=full\n' > "$TUI_FULL_STAGE/scripts/jarock-edition.ini"
+          printf 'JAROCK_INTERFACE=tui\nJAROCK_PACKAGE_TIER=lite\n' > "$TUI_LITE_STAGE/scripts/jarock-edition.ini"
+          # A manually dispatched version must be the version installed by the package too.
+          for stage in "$CLI_FULL_STAGE" "$CLI_LITE_STAGE" "$TUI_FULL_STAGE" "$TUI_LITE_STAGE"; do
+            printf '%s\n' "$VERSION" > "$stage/scripts/version.txt"
+          done
+          for stage in "$TUI_FULL_STAGE" "$TUI_LITE_STAGE"; do
+            cp -p .tui-artifact/jarock-tui.exe "$stage/jarock-tui.exe"
+            cp -p tui/LICENSE-OPENTUI.txt "$stage/LICENSE-OPENTUI.txt"
+          done
+          python3 - "$CLI_FULL_STAGE" "$CLI_FULL_NAME" "$CLI_LITE_STAGE" "$CLI_LITE_NAME" "$TUI_FULL_STAGE" "$TUI_FULL_NAME" "$TUI_LITE_STAGE" "$TUI_LITE_NAME" <<'PY'
           import shutil, sys
-          shutil.make_archive(sys.argv[2][:-4], 'zip', sys.argv[1])
+          for stage, archive in zip(sys.argv[1::2], sys.argv[2::2]): shutil.make_archive(archive[:-4], 'zip', stage)
           PY
-          python3 - "$LITE_STAGE" "$LITE_NAME" <<'PY'
-          import shutil, sys
-          shutil.make_archive(sys.argv[2][:-4], 'zip', sys.argv[1])
-          PY
-          python3 - "$FULL_NAME" "$LITE_NAME" <<'PY'
+          python3 - "$CLI_FULL_NAME" "$CLI_LITE_NAME" "$TUI_FULL_NAME" "$TUI_LITE_NAME" <<'PY'
           import sys, zipfile
-          required = {'icon.png', 'server/icon.png', 'server/server-icon.png', 'server/config/welcomemessage.json5.jarock', 'server/config/welcomemessage.json5.template-jarock'}
+          required = {'icon.png', 'server/icon.png', 'server/server-icon.png', 'server/config/welcomemessage.json5.jarock', 'server/config/welcomemessage.json5.template-jarock', 'scripts/jarock-edition.ini'}
           for archive_name in sys.argv[1:]:
-              with zipfile.ZipFile(archive_name) as archive:
-                  names = set(archive.namelist())
+              with zipfile.ZipFile(archive_name) as archive: names = set(archive.namelist())
               missing = required - names
-              if missing:
-                  raise SystemExit(f'{archive_name} is missing required Jarock file(s): {sorted(missing)}')
-              print(f'{archive_name}: Jarock icons and Welcome Message template are packaged')
+              if missing: raise SystemExit(f'{archive_name} is missing required Jarock file(s): {sorted(missing)}')
+              if 'tui-' in archive_name and 'jarock-tui.exe' not in names: raise SystemExit(f'{archive_name} is missing jarock-tui.exe')
+              if 'tui-' not in archive_name and 'jarock-tui.exe' in names: raise SystemExit(f'{archive_name} unexpectedly contains jarock-tui.exe')
+              print(f'{archive_name}: package validation passed')
           PY
-          sha512sum "$FULL_NAME" > "$FULL_NAME.sha512"
-          sha512sum "$LITE_NAME" > "$LITE_NAME.sha512"
+          for archive in "$CLI_FULL_NAME" "$CLI_LITE_NAME" "$TUI_FULL_NAME" "$TUI_LITE_NAME"; do sha512sum "$archive" > "$archive.sha512"; done
+          # Compatibility aliases keep pre-0.0.111 CLI installations updateable.
+          # They point to the same content as the new CLI Full/Lite packages.
+          LEGACY_FULL_NAME="${CLI_FULL_NAME/cli-full/full}"
+          LEGACY_LITE_NAME="${CLI_LITE_NAME/cli-lite/lite}"
+          cp -p "$CLI_FULL_NAME" "$LEGACY_FULL_NAME"
+          cp -p "$CLI_LITE_NAME" "$LEGACY_LITE_NAME"
+          sha512sum "$LEGACY_FULL_NAME" > "$LEGACY_FULL_NAME.sha512"
+          sha512sum "$LEGACY_LITE_NAME" > "$LEGACY_LITE_NAME.sha512"
           {
-            echo "full_name=$FULL_NAME"
-            echo "lite_name=$LITE_NAME"
-            echo "full_checksum=$FULL_NAME.sha512"
-            echo "lite_checksum=$LITE_NAME.sha512"
+            echo "cli_full_name=$CLI_FULL_NAME"
+            echo "cli_lite_name=$CLI_LITE_NAME"
+            echo "tui_full_name=$TUI_FULL_NAME"
+            echo "tui_lite_name=$TUI_LITE_NAME"
+            echo "cli_full_checksum=$CLI_FULL_NAME.sha512"
+            echo "cli_lite_checksum=$CLI_LITE_NAME.sha512"
+            echo "tui_full_checksum=$TUI_FULL_NAME.sha512"
+            echo "tui_lite_checksum=$TUI_LITE_NAME.sha512"
+            echo "legacy_full_name=$LEGACY_FULL_NAME"
+            echo "legacy_lite_name=$LEGACY_LITE_NAME"
+            echo "legacy_full_checksum=$LEGACY_FULL_NAME.sha512"
+            echo "legacy_lite_checksum=$LEGACY_LITE_NAME.sha512"
           } >> "$GITHUB_OUTPUT"
-          ls -la "$FULL_NAME" "$LITE_NAME" "$FULL_NAME.sha512" "$LITE_NAME.sha512"
+          ls -la "$CLI_FULL_NAME" "$CLI_LITE_NAME" "$TUI_FULL_NAME" "$TUI_LITE_NAME" "$LEGACY_FULL_NAME" "$LEGACY_LITE_NAME" *.sha512
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -218,9 +300,17 @@ jobs:
           prerelease: ${{ steps.version.outputs.prerelease }}
           generate_release_notes: false
           files: |
-            ${{ steps.package.outputs.full_name }}
-            ${{ steps.package.outputs.lite_name }}
-            ${{ steps.package.outputs.full_checksum }}
-            ${{ steps.package.outputs.lite_checksum }}
+            ${{ steps.package.outputs.cli_full_name }}
+            ${{ steps.package.outputs.cli_lite_name }}
+            ${{ steps.package.outputs.tui_full_name }}
+            ${{ steps.package.outputs.tui_lite_name }}
+            ${{ steps.package.outputs.cli_full_checksum }}
+            ${{ steps.package.outputs.cli_lite_checksum }}
+            ${{ steps.package.outputs.tui_full_checksum }}
+            ${{ steps.package.outputs.tui_lite_checksum }}
+            ${{ steps.package.outputs.legacy_full_name }}
+            ${{ steps.package.outputs.legacy_lite_name }}
+            ${{ steps.package.outputs.legacy_full_checksum }}
+            ${{ steps.package.outputs.legacy_lite_checksum }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

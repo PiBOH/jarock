@@ -28,5 +28,7 @@ WORLD_IMPORT_APPLIED=false
 # World export: set this to a folder outside server/ to copy the current world there
 # after every clean shutdown (the destination folder is overwritten).
 WORLD_EXPORT_DEST=
+# Release edition is stored separately in scripts/jarock-edition.ini; do not change it to switch packages manually.
+# CLI/TUI and Full/Lite are preserved by the updater.
 # Legacy AUTO_UPDATE_CHECK is still understood for older local settings:
 # true maps to install and false maps to never when AUTO_UPDATE_MODE is absent.

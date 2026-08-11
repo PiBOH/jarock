@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.0.112-beta]
+
+- Completed the Windows CLI/TUI release integration: manual workflow-dispatch versions are now written into `scripts/version.txt` inside every generated package, so the installed package version always matches its release tag.
+- Fixed the automatic-release TUI smoke test to launch `jarock-tui.exe --smoke`, initialize the renderer, and exit without waiting for interactive input.
+- Kept the installed CLI/TUI and Full/Lite edition unchanged during verified updates, including legacy asset aliases for pre-TUI installations.
+
+## [0.0.111-beta] - 2026-08-11
+
+### Added
+
+- Added Windows CLI and TUI release families: `jarock-cli-full`, `jarock-cli-lite`, `jarock-tui-full` and `jarock-tui-lite`.
+- Added `scripts/jarock-edition.ini` so launchers and the updater preserve the installed interface and Full/Lite tier.
+- Added the OpenTUI-based `jarock-tui.exe` central menu for server startup, updates, world operations, parameter management and runtime cleanup.
+- Kept legacy `jarock-full` and `jarock-lite` asset aliases so pre-TUI installations remain updateable.
+
+### Changed
+
+- TUI packages route both `start-server.bat` and `parameter-manager.bat` through the Windows TUI; CLI packages retain the classic command-line flow.
+- Automatic updates now select the matching `cli/tui` and `full/lite` package instead of always downloading a Lite CLI archive.
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),

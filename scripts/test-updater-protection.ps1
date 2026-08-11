@@ -111,6 +111,7 @@ function New-TestPackage([string]$Dir, [switch]$WithoutTemplate) {
     Set-Content -LiteralPath (Join-Path $Scripts 'update-jarock.ps1') -Value '# updater' -Encoding Ascii
     Set-Content -LiteralPath (Join-Path $Scripts 'update-jarock.bat') -Value '@echo off' -Encoding Ascii
     Set-Content -LiteralPath (Join-Path $Scripts 'apply-pending-launcher.ps1') -Value '# launcher' -Encoding Ascii
+    Set-Content -LiteralPath (Join-Path $Scripts 'jarock-edition.ini') -Value "JAROCK_INTERFACE=cli`r`nJAROCK_PACKAGE_TIER=lite`r`n" -Encoding Ascii
     if (-not $WithoutTemplate) {
         Copy-Item -LiteralPath (Join-Path $Root 'server/config/welcomemessage.json5.jarock') -Destination (Join-Path $Dir 'server/config/welcomemessage.json5.jarock')
         Copy-Item -LiteralPath (Join-Path $Root 'server/config/welcomemessage.json5.jarock') -Destination (Join-Path $Dir 'server/config/welcomemessage.json5.template-jarock')
@@ -119,7 +120,7 @@ function New-TestPackage([string]$Dir, [switch]$WithoutTemplate) {
     Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
     $Zip = [IO.Compression.ZipFile]::Open($ZipPath, [IO.Compression.ZipArchiveMode]::Create)
     try {
-        foreach ($Rel in @('scripts/version.txt', 'start-server.bat', 'scripts/update-jarock.ps1', 'scripts/update-jarock.bat', 'scripts/apply-pending-launcher.ps1')) {
+        foreach ($Rel in @('scripts/version.txt', 'start-server.bat', 'scripts/update-jarock.ps1', 'scripts/update-jarock.bat', 'scripts/apply-pending-launcher.ps1', 'scripts/jarock-edition.ini')) {
             $Entry = $Zip.CreateEntry($Rel)
             $Writer = New-Object IO.StreamWriter($Entry.Open())
             try { $Writer.Write((Get-Content -LiteralPath (Join-Path $Dir $Rel) -Raw)) } finally { $Writer.Dispose() }
@@ -143,7 +144,8 @@ try {
     $WithZip = New-TestPackage $PackageTestDir
     $Expected = & $PackageModule Parse-SemVer $PackageVersionText
     $Threw = $false
-    try { & $PackageModule Test-Package $WithZip $Expected } catch { $Threw = $true }
+    $Edition = [pscustomobject]@{ Interface = 'cli'; Tier = 'lite' }
+    try { & $PackageModule Test-Package $WithZip $Expected $Edition } catch { $Threw = $true }
     Assert-T (-not $Threw) 'Test-Package accepts a package that contains the Welcome Message template'
     $AcceptedArchive = [IO.Compression.ZipFile]::OpenRead($WithZip)
     try {
@@ -156,7 +158,7 @@ try {
     $WithoutZip = New-TestPackage $WithoutDir -WithoutTemplate
     $Threw = $false
     $Message = ''
-    try { & $PackageModule Test-Package $WithoutZip $Expected } catch { $Threw = $true; $Message = $_.Exception.Message }
+    try { & $PackageModule Test-Package $WithoutZip $Expected $Edition } catch { $Threw = $true; $Message = $_.Exception.Message }
     Assert-T $Threw 'Test-Package rejects a package without the Welcome Message template'
     Assert-T ($Message -match 'welcomemessage') 'The rejection message mentions the Welcome Message template'
 }

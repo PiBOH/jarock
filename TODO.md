@@ -6,6 +6,9 @@ The repository intentionally does **not** open router ports, modify firewall rul
 
 ## Required before public access
 
+- [ ] Test `jarock-tui.exe` on a clean Windows x64 machine and confirm OpenTUI native rendering, menu actions, and bundled runtime behavior. (CI smoke test is configured; clean-machine verification remains pending.)
+- [ ] Publish and verify the four CLI/TUI release ZIP families and their SHA-512 assets in a real GitHub Actions release.
+
 - [x] Install a supported 64-bit Java runtime for Minecraft 26.2 and confirm `java -version` (Java 25.0.4, 64-bit, selected successfully by the launcher).
 - [x] Download this repository from a trusted source. The launcher supports spaces, Unicode names and ordinary deeply nested paths; do not use unavailable drives or folders where Windows denies write access.
 - [x] Run `start-server.bat` once, choose Fabric or NeoForge, and confirm the selected loader-specific runtime and mods are installed. Fabric 26.2 was selected, the runtime was generated, and the server booted successfully with all pinned mods (Fabric API, Geyser, Floodgate, Lithium, FerriteCore, Krypton, ServerCore, Async, Fabric Carpet, Essential Commands, ec-core, InvView, OfflineCommands, I'm Fast, Links In Chat, Welcome Message, Collective, No Chat Reports, DedicatedPower) and the verified Better Multiplayer Sleep datapack.

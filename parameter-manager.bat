@@ -37,6 +37,8 @@ exit /b 1
 
 :runner_start
 if defined _JAROCK_PARAMETER_MANAGER_ROOT set "ROOT=%_JAROCK_PARAMETER_MANAGER_ROOT%"
+call :read_edition_marker
+if /i "%JAROCK_INTERFACE%"=="tui" if not defined JAROCK_TUI_BYPASS goto :run_tui_parameter_manager
 set "SETTINGS=%ROOT%\scripts\server-launch-settings.ini"
 set "TEMPLATE=%ROOT%\scripts\server-launch-settings.ini.template"
 set "TEMP_SETTINGS=%TEMP%\Jarock-parameter-manager-%RANDOM%-%RANDOM%.ini"
@@ -244,7 +246,7 @@ goto menu
 :manual_update_check
 cls
 echo ==^> Opening the Jarock updater in a new window
-echo The server will not be started. The updater will check GitHub and ask before installing a verified Lite package.
+echo The server will not be started. The updater will check GitHub and ask before installing a verified package matching this edition.
 if not exist "%ROOT%\scripts\update-jarock.bat" (
     echo ERROR: The updater entry point is missing: scripts\update-jarock.bat
     echo Suggested fix: restore scripts\update-jarock.bat from the Jarock repository or release package.
@@ -268,7 +270,7 @@ goto menu
 cls
 echo Startup update behavior:
 echo 1. Check and install updates automatically
- echo    Contacts GitHub and installs a verified compatible Lite package before startup.
+ echo    Contacts GitHub and installs a verified compatible package for this edition before startup.
 echo 2. Check updates only
  echo    Contacts GitHub and reports updates, but never installs anything.
 echo 3. Do not check updates ^& do not install updates
@@ -459,6 +461,31 @@ echo Settings saved:
  type "%SETTINGS%"
 del /q "%TEMP_SETTINGS%" >nul 2>&1
 exit /b 0
+
+:read_edition_marker
+set "JAROCK_INTERFACE=cli"
+set "JAROCK_PACKAGE_TIER=lite"
+set "EDITION_MARKER=%ROOT%\scripts\jarock-edition.ini"
+if exist "%EDITION_MARKER%" (
+    for /f "tokens=1,* delims==" %%A in ('findstr /b /c:"JAROCK_INTERFACE=" /c:"JAROCK_PACKAGE_TIER=" "%EDITION_MARKER%" 2^>nul') do (
+        if /i "%%A"=="JAROCK_INTERFACE" set "JAROCK_INTERFACE=%%B"
+        if /i "%%A"=="JAROCK_PACKAGE_TIER" set "JAROCK_PACKAGE_TIER=%%B"
+    )
+)
+exit /b 0
+
+:run_tui_parameter_manager
+set "TUI_EXE=%ROOT%\jarock-tui.exe"
+if not exist "%TUI_EXE%" (
+    echo ERROR: This TUI package is missing jarock-tui.exe.
+    echo Suggested fix: download a complete jarock-tui-full or jarock-tui-lite package.
+    pause
+    exit /b 1
+)
+set "JAROCK_ROOT=%ROOT%"
+"%TUI_EXE%" --parameters %*
+set "TUI_EXIT_CODE=%errorlevel%"
+exit /b %TUI_EXIT_CODE%
 
 :read_menu_values
 rem Initialize every displayed value before reading the temporary settings copy.

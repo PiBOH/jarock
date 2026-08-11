@@ -1,5 +1,9 @@
 # Documentation
 
+## Release editions and TUI
+
+Every release provides four Windows ZIP families: `jarock-cli-full`, `jarock-cli-lite`, `jarock-tui-full` and `jarock-tui-lite`. CLI editions use the classic command-line flow. TUI editions include the standalone `jarock-tui.exe`; both `start-server.bat` and `parameter-manager.bat` open the central terminal menu, while DedicatedPower continues to manage the server window. Full editions include the Java installers; Lite editions preserve the existing Lite behavior. `scripts/jarock-edition.ini` records the installed interface and tier, and verified updates never switch between CLI/TUI or Full/Lite.
+
 ## English guides
 
 - [Minecraft Java Fabric Server — installation guide](en/server-guide.md)
@@ -17,7 +21,7 @@ The English guides are the source of truth for the technical procedure. The curr
 - `java-home.txt` is an optional local override for a custom JDK folder and is ignored by Git; `JAROCK_JAVA_HOME` is the advanced equivalent.
 - `scripts/java-runtime.ps1` finds a compatible 64-bit Java 25+ runtime even when Java 8 or Java 21 appears first on `PATH`; if none is available and the bundled installers are present in `prerequisites/`, `start-server.bat` runs them automatically (legacy Java 8 first, then the Temurin JDK 25 MSI); otherwise it lists the detected incompatible candidates and gives a Java 25 installation link.
 - `scripts/configure-java-environment.ps1` updates only the current user's `JAVA_HOME` and `PATH`, preserving unrelated entries.
-Startup update modes: AUTO_UPDATE_MODE=install checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=install; choose check or never in parameter-manager.bat to override it.
+Startup update modes: AUTO_UPDATE_MODE=install checks for a compatible release and installs the verified package matching scripts/jarock-edition.ini automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=install; choose check or never in parameter-manager.bat to override it.
 
 ## How Jarock works translations
 

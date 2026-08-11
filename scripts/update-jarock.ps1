@@ -95,6 +95,26 @@ function Get-LocalVersion {
     return Parse-SemVer (Get-Content -LiteralPath $VersionPath -Raw)
 }
 
+function Get-InstalledEdition {
+    $MarkerPath = Join-Path $PSScriptRoot 'jarock-edition.ini'
+    $Interface = $null
+    $Tier = $null
+    if (Test-Path -LiteralPath $MarkerPath -PathType Leaf) {
+        foreach ($Line in Get-Content -LiteralPath $MarkerPath) {
+            if ($Line -match '^JAROCK_INTERFACE=(.+)$') { $Interface = $Matches[1].Trim().ToLowerInvariant() }
+            if ($Line -match '^JAROCK_PACKAGE_TIER=(.+)$') { $Tier = $Matches[1].Trim().ToLowerInvariant() }
+        }
+    }
+    # Installations created before the edition marker were introduced are CLI
+    # installations. Presence of bundled installers is the only safe way to
+    # distinguish the old Full archive from the old Lite archive.
+    if ($Interface -notin @('cli', 'tui')) { $Interface = 'cli' }
+    if ($Tier -notin @('full', 'lite')) {
+        $Tier = if (Test-Path -LiteralPath (Join-Path $Root 'prerequisites') -PathType Container) { 'full' } else { 'lite' }
+    }
+    [PSCustomObject]@{ Interface = $Interface; Tier = $Tier }
+}
+
 function Get-ReleaseList {
     try {
         # Invoke-WebRequest provides a bounded timeout in Windows PowerShell 5.1.
@@ -107,27 +127,27 @@ function Get-ReleaseList {
     }
 }
 
-function Get-ReleaseCandidate($Release, $LocalVersion) {
+function Get-ReleaseCandidate($Release, $LocalVersion, $Edition) {
     if ($null -eq $Release -or [bool]$Release.draft) { return $null }
     try { $ReleaseVersion = Parse-SemVer ([string]$Release.tag_name) } catch { return $null }
     $SameChannel = (($null -ne $LocalVersion.Pre) -eq ($null -ne $ReleaseVersion.Pre))
     if (-not $SameChannel -or (Compare-SemVer $ReleaseVersion $LocalVersion) -le 0) { return $null }
-    $ExpectedName = if ($null -ne $LocalVersion.Pre) { "jarock-lite-$($ReleaseVersion.Text).zip" } else { 'jarock-lite.zip' }
+    $Prefix = "jarock-$($Edition.Interface)-$($Edition.Tier)"
+    $ExpectedName = if ($null -ne $LocalVersion.Pre) { "$Prefix-$($ReleaseVersion.Text).zip" } else { "$Prefix.zip" }
     $Asset = @($Release.assets | Where-Object { $_.name -eq $ExpectedName } | Select-Object -First 1)
     $ChecksumName = "$ExpectedName.sha512"
     $ChecksumAsset = @($Release.assets | Where-Object { $_.name -eq $ChecksumName } | Select-Object -First 1)
-    # Updates use the Lite package: an existing installation already has its
-    # prerequisites, and the Lite archive avoids downloading/installing Java again.
-    # The package and its SHA-512 checksum are still required; never apply an unchecked archive.
+    # Preserve the installed interface and package tier. A TUI installation must
+    # never silently downgrade to CLI, and a Full installation must not become Lite.
     if ($Asset.Count -eq 0 -or $ChecksumAsset.Count -eq 0) { return $null }
-    [PSCustomObject]@{ Release = $Release; Version = $ReleaseVersion; Asset = $Asset[0]; ChecksumAsset = $ChecksumAsset[0] }
+    [PSCustomObject]@{ Release = $Release; Version = $ReleaseVersion; Asset = $Asset[0]; ChecksumAsset = $ChecksumAsset[0]; Edition = $Edition }
 }
 
-function Find-LatestUpdate($LocalVersion) {
+function Find-LatestUpdate($LocalVersion, $Edition) {
     $Candidates = @()
     $UnverifiedNewer = @()
     foreach ($Release in (Get-ReleaseList)) {
-        $Candidate = Get-ReleaseCandidate $Release $LocalVersion
+        $Candidate = Get-ReleaseCandidate $Release $LocalVersion $Edition
         if ($null -ne $Candidate) { $Candidates += $Candidate; continue }
         if ($null -eq $Release -or [bool]$Release.draft) { continue }
         try { $ReleaseVersion = Parse-SemVer ([string]$Release.tag_name) } catch { continue }
@@ -135,7 +155,7 @@ function Find-LatestUpdate($LocalVersion) {
         if ($SameChannel -and (Compare-SemVer $ReleaseVersion $LocalVersion) -gt 0) { $UnverifiedNewer += $ReleaseVersion.Text }
     }
     if ($Candidates.Count -eq 0) {
-        if ($UnverifiedNewer.Count -gt 0) { throw "A newer $($(if ($null -ne $LocalVersion.Pre) { 'prerelease/beta' } else { 'stable' })) release exists, but it has no matching Lite package and SHA-512 checksum. Install it manually from the GitHub Releases page before using the updater again." }
+        if ($UnverifiedNewer.Count -gt 0) { throw "A newer $($(if ($null -ne $LocalVersion.Pre) { 'prerelease/beta' } else { 'stable' })) release exists, but it has no matching $($Edition.Interface)-$($Edition.Tier) package and SHA-512 checksum. Install it manually from the GitHub Releases page before using the updater again." }
         return $null
     }
     $Best = $Candidates[0]
@@ -254,7 +274,7 @@ function Get-TrackedFiles {
     return $script:TrackedFilesCache
 }
 
-function Test-Package([string]$ZipPath, $ExpectedVersion) {
+function Test-Package([string]$ZipPath, $ExpectedVersion, $Edition) {
     Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
     $Archive = [IO.Compression.ZipFile]::OpenRead($ZipPath)
     try {
@@ -267,7 +287,14 @@ function Test-Package([string]$ZipPath, $ExpectedVersion) {
         # bootstrap needs it on the first start. A package without it would leave
         # the installation broken, so reject it before anything is applied.
         $WelcomeTemplateEntry = $Archive.GetEntry('server/config/welcomemessage.json5.jarock')
-        if ($null -eq $VersionEntry -or $null -eq $StartEntry -or $null -eq $UpdateEntry -or $null -eq $UpdateLauncherEntry -or $null -eq $DeferredLauncherEntry -or $null -eq $WelcomeTemplateEntry) { throw 'The downloaded Lite package is missing required Jarock files (updater launchers or server/config/welcomemessage.json5.jarock).' }
+        $EditionEntry = $Archive.GetEntry('scripts/jarock-edition.ini')
+        $TuiEntry = $Archive.GetEntry('jarock-tui.exe')
+        if ($null -eq $VersionEntry -or $null -eq $StartEntry -or $null -eq $UpdateEntry -or $null -eq $UpdateLauncherEntry -or $null -eq $DeferredLauncherEntry -or $null -eq $WelcomeTemplateEntry -or $null -eq $EditionEntry) { throw 'The downloaded Jarock package is missing required launchers, edition metadata or server/config/welcomemessage.json5.jarock.' }
+        if ($Edition.Interface -eq 'tui' -and $null -eq $TuiEntry) { throw 'The downloaded TUI package is missing jarock-tui.exe.' }
+        if ($Edition.Interface -eq 'cli' -and $null -ne $TuiEntry) { throw 'The downloaded CLI package unexpectedly contains jarock-tui.exe.' }
+        $EditionReader = New-Object IO.StreamReader($EditionEntry.Open())
+        try { $EditionText = $EditionReader.ReadToEnd() } finally { $EditionReader.Dispose() }
+        if ($EditionText -notmatch '(?m)^JAROCK_INTERFACE=' + [regex]::Escape($Edition.Interface) + '\s*$' -or $EditionText -notmatch '(?m)^JAROCK_PACKAGE_TIER=' + [regex]::Escape($Edition.Tier) + '\s*$') { throw "The package edition marker does not match the installed $($Edition.Interface)-$($Edition.Tier) edition." }
         $Reader = New-Object IO.StreamReader($VersionEntry.Open())
         try { $PackageVersion = Parse-SemVer $Reader.ReadToEnd() } finally { $Reader.Dispose() }
         if ((Compare-SemVer $PackageVersion $ExpectedVersion) -ne 0) { throw "The package version ($($PackageVersion.Text)) does not match the release version ($($ExpectedVersion.Text))." }
@@ -417,11 +444,13 @@ try {
         Write-Host 'Read-only startup/update check: no files will be changed.' -ForegroundColor Cyan
     }
     $LocalVersion = Get-LocalVersion
+    $Edition = Get-InstalledEdition
     Write-Host "Installed Jarock version: $($LocalVersion.Text)" -ForegroundColor Green
-    $Candidate = Find-LatestUpdate $LocalVersion
+    Write-Host "Installed edition: $($Edition.Interface)-$($Edition.Tier)" -ForegroundColor Green
+    $Candidate = Find-LatestUpdate $LocalVersion $Edition
     if ($null -eq $Candidate) {
         $Channel = if ($null -ne $LocalVersion.Pre) { 'prerelease/beta' } else { 'stable' }
-        Write-Host "No newer $Channel Jarock release with a compatible package was found." -ForegroundColor Green
+        Write-Host "No newer $Channel Jarock $($Edition.Interface)-$($Edition.Tier) release with a compatible package was found." -ForegroundColor Green
         exit 0
     }
     Write-Host "Available update: $($Candidate.Version.Text) ($($Candidate.Asset.name))" -ForegroundColor Yellow
@@ -446,7 +475,7 @@ try {
     Write-Host "Downloading $($Candidate.ChecksumAsset.name) ..." -ForegroundColor Cyan
     Invoke-RobustDownload -Url $Candidate.ChecksumAsset.browser_download_url -Path $ChecksumPath
     Verify-ReleaseChecksum $ZipPath $ChecksumPath $Candidate.Asset.name
-    Test-Package $ZipPath $Candidate.Version
+    Test-Package $ZipPath $Candidate.Version $Edition
     $Stage = Get-Stage $ZipPath
     try {
         $Backup = Backup-AndApply $Stage $Candidate.Version

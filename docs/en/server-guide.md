@@ -190,7 +190,7 @@ eula=true
 5. Save the file.
 6. Run `start-server.bat` again.
 
-The first complete start creates `world`, `logs`, `config` and `server.properties`. Jarock applies the tracked root `icon.png` to `world/icon.png` when the world has no icon; an imported or customized world icon is preserved. The tracked `server/icon.png` is included in the server runtime, and `server/server-icon.png` is used as the multiplayer server-list icon. All three tracked icons are included in the Full and Lite release packages. The cleanup script also preserves the two tracked server icons; the repository-root icon.png and logo.png remain outside its cleanup scope. Jarock verifies Better Multiplayer Sleep and installs it in `world/datapacks` (or the folder named by `level-name`) without replacing an existing world or other datapacks. If you change a datapack manually while the server is running, use `/reload`. Wait until the console says that the server is done before trying to connect.
+The first complete start creates `world`, `logs`, `config` and `server.properties`. Jarock applies the tracked root `icon.png` to `world/icon.png` when the world has no icon; an imported or customized world icon is preserved. The tracked `server/icon.png` is included in the server runtime, and `server/server-icon.png` is used as the multiplayer server-list icon. All three tracked icons are included in every CLI and TUI release package. The cleanup script also preserves the two tracked server icons; the repository-root icon.png and logo.png remain outside its cleanup scope. Jarock verifies Better Multiplayer Sleep and installs it in `world/datapacks` (or the folder named by `level-name`) without replacing an existing world or other datapacks. If you change a datapack manually while the server is running, use `/reload`. Wait until the console says that the server is done before trying to connect.
 
 To stop safely, type this in the server console and press Enter:
 
@@ -575,7 +575,7 @@ Always prefer the project's current documentation and download page over a copie
 
 ## Optional startup update check
 
-Startup update modes: AUTO_UPDATE_MODE=install checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=install; choose check or never in parameter-manager.bat to override it.
+Startup update modes: AUTO_UPDATE_MODE=install checks for a compatible release and installs the verified package matching scripts/jarock-edition.ini automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=install; choose check or never in parameter-manager.bat to override it.
 
 <!-- jarock-console-close-protection -->
 

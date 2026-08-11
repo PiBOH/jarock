@@ -1,0 +1,22 @@
+{
+  "lockfileVersion": 1,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "jarock-tui",
+      "dependencies": {
+        "@opentui/core": "0.5.1"
+      }
+    }
+  },
+  "packages": {
+    "@opentui/core": ["@opentui/core@0.5.1", "", {"dependencies":{"bun-ffi-structs":"0.3.1","diff":"9.0.0","marked":"17.0.1","string-width":"7.2.0","strip-ansi":"7.1.2"},"optionalDependencies":{"@opentui/core-win32-arm64":"0.5.1","@opentui/core-win32-x64":"0.5.1"}}, ""],
+    "bun-ffi-structs": ["bun-ffi-structs@0.3.1", "", {}, ""],
+    "diff": ["diff@9.0.0", "", {}, ""],
+    "marked": ["marked@17.0.1", "", {}, ""],
+    "string-width": ["string-width@7.2.0", "", {}, ""],
+    "strip-ansi": ["strip-ansi@7.1.2", "", {}, ""],
+    "@opentui/core-win32-arm64": ["@opentui/core-win32-arm64@0.5.1", "", {"os":"win32","cpu":"arm64"}, ""],
+    "@opentui/core-win32-x64": ["@opentui/core-win32-x64@0.5.1", "", {"os":"win32","cpu":"x64"}, ""]
+  }
+}

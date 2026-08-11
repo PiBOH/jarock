@@ -17,7 +17,11 @@ if not errorlevel 1 (
     for /f "tokens=1,2,*" %%A in ('reg query "HKCU\Console" /v DelegationConsole ^| findstr /i "DelegationConsole"') do set "_JAROCK_DELEGATION_BACKUP=%%C"
 )
 reg add "HKCU\Console" /v DelegationConsole /t REG_SZ /d "{B23D10C0-E52E-411E-9D5B-C09FDF709C7D}" /f >nul 2>&1
-start "%~1" "%ComSpec%" /d /c call "%~2"
+if /i "%~3"=="/wait" (
+    start /wait "%~1" "%ComSpec%" /d /c call "%~2"
+) else (
+    start "%~1" "%ComSpec%" /d /c call "%~2"
+)
 if defined _JAROCK_DELEGATION_HAD (
     reg add "HKCU\Console" /v DelegationConsole /t REG_SZ /d "%_JAROCK_DELEGATION_BACKUP%" /f >nul 2>&1
 ) else (

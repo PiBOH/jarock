@@ -100,9 +100,12 @@ jobs:
               $LegacyWelcome = Join-Path $CurrentStage 'server/config/welcomemessage.json5.template-jarock'
               Assert-Condition (Test-Path -LiteralPath $CurrentWelcome -PathType Leaf) 'The current Welcome Message template is present in the release stage.'
               Copy-Item -LiteralPath $CurrentWelcome -Destination $LegacyWelcome -Force
-              $CurrentAssetName = "jarock-lite-$CurrentVersion.zip"
+              $CurrentAssetName = "jarock-cli-lite-$CurrentVersion.zip"
+              $LegacyCurrentAssetName = "jarock-lite-$CurrentVersion.zip"
               $CurrentAssetPath = Join-Path $MockRoot $CurrentAssetName
+              $LegacyCurrentAssetPath = Join-Path $MockRoot $LegacyCurrentAssetName
               Compress-Archive -Path (Join-Path $CurrentStage '*') -DestinationPath $CurrentAssetPath -CompressionLevel Optimal
+              Copy-Item -LiteralPath $CurrentAssetPath -Destination $LegacyCurrentAssetPath -Force
               Add-Type -AssemblyName System.IO.Compression.FileSystem
               $CurrentArchive = [IO.Compression.ZipFile]::OpenRead($CurrentAssetPath)
               try {
@@ -114,11 +117,15 @@ jobs:
               $CurrentChecksumName = "$CurrentAssetName.sha512"
               $CurrentChecksumPath = Join-Path $MockRoot $CurrentChecksumName
               "$CurrentHash  $CurrentAssetName" | Set-Content -LiteralPath $CurrentChecksumPath -Encoding ascii
+              $LegacyCurrentHash = (Get-FileHash -Algorithm SHA512 -LiteralPath $LegacyCurrentAssetPath).Hash.ToLowerInvariant()
+              $LegacyCurrentChecksumName = "$LegacyCurrentAssetName.sha512"
+              $LegacyCurrentChecksumPath = Join-Path $MockRoot $LegacyCurrentChecksumName
+              "$LegacyCurrentHash  $LegacyCurrentAssetName" | Set-Content -LiteralPath $LegacyCurrentChecksumPath -Encoding ascii
 
               # Create an older Lite package from the historical revision that still
               # tracked the legacy template, then download it into the isolated
               # installation. This uses the same Lite boundary as the current package.
-              $OldAssetName = "jarock-lite-$OldVersion.zip"
+              $OldAssetName = "jarock-cli-lite-$OldVersion.zip"
               $OldAssetPath = Join-Path $MockRoot $OldAssetName
               $OldStage = Join-Path $TestRoot 'old-lite-stage'
               Copy-LiteTrackedFiles $OldStage $LegacyRevision
@@ -138,6 +145,16 @@ jobs:
                               name = $CurrentChecksumName
                               size = (Get-Item -LiteralPath $CurrentChecksumPath).Length
                               browser_download_url = "http://127.0.0.1:$Port/$CurrentChecksumName"
+                          }
+                          [pscustomobject]@{
+                              name = $LegacyCurrentAssetName
+                              size = (Get-Item -LiteralPath $LegacyCurrentAssetPath).Length
+                              browser_download_url = "http://127.0.0.1:$Port/$LegacyCurrentAssetName"
+                          }
+                          [pscustomobject]@{
+                              name = $LegacyCurrentChecksumName
+                              size = (Get-Item -LiteralPath $LegacyCurrentChecksumPath).Length
+                              browser_download_url = "http://127.0.0.1:$Port/$LegacyCurrentChecksumName"
                           }
                       )
                   }

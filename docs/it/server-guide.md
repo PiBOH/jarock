@@ -409,7 +409,7 @@ Technical note: after startup, Jarock prints the local LAN IPv4 address. Java pl
 > Scrivi `stop` nella console e lascia aperta la finestra. Prima di chiuderla attendi `CLEAN SHUTDOWN COMPLETE` e poi `SAFE TO CLOSE`. Se il secondo messaggio non compare, controlla log e crash report e ripristina un backup se necessario.
 > Nota: quando viene rilevato il comando `stop`, Jarock avvisa che il mondo sta venendo salvato e poi stampa la conferma finale `SAFE TO CLOSE` direttamente nella console del server, appena il salvataggio è completo, sia in modalità `gui` sia `nogui`. Tieni la finestra aperta fino a quando non appare quel messaggio.
 
-> **Icone Jarock:** il file root `icon.png` viene usato solo come icona predefinita per un mondo che non possiede già una propria icona; le icone di mondi importati o personalizzati vengono preservate. `server/server-icon.png` è l'icona mostrata nell'elenco multiplayer. I tre file tracciati sono inclusi nei pacchetti di rilascio Full e Lite; lo script di pulizia preserva le due icone nella cartella server, mentre icon.png e logo.png nella root restano fuori dal suo ambito.
+> **Icone Jarock:** il file root `icon.png` viene usato solo come icona predefinita per un mondo che non possiede già una propria icona; le icone di mondi importati o personalizzati vengono preservate. `server/server-icon.png` è l'icona mostrata nell'elenco multiplayer. I tre file tracciati sono inclusi in tutti i pacchetti di rilascio CLI e TUI; lo script di pulizia preserva le due icone nella cartella server, mentre icon.png e logo.png nella root restano fuori dal suo ambito.
 
 <!-- jarock-updater -->
 
@@ -426,7 +426,7 @@ Technical note: after startup, Jarock prints the local LAN IPv4 address. Java pl
 
 ## Controllo aggiornamenti all'avvio
 
-Startup update modes: AUTO_UPDATE_MODE=install checks for a compatible release and installs the verified Lite package automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=install; choose check or never in parameter-manager.bat to override it.
+Startup update modes: AUTO_UPDATE_MODE=install checks for a compatible release and installs the verified package matching scripts/jarock-edition.ini automatically; AUTO_UPDATE_MODE=check checks for updates only and never installs; AUTO_UPDATE_MODE=never does not check for updates and does not install updates. The default is AUTO_UPDATE_MODE=install; choose check or never in parameter-manager.bat to override it.
 
 <!-- jarock-console-close-protection -->
 
