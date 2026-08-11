@@ -33,16 +33,21 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: '1.3.0'
-      - name: Setup Zig
-        uses: goto-bus-stop/setup-zig@v2
-        with:
-          version: 0.15.1
       - name: Install TUI dependencies
         shell: pwsh
-        run: bun install --cwd tui
+        run: bun install --cwd tui --frozen-lockfile
       - name: Compile standalone Windows TUI
         shell: pwsh
-        run: bun build --compile --target=bun-windows-x64 tui/index.ts --outfile jarock-tui.exe
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          Push-Location tui
+          try {
+            bun build --compile --target=bun-windows-x64 index.ts --outfile ..\jarock-tui.exe
+            if ($LASTEXITCODE -ne 0) { throw "Bun failed to compile the Windows TUI (exit code $LASTEXITCODE)." }
+          }
+          finally { Pop-Location }
+          if (-not (Test-Path -LiteralPath .\jarock-tui.exe -PathType Leaf)) { throw 'Bun did not create jarock-tui.exe.' }
       - name: Smoke test TUI executable
         shell: pwsh
         run: |
@@ -51,7 +56,15 @@ jobs:
       - name: Smoke test native OpenTUI renderer
         shell: pwsh
         run: |
-          bun build --compile --target=bun-windows-x64 tui/smoke.ts --outfile jarock-tui-smoke.exe
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          Push-Location tui
+          try {
+            bun build --compile --target=bun-windows-x64 smoke.ts --outfile ..\jarock-tui-smoke.exe
+            if ($LASTEXITCODE -ne 0) { throw "Bun failed to compile the native OpenTUI smoke test (exit code $LASTEXITCODE)." }
+          }
+          finally { Pop-Location }
+          if (-not (Test-Path -LiteralPath .\jarock-tui-smoke.exe -PathType Leaf)) { throw 'Bun did not create jarock-tui-smoke.exe.' }
           $process = Start-Process -FilePath .\jarock-tui-smoke.exe -PassThru -Wait -NoNewWindow
           if ($process.ExitCode -ne 0) { throw "Native OpenTUI renderer smoke test failed with exit code $($process.ExitCode)." }
       - name: Upload TUI executable

@@ -7,6 +7,9 @@ import {
   Text,
   createCliRenderer,
 } from "@opentui/core"
+// Keep the Windows native DLL in Bun's standalone bundle. OpenTUI resolves
+// this package dynamically at runtime, which is easy for a compiler to miss.
+import nativeWindowsBackend from "@opentui/core-win32-x64"
 import { spawn, spawnSync } from "node:child_process"
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
@@ -16,6 +19,7 @@ if (process.argv.includes("--help")) {
   process.exit(0)
 }
 const smokeMode = process.argv.includes("--smoke")
+if (!nativeWindowsBackend) throw new Error("The OpenTUI Windows native backend is missing.")
 const root = process.env.JAROCK_ROOT || dirname(process.execPath)
 const settingsPath = join(root, "scripts", "server-launch-settings.ini")
 const templatePath = join(root, "scripts", "server-launch-settings.ini.template")

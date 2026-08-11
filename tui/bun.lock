@@ -6,6 +6,9 @@
       "name": "jarock-tui",
       "dependencies": {
         "@opentui/core": "0.5.1"
+      },
+      "optionalDependencies": {
+        "@opentui/core-win32-x64": "0.5.1"
       }
     }
   },

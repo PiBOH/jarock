@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.113-beta]
+
+- Fixed the Windows TUI release build by explicitly bundling OpenTUI's `@opentui/core-win32-x64` native backend in both the main executable and renderer smoke test.
+- Updated the GitHub Actions build to compile from the TUI package directory, validate output files and report Bun compilation failures clearly; the workflow now consumes OpenTUI's prebuilt native DLL without an unnecessary Zig setup step.
+
 ## [0.0.112-beta]
 
 - Completed the Windows CLI/TUI release integration: manual workflow-dispatch versions are now written into `scripts/version.txt` inside every generated package, so the installed package version always matches its release tag.
