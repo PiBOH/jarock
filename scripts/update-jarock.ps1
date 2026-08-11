@@ -266,8 +266,8 @@ function Test-Package([string]$ZipPath, $ExpectedVersion) {
         # The Welcome Message template is a required project file: the server
         # bootstrap needs it on the first start. A package without it would leave
         # the installation broken, so reject it before anything is applied.
-        $WelcomeTemplateEntry = $Archive.GetEntry('server/config/welcomemessage.json5.template-jarock')
-        if ($null -eq $VersionEntry -or $null -eq $StartEntry -or $null -eq $UpdateEntry -or $null -eq $UpdateLauncherEntry -or $null -eq $DeferredLauncherEntry -or $null -eq $WelcomeTemplateEntry) { throw 'The downloaded Lite package is missing required Jarock files (updater launchers or server/config/welcomemessage.json5.template-jarock).' }
+        $WelcomeTemplateEntry = $Archive.GetEntry('server/config/welcomemessage.json5.jarock')
+        if ($null -eq $VersionEntry -or $null -eq $StartEntry -or $null -eq $UpdateEntry -or $null -eq $UpdateLauncherEntry -or $null -eq $DeferredLauncherEntry -or $null -eq $WelcomeTemplateEntry) { throw 'The downloaded Lite package is missing required Jarock files (updater launchers or server/config/welcomemessage.json5.jarock).' }
         $Reader = New-Object IO.StreamReader($VersionEntry.Open())
         try { $PackageVersion = Parse-SemVer $Reader.ReadToEnd() } finally { $Reader.Dispose() }
         if ((Compare-SemVer $PackageVersion $ExpectedVersion) -ne 0) { throw "The package version ($($PackageVersion.Text)) does not match the release version ($($ExpectedVersion.Text))." }
@@ -311,7 +311,7 @@ function Test-ProtectedProjectPath([string]$Relative) {
     # package that did not track them yet (e.g. the Welcome Message template added
     # in 0.0.95). Without this guard they would be mistaken for generated runtime
     # configuration and left missing after the update.
-    if ($Comparable -match '^server/(.+\.template(?:-[^/]+)?|readme\.md|mods-manifest[^/]*\.ps1)$') { return $false }
+    if ($Comparable -match '^server/(.+\.template(?:-[^/]+)?|.+\.jarock|readme\.md|mods-manifest[^/]*\.ps1)$') { return $false }
 
     # In a Git checkout, tracked server files are project files and may be
     # updated; all other server paths are generated runtime data.
@@ -456,16 +456,16 @@ try {
         # already guarantees the entry, and Backup-AndApply copies every
         # non-protected file (the template is never runtime-protected), so this
         # branch normally never fires; keep it as a final guard anyway.
-        $WelcomeTemplateRel = 'server/config/welcomemessage.json5.template-jarock'
+        $WelcomeTemplateRel = 'server/config/welcomemessage.json5.jarock'
         $WelcomeTemplateDest = Join-Path $Root $WelcomeTemplateRel
         if (-not (Test-Path -LiteralPath $WelcomeTemplateDest -PathType Leaf)) {
             $WelcomeTemplateSrc = Join-Path $Stage $WelcomeTemplateRel
             if (-not (Test-Path -LiteralPath $WelcomeTemplateSrc -PathType Leaf)) {
-                throw 'The downloaded package is missing server/config/welcomemessage.json5.template-jarock after extraction.'
+                throw 'The downloaded package is missing server/config/welcomemessage.json5.jarock after extraction.'
             }
             New-Item -ItemType Directory -Force -Path (Split-Path -Parent $WelcomeTemplateDest) | Out-Null
             Copy-Item -LiteralPath $WelcomeTemplateSrc -Destination $WelcomeTemplateDest -Force
-            Write-Host 'Restored server/config/welcomemessage.json5.template-jarock from the package.' -ForegroundColor Cyan
+            Write-Host 'Restored server/config/welcomemessage.json5.jarock from the package.' -ForegroundColor Cyan
         }
     }
     finally { Remove-Item -LiteralPath $Stage -Recurse -Force -ErrorAction SilentlyContinue }

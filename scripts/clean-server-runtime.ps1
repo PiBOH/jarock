@@ -79,7 +79,7 @@ try {
         'server.properties.template',
         'config\Geyser-Fabric\config.yml.template',
         'config\Geyser-NeoForge\config.yml.template',
-        'config\welcomemessage.json5.template-jarock'
+        'config\welcomemessage.json5.jarock'
     )
     $PreservedPaths = @{}
     foreach ($RelativePath in $PreservedRelativePaths) {

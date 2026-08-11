@@ -17,7 +17,7 @@ The script refuses to clean while any `java.exe` or `javaw.exe` process is runni
 
 ## What it removes
 
-The script uses an explicit preservation whitelist and removes every other file and directory below `server/`, including the generated loader marker and both local jar entry points. The tracked `server/icon.png` and `server/server-icon.png` are explicitly preserved; an optional `server/logo.png` is preserved too if an installation contains it. The tracked `server/config/welcomemessage.json5.template-jarock` is also preserved so the configured Welcome Message template is never removed. The tracked root `icon.png` and `logo.png` are outside `server/`, so this cleanup never touches them. This also catches newly generated runtime files that are not listed here, including:
+The script uses an explicit preservation whitelist and removes every other file and directory below `server/`, including the generated loader marker and both local jar entry points. The tracked `server/icon.png` and `server/server-icon.png` are explicitly preserved; an optional `server/logo.png` is preserved too if an installation contains it. The tracked `server/config/welcomemessage.json5.jarock` is also preserved so the configured Welcome Message template is never removed. The tracked root `icon.png` and `logo.png` are outside `server/`, so this cleanup never touches them. This also catches newly generated runtime files that are not listed here, including:
 
 - worlds and player data such as `world/`, `world_nether/`, `world_the_end/`, `ops.json` and `whitelist.json`
 - `logs/` and `crash-reports/`
@@ -44,7 +44,7 @@ The script uses an explicit preservation whitelist and removes every other file 
 - the repository-root `icon.png` and `logo.png` (the cleanup only scans `server/`)
 - `server/config/Geyser-Fabric/config.yml.template`
 - `server/config/Geyser-NeoForge/config.yml.template` when present
-- `server/config/welcomemessage.json5.template-jarock`
+- `server/config/welcomemessage.json5.jarock`
 
 After cleanup, the default `N` choice keeps the current `LOADER_TYPE` setting, so a new `start-server.bat` run downloads/regenerates the same selected runtime and verifies its matching pinned mod manifest. Choose `Y` when you also want to clear the active loader selection: after the cleanup succeeds, the script changes `LOADER_TYPE` to `none`; the local loader marker was already removed by the cleanup, and the next start asks you to choose Fabric or NeoForge again. This reset does not restore the deleted world, mods, libraries or generated configuration. Fabric and NeoForge include I’m Fast 1.0.3 builds for Minecraft 26.2; Forge is currently unavailable from the official 26.2 source.
 

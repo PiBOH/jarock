@@ -7,7 +7,7 @@ name: test-update.yml
       - 'scripts/update-jarock.ps1'
       - 'scripts/update-jarock.bat'
       - 'scripts/version.txt'
-      - 'server/config/welcomemessage.json5.template-jarock'
+      - 'server/config/welcomemessage.json5.jarock'
       - 'start-server.bat'
       - 'parameter-manager.bat'
       - 'CHANGELOG.md'
@@ -144,7 +144,7 @@ jobs:
               $WorldPath = Join-Path $InstallRoot 'server/world/level.dat'
               $PropertiesPath = Join-Path $InstallRoot 'server/server.properties'
               $GeyserConfigPath = Join-Path $InstallRoot 'server/config/Geyser-Fabric/config.yml'
-              $WelcomeTemplatePath = Join-Path $InstallRoot 'server/config/welcomemessage.json5.template-jarock'
+              $WelcomeTemplatePath = Join-Path $InstallRoot 'server/config/welcomemessage.json5.jarock'
               $SettingsPath = Join-Path $InstallRoot 'scripts/server-launch-settings.ini'
               New-Item -ItemType Directory -Force -Path (Split-Path -Parent $WorldPath), (Split-Path -Parent $PropertiesPath), (Split-Path -Parent $GeyserConfigPath), (Split-Path -Parent $WelcomeTemplatePath), (Split-Path -Parent $SettingsPath) | Out-Null
               Set-Content -LiteralPath $WorldPath -Value 'WORLD DATA MUST SURVIVE' -Encoding ascii
@@ -157,7 +157,7 @@ jobs:
               # mistaking it for protected runtime configuration.
               Remove-Item -LiteralPath $WelcomeTemplatePath -Force -ErrorAction SilentlyContinue
               $ExpectedReadmeHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'README.md')).Hash
-              $ExpectedWelcomeTemplateHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'server/config/welcomemessage.json5.template-jarock')).Hash
+              $ExpectedWelcomeTemplateHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'server/config/welcomemessage.json5.jarock')).Hash
               $ExpectedUpdaterHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'scripts/update-jarock.ps1')).Hash
 
               Write-Host "Older isolated installation: $OldVersion" -ForegroundColor Cyan

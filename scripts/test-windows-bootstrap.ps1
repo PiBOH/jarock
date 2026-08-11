@@ -318,7 +318,7 @@ try {
     # an installation updated from a version created before the template existed)
     # instead of failing startup. Delete the template and let the second bootstrap
     # restore it automatically.
-    $WelcomeMessageTemplatePath = Join-Path $Root 'server\config\welcomemessage.json5.template-jarock'
+    $WelcomeMessageTemplatePath = Join-Path $Root 'server\config\welcomemessage.json5.jarock'
     if (Test-Path -LiteralPath $WelcomeMessageTemplatePath -PathType Leaf) { Remove-Item -LiteralPath $WelcomeMessageTemplatePath -Force }
     $SecondBootstrapOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'bootstrap-server.ps1') 2>&1)
     $SecondBootstrapCode = $LASTEXITCODE

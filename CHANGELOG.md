@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.109-beta] - 2026-08-11
+
+### Changed
+
+- Renamed the Jarock Welcome Message configuration template from `server/config/welcomemessage.json5.template-jarock` to `server/config/welcomemessage.json5.jarock` and updated every reference (bootstrap, updater, cleanup script, tests, GitHub workflows and documentation). The updater still treats the file as a committed project file that is always refreshed from the package: the always-refresh classification now also covers the `.jarock` suffix. Existing installations are migrated automatically: on the next start the bootstrap removes a stale legacy copy of the old file, keeping only the renamed template.
+
 ## [0.0.108-beta] - 2026-08-11
 
 ### Added
@@ -21,14 +27,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Guaranteed that updates download and install `server/config/welcomemessage.json5.template-jarock` even when the file is not present among the installed server files: the updater now rejects a Lite package that does not contain the template before applying anything, and verifies after application that the template exists, restoring it from the stage if it is missing for any reason.
+- Guaranteed that updates download and install `server/config/welcomemessage.json5.jarock` even when the file is not present among the installed server files: the updater now rejects a Lite package that does not contain the template before applying anything, and verifies after application that the template exists, restoring it from the stage if it is missing for any reason.
 - Extended the committed updater regression test (`test-updater-protection.ps1`) to cover the package validation: a package containing the template is accepted, a package without it is rejected, and the rejection message identifies the missing template.
 
 ## [0.0.105-beta] - 2026-08-10
 
 ### Fixed
 
-- Ensured `server/config/welcomemessage.json5.template-jarock` is always applied when updating from older versions: the updater now treats committed server templates and manifests as project files even when the current installation predates them, so the Welcome Message template is no longer mistaken for generated runtime configuration and left missing after an update.
+- Ensured `server/config/welcomemessage.json5.jarock` is always applied when updating from older versions: the updater now treats committed server templates and manifests as project files even when the current installation predates them, so the Welcome Message template is no longer mistaken for generated runtime configuration and left missing after an update.
 - Made the server bootstrap self-healing: if the Welcome Message template is missing (for example after an update from a version created before the template existed), the bootstrap restores the standard Jarock template automatically at startup instead of failing.
 - Extended the Windows update regression test to cover an older installation without the template and the bootstrap test to verify automatic template restoration.
 
@@ -36,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Preserved `server/config/welcomemessage.json5.template-jarock` during `clean-server-runtime.bat` cleanup.
+- Preserved `server/config/welcomemessage.json5.jarock` during `clean-server-runtime.bat` cleanup.
 - Updated the Lite-package updater so the Welcome Message project template is refreshed during verified updates instead of being treated as generated runtime configuration. Added cleanup and update regression coverage.
 
 ## [0.0.103-beta] - 2026-08-10
@@ -91,7 +97,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added the Jarock Welcome Message configuration template at `server/config/welcomemessage.json5.template-jarock`. During the first Jarock-managed startup it replaces the mod's generic `welcomemessage.json5` with the configured Jarock welcome messages and links, then preserves later operator edits through a local marker.
+- Added the Jarock Welcome Message configuration template at `server/config/welcomemessage.json5.jarock`. During the first Jarock-managed startup it replaces the mod's generic `welcomemessage.json5` with the configured Jarock welcome messages and links, then preserves later operator edits through a local marker.
 
 ## [0.0.94-beta] - 2026-08-09
 

@@ -3,13 +3,13 @@ param()
 
 # Regression test for the Welcome Message template update fix:
 #   1. Test-ProtectedProjectPath in scripts/update-jarock.ps1 must treat committed
-#      server templates and manifests (including the special `.template-jarock`
+#      server templates and manifests (including the special `.jarock`
 #      suffix) as updatable project files even when the current installation is an
 #      old Git checkout or old package that does not track them yet. Without this,
 #      an update from a version created before the template existed leaves the file
 #      missing and the next server start fails.
 #   2. The bootstrap fallback template embedded in scripts/bootstrap-server.ps1
-#      must stay in sync with the tracked server/config/welcomemessage.json5.template-jarock.
+#      must stay in sync with the tracked server/config/welcomemessage.json5.jarock.
 # The function is extracted from the updater via the PowerShell AST so the real,
 # committed implementation is tested without executing the whole updater script.
 
@@ -47,15 +47,15 @@ function Invoke-Protected([string]$Path) {
 
 # 1a. No-Git install (empty tracked list): template must be updatable.
 $script:Tracked = @()
-Assert-T (-not (Invoke-Protected 'server/config/welcomemessage.json5.template-jarock')) 'No-Git install: Welcome Message template is updatable'
+Assert-T (-not (Invoke-Protected 'server/config/welcomemessage.json5.jarock')) 'No-Git install: Welcome Message template is updatable'
 
 # 1b. Old Git checkout (pre-0.0.95, template not tracked yet): still updatable.
 $script:Tracked = @('scripts/version.txt', 'server/mods-manifest.ps1', 'start-server.bat')
-Assert-T (-not (Invoke-Protected 'server/config/welcomemessage.json5.template-jarock')) 'Old Git checkout: Welcome Message template is updatable'
+Assert-T (-not (Invoke-Protected 'server/config/welcomemessage.json5.jarock')) 'Old Git checkout: Welcome Message template is updatable'
 
 # 1c. Current Git checkout (template tracked): still updatable.
-$script:Tracked = @('scripts/version.txt', 'server/config/welcomemessage.json5.template-jarock', 'server/mods-manifest.ps1')
-Assert-T (-not (Invoke-Protected 'server/config/welcomemessage.json5.template-jarock')) 'Current Git checkout: Welcome Message template is updatable'
+$script:Tracked = @('scripts/version.txt', 'server/config/welcomemessage.json5.jarock', 'server/mods-manifest.ps1')
+Assert-T (-not (Invoke-Protected 'server/config/welcomemessage.json5.jarock')) 'Current Git checkout: Welcome Message template is updatable'
 
 # 1d. Generated runtime configuration must remain protected.
 $script:Tracked = @()
@@ -79,7 +79,7 @@ if ($FallbackMatch.Success) {
     $Fallback = $FallbackMatch.Groups['body'].Value
     $Normalize = { param($S) (($S -replace "`r", '') -replace '\s+$', '').Trim() }
     $FallbackNormalized = & $Normalize $Fallback
-    $TrackedTemplate = Get-Content -LiteralPath (Join-Path $Root 'server/config/welcomemessage.json5.template-jarock') -Raw
+    $TrackedTemplate = Get-Content -LiteralPath (Join-Path $Root 'server/config/welcomemessage.json5.jarock') -Raw
     $TrackedNormalized = & $Normalize $TrackedTemplate
     Assert-T ($FallbackNormalized -eq $TrackedNormalized) 'The bootstrap fallback matches the tracked Welcome Message template'
 }
@@ -112,7 +112,7 @@ function New-TestPackage([string]$Dir, [switch]$WithoutTemplate) {
     Set-Content -LiteralPath (Join-Path $Scripts 'update-jarock.bat') -Value '@echo off' -Encoding Ascii
     Set-Content -LiteralPath (Join-Path $Scripts 'apply-pending-launcher.ps1') -Value '# launcher' -Encoding Ascii
     if (-not $WithoutTemplate) {
-        Copy-Item -LiteralPath (Join-Path $Root 'server/config/welcomemessage.json5.template-jarock') -Destination (Join-Path $Dir 'server/config/welcomemessage.json5.template-jarock')
+        Copy-Item -LiteralPath (Join-Path $Root 'server/config/welcomemessage.json5.jarock') -Destination (Join-Path $Dir 'server/config/welcomemessage.json5.jarock')
     }
     $ZipPath = Join-Path $Dir 'package.zip'
     Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
@@ -124,9 +124,9 @@ function New-TestPackage([string]$Dir, [switch]$WithoutTemplate) {
             try { $Writer.Write((Get-Content -LiteralPath (Join-Path $Dir $Rel) -Raw)) } finally { $Writer.Dispose() }
         }
         if (-not $WithoutTemplate) {
-            $Entry = $Zip.CreateEntry('server/config/welcomemessage.json5.template-jarock')
+            $Entry = $Zip.CreateEntry('server/config/welcomemessage.json5.jarock')
             $Writer = New-Object IO.StreamWriter($Entry.Open())
-            try { $Writer.Write((Get-Content -LiteralPath (Join-Path $Dir 'server/config/welcomemessage.json5.template-jarock') -Raw)) } finally { $Writer.Dispose() }
+            try { $Writer.Write((Get-Content -LiteralPath (Join-Path $Dir 'server/config/welcomemessage.json5.jarock') -Raw)) } finally { $Writer.Dispose() }
         }
     }
     finally { $Zip.Dispose() }

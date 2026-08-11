@@ -297,7 +297,7 @@ function Ensure-WelcomeMessageConfig {
     # Jarock-managed setup, replace only the mod's recognizable generic config with
     # the project configuration supplied in the repository. A local marker makes
     # this a one-time migration: later starts preserve the operator's edits.
-    $TemplatePath = Join-Path $ConfigDir 'welcomemessage.json5.template-jarock'
+    $TemplatePath = Join-Path $ConfigDir 'welcomemessage.json5.jarock'
     $ConfigPath = Join-Path $ConfigDir 'welcomemessage.json5'
     $MarkerPath = Join-Path $ConfigDir '.jarock-welcomemessage-configured'
     if (-not (Test-Path -LiteralPath $TemplatePath -PathType Leaf)) {
@@ -336,7 +336,7 @@ function Ensure-WelcomeMessageConfig {
 '@
         [IO.File]::WriteAllText($TemplatePath, $FallbackTemplate.Replace("`r`n", "`n").Replace("`n", "`r`n"), (New-Object Text.UTF8Encoding($false)))
         Write-Host 'WARNING: The Jarock Welcome Message template was missing and was restored automatically.' -ForegroundColor Yellow
-        Write-Host 'Restore server/config/welcomemessage.json5.template-jarock from the repository to keep it in sync with future updates.' -ForegroundColor Yellow
+        Write-Host 'Restore server/config/welcomemessage.json5.jarock from the repository to keep it in sync with future updates.' -ForegroundColor Yellow
     }
     if (-not (Test-Path -LiteralPath $MarkerPath -PathType Leaf)) {
         $ApplyTemplate = -not (Test-Path -LiteralPath $ConfigPath -PathType Leaf)
@@ -372,6 +372,14 @@ function Ensure-WelcomeMessageConfig {
     }
     else {
         Write-Host 'Preserved the existing server/config/welcomemessage.json5 Welcome Message configuration.' -ForegroundColor Cyan
+    }
+
+    # Migration: releases before 0.0.109 shipped this template under the old
+    # name. Remove a stale legacy copy so the renamed template is the only one.
+    $LegacyTemplatePath = Join-Path $ConfigDir 'welcomemessage.json5.template-jarock'
+    if (Test-Path -LiteralPath $LegacyTemplatePath -PathType Leaf) {
+        Remove-Item -LiteralPath $LegacyTemplatePath -Force
+        Write-Host 'Removed the legacy welcomemessage.json5.template-jarock; the current template is welcomemessage.json5.jarock.' -ForegroundColor Cyan
     }
 }
 function Test-VanillaServerJar([string]$Path) {

@@ -29,7 +29,7 @@ try {
     New-Item -ItemType Directory -Force -Path (Join-Path $ServerDirectory 'config/Geyser-Fabric'), (Join-Path $ServerDirectory 'config/Geyser-NeoForge') | Out-Null
     Set-Content -LiteralPath (Join-Path $ServerDirectory 'config/Geyser-Fabric/config.yml.template') -Value 'template' -NoNewline
     Set-Content -LiteralPath (Join-Path $ServerDirectory 'config/Geyser-NeoForge/config.yml.template') -Value 'template' -NoNewline
-    $WelcomeTemplatePath = Join-Path $ServerDirectory 'config/welcomemessage.json5.template-jarock'
+    $WelcomeTemplatePath = Join-Path $ServerDirectory 'config/welcomemessage.json5.jarock'
     Set-Content -LiteralPath $WelcomeTemplatePath -Value 'Jarock welcome template' -NoNewline
 
     foreach ($FileName in @('icon.png', 'server-icon.png', 'logo.png')) {

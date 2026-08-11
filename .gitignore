@@ -17,7 +17,7 @@
 !/server/config/Geyser-NeoForge/
 /server/config/Geyser-NeoForge/*
 !/server/config/Geyser-NeoForge/config.yml.template
-!/server/config/welcomemessage.json5.template-jarock
+!/server/config/welcomemessage.json5.jarock
 
 # Local bootstrap and updater cache
 /.cache/
