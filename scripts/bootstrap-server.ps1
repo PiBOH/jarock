@@ -300,6 +300,11 @@ function Ensure-WelcomeMessageConfig {
     $TemplatePath = Join-Path $ConfigDir 'welcomemessage.json5.jarock'
     $ConfigPath = Join-Path $ConfigDir 'welcomemessage.json5'
     $MarkerPath = Join-Path $ConfigDir '.jarock-welcomemessage-configured'
+    $LegacyTemplatePath = Join-Path $ConfigDir 'welcomemessage.json5.template-jarock'
+    if (-not (Test-Path -LiteralPath $TemplatePath -PathType Leaf) -and (Test-Path -LiteralPath $LegacyTemplatePath -PathType Leaf)) {
+        Copy-Item -LiteralPath $LegacyTemplatePath -Destination $TemplatePath -Force
+        Write-Host 'Migrated the legacy Welcome Message template to welcomemessage.json5.jarock.' -ForegroundColor Cyan
+    }
     if (-not (Test-Path -LiteralPath $TemplatePath -PathType Leaf)) {
         # An old installation may have been updated before the template existed or
         # may have lost it. Restore the standard Jarock template automatically so
@@ -376,7 +381,6 @@ function Ensure-WelcomeMessageConfig {
 
     # Migration: releases before 0.0.109 shipped this template under the old
     # name. Remove a stale legacy copy so the renamed template is the only one.
-    $LegacyTemplatePath = Join-Path $ConfigDir 'welcomemessage.json5.template-jarock'
     if (Test-Path -LiteralPath $LegacyTemplatePath -PathType Leaf) {
         Remove-Item -LiteralPath $LegacyTemplatePath -Force
         Write-Host 'Removed the legacy welcomemessage.json5.template-jarock; the current template is welcomemessage.json5.jarock.' -ForegroundColor Cyan

@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.110-beta] - 2026-08-11
+
+### Fixed
+
+- Added a temporary legacy compatibility alias, `server/config/welcomemessage.json5.template-jarock`, to both Full and Lite release archives. This allows installations running the 0.0.108-beta updater to install the renamed `server/config/welcomemessage.json5.jarock` package successfully. The alias is generated only during release packaging and is removed automatically by the bootstrap after the update.
+- Added release-package and updater regression checks for both Welcome Message filenames so future renames cannot break automatic updates from older installations.
+
 ## [0.0.109-beta] - 2026-08-11
 
 ### Changed

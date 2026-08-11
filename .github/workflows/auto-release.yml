@@ -172,6 +172,13 @@ jobs:
             mkdir -p "$LITE_STAGE/$(dirname "$f")"
             cp -p "$f" "$LITE_STAGE/$f"
           done
+          # Compatibility alias for installers whose updater predates the
+          # welcomemessage.json5.jarock rename. It is generated only in the
+          # release archives; the repository keeps the new filename only.
+          for stage in "$FULL_STAGE" "$LITE_STAGE"; do
+            cp -p "$stage/server/config/welcomemessage.json5.jarock" \
+              "$stage/server/config/welcomemessage.json5.template-jarock"
+          done
           python3 - "$FULL_STAGE" "$FULL_NAME" <<'PY'
           import shutil, sys
           shutil.make_archive(sys.argv[2][:-4], 'zip', sys.argv[1])
@@ -182,7 +189,7 @@ jobs:
           PY
           python3 - "$FULL_NAME" "$LITE_NAME" <<'PY'
           import sys, zipfile
-          required = {'icon.png', 'server/icon.png', 'server/server-icon.png', 'server/config/welcomemessage.json5.jarock'}
+          required = {'icon.png', 'server/icon.png', 'server/server-icon.png', 'server/config/welcomemessage.json5.jarock', 'server/config/welcomemessage.json5.template-jarock'}
           for archive_name in sys.argv[1:]:
               with zipfile.ZipFile(archive_name) as archive:
                   names = set(archive.namelist())

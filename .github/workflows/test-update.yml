@@ -27,7 +27,7 @@ jobs:
       - name: Checkout repository history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Download the older package and test the updater
         shell: pwsh
@@ -40,7 +40,14 @@ jobs:
           $MockRoot = Join-Path $TestRoot 'mock-releases'
           $InstallRoot = Join-Path $TestRoot 'older-installation'
           $CurrentVersion = (Get-Content -LiteralPath (Join-Path $RepositoryRoot 'scripts/version.txt') -Raw).Trim()
-          $OldVersion = (& git show 'HEAD^:scripts/version.txt').Trim()
+          $VersionRevisions = @(& git rev-list --all -- scripts/version.txt)
+          $LegacyRevision = $null
+          foreach ($Revision in $VersionRevisions) {
+              & git cat-file -e "${Revision}:server/config/welcomemessage.json5.template-jarock" 2>$null
+              if ($LASTEXITCODE -eq 0) { $LegacyRevision = $Revision; break }
+          }
+          if ([string]::IsNullOrWhiteSpace($LegacyRevision)) { throw 'Could not find a historical Jarock revision containing the legacy Welcome Message template.' }
+          $OldVersion = (& git show "${LegacyRevision}:scripts/version.txt").Trim()
           $Port = 18080
           $HttpProcess = $null
 
@@ -49,18 +56,32 @@ jobs:
           }
 
           function Copy-LiteTrackedFiles([string]$Destination, [string]$Revision) {
+              # Materialize the requested Git revision first, then apply the same
+              # Lite boundary used by auto-release.yml. This is important for the
+              # legacy package: copying from the current working tree would make the
+              # simulated old installation accidentally contain current files.
+              $ArchivePath = Join-Path $TestRoot ('source-' + [guid]::NewGuid().ToString('N') + '.zip')
+              $ArchiveRoot = Join-Path $TestRoot ('source-' + [guid]::NewGuid().ToString('N'))
+              & git archive --format=zip "--output=$ArchivePath" $Revision
+              if ($LASTEXITCODE -ne 0) { throw "Could not archive Git revision $Revision." }
+              Expand-Archive -LiteralPath $ArchivePath -DestinationPath $ArchiveRoot -Force
               New-Item -ItemType Directory -Force -Path $Destination | Out-Null
-              $Files = @(& git ls-tree -r --name-only $Revision)
-              foreach ($Relative in $Files) {
-                  if ([string]::IsNullOrWhiteSpace($Relative)) { continue }
-                  if ($Relative -like '.github/*' -or $Relative -like '.website/*' -or
-                      $Relative -eq '.gitattributes' -or $Relative -eq '.gitignore' -or
-                      $Relative -like 'prerequisites/*') { continue }
-                  $Source = Join-Path $RepositoryRoot ($Relative.Replace('/', '\'))
-                  if (-not (Test-Path -LiteralPath $Source -PathType Leaf)) { continue }
-                  $Target = Join-Path $Destination ($Relative.Replace('/', '\'))
-                  New-Item -ItemType Directory -Force -Path (Split-Path -Parent $Target) | Out-Null
-                  Copy-Item -LiteralPath $Source -Destination $Target -Force
+              try {
+                  $Files = @(Get-ChildItem -LiteralPath $ArchiveRoot -File -Recurse)
+                  foreach ($File in $Files) {
+                      $Relative = $File.FullName.Substring($ArchiveRoot.Length).TrimStart('\\','/').Replace('\\','/')
+                      if ([string]::IsNullOrWhiteSpace($Relative)) { continue }
+                      if ($Relative -like '.github/*' -or $Relative -like '.website/*' -or
+                          $Relative -eq '.gitattributes' -or $Relative -eq '.gitignore' -or
+                          $Relative -like 'prerequisites/*') { continue }
+                      $Target = Join-Path $Destination ($Relative.Replace('/', '\\'))
+                      New-Item -ItemType Directory -Force -Path (Split-Path -Parent $Target) | Out-Null
+                      Copy-Item -LiteralPath $File.FullName -Destination $Target -Force
+                  }
+              }
+              finally {
+                  Remove-Item -LiteralPath $ArchivePath -Force -ErrorAction SilentlyContinue
+                  Remove-Item -LiteralPath $ArchiveRoot -Recurse -Force -ErrorAction SilentlyContinue
               }
           }
 
@@ -75,22 +96,33 @@ jobs:
               # auto-release.yml. It is the package the updater is expected to install.
               $CurrentStage = Join-Path $TestRoot 'current-lite-stage'
               Copy-LiteTrackedFiles $CurrentStage 'HEAD'
+              $CurrentWelcome = Join-Path $CurrentStage 'server/config/welcomemessage.json5.jarock'
+              $LegacyWelcome = Join-Path $CurrentStage 'server/config/welcomemessage.json5.template-jarock'
+              Assert-Condition (Test-Path -LiteralPath $CurrentWelcome -PathType Leaf) 'The current Welcome Message template is present in the release stage.'
+              Copy-Item -LiteralPath $CurrentWelcome -Destination $LegacyWelcome -Force
               $CurrentAssetName = "jarock-lite-$CurrentVersion.zip"
               $CurrentAssetPath = Join-Path $MockRoot $CurrentAssetName
               Compress-Archive -Path (Join-Path $CurrentStage '*') -DestinationPath $CurrentAssetPath -CompressionLevel Optimal
+              Add-Type -AssemblyName System.IO.Compression.FileSystem
+              $CurrentArchive = [IO.Compression.ZipFile]::OpenRead($CurrentAssetPath)
+              try {
+                  Assert-Condition ($null -ne $CurrentArchive.GetEntry('server/config/welcomemessage.json5.jarock')) 'The current Lite package contains the new Welcome Message template name.'
+                  Assert-Condition ($null -ne $CurrentArchive.GetEntry('server/config/welcomemessage.json5.template-jarock')) 'The current Lite package contains the legacy Welcome Message compatibility alias.'
+              }
+              finally { $CurrentArchive.Dispose() }
               $CurrentHash = (Get-FileHash -Algorithm SHA512 -LiteralPath $CurrentAssetPath).Hash.ToLowerInvariant()
               $CurrentChecksumName = "$CurrentAssetName.sha512"
               $CurrentChecksumPath = Join-Path $MockRoot $CurrentChecksumName
               "$CurrentHash  $CurrentAssetName" | Set-Content -LiteralPath $CurrentChecksumPath -Encoding ascii
 
-              # Create an older package from the parent commit, then download it into
-              # the isolated installation. This avoids relying on an existing GitHub
-              # Release or racing the auto-release workflow, while exercising a real
-              # older repository snapshot rather than merely editing version.txt.
+              # Create an older Lite package from the historical revision that still
+              # tracked the legacy template, then download it into the isolated
+              # installation. This uses the same Lite boundary as the current package.
               $OldAssetName = "jarock-lite-$OldVersion.zip"
               $OldAssetPath = Join-Path $MockRoot $OldAssetName
-              & git archive --format=zip --output=$OldAssetPath 'HEAD^'
-              if ($LASTEXITCODE -ne 0) { throw 'Could not create the older release package from HEAD^.' }
+              $OldStage = Join-Path $TestRoot 'old-lite-stage'
+              Copy-LiteTrackedFiles $OldStage $LegacyRevision
+              Compress-Archive -Path (Join-Path $OldStage '*') -DestinationPath $OldAssetPath -CompressionLevel Optimal
 
               $ReleaseJson = @(
                   [pscustomobject]@{
@@ -130,11 +162,11 @@ jobs:
               Invoke-WebRequest -Uri "http://127.0.0.1:$Port/$OldAssetName" -OutFile $OldDownloadPath -UseBasicParsing
               Expand-Archive -LiteralPath $OldDownloadPath -DestinationPath $InstallRoot -Force
 
-              # Keep the old version marker, but run the updater from the current
-              # checkout. This is the behavior under test: a current updater must
-              # migrate an older installation safely.
-              Copy-Item -LiteralPath (Join-Path $RepositoryRoot 'scripts/update-jarock.ps1') -Destination (Join-Path $InstallRoot 'scripts/update-jarock.ps1') -Force
-              Copy-Item -LiteralPath (Join-Path $RepositoryRoot 'scripts/update-jarock.bat') -Destination (Join-Path $InstallRoot 'scripts/update-jarock.bat') -Force
+              # Keep the old version marker and the old updater from the same
+              # revision. This reproduces the real migration: the 0.0.108 updater
+              # must accept a current package that carries the temporary legacy alias.
+              # The current updater is deliberately not copied before the run; it must
+              # arrive from the package as the result of the old updater's update.
 
               # Add runtime-only files and an old project marker. The updater must
               # replace the project file but preserve every generated runtime file.
@@ -145,8 +177,9 @@ jobs:
               $PropertiesPath = Join-Path $InstallRoot 'server/server.properties'
               $GeyserConfigPath = Join-Path $InstallRoot 'server/config/Geyser-Fabric/config.yml'
               $WelcomeTemplatePath = Join-Path $InstallRoot 'server/config/welcomemessage.json5.jarock'
+              $LegacyWelcomeTemplatePath = Join-Path $InstallRoot 'server/config/welcomemessage.json5.template-jarock'
               $SettingsPath = Join-Path $InstallRoot 'scripts/server-launch-settings.ini'
-              New-Item -ItemType Directory -Force -Path (Split-Path -Parent $WorldPath), (Split-Path -Parent $PropertiesPath), (Split-Path -Parent $GeyserConfigPath), (Split-Path -Parent $WelcomeTemplatePath), (Split-Path -Parent $SettingsPath) | Out-Null
+              New-Item -ItemType Directory -Force -Path (Split-Path -Parent $WorldPath), (Split-Path -Parent $PropertiesPath), (Split-Path -Parent $GeyserConfigPath), (Split-Path -Parent $WelcomeTemplatePath), (Split-Path -Parent $LegacyWelcomeTemplatePath), (Split-Path -Parent $SettingsPath) | Out-Null
               Set-Content -LiteralPath $WorldPath -Value 'WORLD DATA MUST SURVIVE' -Encoding ascii
               Set-Content -LiteralPath $PropertiesPath -Value @('server-port=25565', 'online-mode=true') -Encoding ascii
               Set-Content -LiteralPath $GeyserConfigPath -Value 'auth-type: floodgate' -Encoding ascii
@@ -158,11 +191,12 @@ jobs:
               Remove-Item -LiteralPath $WelcomeTemplatePath -Force -ErrorAction SilentlyContinue
               $ExpectedReadmeHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'README.md')).Hash
               $ExpectedWelcomeTemplateHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'server/config/welcomemessage.json5.jarock')).Hash
+              $ExpectedLegacyWelcomeTemplateHash = $ExpectedWelcomeTemplateHash
               $ExpectedUpdaterHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'scripts/update-jarock.ps1')).Hash
 
               Write-Host "Older isolated installation: $OldVersion" -ForegroundColor Cyan
               Write-Host "Target release: $CurrentVersion" -ForegroundColor Cyan
-              Write-Host 'Running the current updater through Windows PowerShell 5.1 ...' -ForegroundColor Cyan
+              Write-Host "Running the legacy updater from $LegacyRevision through Windows PowerShell 5.1 ..." -ForegroundColor Cyan
               $UpdaterPath = Join-Path $InstallRoot 'scripts/update-jarock.ps1'
               $UpdaterOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $UpdaterPath -NonInteractive -AllowLocalChanges -ReleaseApiUrl $ApiUrl 2>&1)
               $UpdaterExitCode = $LASTEXITCODE
@@ -176,9 +210,10 @@ jobs:
               Assert-Condition ((Get-Content -LiteralPath $WorldPath -Raw).Trim() -eq 'WORLD DATA MUST SURVIVE') 'World data was not preserved.'
               Assert-Condition ((Get-Content -LiteralPath $PropertiesPath -Raw).Trim() -like '*server-port=25565*') 'server.properties was not preserved.'
               Assert-Condition ((Get-Content -LiteralPath $GeyserConfigPath -Raw).Trim() -eq 'auth-type: floodgate') 'The Geyser configuration was not preserved.'
-              Assert-Condition ((Get-FileHash -Algorithm SHA256 -LiteralPath $WelcomeTemplatePath).Hash -eq $ExpectedWelcomeTemplateHash) 'The current Welcome Message template was not applied from the update package.'
+              Assert-Condition (-not (Test-Path -LiteralPath $WelcomeTemplatePath -PathType Leaf)) 'The legacy updater unexpectedly treated the new Welcome Message filename as a project file.'
+              Assert-Condition ((Get-FileHash -Algorithm SHA256 -LiteralPath $LegacyWelcomeTemplatePath).Hash -eq $ExpectedLegacyWelcomeTemplateHash) 'The legacy Welcome Message compatibility alias was not accepted by the old updater.'
               Assert-Condition ((Get-Content -LiteralPath $SettingsPath -Raw).Trim() -like '*LOADER_TYPE=fabric*') 'Local launch settings were not preserved.'
-              Write-Host 'PASS: older package downloaded, Lite update applied, checksum verified, and runtime/settings/world data preserved.' -ForegroundColor Green
+              Write-Host 'PASS: the legacy updater accepted the compatibility alias, applied the Lite update, verified its checksum, and preserved runtime/settings/world data.' -ForegroundColor Green
           }
           finally {
               if ($null -ne $HttpProcess -and -not $HttpProcess.HasExited) {

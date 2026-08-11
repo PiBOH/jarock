@@ -113,6 +113,7 @@ function New-TestPackage([string]$Dir, [switch]$WithoutTemplate) {
     Set-Content -LiteralPath (Join-Path $Scripts 'apply-pending-launcher.ps1') -Value '# launcher' -Encoding Ascii
     if (-not $WithoutTemplate) {
         Copy-Item -LiteralPath (Join-Path $Root 'server/config/welcomemessage.json5.jarock') -Destination (Join-Path $Dir 'server/config/welcomemessage.json5.jarock')
+        Copy-Item -LiteralPath (Join-Path $Root 'server/config/welcomemessage.json5.jarock') -Destination (Join-Path $Dir 'server/config/welcomemessage.json5.template-jarock')
     }
     $ZipPath = Join-Path $Dir 'package.zip'
     Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
@@ -127,6 +128,9 @@ function New-TestPackage([string]$Dir, [switch]$WithoutTemplate) {
             $Entry = $Zip.CreateEntry('server/config/welcomemessage.json5.jarock')
             $Writer = New-Object IO.StreamWriter($Entry.Open())
             try { $Writer.Write((Get-Content -LiteralPath (Join-Path $Dir 'server/config/welcomemessage.json5.jarock') -Raw)) } finally { $Writer.Dispose() }
+            $Entry = $Zip.CreateEntry('server/config/welcomemessage.json5.template-jarock')
+            $Writer = New-Object IO.StreamWriter($Entry.Open())
+            try { $Writer.Write((Get-Content -LiteralPath (Join-Path $Dir 'server/config/welcomemessage.json5.template-jarock') -Raw)) } finally { $Writer.Dispose() }
         }
     }
     finally { $Zip.Dispose() }
@@ -141,6 +145,11 @@ try {
     $Threw = $false
     try { & $PackageModule Test-Package $WithZip $Expected } catch { $Threw = $true }
     Assert-T (-not $Threw) 'Test-Package accepts a package that contains the Welcome Message template'
+    $AcceptedArchive = [IO.Compression.ZipFile]::OpenRead($WithZip)
+    try {
+        Assert-T ($null -ne $AcceptedArchive.GetEntry('server/config/welcomemessage.json5.template-jarock')) 'The compatibility fixture contains the legacy Welcome Message alias'
+    }
+    finally { $AcceptedArchive.Dispose() }
 
     $WithoutDir = Join-Path $PackageTestDir 'without'
     New-Item -ItemType Directory -Force -Path $WithoutDir | Out-Null

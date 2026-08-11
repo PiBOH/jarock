@@ -319,11 +319,17 @@ try {
     # instead of failing startup. Delete the template and let the second bootstrap
     # restore it automatically.
     $WelcomeMessageTemplatePath = Join-Path $Root 'server\config\welcomemessage.json5.jarock'
-    if (Test-Path -LiteralPath $WelcomeMessageTemplatePath -PathType Leaf) { Remove-Item -LiteralPath $WelcomeMessageTemplatePath -Force }
+    $LegacyWelcomeMessageTemplatePath = Join-Path $Root 'server\config\welcomemessage.json5.template-jarock'
+    $WelcomeMessageTemplateHash = if (Test-Path -LiteralPath $WelcomeMessageTemplatePath -PathType Leaf) { Get-Sha512 $WelcomeMessageTemplatePath } else { '' }
+    if (Test-Path -LiteralPath $WelcomeMessageTemplatePath -PathType Leaf) {
+        Move-Item -LiteralPath $WelcomeMessageTemplatePath -Destination $LegacyWelcomeMessageTemplatePath -Force
+    }
     $SecondBootstrapOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'bootstrap-server.ps1') 2>&1)
     $SecondBootstrapCode = $LASTEXITCODE
     Assert ($SecondBootstrapCode -eq 0) 'A second bootstrap remains idempotent'
-    Assert (Test-Path -LiteralPath $WelcomeMessageTemplatePath -PathType Leaf) 'Bootstrap restores the missing Welcome Message template'
+    Assert (Test-Path -LiteralPath $WelcomeMessageTemplatePath -PathType Leaf) 'Bootstrap migrates/restores the Welcome Message template'
+    Assert ((Get-Sha512 $WelcomeMessageTemplatePath) -eq $WelcomeMessageTemplateHash) 'Bootstrap preserves the migrated Welcome Message template content'
+    Assert (-not (Test-Path -LiteralPath $LegacyWelcomeMessageTemplatePath -PathType Leaf)) 'Bootstrap removes the legacy Welcome Message template alias'
     Assert ((Test-Path -LiteralPath $DefaultWorldIconPath -PathType Leaf) -and ((Get-Sha512 $DefaultWorldIconPath) -eq $CustomWorldIconHash)) 'Second bootstrap preserves a custom world icon'
     if ($WelcomeMessageWasValidated) {
         $WelcomeMessageCustomizedText = $WelcomeMessageConfigText -replace '"messageOneText": "Welcome to the Jarock server!"', '"messageOneText": "My customized Jarock welcome!"'
