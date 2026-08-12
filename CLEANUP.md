@@ -2,7 +2,13 @@
 
 Run `clean-server-runtime.bat` from the repository root whenever you want to remove generated Minecraft runtime data before a commit or push. The script asks whether it should also reset the selected loader.
 
-## Before running it
+To remove only inactive Jarock temporary files, update downloads, rollback backups and operation wrappers, use `clean-cache.bat`. The same action is available as `C. Clean Jarock cache` in the CLI parameter manager and as `Clean .cache` in the TUI. It does not remove the server runtime, worlds or settings.
+
+## Cache cleanup safety
+
+Before running `clean-cache.bat`, stop Jarock and all other Java applications. The cache cleaner preserves active `start-server-runner.bat`, `parameter-manager-runner.bat` and the current TUI operation wrapper, so launching it from the CLI or TUI cannot delete the runner that is still executing. It removes inactive update downloads, rollback backups and temporary wrappers only.
+
+## Before running runtime cleanup
 
 1. Stop the server with the console command:
 

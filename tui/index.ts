@@ -12,7 +12,7 @@ import {
 import nativeWindowsBackend from "@opentui/core-win32-x64"
 import { spawn, spawnSync } from "node:child_process"
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs"
-import { dirname, join } from "node:path"
+import { basename, dirname, join } from "node:path"
 
 if (process.argv.includes("--help")) {
   console.log("Jarock TUI: use start-server.bat or parameter-manager.bat to open the menu.")
@@ -44,6 +44,7 @@ const menu = createActionSelect([
   { name: "Import / export world", description: "Configure safe world transfer operations.", value: "world" },
   { name: "Open parameter manager", description: "Edit Jarock settings in this TUI.", value: "parameters" },
   { name: "Clean runtime", description: "Run the existing cleanup confirmation flow.", value: "clean" },
+  { name: "Clean .cache", description: "Remove inactive temporary cache files and update backups.", value: "cache" },
   { name: "Exit", description: "Close the Jarock TUI.", value: "exit" },
 ], {
   id: "jarock-menu", width: "100%", height: 12, wrapSelection: true,
@@ -205,6 +206,7 @@ function runClassicConsoleBatch(path: string, args: string[] = []): void {
       ...process.env,
       JAROCK_TUI_BYPASS: "1",
       _JAROCK_CLASSIC_CONSOLE: "1",
+      JAROCK_CACHE_KEEP: basename(wrapper),
     },
   })
   child.on("close", (code) => { try { unlinkSync(wrapper) } catch {} ; status.content = code === 0 ? "Operation finished. Choose another action." : `Operation exited with code ${code ?? 1}. Check the opened console.`; menu.focus() })
@@ -329,6 +331,7 @@ function activateMainMenuOption(value: string): void {
     case "world": showSettingsScreen(); break
     case "parameters": showSettingsScreen(); break
     case "clean": runClassicConsoleBatch(entry("clean-server-runtime.bat")); break
+    case "cache": runClassicConsoleBatch(entry("clean-cache.bat")); break
     case "exit": renderer.destroy(); break
   }
 }

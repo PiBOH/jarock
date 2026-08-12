@@ -101,6 +101,7 @@ echo   Import remembered?%PAD:~0,32%[%IMPORT_REMEMBER_SHOW%]
 echo   %OPTE%%PAD:~0,35%[%EXPORT_SHOW%]
 echo   %OPTY%%PAD:~0,21%[%AUTO_UPDATE_MODE%]
 echo   %OPTU%%PAD:~0,23%[checks GitHub now]
+echo   %OPTC%%PAD:~0,23%[cleans inactive .cache files]
 echo.
 echo   %OPT8%%PAD:~0,22%[starts the server]
 echo   %OPT9%%PAD:~0,34%[saves settings]
@@ -109,7 +110,8 @@ echo   %OPTX%%PAD:~0,28%[restores defaults]
 echo.
 if /i "%ONLINE_MODE%"=="false" echo  WARNING: online-mode=false disables Mojang authentication. Keep it for private testing only.
 echo.
-choice /c 1234567890XYIEU /n /m "Choose an option: "
+choice /c 1234567890XYIEUC /n /m "Choose an option: "
+if errorlevel 16 goto clean_cache_menu
 if errorlevel 15 goto manual_update_check
 if errorlevel 14 goto export_world_menu
 if errorlevel 13 goto import_world_menu
@@ -241,6 +243,27 @@ if /i "%AUTO_CONFIGURE_JAVA%"=="true" (
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name AUTO_CONFIGURE_JAVA -Value "%NEW_JAVA%"
 if errorlevel 1 pause
 pause
+goto menu
+
+:clean_cache_menu
+cls
+echo ==^> Opening the Jarock cache cleaner in a new window
+echo The server and all other Java applications must be stopped first.
+if not exist "%ROOT%\clean-cache.bat" (
+    echo ERROR: The cache cleaner entry point is missing: clean-cache.bat
+    echo Suggested fix: restore clean-cache.bat from the Jarock repository or release package.
+    pause
+    goto menu
+)
+call "%ROOT%\scripts\classic-console.bat" "Jarock cache cleanup" "%ROOT%\clean-cache.bat" /wait
+if errorlevel 1 (
+    echo ERROR: Windows could not open the cache cleaner window.
+    echo Suggested fix: verify that Windows can start its command processor and run this option again.
+    pause
+) else (
+    echo The Jarock cache cleaner window has finished.
+    pause
+)
 goto menu
 
 :manual_update_check
@@ -551,6 +574,7 @@ set "OPT0=0. Exit without saving"
 set "OPTX=X. Reset safe defaults"
 set "OPTY=Y. Choose startup update mode"
 set "OPTU=U. Check for Jarock updates"
+set "OPTC=C. Clean Jarock cache"
 set "WORLD_IMPORT_SOURCE="
 set "WORLD_IMPORT_REMEMBER=false"
 set "WORLD_IMPORT_APPLIED=false"

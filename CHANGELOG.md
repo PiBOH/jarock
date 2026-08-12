@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.139-beta]
+
+- Added `clean-cache.bat` and `scripts/clean-cache.ps1` to remove inactive Jarock updater downloads, rollback backups and temporary wrappers without touching the server runtime, worlds or settings.
+- Added `Clean .cache` to the TUI and `C. Clean Jarock cache` to the CLI parameter manager. Active launcher runners and the current TUI operation wrapper are preserved so the cleanup cannot corrupt the session that launched it.
+- Documented the cache-cleanup boundary and added an isolated regression test for removing stale cache entries while preserving active runners.
+
 ## [0.0.138-beta]
 
 - Hardened TUI action activation across Windows console hosts: Enter now resolves the selected option directly from the Select state instead of depending on event payload ordering, while mouse-down only selects and mouse-up performs one definitive click activation.
