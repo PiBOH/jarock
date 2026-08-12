@@ -42,7 +42,7 @@ function Stop-WithGuidance([string]$Message, [string]$Action) {
 function Read-Settings {
     $Values = @{}
     if (Test-Path -LiteralPath $SettingsPath -PathType Leaf) {
-        foreach ($Line in Get-Content -LiteralPath $SettingsPath) {
+        foreach ($Line in Get-Content -LiteralPath $SettingsPath -Encoding UTF8) {
             if ($Line -match '^\s*([A-Z_]+)=(.*?)\s*$') { $Values[$Matches[1]] = $Matches[2] }
         }
     }
@@ -84,11 +84,11 @@ function Start-InClassicConsole {
     }
 }
 function Save-Loader([string]$Loader) {
-    $Content = Get-Content -LiteralPath $SettingsPath -Raw
+    $Content = Get-Content -LiteralPath $SettingsPath -Raw -Encoding UTF8
     $Pattern = '(?m)^LOADER_TYPE=.*$'
     if ($Content -match $Pattern) { $Content = [regex]::Replace($Content, $Pattern, "LOADER_TYPE=$Loader") }
     else { $Content = $Content.TrimEnd("`r", "`n") + "`r`nLOADER_TYPE=$Loader`r`n" }
-    Set-Content -LiteralPath $SettingsPath -Value $Content -Encoding UTF8
+    [IO.File]::WriteAllText($SettingsPath, $Content, (New-Object Text.UTF8Encoding($false)))
 }
 function Select-Loader {
     $Values = Read-Settings
@@ -109,7 +109,7 @@ function Select-Loader {
         '3' { $Loader = 'forge' }
         default { Stop-WithGuidance "Invalid loader choice '$Choice'." 'Run start-server.bat again and type 1, 2 or 3.' }
     }
-    $OriginalSettingsContent = Get-Content -LiteralPath $SettingsPath -Raw
+    $OriginalSettingsContent = Get-Content -LiteralPath $SettingsPath -Raw -Encoding UTF8
     Save-Loader $Loader
     Write-Host "Selected loader for this setup: $Loader" -ForegroundColor Green
     $OpenManager = Read-Host 'Open parameter-manager.bat now before continuing? (Y/N)'
@@ -122,16 +122,16 @@ function Select-Loader {
             $ManagerProcess = Start-InClassicConsole -FilePath $env:ComSpec -ArgumentList @('/d', '/c', $ManagerCommand) -WorkingDirectory $Root
         }
         catch {
-            Set-Content -LiteralPath $SettingsPath -Value $OriginalSettingsContent -Encoding UTF8
+            [IO.File]::WriteAllText($SettingsPath, $OriginalSettingsContent, (New-Object Text.UTF8Encoding($false)))
             Stop-WithGuidance "Could not open parameter-manager.bat: $($_.Exception.Message)" 'Open parameter-manager.bat manually from the repository root, choose Save and exit, then run start-server.bat again. Exit without saving cancels this first-run setup.'
         }
         if ($ManagerProcess.ExitCode -eq 2) {
-            Set-Content -LiteralPath $SettingsPath -Value $OriginalSettingsContent -Encoding UTF8
+            [IO.File]::WriteAllText($SettingsPath, $OriginalSettingsContent, (New-Object Text.UTF8Encoding($false)))
             Write-Host 'Setup cancelled. No parameter changes were saved and the server was not started.' -ForegroundColor Yellow
             exit 2
         }
         if ($ManagerProcess.ExitCode -ne 0) {
-            Set-Content -LiteralPath $SettingsPath -Value $OriginalSettingsContent -Encoding UTF8
+            [IO.File]::WriteAllText($SettingsPath, $OriginalSettingsContent, (New-Object Text.UTF8Encoding($false)))
             Stop-WithGuidance "parameter-manager.bat did not finish successfully (exit code $($ManagerProcess.ExitCode))." 'Open parameter-manager.bat manually, save valid settings with Save and exit, then run start-server.bat again. Do not choose Exit without saving if you want to continue this first-run setup.'
         }
         $Values = Read-Settings

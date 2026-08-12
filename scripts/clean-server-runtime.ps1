@@ -27,7 +27,7 @@ function Reset-LoaderSelection([string]$SettingsPath) {
         throw "The launch settings file was not found, so the loader selection could not be reset: $SettingsPath"
     }
 
-    $Content = Get-Content -LiteralPath $SettingsPath -Raw
+    $Content = Get-Content -LiteralPath $SettingsPath -Raw -Encoding UTF8
     $Pattern = '(?m)^LOADER_TYPE=.*$'
     if ($Content -match $Pattern) {
         $Content = [regex]::Replace($Content, $Pattern, 'LOADER_TYPE=none')
@@ -35,7 +35,7 @@ function Reset-LoaderSelection([string]$SettingsPath) {
     else {
         $Content = $Content.TrimEnd("`r", "`n") + "`r`nLOADER_TYPE=none`r`n"
     }
-    Set-Content -LiteralPath $SettingsPath -Value $Content -Encoding UTF8
+    [IO.File]::WriteAllText($SettingsPath, $Content, (New-Object Text.UTF8Encoding($false)))
     Write-Host 'Loader selection reset to none. The next start will ask you to choose Fabric or NeoForge again.' -ForegroundColor Green
 }
 

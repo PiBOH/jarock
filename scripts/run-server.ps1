@@ -36,7 +36,7 @@ function Assert-MemoryValue([string]$Name, [string]$Value) {
 function Read-Settings {
     $Values=@{}
     $Path=Join-Path $PSScriptRoot 'server-launch-settings.ini'
-    if (Test-Path -LiteralPath $Path -PathType Leaf) { foreach($Line in Get-Content -LiteralPath $Path) { if($Line -match '^\s*([A-Z_]+)=(.*?)\s*$'){$Values[$Matches[1]]=$Matches[2]} } }
+    if (Test-Path -LiteralPath $Path -PathType Leaf) { foreach($Line in Get-Content -LiteralPath $Path -Encoding UTF8) { if($Line -match '^\s*([A-Z_]+)=(.*?)\s*$'){$Values[$Matches[1]]=$Matches[2]} } }
     return $Values
 }
 function Get-LanIPv4 {

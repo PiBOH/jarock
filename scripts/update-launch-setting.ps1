@@ -21,7 +21,12 @@ try {
         'WORLD_IMPORT_REMEMBER' { if ($Value -notin @('true','false')) { throw 'WORLD_IMPORT_REMEMBER must be true or false.' } }
         'WORLD_IMPORT_APPLIED' { if ($Value -notin @('true','false')) { throw 'WORLD_IMPORT_APPLIED must be true or false.' } }
     }
-    $Content = Get-Content -LiteralPath $SettingsPath -Raw
+    # Read and write the settings as UTF-8 explicitly: the file can be created by
+    # the TUI (Node writes UTF-8 without BOM) or by Windows PowerShell 5.1 (UTF-8
+    # with BOM), and values such as world paths may contain non-ASCII characters.
+    # Default ANSI reads would mis-decode a BOM-less UTF-8 file and the later
+    # rewrite would corrupt those values.
+    $Content = Get-Content -LiteralPath $SettingsPath -Raw -Encoding UTF8
     $SettingPattern = "(?m)^$Name=.*$"
     if ($Content -match $SettingPattern) {
         $Content = [regex]::Replace($Content, $SettingPattern, "$Name=$Value")
@@ -29,7 +34,7 @@ try {
     else {
         $Content = $Content.TrimEnd("`r", "`n") + "`r`n$Name=$Value`r`n"
     }
-    Set-Content -LiteralPath $SettingsPath -Value $Content -Encoding UTF8
+    [IO.File]::WriteAllText($SettingsPath, $Content, (New-Object Text.UTF8Encoding($false)))
     exit 0
 }
 catch {

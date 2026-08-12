@@ -68,11 +68,11 @@ function Resolve-ImportSource([string]$Source) {
 
 function Set-SettingsValue([string]$SettingsPath, [string]$Name, [string]$Value) {
     if (-not (Test-Path -LiteralPath $SettingsPath -PathType Leaf)) { throw "The launch settings file was not found: $SettingsPath" }
-    $Content = Get-Content -LiteralPath $SettingsPath -Raw
+    $Content = Get-Content -LiteralPath $SettingsPath -Raw -Encoding UTF8
     $Pattern = "(?m)^$Name=.*$"
     if ($Content -match $Pattern) { $Content = [regex]::Replace($Content, $Pattern, "$Name=$Value") }
     else { $Content = $Content.TrimEnd("`r", "`n") + "`r`n$Name=$Value`r`n" }
-    Set-Content -LiteralPath $SettingsPath -Value $Content -Encoding UTF8
+    [IO.File]::WriteAllText($SettingsPath, $Content, (New-Object Text.UTF8Encoding($false)))
 }
 
 function Invoke-WorldImport {
@@ -83,7 +83,7 @@ function Invoke-WorldImport {
     )
     $Settings = @{}
     if (Test-Path -LiteralPath $SettingsPath -PathType Leaf) {
-        foreach ($Line in Get-Content -LiteralPath $SettingsPath) {
+        foreach ($Line in Get-Content -LiteralPath $SettingsPath -Encoding UTF8) {
             if ($Line -match '^\s*([A-Z_]+)=(.*?)\s*$') { $Settings[$Matches[1]] = $Matches[2] }
         }
     }

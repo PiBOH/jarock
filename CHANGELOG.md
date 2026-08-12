@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.0.149-beta]
+
+### Fixed
+
+- Audited every script that rewrites configuration files for the same ANSI-read/UTF-8-write corruption pattern that broke the custom `motd`, and fixed two real instances:
+  - Geyser `config.yml`: `scripts/configure-geyser.ps1` now uses the new byte-preserving `scripts/geyser-config.ps1` module (`Set-GeyserAuthType`), which rewrites only the `auth-type` line using the file's original encoding (Latin-1, UTF-8 with or without BOM) and keeps every other byte, including non-ASCII YAML values, identical.
+  - `scripts/server-launch-settings.ini`: the settings chain (`update-launch-setting.ps1`, `update-launch-settings.ps1`, `world-transfer.ps1`, `clean-server-runtime.ps1`, `bootstrap-server.ps1`) now reads and writes the file explicitly as UTF-8 without BOM, and `run-server.ps1` / `validate-launch-settings.ps1` read it as UTF-8, so accented values such as world import/export paths survive both rewrites and reads on Windows PowerShell 5.1, which previously interpreted the file as ANSI and corrupted them.
+- Added the `scripts/test-configure-geyser.ps1` (13 checks) and `scripts/test-settings-encoding.ps1` (16 checks) regression suites plus the `.github/workflows/test-config-encoding.yml` workflow, which run on Windows PowerShell 5.1 and PowerShell 7 and prove byte-for-byte that only the intended line changes for every supported encoding.
+
 ## [0.0.148-beta]
 
 - Strengthened `scripts/test-server-properties.ps1` so the `online-mode` rewrite regression proves **byte-for-byte** that only the `online-mode` value changes, for every supported encoding: Latin-1 (classic Java), UTF-8 without BOM (modern Notepad) and UTF-8 with BOM. A masked whole-file comparison (`Assert-OnlyOnlineModeChanged`) now rejects any accidental re-encoding, BOM loss or line-ending drift. The UTF-8 with BOM case now also asserts that `online-mode` is actually updated, and the previously vacuous motd check on the BOM line (whose first line starts with the BOM bytes) was fixed to match non-empty results.

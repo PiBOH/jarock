@@ -9,6 +9,8 @@ Set-StrictMode -Version Latest
 $Root = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $ConfigRoot = Join-Path $Root 'server\config'
 $LoaderMarkerPath = Join-Path $Root 'server\jarock-loader.txt'
+$GeyserConfigScript = Join-Path $PSScriptRoot 'geyser-config.ps1'
+. $GeyserConfigScript
 if ([string]::IsNullOrWhiteSpace($Loader) -and (Test-Path -LiteralPath $LoaderMarkerPath -PathType Leaf)) {
     $Loader = (Get-Content -LiteralPath $LoaderMarkerPath -Raw).Trim()
 }
@@ -40,14 +42,12 @@ try {
         exit 0
     }
 
-    $Content = Get-Content -LiteralPath $ConfigPath -Raw
-    $Updated = [regex]::Replace($Content, '(?m)^(\s*auth-type:\s*).*$', '${1}floodgate')
-    if ($Updated -eq $Content -and $Content -notmatch '(?m)^\s*auth-type:\s*') {
+    $Result = Set-GeyserAuthType -ConfigPath $ConfigPath -Value 'floodgate'
+    if ($Result -eq 'no-auth-type') {
         Show-ErrorGuidance "Could not find auth-type in $ConfigPath." 'Open the generated Geyser config, add auth-type: floodgate at the correct YAML level, save it as UTF-8, and run start-server.bat again.'
         exit 1
     }
-    if ($Updated -ne $Content) {
-        Set-Content -LiteralPath $ConfigPath -Value $Updated -Encoding UTF8
+    if ($Result -eq 'updated') {
         Write-Host "Geyser authentication configured for Floodgate: $ConfigPath" -ForegroundColor Green
     } else { Write-Host 'Geyser authentication is already configured for Floodgate.' -ForegroundColor Green }
     Write-Host 'No router, firewall, port-forwarding, or public-network changes were performed.' -ForegroundColor Yellow

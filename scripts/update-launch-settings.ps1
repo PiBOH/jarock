@@ -29,10 +29,10 @@ try {
             throw "RAM_MAX leaves less than ${ReservedMemoryMb}M for Windows and other applications. Detected physical memory: ${PhysicalMemoryMb}M; choose at most ${MaximumSafeMemoryMb}M."
         }
     }
-    $Content = Get-Content -LiteralPath $SettingsPath -Raw
+    $Content = Get-Content -LiteralPath $SettingsPath -Raw -Encoding UTF8
     $Content = [regex]::Replace($Content, '(?m)^RAM_INITIAL=.*$', "RAM_INITIAL=$InitialMemory")
     $Content = [regex]::Replace($Content, '(?m)^RAM_MAX=.*$', "RAM_MAX=$MaximumMemory")
-    Set-Content -LiteralPath $SettingsPath -Value $Content -Encoding UTF8
+    [IO.File]::WriteAllText($SettingsPath, $Content, (New-Object Text.UTF8Encoding($false)))
     exit 0
 }
 catch {

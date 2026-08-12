@@ -15,7 +15,7 @@ function Get-Megabytes([string]$Value) {
 
 try {
     $Values = @{}
-    foreach ($Line in (Get-Content -LiteralPath $SettingsPath)) {
+    foreach ($Line in (Get-Content -LiteralPath $SettingsPath -Encoding UTF8)) {
         if ($Line -match '^\s*([A-Z_]+)=(.*?)\s*$') { $Values[$Matches[1]] = $Matches[2] }
     }
     foreach ($Name in @('LOADER_TYPE','RAM_INITIAL','RAM_MAX','GUI_MODE','AUTO_CONFIGURE_JAVA','ONLINE_MODE','GC_PROFILE','SHOW_READY_BANNER','AUTO_UPDATE_MODE','WORLD_IMPORT_REMEMBER','WORLD_IMPORT_APPLIED')) {
