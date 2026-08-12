@@ -86,6 +86,7 @@ try {
     Assert ($TuiEntry.Contains('process.stdin.resume()')) 'TUI resumes stdin explicitly for standalone Windows builds'
     Assert ($TuiEntry.Contains('process.stdin.setRawMode(true)')) 'TUI enables raw stdin mode when the Windows host exposes it'
     Assert ($TuiEntry.Contains('SelectRenderableEvents.ITEM_SELECTED')) 'TUI listens for OpenTUI Select confirmation events'
+    Assert ($TuiEntry.Contains('  SelectRenderableEvents,')) 'TUI imports the OpenTUI Select event enum before using it'
     Assert ($TuiEntry.Contains('select.on(SelectRenderableEvents.ITEM_SELECTED')) 'TUI activates actions through the official Select event'
     Assert ($TuiEntry.Contains('menu.focus()')) 'TUI focuses the main menu after starting the renderer'
     Assert ($TuiEntry.Contains('function createActionSelect')) 'TUI gives every Select a direct activation callback'

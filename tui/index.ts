@@ -3,6 +3,7 @@ import {
   Input,
   InputRenderableEvents,
   Select,
+  SelectRenderableEvents,
   Text,
   createCliRenderer,
 } from "@opentui/core"

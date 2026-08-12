@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.135-beta]
+
+- Fixed the TUI startup crash introduced in 0.0.134-beta: `SelectRenderableEvents` is now imported explicitly from OpenTUI before the `ITEM_SELECTED` listener is registered. This removes the `ReferenceError: SelectRenderableEvents is not defined` seen immediately after the update check.
+- Added a regression assertion that protects the import and the event usage from drifting apart.
+
 ## [0.0.134-beta]
 
 - Fixed TUI action activation in standalone Windows builds by listening to OpenTUI's official `SelectRenderableEvents.ITEM_SELECTED` event for Enter/Return confirmation instead of relying only on a custom key callback. This keeps the menu actions working across cmd.exe, PowerShell and older console input hosts.
