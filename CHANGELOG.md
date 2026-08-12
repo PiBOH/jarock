@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.127-beta]
+
+- Recreated `icon.png` with a high-contrast, simplified composition for 16x16 Explorer thumbnails: a clearly visible Java coffee cup with red/orange steam sits in front of a broad blue Bedrock-style background; the existing README `logo.png` is preserved.
+- Regenerated the 64x64 `server/icon.png` and `server/server-icon.png` assets from the same artwork so the runtime and multiplayer server-list icons stay consistent.
+
 ## [0.0.126-beta]
 
 - Added a direct keyboard fallback for the standalone Windows TUI: keypresses are forwarded to the currently focused OpenTUI control and handled only once, so arrows, Enter and text input continue to work when the compiled Bun event bridge does not dispatch to the focused renderable.
