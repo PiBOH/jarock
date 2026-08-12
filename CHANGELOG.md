@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.129-beta]
+
+- Restored the original Jarock icon artwork in `icon.png`, `server/icon.png` and `server/server-icon.png` at the operator's request. The previous 16x16 Java-cup/Bedrock redesign is no longer used; `logo.png` remains unchanged.
+- Kept the existing release packaging and TUI icon pipeline unchanged so the restored icons continue to be included in CLI/TUI Full and Lite archives and embedded in `jarock-tui.exe`.
+
 ## [0.0.128-beta]
 
 - Fixed TUI menu activation in standalone Windows builds: `Enter` is now handled by the focused OpenTUI `Select` through its `onKeyDown` path, including Windows backends that report the key as `enter`, `return` or `linefeed`.
