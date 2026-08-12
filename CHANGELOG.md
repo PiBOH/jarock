@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Linked the README technology and environment badges to their official Minecraft, OpenJDK, Geyser, Fabric and NeoForge pages, and split the combined loader badge so each loader has its own destination.
+
 ## [0.0.114-beta]
 
 - Fixed the standalone Windows TUI build by declaring OpenTUI's `web-tree-sitter@0.25.10` peer dependency explicitly, allowing Bun to resolve and embed `web-tree-sitter/tree-sitter.wasm` during compilation.

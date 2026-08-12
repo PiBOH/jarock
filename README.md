@@ -12,10 +12,11 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Minecraft-26.2-00AA00" alt="Minecraft 26.2">
-  <img src="https://img.shields.io/badge/Java-25-ED8B00" alt="Java 25">
-  <img src="https://img.shields.io/badge/Java%20%2B%20Bedrock%20cross--play-Geyser-6F42C1" alt="Java and Bedrock cross-play">
-  <img src="https://img.shields.io/badge/Loaders-Fabric%20%26%20NeoForge-4B8BBE" alt="Fabric and NeoForge loaders">
+  <a href="https://www.minecraft.net/en-us/article/minecraft-java-edition-26-2"><img src="https://img.shields.io/badge/Minecraft-26.2-00AA00" alt="Minecraft 26.2"></a>
+  <a href="https://openjdk.org/projects/jdk/25/"><img src="https://img.shields.io/badge/Java-25-ED8B00" alt="Java 25"></a>
+  <a href="https://geysermc.org/"><img src="https://img.shields.io/badge/Java%20%2B%20Bedrock%20cross--play-Geyser-6F42C1" alt="Java and Bedrock cross-play"></a>
+  <a href="https://fabricmc.net/"><img src="https://img.shields.io/badge/Loader-Fabric-4B8BBE" alt="Fabric loader"></a>
+  <a href="https://neoforged.net/"><img src="https://img.shields.io/badge/Loader-NeoForge-4B8BBE" alt="NeoForge loader"></a>
 </p>
 
 <p align="center">
