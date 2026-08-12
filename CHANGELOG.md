@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.131-beta]
+
+- Included all supplied icon assets under `tui/icons/` in the repository so the autorelease Windows runner can actually copy `icon48.ico` during checkout. The files are committed byte-for-byte; no ICO or PNG asset was regenerated or modified.
+- Kept `icon48.ico` as the selected TUI application icon and synchronized the package/version metadata for the corrected release build.
+
 ## [0.0.130-beta]
 
 - Updated the Windows TUI release build to use the supplied, unchanged `tui/icons/icon48.ico` directly as the `jarock-tui.exe` icon. The workflow no longer regenerates an ICO from `icon.png` and verifies the copied file's pinned SHA-256 hash, 48x48 dimensions and supplied 24-bit legacy-DIB format.
