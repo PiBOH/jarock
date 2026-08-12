@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.136-beta]
+
+- Stopped generating and publishing the obsolete `jarock-full-*` and `jarock-lite-*` compatibility aliases in future releases. New releases now publish only the current `jarock-cli-*`, `jarock-tui-*` and standalone `jarock-tui.exe` assets.
+- Existing legacy assets already attached to previous releases are left untouched, preserving the selected compatibility window without adding obsolete files to new releases.
+
 ## [0.0.135-beta]
 
 - Fixed the TUI startup crash introduced in 0.0.134-beta: `SelectRenderableEvents` is now imported explicitly from OpenTUI before the `ITEM_SELECTED` listener is registered. This removes the `ReferenceError: SelectRenderableEvents is not defined` seen immediately after the update check.

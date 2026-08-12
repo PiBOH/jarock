@@ -392,14 +392,6 @@ jobs:
               print(f'{archive_name}: package validation passed')
           PY
           for archive in "$CLI_FULL_NAME" "$CLI_LITE_NAME" "$TUI_FULL_NAME" "$TUI_LITE_NAME"; do sha512sum "$archive" > "$archive.sha512"; done
-          # Compatibility aliases keep pre-0.0.111 CLI installations updateable.
-          # They point to the same content as the new CLI Full/Lite packages.
-          LEGACY_FULL_NAME="${CLI_FULL_NAME/cli-full/full}"
-          LEGACY_LITE_NAME="${CLI_LITE_NAME/cli-lite/lite}"
-          cp -p "$CLI_FULL_NAME" "$LEGACY_FULL_NAME"
-          cp -p "$CLI_LITE_NAME" "$LEGACY_LITE_NAME"
-          sha512sum "$LEGACY_FULL_NAME" > "$LEGACY_FULL_NAME.sha512"
-          sha512sum "$LEGACY_LITE_NAME" > "$LEGACY_LITE_NAME.sha512"
           {
             echo "cli_full_name=$CLI_FULL_NAME"
             echo "cli_lite_name=$CLI_LITE_NAME"
@@ -409,12 +401,8 @@ jobs:
             echo "cli_lite_checksum=$CLI_LITE_NAME.sha512"
             echo "tui_full_checksum=$TUI_FULL_NAME.sha512"
             echo "tui_lite_checksum=$TUI_LITE_NAME.sha512"
-            echo "legacy_full_name=$LEGACY_FULL_NAME"
-            echo "legacy_lite_name=$LEGACY_LITE_NAME"
-            echo "legacy_full_checksum=$LEGACY_FULL_NAME.sha512"
-            echo "legacy_lite_checksum=$LEGACY_LITE_NAME.sha512"
           } >> "$GITHUB_OUTPUT"
-          ls -la "$CLI_FULL_NAME" "$CLI_LITE_NAME" "$TUI_FULL_NAME" "$TUI_LITE_NAME" "$LEGACY_FULL_NAME" "$LEGACY_LITE_NAME" *.sha512
+          ls -la "$CLI_FULL_NAME" "$CLI_LITE_NAME" "$TUI_FULL_NAME" "$TUI_LITE_NAME" *.sha512
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -434,10 +422,6 @@ jobs:
             ${{ steps.package.outputs.cli_lite_checksum }}
             ${{ steps.package.outputs.tui_full_checksum }}
             ${{ steps.package.outputs.tui_lite_checksum }}
-            ${{ steps.package.outputs.legacy_full_name }}
-            ${{ steps.package.outputs.legacy_lite_name }}
-            ${{ steps.package.outputs.legacy_full_checksum }}
-            ${{ steps.package.outputs.legacy_lite_checksum }}
             .tui-artifact/jarock-tui.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
