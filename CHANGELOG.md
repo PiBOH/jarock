@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.130-beta]
+
+- Updated the Windows TUI release build to use the supplied, unchanged `tui/icons/icon48.ico` directly as the `jarock-tui.exe` icon. The workflow no longer regenerates an ICO from `icon.png` and verifies the copied file's pinned SHA-256 hash, 48x48 dimensions and supplied 24-bit legacy-DIB format.
+- Kept the other ICO/PNG variants in `tui/icons` untouched and build-only; only `icon48.ico` is selected because it matches the current Bun baseline icon compatibility checks.
+
 ## [0.0.129-beta]
 
 - Restored the original Jarock icon artwork in `icon.png`, `server/icon.png` and `server/server-icon.png` at the operator's request. The previous 16x16 Java-cup/Bedrock redesign is no longer used; `logo.png` remains unchanged.

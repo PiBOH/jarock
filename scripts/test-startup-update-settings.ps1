@@ -99,9 +99,13 @@ try {
     Assert ($TuiSmoke.Contains('renderer.start()')) 'native OpenTUI smoke test explicitly starts the renderer loop'
     Assert ($TuiSmoke.Contains('useKittyKeyboard: null')) 'native OpenTUI smoke test disables Kitty keyboard sequences'
     Assert ($AutoRelease.Contains('Verify embedded Jarock icon')) 'auto-release verifies that the compiled TUI contains an icon resource'
-    Assert ($AutoRelease.Contains('first ICO frame must be the 48x48')) 'auto-release verifies the Bun-safe first ICO frame'
-    $IconBuilder = Get-Content -LiteralPath (Join-Path $Root 'scripts/png-to-ico.py') -Raw
-    Assert ($IconBuilder.Contains('sizes = (48, 256, 128, 64, 32, 16)')) 'the Windows ICO places a conventional 48px legacy-DIB frame first'
+    Assert ($AutoRelease.Contains('tui/icons/icon48.ico')) 'auto-release selects the supplied 48px TUI ICO'
+    Assert ($AutoRelease.Contains('Copy-Item -LiteralPath $source -Destination $target -Force')) 'auto-release copies the supplied TUI ICO without modifying it'
+    Assert ($AutoRelease.Contains('sourceHash -ne $targetHash')) 'auto-release verifies the supplied TUI ICO byte-for-byte after copying'
+    Assert ($AutoRelease.Contains('245a1bb1056c8293921bb7c3af79a277a148917e41e569bb8529593744571ed5')) 'auto-release pins the supplied TUI ICO SHA-256'
+    Assert ($AutoRelease.Contains('selected TUI ICO must be 48x48')) 'auto-release validates the supplied TUI ICO dimensions'
+    Assert ($AutoRelease.Contains('selected TUI ICO must use its supplied 24-bit legacy DIB')) 'auto-release validates the supplied TUI ICO format'
+    Assert (-not $AutoRelease.Contains('scripts/png-to-ico.py')) 'auto-release does not regenerate the supplied TUI ICO'
     $Updater = Get-Content -LiteralPath (Join-Path $Root 'scripts/update-jarock.ps1') -Raw
     Assert ($Updater.Contains('Schedule-DeferredLauncherApply')) 'updater schedules the launcher replacement after startup exits'
     $PendingHelper = Get-Content -LiteralPath (Join-Path $Root 'scripts/apply-pending-launcher.ps1') -Raw

@@ -44,10 +44,7 @@ jobs:
         run: |
           $buildRoot = 'C:\jarock-tui-build'
           if (Test-Path -LiteralPath $buildRoot) { Remove-Item -LiteralPath $buildRoot -Recurse -Force }
-          New-Item -ItemType Directory -Path (Join-Path $buildRoot 'scripts') -Force | Out-Null
           Copy-Item -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'tui') -Destination $buildRoot -Recurse -Force
-          Copy-Item -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'icon.png') -Destination $buildRoot -Force
-          Copy-Item -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'scripts/png-to-ico.py') -Destination (Join-Path $buildRoot 'scripts') -Force
           "JAROCK_TUI_BUILD_ROOT=$buildRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           Write-Host "Prepared TUI build workspace on $buildRoot so Bun's baseline cache rename stays on the C: volume."
       - name: Install TUI dependencies
@@ -63,20 +60,25 @@ jobs:
             throw "The web-tree-sitter WASM asset is missing after installation: $asset"
           }
           Write-Host "Tree-sitter WASM asset found: $asset"
-      - name: Generate Jarock Windows icon
+      - name: Select Jarock Windows icon
         shell: pwsh
         run: |
-          Push-Location $env:JAROCK_TUI_BUILD_ROOT
-          try { python scripts/png-to-ico.py icon.png jarock-tui.ico }
-          finally { Pop-Location }
-          if ($LASTEXITCODE -ne 0) { throw "Could not generate the Jarock Windows icon (exit code $LASTEXITCODE)." }
-          $ico = [IO.File]::ReadAllBytes((Join-Path $env:JAROCK_TUI_BUILD_ROOT 'jarock-tui.ico'))
-          if ($ico.Length -lt 22 -or $ico[0] -ne 0 -or $ico[1] -ne 0 -or $ico[2] -ne 1 -or $ico[3] -ne 0) { throw 'The generated Jarock Windows icon is not a valid ICO file.' }
+          $source = Join-Path $env:JAROCK_TUI_BUILD_ROOT 'tui/icons/icon48.ico'
+          $target = Join-Path $env:JAROCK_TUI_BUILD_ROOT 'jarock-tui.ico'
+          if (-not (Test-Path -LiteralPath $source -PathType Leaf)) { throw "The selected TUI icon is missing: $source" }
+          Copy-Item -LiteralPath $source -Destination $target -Force
+          $sourceHash = (Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash
+          $targetHash = (Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash
+          if ($sourceHash -ne '245a1bb1056c8293921bb7c3af79a277a148917e41e569bb8529593744571ed5') { throw "The tracked icon48.ico hash changed unexpectedly: $sourceHash" }
+          if ($sourceHash -ne $targetHash) { throw 'The selected TUI ICO changed while being copied.' }
+          $ico = [IO.File]::ReadAllBytes($target)
+          if ($ico.Length -lt 22 -or $ico[0] -ne 0 -or $ico[1] -ne 0 -or $ico[2] -ne 1 -or $ico[3] -ne 0) { throw 'The selected TUI icon is not a valid ICO file.' }
           $entryWidth = $ico[6]
           $entryHeight = $ico[7]
-          if ($entryWidth -ne 48 -or $entryHeight -ne 48) { throw "The first ICO frame must be the 48x48 Jarock frame for Bun; found $entryWidth x $entryHeight." }
-          if ($ico[10] -ne 1 -or $ico[11] -ne 0 -or $ico[12] -ne 32 -or $ico[13] -ne 0) { throw 'The first ICO frame is not a 32-bit legacy DIB.' }
-          Write-Host 'Validated the 48x48 first legacy-DIB ICO frame for Bun and Windows shell compatibility.'
+          if ($entryWidth -ne 48 -or $entryHeight -ne 48) { throw "The selected TUI ICO must be 48x48; found $entryWidth x $entryHeight." }
+          if ($ico[10] -ne 1 -or $ico[11] -ne 0 -or $ico[12] -ne 24 -or $ico[13] -ne 0) { throw 'The selected TUI ICO must use its supplied 24-bit legacy DIB frame.' }
+          Write-Host "Using the unchanged supplied TUI icon: $source"
+          Write-Host 'Validated the supplied 48x48 24-bit legacy-DIB ICO for Bun and Windows shell compatibility.'
       - name: Compile standalone Windows TUI
         shell: pwsh
         run: |
