@@ -46,7 +46,7 @@ const menu = Select({
     { name: "Open parameter manager", description: "Edit Jarock settings in this TUI.", value: "parameters" },
     { name: "Clean runtime", description: "Run the existing cleanup confirmation flow.", value: "clean" },
     { name: "Exit", description: "Close the Jarock TUI.", value: "exit" },
-  ], selectedBackgroundColor: "#145a72", selectedTextColor: "#ffffff", showDescription: true,
+  ], selectedBackgroundColor: "#145a72", selectedTextColor: "#ffffff", showDescription: true, onMouseDown: selectMouseDown,
 })
 main.add(title); main.add(subtitle); main.add(status); main.add(menu); renderer.root.add(main)
 menu.focus()
@@ -64,6 +64,36 @@ try {
 // control state. Start the loop explicitly so keyboard and mouse events are
 // processed in standalone Windows builds as well as during development.
 renderer.start()
+
+function selectMouseDown(this: any, event: any): void {
+  if (event.button !== 0) return
+  const row = Math.floor(event.y - this.screenY)
+  const lineHeight = this.showDescription ? 2 : 1
+  const visibleCount = Math.max(1, Math.floor(this.height / lineHeight))
+  const maxOffset = Math.max(0, this.options.length - visibleCount)
+  const selectedIndex = this.getSelectedIndex()
+  const offset = Math.max(0, Math.min(selectedIndex - Math.floor(visibleCount / 2), maxOffset))
+  const index = offset + Math.floor(row / lineHeight)
+  if (row < 0 || index < 0 || index >= this.options.length || Math.floor(row / lineHeight) >= visibleCount) return
+  this.setSelectedIndex(index)
+  this.selectCurrent()
+  event.preventDefault()
+  event.stopPropagation()
+}
+
+// OpenTUI normally forwards key events from the focused renderable. In a
+// compiled Bun/Windows console that forwarding can be lost while the global
+// parser still receives the key. Dispatch once from the public key handler as
+// a compatibility fallback, then prevent the normal path from handling it a
+// second time.
+renderer.keyInput.on("keypress", (key: any) => {
+  const focused: any = renderer.currentFocusedRenderable
+  if (!focused || typeof focused.handleKeyPress !== "function" || key.defaultPrevented) return
+  focused.onKeyDown?.(key)
+  if (key.defaultPrevented) return
+  focused.handleKeyPress(key)
+  key.preventDefault()
+})
 
 function entry(name: string): string { return join(root, name) }
 function readSettings(): Map<string, string> {
@@ -131,7 +161,7 @@ function openCliParameterManager(): void {
 function showWorldSettingsScreen(): void {
   menu.visible = false
   const worldMenu = Select({
-    width: "100%", height: 8, wrapSelection: true, showDescription: true, selectedBackgroundColor: "#145a72",
+    width: "100%", height: 8, wrapSelection: true, showDescription: true, selectedBackgroundColor: "#145a72", onMouseDown: selectMouseDown,
     options: [
       { name: "Import world", description: `Source: ${value("WORLD_IMPORT_SOURCE", "none")}`, value: "import" },
       { name: "Export world", description: `Destination: ${value("WORLD_EXPORT_DEST", "none")}`, value: "export" },
@@ -164,7 +194,7 @@ function showWorldSettingsScreen(): void {
 function showRememberWorldScreen(): void {
   menu.visible = false
   const rememberMenu = Select({
-    width: "100%", height: 6, wrapSelection: true, selectedBackgroundColor: "#145a72",
+    width: "100%", height: 6, wrapSelection: true, selectedBackgroundColor: "#145a72", onMouseDown: selectMouseDown,
     options: [
       { name: "Remember this world (default)", description: "Reuse it only if the configured world is later deleted.", value: "true" },
       { name: "Use once only", description: "Clear the source after the next successful import.", value: "false" },
@@ -180,7 +210,7 @@ function showRememberWorldScreen(): void {
 function showSettingsScreen(): void {
   menu.visible = false
   const settingsMenu = Select({
-    width: "100%", height: 16, wrapSelection: true, showDescription: true, selectedBackgroundColor: "#145a72",
+    width: "100%", height: 16, wrapSelection: true, showDescription: true, selectedBackgroundColor: "#145a72", onMouseDown: selectMouseDown,
     options: [
       { name: `Loader [${value("LOADER_TYPE", "none")}]`, description: "Switch between Fabric and NeoForge.", value: "loader" },
       { name: `RAM [${value("RAM_INITIAL", "4G")} / ${value("RAM_MAX", "4G")}]`, description: "Use the validated CLI editor for RAM values.", value: "ram" },

@@ -81,6 +81,12 @@ try {
     Assert ($TuiEntry.Contains('useKittyKeyboard: null')) 'TUI disables Kitty keyboard sequences for legacy Windows consoles'
     Assert ($TuiEntry.Contains('process.stdin.resume()')) 'TUI resumes stdin explicitly for standalone Windows builds'
     Assert ($TuiEntry.Contains('process.stdin.setRawMode(true)')) 'TUI enables raw stdin mode when the Windows host exposes it'
+    Assert ($TuiEntry.Contains('renderer.keyInput.on("keypress"')) 'TUI has a direct focused-renderable keyboard fallback'
+    Assert ($TuiEntry.Contains('focused.handleKeyPress(key)')) 'TUI keyboard fallback dispatches to the focused control'
+    Assert ($TuiEntry.Contains('function selectMouseDown')) 'TUI defines an explicit Select mouse handler'
+    Assert ($TuiEntry.Contains('this.selectCurrent()')) 'TUI mouse handler activates the clicked option'
+    Assert ($TuiEntry.Contains('const offset = Math.max(0')) 'TUI mouse handler accounts for Select scrolling'
+    Assert ($TuiEntry.Contains('onMouseDown: selectMouseDown')) 'TUI menus attach the explicit mouse handler'
     Assert (-not $Batch.Contains('set "TUI_EXIT_CODE=%errorlevel%"if not')) 'start-server.bat separates the TUI exit-code assignment from its conditional'
     Assert ($Batch.Contains('classic-console.bat" "Jarock classic console" "%~f0" /wait')) 'start-server.bat waits for the classic-console child and keeps terminal selection stable'
     $TuiSmoke = Get-Content -LiteralPath (Join-Path $Root 'tui/smoke.ts') -Raw

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.126-beta]
+
+- Added a direct keyboard fallback for the standalone Windows TUI: keypresses are forwarded to the currently focused OpenTUI control and handled only once, so arrows, Enter and text input continue to work when the compiled Bun event bridge does not dispatch to the focused renderable.
+- Added explicit left-click handling to every TUI selection menu. The clicked row is converted to a menu option, focused and activated, including the main menu, world menu, settings menu and remembered-world choice.
+- Extended the Windows startup regression assertions to cover the keyboard and mouse fallback paths.
+
 ## [0.0.125-beta]
 
 - Fixed the Windows TUI input path for standalone builds and classic console hosts: stdin is resumed explicitly, raw mode is enabled when available, and Kitty keyboard escape sequences are disabled in favor of legacy key sequences supported by cmd.exe, PowerShell and older ConPTY implementations.
