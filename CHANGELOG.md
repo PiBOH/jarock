@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.0.148-beta]
+
+- Strengthened `scripts/test-server-properties.ps1` so the `online-mode` rewrite regression proves **byte-for-byte** that only the `online-mode` value changes, for every supported encoding: Latin-1 (classic Java), UTF-8 without BOM (modern Notepad) and UTF-8 with BOM. A masked whole-file comparison (`Assert-OnlyOnlineModeChanged`) now rejects any accidental re-encoding, BOM loss or line-ending drift. The UTF-8 with BOM case now also asserts that `online-mode` is actually updated, and the previously vacuous motd check on the BOM line (whose first line starts with the BOM bytes) was fixed to match non-empty results.
+
 ## [0.0.147-beta]
 
 - Fixed the server.properties `online-mode` rewrite corrupting a custom `motd` with non-ASCII characters: `Set-ServerOnlineMode` now lives in the shared `scripts/server-properties.ps1` module and uses a byte-preserving Latin-1 round-trip, so only the `online-mode` line changes and the rest of the file (motd, BOM, CRLF/LF line endings) stays byte-for-byte identical regardless of the original encoding (Latin-1, UTF-8 or UTF-8 with BOM).
