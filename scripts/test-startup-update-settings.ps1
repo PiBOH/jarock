@@ -103,6 +103,8 @@ try {
     Assert ($TuiSmoke.Contains('renderer.start()')) 'native OpenTUI smoke test explicitly starts the renderer loop'
     Assert ($TuiSmoke.Contains('useKittyKeyboard: null')) 'native OpenTUI smoke test disables Kitty keyboard sequences'
     Assert ($AutoRelease.Contains('Verify embedded Jarock icon')) 'auto-release verifies that the compiled TUI contains an icon resource'
+    Assert ($AutoRelease.Contains('Verify standalone TUI release asset')) 'auto-release validates the standalone TUI executable before publishing'
+    Assert ($AutoRelease.Contains("            .tui-artifact/jarock-tui.exe")) 'auto-release publishes jarock-tui.exe as a standalone release asset'
     Assert ($AutoRelease.Contains('tui/icons/icon48.ico')) 'auto-release selects the supplied 48px TUI ICO'
     Assert ($AutoRelease.Contains('Copy-Item -LiteralPath $source -Destination $target -Force')) 'auto-release copies the supplied TUI ICO without modifying it'
     Assert ($AutoRelease.Contains('sourceHash -ne $targetHash')) 'auto-release verifies the supplied TUI ICO byte-for-byte after copying'

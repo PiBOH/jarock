@@ -280,6 +280,17 @@ jobs:
           name: jarock-tui
           path: .tui-artifact
 
+      - name: Verify standalone TUI release asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -s .tui-artifact/jarock-tui.exe ]]; then
+            echo 'The downloaded TUI artifact is missing or empty: .tui-artifact/jarock-tui.exe' >&2
+            exit 1
+          fi
+          file .tui-artifact/jarock-tui.exe || true
+          echo 'Standalone jarock-tui.exe is ready to publish as a release asset.'
+
       - name: Build release packages
         id: package
         shell: bash
@@ -427,5 +438,6 @@ jobs:
             ${{ steps.package.outputs.legacy_lite_name }}
             ${{ steps.package.outputs.legacy_full_checksum }}
             ${{ steps.package.outputs.legacy_lite_checksum }}
+            .tui-artifact/jarock-tui.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

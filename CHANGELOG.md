@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.133-beta]
+
+- Added the compiled `jarock-tui.exe` as a standalone asset in every automatic GitHub release, in addition to the copy included inside the TUI Full and Lite ZIP packages.
+- Added a release-job validation that refuses to publish when the downloaded standalone TUI executable is missing or empty.
+
 ## [0.0.132-beta]
 
 - Fixed the Windows TUI autorelease workspace copy: the workflow now creates `C:\\jarock-tui-build\\tui` explicitly and copies the TUI project contents into it before running Bun. The previous copy placed the project at the workspace root while the install step looked for a missing `tui` subdirectory, causing `bun install` to fail immediately.
