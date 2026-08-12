@@ -37,6 +37,7 @@ const main = Box({ width: "100%", height: "100%", flexDirection: "column", paddi
 const title = Text({ content: "Jarock TUI", fg: "#00d7ff" })
 const subtitle = Text({ content: "Windows terminal menu | DedicatedPower keeps the server window", fg: "#888888" })
 const status = Text({ content: "Use Up/Down and Enter to choose an action. Ctrl+C exits.", fg: "#ffffff" })
+let activeActionSelect: any
 const menu = createActionSelect([
   { name: "Start server", description: "Open the server console and return here after it exits.", value: "start" },
   { name: "Check / install updates", description: "Run the verified updater for this installed edition.", value: "update" },
@@ -67,7 +68,24 @@ renderer.start()
 // Focus after the explicit start as well: on some standalone Windows builds
 // autoFocus runs during renderer.start() and can otherwise leave the Select
 // rendered but outside the active focus chain.
-menu.focus()
+focusActionSelect(menu)
+
+// Keep a guarded renderer-level fallback for standalone builds where the
+// focused Select receives navigation keys but does not invoke its onKeyDown
+// callback. The marker prevents a duplicate action regardless of listener
+// ordering when both paths receive the same KeyEvent.
+renderer.keyInput.on("keypress", (key: any) => {
+  if (!activeActionSelect || key.defaultPrevented || key.__jarockHandled || !isSelectConfirmKey(key)) return
+  key.__jarockHandled = true
+  key.preventDefault()
+  key.stopPropagation()
+  activateBoundSelect(activeActionSelect)
+})
+
+function focusActionSelect(select: any): void {
+  activeActionSelect = select
+  select.focus()
+}
 
 function selectIndexAt(select: any, event: any): number | null {
   const lineHeight = Math.max(1, Number(select.linesPerItem ?? (select.showDescription ? 2 : 1)))
@@ -101,7 +119,7 @@ function invokeAction(activate: ((selected: any) => void) | undefined, option: a
   } catch (error) {
     status.content = `Action failed: ${error instanceof Error ? error.message : String(error)}`
     menu.visible = true
-    menu.focus()
+    focusActionSelect(menu)
   }
 }
 
@@ -115,33 +133,52 @@ function isSelectConfirmKey(key: any): boolean {
   return key?.name === "return" || key?.name === "enter" || key?.name === "linefeed" || key?.sequence === "\r" || key?.sequence === "\n"
 }
 
-function selectKeyDown(this: any, key: any): void {
-  if (!isSelectConfirmKey(key)) return
+function selectKeyDown(select: any, key: any): void {
+  if (!isSelectConfirmKey(key) || key.__jarockHandled) return
+  key.__jarockHandled = true
   key.preventDefault()
   key.stopPropagation()
-  activateBoundSelect(this)
+  activateBoundSelect(select)
 }
 
-function selectMouseDown(this: any, event: any): void {
+function selectMouseDown(select: any, event: any): void {
   if (event.button !== 0 && event.button !== "left") return
-  const index = selectIndexAt(this, event)
+  const index = selectIndexAt(select, event)
   if (index === null) return
-  this.setSelectedIndex(index)
-  this.focus()
+  select.setSelectedIndex(index)
+  select.focus()
+  select.__jarockMouseDownIndex = index
   event.preventDefault()
   event.stopPropagation()
-  activateBoundSelect(this)
+  activateBoundSelect(select)
+}
+
+function selectMouseUp(select: any, event: any): void {
+  if (event.button !== 0 && event.button !== "left") return
+  const index = selectIndexAt(select, event)
+  const downIndex = select.__jarockMouseDownIndex
+  select.__jarockMouseDownIndex = undefined
+  if (index === null) return
+  select.setSelectedIndex(index)
+  select.focus()
+  event.preventDefault()
+  event.stopPropagation()
+  // Some Windows console hosts deliver mouse-up but lose mouse-down. Keep the
+  // fallback, while avoiding a second activation when both events arrive.
+  if (downIndex === undefined || downIndex !== index) activateBoundSelect(select)
 }
 
 function createActionSelect(options: any[], settings: Record<string, any>, activate: (option: any) => void): any {
   const select: any = Select({
     ...settings,
     options,
-    onMouseMove: selectMouseMove,
-    onMouseDown: selectMouseDown,
-    onKeyDown: selectKeyDown,
+    onMouseMove: (event: any) => selectMouseMove.call(select, event),
+    onMouseDown: (event: any) => selectMouseDown(select, event),
+    onMouseUp: (event: any) => selectMouseUp(select, event),
+    onKeyDown: (key: any) => selectKeyDown(select, key),
   })
   select.__jarockActivate = activate
+  activeActionSelect = select
   return select
 }
 
@@ -196,15 +233,16 @@ function runClassicConsoleBatch(path: string, args: string[] = []): void {
       JAROCK_CACHE_KEEP: basename(wrapper),
     },
   })
-  child.on("close", (code) => { try { unlinkSync(wrapper) } catch {} ; status.content = code === 0 ? "Operation finished. Choose another action." : `Operation exited with code ${code ?? 1}. Check the opened console.`; menu.focus() })
-  child.on("error", (error) => { try { unlinkSync(wrapper) } catch {} ; status.content = `Could not start the operation: ${error.message}`; menu.focus() })
+  child.on("close", (code) => { try { unlinkSync(wrapper) } catch {} ; status.content = code === 0 ? "Operation finished. Choose another action." : `Operation exited with code ${code ?? 1}. Check the opened console.`; focusActionSelect(menu) })
+  child.on("error", (error) => { try { unlinkSync(wrapper) } catch {} ; status.content = `Could not start the operation: ${error.message}`; focusActionSelect(menu) })
 }
 function showInputScreen(label: string, current: string, onSubmit: (next: string) => void): void {
   menu.visible = false
+  activeActionSelect = undefined
   const prompt = Text({ content: `${label}\nCurrent: ${current}\nPress Enter to save; Ctrl+C cancels the TUI.`, fg: "#ffffff" })
   const input = Input({ width: "100%", value: current, placeholder: "Type a value...", focusedBackgroundColor: "#173847", cursorColor: "#00d7ff" })
   main.add(prompt); main.add(input); input.focus()
-  input.on(InputRenderableEvents.ENTER, (next: string) => { input.destroy(); prompt.destroy(); menu.visible = true; onSubmit(next); menu.focus() })
+  input.on(InputRenderableEvents.ENTER, (next: string) => { input.destroy(); prompt.destroy(); menu.visible = true; onSubmit(next) })
 }
 function openCliParameterManager(): void {
   runClassicConsoleBatch(entry("parameter-manager.bat"), ["/cli"])
@@ -224,7 +262,7 @@ function showWorldSettingsScreen(): void {
 
 function activateWorldMenuOption(option: any, worldMenu: any): void {
     worldMenu.destroy()
-    if (option.value === "back") { menu.visible = true; menu.focus(); return }
+    if (option.value === "back") { menu.visible = true; focusActionSelect(menu); return }
     if (option.value === "export") {
       showInputScreen("World export destination (empty clears it)", value("WORLD_EXPORT_DEST", ""), (next) => {
         if (updateSetting("WORLD_EXPORT_DEST", next.trim())) status.content = "World export destination saved and validated."
@@ -277,7 +315,7 @@ function showSettingsScreen(): void {
       width: "100%", height: 16, wrapSelection: true, showDescription: true, selectedBackgroundColor: "#145a72",
     }, (option) => {
     settingsMenu.destroy()
-    if (option.value === "back") { menu.visible = true; menu.focus(); return }
+    if (option.value === "back") { menu.visible = true; focusActionSelect(menu); return }
     // The existing CLI manager remains the authoritative validated editor for
     // complex settings (RAM, world paths and loader changes).
     if (option.value === "world") { menu.visible = true; showWorldSettingsScreen(); return }
@@ -307,8 +345,10 @@ function showSettingsScreen(): void {
     const settingName = key === "mode" ? "GUI_MODE" : key === "gc" ? "GC_PROFILE" : key === "java" ? "AUTO_CONFIGURE_JAVA" : key === "online" ? "ONLINE_MODE" : key === "banner" ? "SHOW_READY_BANNER" : "AUTO_UPDATE_MODE"
     menu.visible = true
     if (updateSetting(settingName, next)) status.content = `${settingName} saved and validated.`
-    menu.focus()
+    focusActionSelect(menu)
   })
+  main.add(settingsMenu)
+  focusActionSelect(settingsMenu)
 }
 
 function activateMainMenuOption(value: string): void {

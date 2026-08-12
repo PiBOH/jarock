@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.0.142-beta]
+
+- Fixed the remaining TUI menu lifecycle bug: nested menus and the parameter screen now explicitly register, add and focus the active `Select`, and returning from a submenu restores the main menu as the active target.
+- Prevented the input screen from stealing focus back to the hidden main menu after a submitted value; the newly opened settings/world menu now retains focus and keyboard/mouse activation.
+- Added regression coverage for active-Select focus ownership and parameter-menu attachment.
+
+## [0.0.141-beta]
+
+- Hardened TUI activation after `0.0.140-beta` still ignored Enter and clicks on the affected standalone Windows console: action callbacks are now explicitly bound to their concrete `Select` instance instead of relying on callback `this`.
+- Added a guarded renderer-level keypress fallback for Enter/Return/LineFeed and kept a mouse-up fallback for hosts that deliver only one half of a click. Shared event markers prevent duplicate actions when both OpenTUI paths receive the same input.
+- Added regression assertions for concrete Select binding, active-menu tracking, guarded key fallback and mouse-up compatibility.
+
 ## [0.0.140-beta]
 
 - Fixed the TUI activation regression where hover and arrow navigation worked but Enter and mouse clicks did nothing. Every Select now handles Enter directly through its focused `onKeyDown` callback, recognizing `enter`, `return` and `linefeed` variants and stopping duplicate native dispatch.
