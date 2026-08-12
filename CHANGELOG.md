@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.125-beta]
+
+- Fixed the Windows TUI input path for standalone builds and classic console hosts: stdin is resumed explicitly, raw mode is enabled when available, and Kitty keyboard escape sequences are disabled in favor of legacy key sequences supported by cmd.exe, PowerShell and older ConPTY implementations.
+- Fixed the Windows launcher handoff so a TUI started from Windows Terminal waits for the classic Console Host child instead of restoring terminal selection immediately; also fixed the malformed TUI exit-code line in `start-server.bat`.
+- Changed the generated Jarock ICO to put a conventional 48px uncompressed legacy-DIB frame first, and added CI validation for the first frame and the extracted embedded icon resource.
+
 ## [0.0.124-beta]
 
 - Fixed the standalone Windows TUI menu not responding to keyboard or mouse input. OpenTUI now explicitly starts its render/input loop after `createCliRenderer()` instead of remaining in the idle state.

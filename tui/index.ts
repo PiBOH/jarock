@@ -23,7 +23,16 @@ if (!nativeWindowsBackend) throw new Error("The OpenTUI Windows native backend i
 const root = process.env.JAROCK_ROOT || dirname(process.execPath)
 const settingsPath = join(root, "scripts", "server-launch-settings.ini")
 const templatePath = join(root, "scripts", "server-launch-settings.ini.template")
-const renderer = await createCliRenderer({ exitOnCtrlC: true, clearOnShutdown: true, useMouse: true, autoFocus: true })
+const renderer = await createCliRenderer({
+  exitOnCtrlC: true,
+  clearOnShutdown: true,
+  useMouse: true,
+  autoFocus: true,
+  // Kitty keyboard escape sequences are not handled consistently by the
+  // classic Windows Console Host and older ConPTY implementations. Legacy
+  // key sequences keep arrows and Enter usable on cmd.exe and PowerShell.
+  useKittyKeyboard: null,
+})
 const main = Box({ width: "100%", height: "100%", flexDirection: "column", padding: 1, gap: 1 })
 const title = Text({ content: "Jarock TUI", fg: "#00d7ff" })
 const subtitle = Text({ content: "Windows terminal menu | DedicatedPower keeps the server window", fg: "#888888" })
@@ -41,6 +50,16 @@ const menu = Select({
 })
 main.add(title); main.add(subtitle); main.add(status); main.add(menu); renderer.root.add(main)
 menu.focus()
+// Bun standalone builds can leave stdin paused even though OpenTUI has put the
+// terminal in raw mode. Resume it explicitly and keep a safe fallback for
+// console hosts that expose setRawMode only conditionally.
+try {
+  process.stdin.resume()
+  if (process.stdin.isTTY && typeof process.stdin.setRawMode === "function") process.stdin.setRawMode(true)
+} catch {
+  // OpenTUI already owns terminal setup; a host without raw-mode support can
+  // still use the renderer's parser and should not abort the menu.
+}
 // createCliRenderer configures raw terminal input but starts in the IDLE
 // control state. Start the loop explicitly so keyboard and mouse events are
 // processed in standalone Windows builds as well as during development.

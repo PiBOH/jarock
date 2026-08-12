@@ -9,7 +9,7 @@ if defined _JAROCK_CLASSIC_CONSOLE goto :classic_console_ok
 if not defined WT_SESSION goto :classic_console_ok
 if not exist "%~dp0scripts\classic-console.bat" goto :classic_console_ok
 set "_JAROCK_CLASSIC_CONSOLE=1"
-call "%~dp0scripts\classic-console.bat" "Jarock classic console" "%~f0"
+call "%~dp0scripts\classic-console.bat" "Jarock classic console" "%~f0" /wait
 echo.
 echo Jarock was relaunched in the classic Windows console because it was started from Windows Terminal.
 exit /b 0
@@ -217,7 +217,8 @@ if not exist "%TUI_EXE%" (
 )
 set "JAROCK_ROOT=%ROOT%"
 "%TUI_EXE%" %*
-set "TUI_EXIT_CODE=%errorlevel%"if not "%TUI_EXIT_CODE%"=="0" (
+set "TUI_EXIT_CODE=%errorlevel%"
+if not "%TUI_EXIT_CODE%"=="0" (
 echo.
     echo ERROR: The Jarock TUI exited unexpectedly with code %TUI_EXIT_CODE%.
     call :explain_tui_exit "%TUI_EXIT_CODE%"

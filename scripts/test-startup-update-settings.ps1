@@ -78,9 +78,18 @@ try {
     Assert ($AutoRelease.Contains('C:\jarock-tui-build')) 'auto-release builds the baseline runtime on the C drive to avoid cross-volume cache renames'
     Assert ($AutoRelease.Contains('JAROCK_TUI_BUILD_ROOT')) 'auto-release shares the isolated C-drive build workspace across TUI steps'
     Assert ($TuiEntry.Contains('renderer.start()')) 'TUI explicitly starts the OpenTUI input and render loop'
+    Assert ($TuiEntry.Contains('useKittyKeyboard: null')) 'TUI disables Kitty keyboard sequences for legacy Windows consoles'
+    Assert ($TuiEntry.Contains('process.stdin.resume()')) 'TUI resumes stdin explicitly for standalone Windows builds'
+    Assert ($TuiEntry.Contains('process.stdin.setRawMode(true)')) 'TUI enables raw stdin mode when the Windows host exposes it'
+    Assert (-not $Batch.Contains('set "TUI_EXIT_CODE=%errorlevel%"if not')) 'start-server.bat separates the TUI exit-code assignment from its conditional'
+    Assert ($Batch.Contains('classic-console.bat" "Jarock classic console" "%~f0" /wait')) 'start-server.bat waits for the classic-console child and keeps terminal selection stable'
     $TuiSmoke = Get-Content -LiteralPath (Join-Path $Root 'tui/smoke.ts') -Raw
     Assert ($TuiSmoke.Contains('renderer.start()')) 'native OpenTUI smoke test explicitly starts the renderer loop'
+    Assert ($TuiSmoke.Contains('useKittyKeyboard: null')) 'native OpenTUI smoke test disables Kitty keyboard sequences'
     Assert ($AutoRelease.Contains('Verify embedded Jarock icon')) 'auto-release verifies that the compiled TUI contains an icon resource'
+    Assert ($AutoRelease.Contains('first ICO frame must be the 48x48')) 'auto-release verifies the Bun-safe first ICO frame'
+    $IconBuilder = Get-Content -LiteralPath (Join-Path $Root 'scripts/png-to-ico.py') -Raw
+    Assert ($IconBuilder.Contains('sizes = (48, 256, 128, 64, 32, 16)')) 'the Windows ICO places a conventional 48px legacy-DIB frame first'
     $Updater = Get-Content -LiteralPath (Join-Path $Root 'scripts/update-jarock.ps1') -Raw
     Assert ($Updater.Contains('Schedule-DeferredLauncherApply')) 'updater schedules the launcher replacement after startup exits'
     $PendingHelper = Get-Content -LiteralPath (Join-Path $Root 'scripts/apply-pending-launcher.ps1') -Raw

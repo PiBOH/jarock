@@ -9,7 +9,7 @@ if defined _JAROCK_CLASSIC_CONSOLE goto :classic_console_ok
 if not defined WT_SESSION goto :classic_console_ok
 if not exist "%~dp0scripts\classic-console.bat" goto :classic_console_ok
 set "_JAROCK_CLASSIC_CONSOLE=1"
-call "%~dp0scripts\classic-console.bat" "Jarock classic console" "%~f0"
+call "%~dp0scripts\classic-console.bat" "Jarock classic console" "%~f0" /wait
 echo.
 echo Jarock was relaunched in the classic Windows console because it was started from Windows Terminal.
 exit /b 0

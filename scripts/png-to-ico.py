@@ -129,8 +129,14 @@ def encode_dib_frame(size: int, channels: int, pixels: bytes) -> bytes:
 
 
 def encode_legacy_ico(channels: int, width: int, height: int, pixels: bytes) -> bytes:
-    """Encode common Windows icon sizes; the 256px frame is first for Bun."""
-    sizes = (256, 128, 64, 48, 32, 16)
+    """Encode conventional Windows icon sizes with a Bun-safe 48px first frame.
+
+    Bun's Windows resource updater historically used the first ICO image when
+    building the executable's associated icon. A 48px legacy DIB is a broadly
+    supported primary frame for Explorer, cmd.exe and PowerShell; the remaining
+    resolutions are retained for shell scaling and high-DPI selection.
+    """
+    sizes = (48, 256, 128, 64, 32, 16)
     frames = [(size, encode_dib_frame(size, channels, resize_nearest(width, height, channels, pixels, size))) for size in sizes]
     directory_size = 6 + 16 * len(frames)
     entries: list[bytes] = []
@@ -151,7 +157,7 @@ def main() -> int:
     width, height, channels, pixels = decode_png(source.read_bytes())
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_bytes(encode_legacy_ico(channels, width, height, pixels))
-    print(f"Created {destination} from {source} ({width}x{height} -> 256/128/64/48/32/16 legacy DIB ICO)")
+    print(f"Created {destination} from {source} ({width}x{height} -> 48/256/128/64/32/16 legacy DIB ICO)")
     return 0
 
 

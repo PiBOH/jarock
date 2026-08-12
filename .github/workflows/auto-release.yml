@@ -70,7 +70,13 @@ jobs:
           try { python scripts/png-to-ico.py icon.png jarock-tui.ico }
           finally { Pop-Location }
           if ($LASTEXITCODE -ne 0) { throw "Could not generate the Jarock Windows icon (exit code $LASTEXITCODE)." }
-          if (-not (Test-Path -LiteralPath (Join-Path $env:JAROCK_TUI_BUILD_ROOT 'jarock-tui.ico') -PathType Leaf)) { throw 'The generated Jarock Windows icon is missing.' }
+          $ico = [IO.File]::ReadAllBytes((Join-Path $env:JAROCK_TUI_BUILD_ROOT 'jarock-tui.ico'))
+          if ($ico.Length -lt 22 -or $ico[0] -ne 0 -or $ico[1] -ne 0 -or $ico[2] -ne 1 -or $ico[3] -ne 0) { throw 'The generated Jarock Windows icon is not a valid ICO file.' }
+          $entryWidth = $ico[6]
+          $entryHeight = $ico[7]
+          if ($entryWidth -ne 48 -or $entryHeight -ne 48) { throw "The first ICO frame must be the 48x48 Jarock frame for Bun; found $entryWidth x $entryHeight." }
+          if ($ico[10] -ne 1 -or $ico[11] -ne 0 -or $ico[12] -ne 32 -or $ico[13] -ne 0) { throw 'The first ICO frame is not a 32-bit legacy DIB.' }
+          Write-Host 'Validated the 48x48 first legacy-DIB ICO frame for Bun and Windows shell compatibility.'
       - name: Compile standalone Windows TUI
         shell: pwsh
         run: |
@@ -79,9 +85,14 @@ jobs:
           $buildRoot = $env:JAROCK_TUI_BUILD_ROOT
           Push-Location (Join-Path $buildRoot 'tui')
           try {
-            bun build --compile --target=bun-windows-x64-baseline --windows-icon=..\jarock-tui.ico index.ts --outfile ..\jarock-tui.exe
-            if ($LASTEXITCODE -ne 0) {
-              $code = $LASTEXITCODE
+            $buildOutput = @(& bun build --compile --target=bun-windows-x64-baseline --windows-icon=..\jarock-tui.ico index.ts --outfile ..\jarock-tui.exe 2>&1)
+            $code = $LASTEXITCODE
+            $buildOutput | ForEach-Object { Write-Host $_ }
+            $buildText = $buildOutput -join "`n"
+            if ($buildText -match '(?i)failed to set executable icon') {
+              throw 'Bun reported that it could not set the executable icon; the release must not publish an EXE with the default Bun icon.'
+            }
+            if ($code -ne 0) {
               Write-Host "Reason: Bun could not produce the standalone Windows TUI." -ForegroundColor Red
               Write-Host "The command uses the pre-2013 CPU baseline target and a legacy DIB ICO; inspect the Bun error above for missing assets, dependencies or compiler errors." -ForegroundColor Yellow
               Write-Host "Build command: bun build --compile --target=bun-windows-x64-baseline --windows-icon=..\jarock-tui.ico index.ts --outfile ..\jarock-tui.exe" -ForegroundColor Yellow
@@ -97,7 +108,10 @@ jobs:
           $exe = Join-Path $env:JAROCK_TUI_BUILD_ROOT 'jarock-tui.exe'
           $icon = [System.Drawing.Icon]::ExtractAssociatedIcon($exe)
           if ($null -eq $icon) { throw 'The compiled jarock-tui.exe has no readable embedded Windows icon resource.' }
-          Write-Host "Embedded Windows icon resource found in $exe."
+          $bitmap = $icon.ToBitmap()
+          if ($bitmap.Width -lt 16 -or $bitmap.Height -lt 16) { throw "The embedded Jarock icon is unexpectedly small: $($bitmap.Width)x$($bitmap.Height)." }
+          Write-Host "Embedded Windows icon resource found in $exe ($($bitmap.Width)x$($bitmap.Height))."
+          $bitmap.Dispose()
           $icon.Dispose()
       - name: Smoke test TUI executable
         shell: pwsh
@@ -115,9 +129,14 @@ jobs:
           $buildRoot = $env:JAROCK_TUI_BUILD_ROOT
           Push-Location (Join-Path $buildRoot 'tui')
           try {
-            bun build --compile --target=bun-windows-x64-baseline --windows-icon=..\jarock-tui.ico smoke.ts --outfile ..\jarock-tui-smoke.exe
-            if ($LASTEXITCODE -ne 0) {
-              $code = $LASTEXITCODE
+            $buildOutput = @(& bun build --compile --target=bun-windows-x64-baseline --windows-icon=..\jarock-tui.ico smoke.ts --outfile ..\jarock-tui-smoke.exe 2>&1)
+            $code = $LASTEXITCODE
+            $buildOutput | ForEach-Object { Write-Host $_ }
+            $buildText = $buildOutput -join "`n"
+            if ($buildText -match '(?i)failed to set executable icon') {
+              throw 'Bun reported that it could not set the smoke executable icon.'
+            }
+            if ($code -ne 0) {
               Write-Host "Reason: Bun could not produce the native OpenTUI smoke executable." -ForegroundColor Red
               Write-Host "The failure usually indicates a missing OpenTUI native backend, Tree-sitter asset or incompatible compiler input; inspect the Bun error above." -ForegroundColor Yellow
               Write-Host "Build command: bun build --compile --target=bun-windows-x64-baseline --windows-icon=..\jarock-tui.ico smoke.ts --outfile ..\jarock-tui-smoke.exe" -ForegroundColor Yellow
