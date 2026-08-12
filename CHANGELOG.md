@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.145-beta]
+
+- Added `docs/interface-support.md` as the canonical interface policy: the CLI is strongly recommended and maintained, while TUI packages and `jarock-tui.exe` remain available but unmaintained/as-is.
+- Linked the new policy from `docs/README.md` and added regression assertions so the documentation keeps the CLI recommendation and future TUI distribution guarantee explicit.
+
 ## [0.0.144-beta]
 
 - Updated the Jarock website to match the interface support policy: the CLI is strongly recommended and maintained, while TUI downloads remain available but are clearly labeled unmaintained/as-is.

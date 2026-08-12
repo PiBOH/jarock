@@ -39,6 +39,7 @@ try {
     $TuiEntry = Get-Content -LiteralPath (Join-Path $Root 'tui/index.ts') -Raw
     $Readme = Get-Content -LiteralPath (Join-Path $Root 'README.md') -Raw
     $DocsReadme = Get-Content -LiteralPath (Join-Path $Root 'docs/README.md') -Raw
+    $InterfaceSupport = Get-Content -LiteralPath (Join-Path $Root 'docs/interface-support.md') -Raw
     $WebsiteIndex = Get-Content -LiteralPath (Join-Path $Root '.website/index.html') -Raw
     $WebsiteDownloads = Get-Content -LiteralPath (Join-Path $Root '.website/downloads.html') -Raw
     $WebsiteDocs = Get-Content -LiteralPath (Join-Path $Root '.website/docs.html') -Raw
@@ -49,6 +50,10 @@ try {
     Assert ($DocsReadme.Contains('The **CLI is strongly recommended and maintained**')) 'documentation index strongly recommends the maintained CLI'
     Assert ($DocsReadme.Contains('The TUI remains available in future releases')) 'documentation index keeps future TUI releases documented'
     Assert ($DocsReadme.Contains('it is **unmaintained**')) 'documentation index marks the TUI as unmaintained'
+    Assert ($DocsReadme.Contains('interface-support.md')) 'documentation index links the interface support policy'
+    Assert ($InterfaceSupport.Contains('## CLI — strongly recommended and maintained')) 'support policy documents the maintained CLI'
+    Assert ($InterfaceSupport.Contains('## TUI — unmaintained, still distributed')) 'support policy documents the unmaintained TUI'
+    Assert ($InterfaceSupport.Contains('jarock-tui-full')) 'support policy preserves future TUI editions'
     Assert ($WebsiteIndex.Contains('The CLI is the strongly recommended and maintained interface')) 'website home strongly recommends the maintained CLI'
     Assert ($WebsiteIndex.Contains('the TUI is <strong>unmaintained</strong>')) 'website home marks the TUI as unmaintained'
     Assert ($WebsiteDownloads.Contains('Maintained · recommended')) 'website downloads marks CLI packages as maintained and recommended'
