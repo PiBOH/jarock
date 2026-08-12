@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.120-beta]
+
+- Fixed the Windows TUI icon build by generating a legacy BGRA/DIB ICO instead of a PNG-in-ICO wrapper. Bun can now embed the official Jarock icon reliably while compiling the baseline Windows executable for older CPUs.
+- Kept both standalone TUI and native OpenTUI smoke builds on `bun-windows-x64-baseline` for CPUs without AVX2.
+
 ## [0.0.119-beta]
 
 - Changed both Windows TUI compilations to Bun's `bun-windows-x64-baseline` target, avoiding AVX2-dependent `0xC000001D` Illegal Instruction crashes on older or less capable x64 CPUs.

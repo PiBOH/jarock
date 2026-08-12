@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Convert an 8-bit RGB/RGBA PNG into a 256x256 Windows ICO."""
+"""Convert an 8-bit RGB/RGBA PNG into a legacy 256x256 Windows ICO."""
 
 from __future__ import annotations
 
@@ -83,15 +83,52 @@ def decode_png(data: bytes) -> tuple[int, int, int, bytes]:
     return width, height, channels, b"".join(rows)
 
 
-def png_chunk(name: bytes, payload: bytes) -> bytes:
-    return struct.pack(">I", len(payload)) + name + payload + struct.pack(">I", binascii.crc32(name + payload) & 0xFFFFFFFF)
+def resize_nearest(width: int, height: int, channels: int, pixels: bytes) -> bytes:
+    resized = bytearray(TARGET_SIZE * TARGET_SIZE * channels)
+    for y in range(TARGET_SIZE):
+        source_y = min(height - 1, y * height // TARGET_SIZE)
+        for x in range(TARGET_SIZE):
+            source_x = min(width - 1, x * width // TARGET_SIZE)
+            source_offset = (source_y * width + source_x) * channels
+            output_offset = (y * TARGET_SIZE + x) * channels
+            resized[output_offset : output_offset + channels] = pixels[
+                source_offset : source_offset + channels
+            ]
+    return bytes(resized)
 
 
-def encode_png(width: int, height: int, channels: int, pixels: bytes) -> bytes:
-    color_type = 2 if channels == 3 else 6
-    header = struct.pack(">IIBBBBB", width, height, 8, color_type, 0, 0, 0)
-    scanlines = b"".join(b"\x00" + pixels[row * width * channels : (row + 1) * width * channels] for row in range(height))
-    return PNG_SIGNATURE + png_chunk(b"IHDR", header) + png_chunk(b"IDAT", zlib.compress(scanlines, 9)) + png_chunk(b"IEND", b"")
+def encode_legacy_ico(channels: int, pixels: bytes) -> bytes:
+    """Encode one 32-bit BGRA DIB frame plus its 1-bit AND mask."""
+    width = height = TARGET_SIZE
+    xor_rows: list[bytes] = []
+    and_row_size = ((width + 31) // 32) * 4
+    and_mask = b"\0" * (and_row_size * height)
+    for y in range(height - 1, -1, -1):
+        row = bytearray()
+        for x in range(width):
+            offset = (y * width + x) * channels
+            red, green, blue = pixels[offset : offset + 3]
+            alpha = pixels[offset + 3] if channels == 4 else 255
+            row.extend((blue, green, red, alpha))
+        xor_rows.append(bytes(row))
+    xor_bitmap = b"".join(xor_rows)
+    header = struct.pack(
+        "<IiiHHIIiiII",
+        40,                 # BITMAPINFOHEADER size
+        width,
+        height * 2,         # XOR bitmap plus AND mask
+        1,                  # planes
+        32,                 # BGRA pixels
+        0,                  # BI_RGB
+        len(xor_bitmap),
+        0,
+        0,
+        0,
+        0,
+    )
+    image = header + xor_bitmap + and_mask
+    entry = struct.pack("<BBBBHHII", 0, 0, 0, 0, 1, 32, len(image), 22)
+    return struct.pack("<HHH", 0, 1, 1) + entry + image
 
 
 def main() -> int:
@@ -101,20 +138,10 @@ def main() -> int:
     source = Path(sys.argv[1])
     destination = Path(sys.argv[2])
     width, height, channels, pixels = decode_png(source.read_bytes())
-    output_width = output_height = TARGET_SIZE
-    resized = bytearray(output_width * output_height * channels)
-    for y in range(output_height):
-        source_y = min(height - 1, y * height // output_height)
-        for x in range(output_width):
-            source_x = min(width - 1, x * width // output_width)
-            source_offset = (source_y * width + source_x) * channels
-            output_offset = (y * output_width + x) * channels
-            resized[output_offset : output_offset + channels] = pixels[source_offset : source_offset + channels]
-    png = encode_png(output_width, output_height, channels, bytes(resized))
-    entry = struct.pack("<BBBBHHII", 0, 0, 0, 0, 1, 32, len(png), 22)
+    resized = resize_nearest(width, height, channels, pixels)
     destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_bytes(struct.pack("<HHH", 0, 1, 1) + entry + png)
-    print(f"Created {destination} from {source} ({width}x{height} -> 256x256)")
+    destination.write_bytes(encode_legacy_ico(channels, resized))
+    print(f"Created {destination} from {source} ({width}x{height} -> 256x256 legacy DIB ICO)")
     return 0
 
 
