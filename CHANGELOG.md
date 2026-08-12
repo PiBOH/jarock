@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.123-beta]
+
+- Fixed the GitHub Actions baseline TUI build on Windows runners by moving the isolated Bun compilation workspace to `C:\\jarock-tui-build`. Bun's baseline runtime download and cache now stay on the same volume, avoiding the known cross-device rename (`XDEV`) failure.
+- Kept the baseline target and the normal `start-server.bat` entry point for every CLI/TUI and Full/Lite edition.
+
 ## [0.0.122-beta]
 
 - Updated the Windows TUI release build from Bun 1.3.0 to Bun 1.3.14. Bun 1.3.0 successfully built the modern Windows target but failed consistently when compiling the `bun-windows-x64-baseline` target required by older CPUs.

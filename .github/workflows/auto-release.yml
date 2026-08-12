@@ -39,13 +39,26 @@ jobs:
           $version = (bun --version).Trim()
           if ($version -ne '1.3.14') { throw "The workflow requires Bun 1.3.14 for baseline Windows compilation, but found Bun $version." }
           Write-Host "Using Bun $version for bun-windows-x64-baseline compilation."
+      - name: Prepare C drive TUI build workspace
+        shell: pwsh
+        run: |
+          $buildRoot = 'C:\jarock-tui-build'
+          if (Test-Path -LiteralPath $buildRoot) { Remove-Item -LiteralPath $buildRoot -Recurse -Force }
+          New-Item -ItemType Directory -Path (Join-Path $buildRoot 'scripts') -Force | Out-Null
+          Copy-Item -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'tui') -Destination $buildRoot -Recurse -Force
+          Copy-Item -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'icon.png') -Destination $buildRoot -Force
+          Copy-Item -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'scripts/png-to-ico.py') -Destination (Join-Path $buildRoot 'scripts') -Force
+          "JAROCK_TUI_BUILD_ROOT=$buildRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Prepared TUI build workspace on $buildRoot so Bun's baseline cache rename stays on the C: volume."
       - name: Install TUI dependencies
         shell: pwsh
-        run: bun install --cwd tui --frozen-lockfile
+        run: |
+          $tuiRoot = Join-Path $env:JAROCK_TUI_BUILD_ROOT 'tui'
+          bun install --cwd $tuiRoot --frozen-lockfile
       - name: Verify OpenTUI Tree-sitter asset
         shell: pwsh
         run: |
-          $asset = Join-Path $PWD 'tui/node_modules/web-tree-sitter/tree-sitter.wasm'
+          $asset = Join-Path $env:JAROCK_TUI_BUILD_ROOT 'tui/node_modules/web-tree-sitter/tree-sitter.wasm'
           if (-not (Test-Path -LiteralPath $asset -PathType Leaf)) {
             throw "The web-tree-sitter WASM asset is missing after installation: $asset"
           }
@@ -53,15 +66,18 @@ jobs:
       - name: Generate Jarock Windows icon
         shell: pwsh
         run: |
-          python scripts/png-to-ico.py icon.png jarock-tui.ico
+          Push-Location $env:JAROCK_TUI_BUILD_ROOT
+          try { python scripts/png-to-ico.py icon.png jarock-tui.ico }
+          finally { Pop-Location }
           if ($LASTEXITCODE -ne 0) { throw "Could not generate the Jarock Windows icon (exit code $LASTEXITCODE)." }
-          if (-not (Test-Path -LiteralPath .\jarock-tui.ico -PathType Leaf)) { throw 'The generated Jarock Windows icon is missing.' }
+          if (-not (Test-Path -LiteralPath (Join-Path $env:JAROCK_TUI_BUILD_ROOT 'jarock-tui.ico') -PathType Leaf)) { throw 'The generated Jarock Windows icon is missing.' }
       - name: Compile standalone Windows TUI
         shell: pwsh
         run: |
           Set-StrictMode -Version Latest
           $ErrorActionPreference = 'Stop'
-          Push-Location tui
+          $buildRoot = $env:JAROCK_TUI_BUILD_ROOT
+          Push-Location (Join-Path $buildRoot 'tui')
           try {
             bun build --compile --target=bun-windows-x64-baseline --windows-icon=..\jarock-tui.ico index.ts --outfile ..\jarock-tui.exe
             if ($LASTEXITCODE -ne 0) {
@@ -73,11 +89,11 @@ jobs:
             }
           }
           finally { Pop-Location }
-          if (-not (Test-Path -LiteralPath .\jarock-tui.exe -PathType Leaf)) { throw 'Bun did not create jarock-tui.exe.' }
+          if (-not (Test-Path -LiteralPath (Join-Path $env:JAROCK_TUI_BUILD_ROOT 'jarock-tui.exe') -PathType Leaf)) { throw 'Bun did not create jarock-tui.exe.' }
       - name: Smoke test TUI executable
         shell: pwsh
         run: |
-          $process = Start-Process -FilePath .\jarock-tui.exe -ArgumentList '--smoke' -PassThru -Wait -NoNewWindow
+          $process = Start-Process -FilePath (Join-Path $env:JAROCK_TUI_BUILD_ROOT 'jarock-tui.exe') -ArgumentList '--smoke' -PassThru -Wait -NoNewWindow
           if ($process.ExitCode -ne 0) {
             Write-Host "Reason: the compiled TUI exited before initializing its renderer; this can indicate a missing native DLL, unsupported CPU instruction or incomplete package." -ForegroundColor Yellow
             throw "jarock-tui.exe smoke test failed with exit code $($process.ExitCode)."
@@ -87,7 +103,8 @@ jobs:
         run: |
           Set-StrictMode -Version Latest
           $ErrorActionPreference = 'Stop'
-          Push-Location tui
+          $buildRoot = $env:JAROCK_TUI_BUILD_ROOT
+          Push-Location (Join-Path $buildRoot 'tui')
           try {
             bun build --compile --target=bun-windows-x64-baseline --windows-icon=..\jarock-tui.ico smoke.ts --outfile ..\jarock-tui-smoke.exe
             if ($LASTEXITCODE -ne 0) {
@@ -99,8 +116,8 @@ jobs:
             }
           }
           finally { Pop-Location }
-          if (-not (Test-Path -LiteralPath .\jarock-tui-smoke.exe -PathType Leaf)) { throw 'Bun did not create jarock-tui-smoke.exe.' }
-          $process = Start-Process -FilePath .\jarock-tui-smoke.exe -PassThru -Wait -NoNewWindow
+          if (-not (Test-Path -LiteralPath (Join-Path $env:JAROCK_TUI_BUILD_ROOT 'jarock-tui-smoke.exe') -PathType Leaf)) { throw 'Bun did not create jarock-tui-smoke.exe.' }
+          $process = Start-Process -FilePath (Join-Path $env:JAROCK_TUI_BUILD_ROOT 'jarock-tui-smoke.exe') -PassThru -Wait -NoNewWindow
           if ($process.ExitCode -ne 0) {
             Write-Host "Reason: the native OpenTUI renderer did not start; check the packaged Windows backend and CPU compatibility." -ForegroundColor Yellow
             throw "Native OpenTUI renderer smoke test failed with exit code $($process.ExitCode)."
@@ -109,7 +126,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jarock-tui
-          path: jarock-tui.exe
+          path: C:\jarock-tui-build\jarock-tui.exe
           if-no-files-found: error
 
   release:

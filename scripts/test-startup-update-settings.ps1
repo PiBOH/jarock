@@ -75,6 +75,8 @@ try {
     Assert ($AutoRelease.Contains("bun-version: '1.3.14'")) 'auto-release pins the Bun version required by baseline TUI compilation'
     Assert ($AutoRelease.Contains("requires Bun 1.3.14 for baseline Windows compilation")) 'auto-release verifies the installed Bun version before compiling'
     Assert ($AutoRelease.Contains('--target=bun-windows-x64-baseline')) 'auto-release keeps the CPU-compatible Windows baseline target'
+    Assert ($AutoRelease.Contains('C:\jarock-tui-build')) 'auto-release builds the baseline runtime on the C drive to avoid cross-volume cache renames'
+    Assert ($AutoRelease.Contains('JAROCK_TUI_BUILD_ROOT')) 'auto-release shares the isolated C-drive build workspace across TUI steps'
     $Updater = Get-Content -LiteralPath (Join-Path $Root 'scripts/update-jarock.ps1') -Raw
     Assert ($Updater.Contains('Schedule-DeferredLauncherApply')) 'updater schedules the launcher replacement after startup exits'
     $PendingHelper = Get-Content -LiteralPath (Join-Path $Root 'scripts/apply-pending-launcher.ps1') -Raw
