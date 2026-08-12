@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.118-beta]
+
+- Updated the Windows TUI build to use the official Jarock `icon.png` as the `jarock-tui.exe` application icon through Bun's `--windows-icon` option.
+- Added a dependency-free PNG-to-ICO build helper and applied the same icon to the native TUI smoke executable.
+
 ## [0.0.117-beta]
 
 - Fixed `start-server.bat` losing control after the startup update check by calling its isolated runner explicitly. Unexpected TUI exits now remain visible with an actionable error and pause instead of closing the console silently.

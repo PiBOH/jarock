@@ -44,6 +44,12 @@ jobs:
             throw "The web-tree-sitter WASM asset is missing after installation: $asset"
           }
           Write-Host "Tree-sitter WASM asset found: $asset"
+      - name: Generate Jarock Windows icon
+        shell: pwsh
+        run: |
+          python scripts/png-to-ico.py icon.png jarock-tui.ico
+          if ($LASTEXITCODE -ne 0) { throw "Could not generate the Jarock Windows icon (exit code $LASTEXITCODE)." }
+          if (-not (Test-Path -LiteralPath .\jarock-tui.ico -PathType Leaf)) { throw 'The generated Jarock Windows icon is missing.' }
       - name: Compile standalone Windows TUI
         shell: pwsh
         run: |
@@ -51,7 +57,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
           Push-Location tui
           try {
-            bun build --compile --target=bun-windows-x64 index.ts --outfile ..\jarock-tui.exe
+            bun build --compile --target=bun-windows-x64 --windows-icon=..\jarock-tui.ico index.ts --outfile ..\jarock-tui.exe
             if ($LASTEXITCODE -ne 0) { throw "Bun failed to compile the Windows TUI (exit code $LASTEXITCODE)." }
           }
           finally { Pop-Location }
@@ -68,7 +74,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
           Push-Location tui
           try {
-            bun build --compile --target=bun-windows-x64 smoke.ts --outfile ..\jarock-tui-smoke.exe
+            bun build --compile --target=bun-windows-x64 --windows-icon=..\jarock-tui.ico smoke.ts --outfile ..\jarock-tui-smoke.exe
             if ($LASTEXITCODE -ne 0) { throw "Bun failed to compile the native OpenTUI smoke test (exit code $LASTEXITCODE)." }
           }
           finally { Pop-Location }
