@@ -1,7 +1,7 @@
 {
   "name": "jarock-tui",
   "private": true,
-  "version": "0.0.142-beta",
+  "version": "0.0.143-beta",
   "type": "module",
   "engines": {
     "bun": ">=1.3.14"

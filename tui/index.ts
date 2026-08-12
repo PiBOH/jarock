@@ -35,7 +35,7 @@ const renderer = await createCliRenderer({
 })
 const main = Box({ width: "100%", height: "100%", flexDirection: "column", padding: 1, gap: 1 })
 const title = Text({ content: "Jarock TUI", fg: "#00d7ff" })
-const subtitle = Text({ content: "Windows terminal menu | DedicatedPower keeps the server window", fg: "#888888" })
+const subtitle = Text({ content: "TUI (unmaintained, as-is) | CLI strongly recommended | DedicatedPower keeps the server window", fg: "#888888" })
 const status = Text({ content: "Use Up/Down and Enter to choose an action. Ctrl+C exits.", fg: "#ffffff" })
 let activeActionSelect: any
 const menu = createActionSelect([

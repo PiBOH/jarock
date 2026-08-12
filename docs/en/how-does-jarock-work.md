@@ -9,6 +9,8 @@
 
 This document explains what happens after someone downloads the Jarock repository. It describes the real files and scripts in this repository, not an imaginary installer. The current Jarock project version is stored only in the `scripts/version.txt` file.
 
+> **Interface status:** The CLI is strongly recommended and maintained. TUI packages continue to be published, but the TUI is unmaintained and provided as-is without an active compatibility-fix guarantee.
+
 ---
 
 ## 1. The short version

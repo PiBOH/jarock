@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.143-beta]
+
+- Marked the TUI as **unmaintained** and provided as-is. The TUI packages and standalone executable will continue to be included in future releases, but no active compatibility or bug-fix guarantee is provided.
+- Marked the CLI as the **strongly recommended and maintained** interface across the README, documentation index, English guides and TUI menu messaging.
+
 ## [0.0.142-beta]
 
 - Fixed the remaining TUI menu lifecycle bug: nested menus and the parameter screen now explicitly register, add and focus the active `Select`, and returning from a submenu restores the main menu as the active target.

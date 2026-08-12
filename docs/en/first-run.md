@@ -4,6 +4,8 @@
 
 This guide explains exactly what happens the first time you use a freshly downloaded Jarock repository. Follow the steps in order. You do not need to download the Minecraft loader or the pinned server mods manually.
 
+> **Interface status:** The CLI parameter-manager flow is strongly recommended and maintained. The TUI is still included in TUI release packages, but it is unmaintained and provided as-is.
+
 ## Before you begin
 
 1. Use a 64-bit Windows installation.

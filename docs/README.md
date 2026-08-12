@@ -1,8 +1,12 @@
 # Documentation
 
+## Interface support status
+
+The **CLI is strongly recommended and maintained**. Use `jarock-cli-full` or `jarock-cli-lite` for the supported command-line experience. The TUI remains available in future releases, but it is **unmaintained**, provided as-is, and may not receive fixes for input or compatibility problems.
+
 ## Release editions and TUI
 
-Every release provides four Windows ZIP families: `jarock-cli-full`, `jarock-cli-lite`, `jarock-tui-full` and `jarock-tui-lite`. CLI editions use the classic command-line flow. TUI editions include the standalone `jarock-tui.exe`; both `start-server.bat` and `parameter-manager.bat` open the central terminal menu, while DedicatedPower continues to manage the server window. Full editions include the Java installers; Lite editions preserve the existing Lite behavior. `scripts/jarock-edition.ini` records the installed interface and tier, and verified updates never switch between CLI/TUI or Full/Lite. Use `clean-cache.bat` to remove inactive updater downloads, rollback backups and temporary wrappers without removing the server runtime; the same action is available from both CLI and TUI menus.
+Every release continues to provide four Windows ZIP families: `jarock-cli-full`, `jarock-cli-lite`, `jarock-tui-full` and `jarock-tui-lite`. CLI editions use the maintained classic command-line flow. TUI editions include the standalone `jarock-tui.exe`; both `start-server.bat` and `parameter-manager.bat` open the central terminal menu, while DedicatedPower continues to manage the server window. Full editions include the Java installers; Lite editions preserve the existing Lite behavior. `scripts/jarock-edition.ini` records the installed interface and tier, and verified updates never switch between CLI/TUI or Full/Lite. Use `clean-cache.bat` to remove inactive updater downloads, rollback backups and temporary wrappers without removing the server runtime; the same action is available from both CLI and TUI menus.
 
 ## English guides
 

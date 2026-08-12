@@ -37,6 +37,16 @@ try {
     Assert ($Batch.Contains('required native DLL')) 'start-server.bat explains missing native DLL failures'
     $ParameterManager = Get-Content -LiteralPath (Join-Path $Root 'parameter-manager.bat') -Raw
     $TuiEntry = Get-Content -LiteralPath (Join-Path $Root 'tui/index.ts') -Raw
+    $Readme = Get-Content -LiteralPath (Join-Path $Root 'README.md') -Raw
+    $DocsReadme = Get-Content -LiteralPath (Join-Path $Root 'docs/README.md') -Raw
+    Assert ($Readme.Contains('The CLI is **strongly recommended** and is the maintained, supported interface')) 'README strongly recommends the maintained CLI'
+    Assert ($Readme.Contains('The TUI remains available in future release packages')) 'README keeps future TUI packages documented'
+    Assert ($Readme.Contains('the TUI is **unmaintained**')) 'README marks the TUI as unmaintained'
+    Assert ($DocsReadme.Contains('The **CLI is strongly recommended and maintained**')) 'documentation index strongly recommends the maintained CLI'
+    Assert ($DocsReadme.Contains('The TUI remains available in future releases')) 'documentation index keeps future TUI releases documented'
+    Assert ($DocsReadme.Contains('it is **unmaintained**')) 'documentation index marks the TUI as unmaintained'
+    Assert ($TuiEntry.Contains('TUI (unmaintained, as-is)')) 'TUI identifies its unmaintained status in the menu'
+    Assert ($TuiEntry.Contains('CLI strongly recommended')) 'TUI points users to the recommended CLI'
     Assert ($TuiEntry.Contains('JAROCK_TUI_BYPASS: "1"')) 'TUI bypasses the outer interface when opening a classic-console operation'
     Assert ($TuiEntry.Contains('_JAROCK_CLASSIC_CONSOLE: "1"')) 'TUI marks classic-console operations as already inside the classic console'
     Assert ($ParameterManager.Contains('_JAROCK_PARAMETER_MANAGER_ROOT')) 'parameter-manager.bat isolates execution for safe self-updates'
