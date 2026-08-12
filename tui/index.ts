@@ -86,7 +86,11 @@ function runClassicConsoleBatch(path: string, args: string[] = []): void {
     writeFileSync(wrapper, command, "ascii")
   } catch { status.content = "Could not create the TUI operation wrapper."; return }
   const child = spawn("cmd.exe", ["/d", "/c", "call", helper, "Jarock operation", wrapper, "/wait"], {
-    cwd: root, windowsHide: false, stdio: "ignore", env: { ...process.env, JAROCK_TUI_BYPASS: "1" },
+    cwd: root, windowsHide: false, stdio: "ignore", env: {
+      ...process.env,
+      JAROCK_TUI_BYPASS: "1",
+      _JAROCK_CLASSIC_CONSOLE: "1",
+    },
   })
   child.on("close", (code) => { try { unlinkSync(wrapper) } catch {} ; status.content = code === 0 ? "Operation finished. Choose another action." : `Operation exited with code ${code ?? 1}. Check the opened console.`; menu.focus() })
   child.on("error", (error) => { try { unlinkSync(wrapper) } catch {} ; status.content = `Could not start the operation: ${error.message}`; menu.focus() })

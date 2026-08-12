@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.115-beta]
+
+- Fixed TUI-launched `start-server.bat`, `parameter-manager.bat` and other operations from being relaunched asynchronously when Windows Terminal was the parent host. TUI child processes now explicitly carry the classic-console context, so startup updates finish before the server flow continues and the parameter manager receives control correctly.
+- Added regression assertions for the TUI classic-console environment handoff.
+
 ## [Unreleased]
 
 - Linked the README technology and environment badges to their official Minecraft, OpenJDK, Geyser, Fabric and NeoForge pages, and split the combined loader badge so each loader has its own destination.
