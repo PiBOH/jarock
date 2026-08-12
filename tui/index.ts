@@ -3,7 +3,6 @@ import {
   Input,
   InputRenderableEvents,
   Select,
-  SelectRenderableEvents,
   Text,
   createCliRenderer,
 } from "@opentui/core"
@@ -112,31 +111,26 @@ function activateBoundSelect(select: any): void {
   invokeAction(activate, option)
 }
 
-function selectMouseDown(this: any, event: any): void {
-  if (event.button !== 0) return
-  const index = selectIndexAt(this, event)
-  if (index === null) return
-  this.setSelectedIndex(index)
-  this.focus()
-  this.__jarockMouseDownIndex = index
-  event.preventDefault()
-  event.stopPropagation()
+function isSelectConfirmKey(key: any): boolean {
+  return key?.name === "return" || key?.name === "enter" || key?.name === "linefeed" || key?.sequence === "\r" || key?.sequence === "\n"
 }
 
-function selectMouseUp(this: any, event: any): void {
-  if (event.button !== 0) return
+function selectKeyDown(this: any, key: any): void {
+  if (!isSelectConfirmKey(key)) return
+  key.preventDefault()
+  key.stopPropagation()
+  activateBoundSelect(this)
+}
+
+function selectMouseDown(this: any, event: any): void {
+  if (event.button !== 0 && event.button !== "left") return
   const index = selectIndexAt(this, event)
-  const downIndex = this.__jarockMouseDownIndex
-  this.__jarockMouseDownIndex = undefined
   if (index === null) return
   this.setSelectedIndex(index)
   this.focus()
   event.preventDefault()
   event.stopPropagation()
-  // Activate only on release. This prevents a drag or a screen transition
-  // during mouse-down from executing an action twice or on the wrong row.
-  // Hosts that provide mouse-up without mouse-down are supported as well.
-  if (downIndex === undefined || downIndex === index) activateBoundSelect(this)
+  activateBoundSelect(this)
 }
 
 function createActionSelect(options: any[], settings: Record<string, any>, activate: (option: any) => void): any {
@@ -145,14 +139,7 @@ function createActionSelect(options: any[], settings: Record<string, any>, activ
     options,
     onMouseMove: selectMouseMove,
     onMouseDown: selectMouseDown,
-    onMouseUp: selectMouseUp,
-  })
-  // SelectRenderable's native key bindings handle Return/Linefeed and emit
-  // ITEM_SELECTED. Listening to that official event works across cmd.exe,
-  // PowerShell and ConPTY, unlike relying on a renderer-level key callback
-  // that may not be invoked by every standalone Bun console host.
-  select.on(SelectRenderableEvents.ITEM_SELECTED, () => {
-    invokeAction(activate, getSelectedActionOption(select))
+    onKeyDown: selectKeyDown,
   })
   select.__jarockActivate = activate
   return select

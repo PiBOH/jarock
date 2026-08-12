@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.140-beta]
+
+- Fixed the TUI activation regression where hover and arrow navigation worked but Enter and mouse clicks did nothing. Every Select now handles Enter directly through its focused `onKeyDown` callback, recognizing `enter`, `return` and `linefeed` variants and stopping duplicate native dispatch.
+- Restored direct left-click activation on `mouseDown` for the main menu and all nested TUI menus. The selected row is still calculated with the scroll offset, while the existing hover and arrow behavior remains unchanged.
+- Added regression assertions for Windows Enter key names, focused Select keyboard handling and direct mouse activation.
+
 ## [0.0.139-beta]
 
 - Added `clean-cache.bat` and `scripts/clean-cache.ps1` to remove inactive Jarock updater downloads, rollback backups and temporary wrappers without touching the server runtime, worlds or settings.
