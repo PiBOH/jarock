@@ -8,11 +8,13 @@ param()
 # Import behavior:
 #   - source is a world folder containing level.dat, or a .zip archive whose root
 #     (or single top-level folder) contains level.dat;
-#   - if the configured world already exists, the operator is asked for confirmation
-#     and the existing world is first moved aside as <name>_originalbkp
-#     (or <name>_originalbkp_<timestamp> when that name is already taken);
+#   - if the configured world already exists (complete or incomplete), the operator
+#     is asked for confirmation and the existing world is first moved aside as
+#     <name>_originalbkp (or <name>_originalbkp_<timestamp> when that name is
+#     already taken), so the active world is replaced with the imported one only
+#     after the operator confirms;
 #   - WORLD_IMPORT_REMEMBER=true keeps the source after a successful import and
-#     restores it only when the configured world folder is later deleted;
+#     imports it again at the next start (always with confirmation and a backup);
 #   - WORLD_IMPORT_REMEMBER=false clears the source after the one-shot import.
 #
 # Export behavior:
@@ -89,9 +91,10 @@ function Invoke-WorldImport {
     $SourceValue = ([string]$Settings['WORLD_IMPORT_SOURCE']).Trim()
     if ([string]::IsNullOrWhiteSpace($SourceValue)) { return }
     $RememberSource = $Settings.ContainsKey('WORLD_IMPORT_REMEMBER') -and ([string]$Settings['WORLD_IMPORT_REMEMBER']).Trim() -match '^(?i:true|yes|1)$'
-    # A remembered source is never a recurring overwrite instruction. The source is
-    # used only when the configured world folder is absent, regardless of the legacy
-    # internal marker value left by parameter-manager.bat after editing settings.
+    # A remembered source is imported at every start: the operator explicitly chose
+    # "Import always", so the configured world replaces the active one at each start
+    # after a confirmation prompt and after backing up the existing folder first.
+    # The legacy WORLD_IMPORT_APPLIED marker does not change that behavior.
 
     $Resolved = Resolve-ImportSource $SourceValue
     # Never import from inside the server folder: the source copy would remain there
@@ -105,13 +108,14 @@ function Invoke-WorldImport {
     $Target = Join-Path $ServerDirectory $SafeName
 
     if (Test-Path -LiteralPath $Target -PathType Container) {
-        # A remembered source is a recovery/template source, not an instruction to
-        # overwrite the live world on every startup. Once it has been applied, leave
-        # the existing world untouched; if the owner deletes it deliberately, the
-        # missing-target path below imports the remembered source again.
-        if ($RememberSource) {
-            Write-Host "Remembered world source is configured; the existing '$SafeName' world was kept. It will be reused only if this world folder is deliberately deleted." -ForegroundColor Cyan
-            return
+        # A complete world has level.dat (and usually a region folder). A folder that
+        # only contains icon.png/datapacks or was left behind by a crash is treated
+        # as incomplete and is replaced after confirmation just like a full world.
+        $TargetLooksComplete = (Test-Path -LiteralPath (Join-Path $Target 'level.dat') -PathType Leaf) -or
+            (Test-Path -LiteralPath (Join-Path $Target 'region') -PathType Container)
+        $PromptText = "A world already exists in '$LevelName'. Importing will replace it after creating a backup. Continue? (Y/N)"
+        if (-not $TargetLooksComplete) {
+            $PromptText = "The existing '$LevelName' folder is incomplete (no world data). Importing will move it aside and import the configured world. Continue? (Y/N)"
         }
         $Confirmed = $false
         if (-not [string]::IsNullOrWhiteSpace($env:JAROCK_WORLD_TRANSFER_ASSUME_YES)) {
@@ -120,16 +124,16 @@ function Invoke-WorldImport {
             $Confirmed = $true
         }
         else {
-            $Confirm = Read-Host "A world already exists in '$LevelName'. Importing will replace it after creating a backup. Continue? (Y/N)"
+            $Confirm = Read-Host $PromptText
             $Confirmed = ($Confirm -match '^(?i:y|yes)$')
         }
         if (-not $Confirmed) {
             # The operator declined to replace the existing world: keep it untouched.
-            # A remembered source remains available for a later deliberate deletion of
-            # the active world; a one-shot request is cleared as before.
+            # A remembered source remains configured and is offered again at the next
+            # start; a one-shot request is cleared as before.
             if ($RememberSource) {
                 Set-SettingsValue $SettingsPath 'WORLD_IMPORT_APPLIED' 'false'
-                Write-Host 'World import skipped: the existing world was kept; the remembered source remains configured.' -ForegroundColor Yellow
+                Write-Host 'World import skipped: the existing world was kept; the remembered source remains configured for the next start.' -ForegroundColor Yellow
             }
             else {
                 Set-SettingsValue $SettingsPath 'WORLD_IMPORT_SOURCE' ''
@@ -182,7 +186,7 @@ function Invoke-WorldImport {
         Set-SettingsValue $SettingsPath 'WORLD_IMPORT_REMEMBER' 'true'
         Set-SettingsValue $SettingsPath 'WORLD_IMPORT_APPLIED' 'true'
         Write-Host "Imported the world from '$SourceValue' into server\$SafeName." -ForegroundColor Green
-        Write-Host 'The world source was remembered. It will be reused only if the configured world is later deleted; the existing world will not be overwritten on normal restarts.' -ForegroundColor Cyan
+        Write-Host 'The world source was remembered: it will be imported again at the next start, with confirmation and a backup of the existing world.' -ForegroundColor Cyan
     }
     else {
         Set-SettingsValue $SettingsPath 'WORLD_IMPORT_SOURCE' ''

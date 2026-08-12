@@ -285,7 +285,7 @@ function showRememberWorldScreen(): void {
   menu.visible = false
   let rememberMenu: any
   rememberMenu = createActionSelect([
-    { name: "Remember this world (default)", description: "Reuse it only if the configured world is later deleted.", value: "true" },
+    { name: "Remember this world (default)", description: "Import it at every start, with confirmation and a backup.", value: "true" },
     { name: "Use once only", description: "Clear the source after the next successful import.", value: "false" },
   ], {
     width: "100%", height: 6, wrapSelection: true, selectedBackgroundColor: "#145a72",

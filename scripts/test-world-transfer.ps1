@@ -53,36 +53,63 @@ try {
         Assert (($ImportedIconBytes.Length -eq 4) -and ($ImportedIconBytes[0] -eq 4) -and ($ImportedIconBytes[1] -eq 3) -and ($ImportedIconBytes[2] -eq 2) -and ($ImportedIconBytes[3] -eq 1)) 'Folder import preserves a custom world icon'
         Assert ((Get-Content -LiteralPath $SettingsPath -Raw) -notmatch 'WORLD_IMPORT_SOURCE=[^\r\n]') 'Import clears the source setting'
 
-        # A remembered source is retained and does not overwrite the active world on
-        # the next start. WORLD_IMPORT_APPLIED=false is intentional here: the parameter
-        # manager resets that internal marker whenever the saved source is edited, but
-        # remembering the source must still prevent a recurring overwrite prompt.
+        # A remembered source restores a deleted/missing world on the next start.
+        # WORLD_IMPORT_APPLIED=false is intentional here: the parameter manager
+        # resets that internal marker whenever the saved source is edited, but the
+        # remembered source is still imported (with confirmation and backup) at
+        # every start.
         Remove-Item -LiteralPath $Level -Recurse -Force
         [IO.File]::WriteAllText($SettingsPath, "LOADER_TYPE=fabric`r`nWORLD_IMPORT_SOURCE=$Source1`r`nWORLD_IMPORT_REMEMBER=true`r`nWORLD_IMPORT_APPLIED=false`r`n")
         Invoke-WorldImport -ServerDirectory $ServerDir -SettingsPath $SettingsPath -LevelName 'world'
         Assert ((Get-Content -LiteralPath (Join-Path $Level 'level.dat') -Raw) -eq 'SOURCE-1') 'Remembered source restores a deleted world'
         Assert ((Get-Content -LiteralPath $SettingsPath -Raw) -match 'WORLD_IMPORT_SOURCE=.*source-world-1') 'Remembered source remains saved after restore'
+
+        # A remembered source replaces an existing world at the next start: with the
+        # test hook the confirmation is automatic and the existing world is backed
+        # up first as world_originalbkp.
         [IO.File]::WriteAllText((Join-Path $Level 'level.dat'), 'ACTIVE-CHANGES')
+        Invoke-WorldImport -ServerDirectory $ServerDir -SettingsPath $SettingsPath -LevelName 'world'
+        Assert ((Get-Content -LiteralPath (Join-Path $Level 'level.dat') -Raw) -eq 'SOURCE-1') 'Remembered source replaces the existing world'
+        Assert (Test-Path -LiteralPath (Join-Path $ServerDir 'world_originalbkp') -PathType Container) 'Remembered replacement creates the world_originalbkp backup'
+        Assert ((Get-Content -LiteralPath $SettingsPath -Raw) -match 'WORLD_IMPORT_SOURCE=.*source-world-1') 'Remembered source remains saved after replacement'
+
+        # Declining the confirmation keeps the existing world and keeps the
+        # remembered source configured for the next start.
+        [IO.File]::WriteAllText((Join-Path $Level 'level.dat'), 'ACTIVE-CHANGES-2')
         $global:JarockWorldTransferPromptCalled = $false
         function global:Read-Host {
             $global:JarockWorldTransferPromptCalled = $true
-            throw 'The remembered-world restart unexpectedly requested overwrite confirmation.'
+            return 'n'
         }
+        $SavedAssumeYes = $env:JAROCK_WORLD_TRANSFER_ASSUME_YES
+        Remove-Item Env:JAROCK_WORLD_TRANSFER_ASSUME_YES -ErrorAction SilentlyContinue
         try {
             Invoke-WorldImport -ServerDirectory $ServerDir -SettingsPath $SettingsPath -LevelName 'world'
         }
         catch {
             Write-Host "Unexpected remembered-world prompt: $($_.Exception.Message)" -ForegroundColor Red
         }
-        Assert ((Get-Content -LiteralPath (Join-Path $Level 'level.dat') -Raw) -eq 'ACTIVE-CHANGES') 'Remembered source does not overwrite an existing world'
-        Assert (-not $global:JarockWorldTransferPromptCalled) 'Remembered restart does not ask for overwrite confirmation'
+        if ($null -eq $SavedAssumeYes) { Remove-Item Env:JAROCK_WORLD_TRANSFER_ASSUME_YES -ErrorAction SilentlyContinue }
+        else { $env:JAROCK_WORLD_TRANSFER_ASSUME_YES = $SavedAssumeYes }
+        Assert ((Get-Content -LiteralPath (Join-Path $Level 'level.dat') -Raw) -eq 'ACTIVE-CHANGES-2') 'Declining keeps the existing world'
+        Assert $global:JarockWorldTransferPromptCalled 'Remembered replacement asks for confirmation'
+        Assert ((Get-Content -LiteralPath $SettingsPath -Raw) -match 'WORLD_IMPORT_SOURCE=.*source-world-1') 'Remembered source remains saved after declining'
         Remove-Item Function:\Read-Host -Force -ErrorAction SilentlyContinue
         Remove-Variable JarockWorldTransferPromptCalled -Scope Global -ErrorAction SilentlyContinue
 
-        # Replacing an existing world creates the backup first.
+        # An incomplete world folder (no level.dat, only icon.png) is replaced after
+        # confirmation with a backup, exactly like a complete world.
+        Remove-Item -LiteralPath $Level -Recurse -Force
+        New-Item -ItemType Directory -Force -Path $Level | Out-Null
+        [IO.File]::WriteAllText((Join-Path $Level 'icon.png'), 'ICON-ONLY')
+        Invoke-WorldImport -ServerDirectory $ServerDir -SettingsPath $SettingsPath -LevelName 'world'
+        Assert ((Get-Content -LiteralPath (Join-Path $Level 'level.dat') -Raw) -eq 'SOURCE-1') 'Remembered source replaces an incomplete world folder'
+        Assert (@(Get-ChildItem -LiteralPath $ServerDir -Directory -Filter 'world_originalbkp_*' -ErrorAction SilentlyContinue).Count -gt 0) 'Incomplete world replacement creates a timestamped backup'
+
+        # Replacing an existing world creates the backup first (one-shot import).
         [IO.File]::WriteAllText($SettingsPath, "LOADER_TYPE=fabric`r`nWORLD_IMPORT_SOURCE=$Source2`r`nWORLD_IMPORT_REMEMBER=false`r`nWORLD_IMPORT_APPLIED=false`r`n")
         Invoke-WorldImport -ServerDirectory $ServerDir -SettingsPath $SettingsPath -LevelName 'world'
-        Assert (Test-Path -LiteralPath (Join-Path $ServerDir 'world_originalbkp') -PathType Container) 'Replacement import creates the world_originalbkp backup'
+        Assert (@(Get-ChildItem -LiteralPath $ServerDir -Directory -Filter 'world_originalbkp_*' -ErrorAction SilentlyContinue).Count -gt 0) 'One-shot replacement creates a timestamped backup'
         Assert ((Get-Content -LiteralPath (Join-Path (Join-Path $ServerDir 'world') 'level.dat') -Raw) -eq 'SOURCE-2') 'Replacement import copies the new world'
 
         # Zip import with a single nested world folder.

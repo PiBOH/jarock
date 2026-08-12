@@ -1,4 +1,4 @@
-# Fabric 服务器指南
+﻿# Fabric 服务器指南
 
 安装 64 位 Java 25，运行 `start-server.bat`，使用 `parameter-manager.bat` 设置内存和 GUI 或 `nogui`。阅读 `server/eula.txt`，同意 EULA 后才设置 `eula=true`。使用 Fabric、Geyser-Fabric 和 Floodgate-Fabric，并先备份。Jarock 不修改路由器、防火墙或 port forwarding。 (enable "Set JAVA_HOME variable" in the Temurin installer)
 
@@ -45,7 +45,7 @@ Technical note: after startup, Jarock prints the local LAN IPv4 address. Java pl
 
 ## World import and export
 
-> English note: parameter-manager.bat option `I` (Import world) accepts the full path of a world folder containing `level.dat` or of a `.zip` world archive; the world is imported on the next `start-server.bat` run. If the configured world already exists you are asked to confirm and it is backed up first as `<name>_originalbkp`. The parameter manager asks whether to remember the source with `(Y/n)`; Enter accepts the default Yes. When remembered, the source stays saved and is reused only if the configured world is later deleted; normal restarts keep the existing world, never overwrite it, and never ask for overwrite confirmation. If not remembered, the request is cleared after the one-shot import. Option `E` (Export world) accepts a destination folder outside `server/`; after every clean shutdown (`stop` + `SAFE TO CLOSE`) the world is copied there, overwriting the destination.
+> English note: parameter-manager.bat option `I` (Import world) accepts the full path of a world folder containing `level.dat` or of a `.zip` world archive; the world is imported on the next `start-server.bat` run. If the configured world already exists you are asked to confirm and it is backed up first as `<name>_originalbkp`. The parameter manager asks whether to remember the source with `(Y/n)`; Enter accepts the default Yes. When remembered, the source stays saved and is imported again at every start: Jarock asks for confirmation and first moves the existing world aside as `<name>_originalbkp` (with a timestamp suffix when that name is already taken), so the imported world replaces the active one after the operator confirms. An incomplete world folder (for example missing `level.dat` after a crash) is also replaced after confirmation, with a backup first. If not remembered, the request is cleared after the one-shot import. Option `E` (Export world) accepts a destination folder outside `server/`; after every clean shutdown (`stop` + `SAFE TO CLOSE`) the world is copied there, overwriting the destination.
 
 > Icon note: Jarock uses the tracked root `icon.png` only as the default icon for a world that has no custom icon, and preserves imported or customized world icons. The tracked `server/icon.png` is included in the server runtime, while `server/server-icon.png` is the multiplayer server-list icon. All three tracked icons are included in every CLI and TUI release package. The cleanup script also preserves the two tracked server icons; the repository-root icon.png and logo.png remain outside its cleanup scope.
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.146-beta]
+
+- Changed the remembered world import (`Remember this world for future starts? (Y/n)` = Yes by default) from recovery-only to **import at every start**: Jarock now asks for confirmation and first moves the existing world aside as `<name>_originalbkp` (timestamp suffix when the name is taken), so the imported world replaces the active one only after the operator confirms.
+- An incomplete world folder (for example missing `level.dat` after a crash) is now also replaced after confirmation with a backup, instead of being skipped because the folder exists.
+- Declining the confirmation keeps the existing world; a remembered source stays configured for the next start, while a one-shot (`n`) request is still cleared after the import.
+- Updated `scripts/world-transfer.ps1`, the parameter manager messages, the TUI remembered-world description, the world-transfer regression test and all documentation (README, docs index, English server guide and all 31 localized server guides).
+
 ## [0.0.145-beta]
 
 - Added `docs/interface-support.md` as the canonical interface policy: the CLI is strongly recommended and maintained, while TUI packages and `jarock-tui.exe` remain available but unmaintained/as-is.

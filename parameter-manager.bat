@@ -339,9 +339,10 @@ call :read_value WORLD_IMPORT_SOURCE ""
 call :read_value WORLD_IMPORT_REMEMBER false
 echo Current world import source: [%WORLD_IMPORT_SOURCE%]
 echo Remembered for future starts: [%WORLD_IMPORT_REMEMBER%]
+echo   (remembered = imported at every start, with confirmation and backup)
 echo.
 echo Paste the full path of a world folder (containing level.dat) or a .zip world archive
-echo that you want to import on the next start-server.bat run.
+echo that you want to import on every start-server.bat run (or once if not remembered).
 echo Leave empty and press Enter to open a folder picker.
 echo Type CLEAR and press Enter to remove the import request.
 set "NEW_IMPORT="
@@ -385,7 +386,8 @@ if errorlevel 1 pause
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name WORLD_IMPORT_APPLIED -Value false
 if errorlevel 1 pause
 if /i "%NEW_REMEMBER%"=="true" (
-    echo World import source set and remembered. It will be reused if the configured world is later deleted.
+    echo World import source set and remembered. It will be imported at every start,
+    echo with a confirmation prompt and a backup of the existing world.
 ) else (
     echo World import source set for the next start only.
 )
