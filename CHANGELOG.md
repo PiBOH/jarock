@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.116-beta]
+
+- Fixed automatic release packaging so `jarock-tui-full` includes both bundled Java prerequisite installers, matching `jarock-cli-full`. Lite packages continue to exclude the installers.
+- Added archive validation that rejects Full packages missing either installer or Lite packages containing prerequisites.
+
 ## [0.0.115-beta]
 
 - Fixed TUI-launched `start-server.bat`, `parameter-manager.bat` and other operations from being relaunched asynchronously when Windows Terminal was the parent host. TUI child processes now explicitly carry the classic-console context, so startup updates finish before the server flow continues and the parameter manager receives control correctly.

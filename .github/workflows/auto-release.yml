@@ -245,13 +245,13 @@ jobs:
             esac
             mkdir -p "$CLI_FULL_STAGE/$(dirname "$f")"
             cp -p "$f" "$CLI_FULL_STAGE/$f"
+            mkdir -p "$TUI_FULL_STAGE/$(dirname "$f")"
+            cp -p "$f" "$TUI_FULL_STAGE/$f"
             case "$f" in
               prerequisites/*) continue ;;
             esac
             mkdir -p "$CLI_LITE_STAGE/$(dirname "$f")"
             cp -p "$f" "$CLI_LITE_STAGE/$f"
-            mkdir -p "$TUI_FULL_STAGE/$(dirname "$f")"
-            cp -p "$f" "$TUI_FULL_STAGE/$f"
             mkdir -p "$TUI_LITE_STAGE/$(dirname "$f")"
             cp -p "$f" "$TUI_LITE_STAGE/$f"
           done
@@ -278,10 +278,15 @@ jobs:
           python3 - "$CLI_FULL_NAME" "$CLI_LITE_NAME" "$TUI_FULL_NAME" "$TUI_LITE_NAME" <<'PY'
           import sys, zipfile
           required = {'icon.png', 'server/icon.png', 'server/server-icon.png', 'server/config/welcomemessage.json5.jarock', 'server/config/welcomemessage.json5.template-jarock', 'scripts/jarock-edition.ini'}
+          required_prerequisites = {'prerequisites/jre-8-windows-x64.exe', 'prerequisites/OpenJDK25U-jdk_x64_windows_hotspot.msi'}
           for archive_name in sys.argv[1:]:
               with zipfile.ZipFile(archive_name) as archive: names = set(archive.namelist())
               missing = required - names
               if missing: raise SystemExit(f'{archive_name} is missing required Jarock file(s): {sorted(missing)}')
+              is_full = '-full' in archive_name
+              has_prerequisites = any(name.startswith('prerequisites/') for name in names)
+              if is_full and not required_prerequisites <= names: raise SystemExit(f'{archive_name} is missing bundled Java prerequisite installer(s): {sorted(required_prerequisites - names)}')
+              if not is_full and has_prerequisites: raise SystemExit(f'{archive_name} unexpectedly contains bundled Java prerequisites')
               if 'tui-' in archive_name and 'jarock-tui.exe' not in names: raise SystemExit(f'{archive_name} is missing jarock-tui.exe')
               if 'tui-' not in archive_name and 'jarock-tui.exe' in names: raise SystemExit(f'{archive_name} unexpectedly contains jarock-tui.exe')
               print(f'{archive_name}: package validation passed')
