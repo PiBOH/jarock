@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.147-beta]
+
+- Fixed the server.properties `online-mode` rewrite corrupting a custom `motd` with non-ASCII characters: `Set-ServerOnlineMode` now lives in the shared `scripts/server-properties.ps1` module and uses a byte-preserving Latin-1 round-trip, so only the `online-mode` line changes and the rest of the file (motd, BOM, CRLF/LF line endings) stays byte-for-byte identical regardless of the original encoding (Latin-1, UTF-8 or UTF-8 with BOM).
+- Added `scripts/test-server-properties.ps1` and the `test-server-properties.yml` workflow covering Latin-1, UTF-8 (with and without BOM), missing `online-mode`, invalid values and repeated rewrites.
+
 ## [0.0.146-beta]
 
 - Changed the remembered world import (`Remember this world for future starts? (Y/n)` = Yes by default) from recovery-only to **import at every start**: Jarock now asks for confirmation and first moves the existing world aside as `<name>_originalbkp` (timestamp suffix when the name is taken), so the imported world replaces the active one only after the operator confirms.

@@ -15,6 +15,8 @@ $JavaRuntimeScript = Join-Path $PSScriptRoot 'java-runtime.ps1'
 . $JavaRuntimeScript
 $WorldTransferScript = Join-Path $PSScriptRoot 'world-transfer.ps1'
 . $WorldTransferScript
+$ServerPropertiesScript = Join-Path $PSScriptRoot 'server-properties.ps1'
+. $ServerPropertiesScript
 $CloseProtectionScript = Join-Path $PSScriptRoot 'console-close-protection.ps1'
 $CloseProtectionEnabled = $false
 $CloseProtectionLoaded = $false
@@ -30,14 +32,6 @@ function Assert-MemoryValue([string]$Name, [string]$Value) {
     if ($Matches['unit'].ToUpperInvariant() -eq 'G') { $Mb *= 1024 }
     if ($Mb -lt 1024) { throw "$Name is too small ('$Value'). Use at least 1G." }
     return $Mb
-}
-function Set-ServerOnlineMode([string]$Path, [string]$Value) {
-    if ($Value -notin @('true','false')) { throw "ONLINE_MODE must be true or false, not '$Value'." }
-    $Content = Get-Content -LiteralPath $Path -Raw
-    if ($Content -match '(?m)^[ \t]*online-mode[ \t]*=') { $Content = [regex]::Replace($Content,'(?m)^[ \t]*online-mode[ \t]*=[^\r\n]*',"online-mode=$Value") }
-    else { $Content = $Content.TrimEnd("`r","`n") + "`r`nonline-mode=$Value`r`n" }
-    [IO.File]::WriteAllText($Path,$Content,(New-Object Text.UTF8Encoding($false)))
-    if ($Value -eq 'false') { Write-Host 'WARNING: online-mode=false disables normal Mojang authentication.' -ForegroundColor Yellow }
 }
 function Read-Settings {
     $Values=@{}
