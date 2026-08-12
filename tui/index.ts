@@ -48,7 +48,6 @@ const menu = createActionSelect([
   selectedBackgroundColor: "#145a72", selectedTextColor: "#ffffff", showDescription: true,
 }, (option) => activateMainMenuOption(option.value))
 main.add(title); main.add(subtitle); main.add(status); main.add(menu); renderer.root.add(main)
-menu.focus()
 // Bun standalone builds can leave stdin paused even though OpenTUI has put the
 // terminal in raw mode. Resume it explicitly and keep a safe fallback for
 // console hosts that expose setRawMode only conditionally.
@@ -63,23 +62,10 @@ try {
 // control state. Start the loop explicitly so keyboard and mouse events are
 // processed in standalone Windows builds as well as during development.
 renderer.start()
-
-function isSelectConfirmKey(key: any): boolean {
-  return key?.name === "return" || key?.name === "enter" || key?.name === "linefeed" || key?.sequence === "\r" || key?.sequence === "\n"
-}
-
-function activateBoundSelect(select: any): void {
-  const option = select.getSelectedOption?.()
-  const activate = select.__jarockActivate as ((selected: any) => void) | undefined
-  if (option && activate) activate(option)
-}
-
-function selectKeyDown(this: any, key: any): void {
-  if (!isSelectConfirmKey(key)) return
-  key.preventDefault()
-  key.stopPropagation()
-  activateBoundSelect(this)
-}
+// Focus after the explicit start as well: on some standalone Windows builds
+// autoFocus runs during renderer.start() and can otherwise leave the Select
+// rendered but outside the active focus chain.
+menu.focus()
 
 function selectMouseDown(this: any, event: any): void {
   if (event.button !== 0) return
@@ -101,7 +87,13 @@ function createActionSelect(options: any[], settings: Record<string, any>, activ
     ...settings,
     options,
     onMouseDown: selectMouseDown,
-    onKeyDown: selectKeyDown,
+  })
+  // SelectRenderable's native key bindings handle Return/Linefeed and emit
+  // ITEM_SELECTED. Listening to that official event works across cmd.exe,
+  // PowerShell and ConPTY, unlike relying on a renderer-level key callback
+  // that may not be invoked by every standalone Bun console host.
+  select.on(SelectRenderableEvents.ITEM_SELECTED, (_index: number, option: any) => {
+    if (option) activate(option)
   })
   select.__jarockActivate = activate
   return select

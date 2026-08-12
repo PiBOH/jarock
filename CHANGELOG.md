@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.134-beta]
+
+- Fixed TUI action activation in standalone Windows builds by listening to OpenTUI's official `SelectRenderableEvents.ITEM_SELECTED` event for Enter/Return confirmation instead of relying only on a custom key callback. This keeps the menu actions working across cmd.exe, PowerShell and older console input hosts.
+- Kept explicit left-click row handling and refocused the main menu after `renderer.start()`, covering the two paths where the TUI could render normally but ignore Enter or clicks.
+- Added regression assertions for the official Select event and removed obsolete assertions for the replaced custom Enter interceptor.
+
 ## [0.0.133-beta]
 
 - Added the compiled `jarock-tui.exe` as a standalone asset in every automatic GitHub release, in addition to the copy included inside the TUI Full and Lite ZIP packages.
