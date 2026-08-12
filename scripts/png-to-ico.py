@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Convert an 8-bit RGB/RGBA PNG into a legacy 256x256 Windows ICO."""
+"""Convert an 8-bit RGB/RGBA PNG into a legacy multi-resolution Windows ICO."""
 
 from __future__ import annotations
 
@@ -83,30 +83,29 @@ def decode_png(data: bytes) -> tuple[int, int, int, bytes]:
     return width, height, channels, b"".join(rows)
 
 
-def resize_nearest(width: int, height: int, channels: int, pixels: bytes) -> bytes:
-    resized = bytearray(TARGET_SIZE * TARGET_SIZE * channels)
-    for y in range(TARGET_SIZE):
-        source_y = min(height - 1, y * height // TARGET_SIZE)
-        for x in range(TARGET_SIZE):
-            source_x = min(width - 1, x * width // TARGET_SIZE)
+def resize_nearest(width: int, height: int, channels: int, pixels: bytes, target_size: int) -> bytes:
+    resized = bytearray(target_size * target_size * channels)
+    for y in range(target_size):
+        source_y = min(height - 1, y * height // target_size)
+        for x in range(target_size):
+            source_x = min(width - 1, x * width // target_size)
             source_offset = (source_y * width + source_x) * channels
-            output_offset = (y * TARGET_SIZE + x) * channels
+            output_offset = (y * target_size + x) * channels
             resized[output_offset : output_offset + channels] = pixels[
                 source_offset : source_offset + channels
             ]
     return bytes(resized)
 
 
-def encode_legacy_ico(channels: int, pixels: bytes) -> bytes:
+def encode_dib_frame(size: int, channels: int, pixels: bytes) -> bytes:
     """Encode one 32-bit BGRA DIB frame plus its 1-bit AND mask."""
-    width = height = TARGET_SIZE
     xor_rows: list[bytes] = []
-    and_row_size = ((width + 31) // 32) * 4
-    and_mask = b"\0" * (and_row_size * height)
-    for y in range(height - 1, -1, -1):
+    and_row_size = ((size + 31) // 32) * 4
+    and_mask = b"\0" * (and_row_size * size)
+    for y in range(size - 1, -1, -1):
         row = bytearray()
-        for x in range(width):
-            offset = (y * width + x) * channels
+        for x in range(size):
+            offset = (y * size + x) * channels
             red, green, blue = pixels[offset : offset + 3]
             alpha = pixels[offset + 3] if channels == 4 else 255
             row.extend((blue, green, red, alpha))
@@ -115,8 +114,8 @@ def encode_legacy_ico(channels: int, pixels: bytes) -> bytes:
     header = struct.pack(
         "<IiiHHIIiiII",
         40,                 # BITMAPINFOHEADER size
-        width,
-        height * 2,         # XOR bitmap plus AND mask
+        size,
+        size * 2,           # XOR bitmap plus AND mask
         1,                  # planes
         32,                 # BGRA pixels
         0,                  # BI_RGB
@@ -126,9 +125,21 @@ def encode_legacy_ico(channels: int, pixels: bytes) -> bytes:
         0,
         0,
     )
-    image = header + xor_bitmap + and_mask
-    entry = struct.pack("<BBBBHHII", 0, 0, 0, 0, 1, 32, len(image), 22)
-    return struct.pack("<HHH", 0, 1, 1) + entry + image
+    return header + xor_bitmap + and_mask
+
+
+def encode_legacy_ico(channels: int, width: int, height: int, pixels: bytes) -> bytes:
+    """Encode common Windows icon sizes; the 256px frame is first for Bun."""
+    sizes = (256, 128, 64, 48, 32, 16)
+    frames = [(size, encode_dib_frame(size, channels, resize_nearest(width, height, channels, pixels, size))) for size in sizes]
+    directory_size = 6 + 16 * len(frames)
+    entries: list[bytes] = []
+    offset = directory_size
+    for size, frame in frames:
+        dimension = 0 if size == 256 else size
+        entries.append(struct.pack("<BBBBHHII", dimension, dimension, 0, 0, 1, 32, len(frame), offset))
+        offset += len(frame)
+    return struct.pack("<HHH", 0, 1, len(frames)) + b"".join(entries) + b"".join(frame for _, frame in frames)
 
 
 def main() -> int:
@@ -138,10 +149,9 @@ def main() -> int:
     source = Path(sys.argv[1])
     destination = Path(sys.argv[2])
     width, height, channels, pixels = decode_png(source.read_bytes())
-    resized = resize_nearest(width, height, channels, pixels)
     destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_bytes(encode_legacy_ico(channels, resized))
-    print(f"Created {destination} from {source} ({width}x{height} -> 256x256 legacy DIB ICO)")
+    destination.write_bytes(encode_legacy_ico(channels, width, height, pixels))
+    print(f"Created {destination} from {source} ({width}x{height} -> 256/128/64/48/32/16 legacy DIB ICO)")
     return 0
 
 

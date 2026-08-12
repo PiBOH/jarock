@@ -90,6 +90,15 @@ jobs:
           }
           finally { Pop-Location }
           if (-not (Test-Path -LiteralPath (Join-Path $env:JAROCK_TUI_BUILD_ROOT 'jarock-tui.exe') -PathType Leaf)) { throw 'Bun did not create jarock-tui.exe.' }
+      - name: Verify embedded Jarock icon
+        shell: pwsh
+        run: |
+          Add-Type -AssemblyName System.Drawing
+          $exe = Join-Path $env:JAROCK_TUI_BUILD_ROOT 'jarock-tui.exe'
+          $icon = [System.Drawing.Icon]::ExtractAssociatedIcon($exe)
+          if ($null -eq $icon) { throw 'The compiled jarock-tui.exe has no readable embedded Windows icon resource.' }
+          Write-Host "Embedded Windows icon resource found in $exe."
+          $icon.Dispose()
       - name: Smoke test TUI executable
         shell: pwsh
         run: |

@@ -23,7 +23,7 @@ if (!nativeWindowsBackend) throw new Error("The OpenTUI Windows native backend i
 const root = process.env.JAROCK_ROOT || dirname(process.execPath)
 const settingsPath = join(root, "scripts", "server-launch-settings.ini")
 const templatePath = join(root, "scripts", "server-launch-settings.ini.template")
-const renderer = await createCliRenderer({ exitOnCtrlC: true, clearOnShutdown: true })
+const renderer = await createCliRenderer({ exitOnCtrlC: true, clearOnShutdown: true, useMouse: true, autoFocus: true })
 const main = Box({ width: "100%", height: "100%", flexDirection: "column", padding: 1, gap: 1 })
 const title = Text({ content: "Jarock TUI", fg: "#00d7ff" })
 const subtitle = Text({ content: "Windows terminal menu | DedicatedPower keeps the server window", fg: "#888888" })
@@ -41,6 +41,10 @@ const menu = Select({
 })
 main.add(title); main.add(subtitle); main.add(status); main.add(menu); renderer.root.add(main)
 menu.focus()
+// createCliRenderer configures raw terminal input but starts in the IDLE
+// control state. Start the loop explicitly so keyboard and mouse events are
+// processed in standalone Windows builds as well as during development.
+renderer.start()
 
 function entry(name: string): string { return join(root, name) }
 function readSettings(): Map<string, string> {

@@ -77,6 +77,10 @@ try {
     Assert ($AutoRelease.Contains('--target=bun-windows-x64-baseline')) 'auto-release keeps the CPU-compatible Windows baseline target'
     Assert ($AutoRelease.Contains('C:\jarock-tui-build')) 'auto-release builds the baseline runtime on the C drive to avoid cross-volume cache renames'
     Assert ($AutoRelease.Contains('JAROCK_TUI_BUILD_ROOT')) 'auto-release shares the isolated C-drive build workspace across TUI steps'
+    Assert ($TuiEntry.Contains('renderer.start()')) 'TUI explicitly starts the OpenTUI input and render loop'
+    $TuiSmoke = Get-Content -LiteralPath (Join-Path $Root 'tui/smoke.ts') -Raw
+    Assert ($TuiSmoke.Contains('renderer.start()')) 'native OpenTUI smoke test explicitly starts the renderer loop'
+    Assert ($AutoRelease.Contains('Verify embedded Jarock icon')) 'auto-release verifies that the compiled TUI contains an icon resource'
     $Updater = Get-Content -LiteralPath (Join-Path $Root 'scripts/update-jarock.ps1') -Raw
     Assert ($Updater.Contains('Schedule-DeferredLauncherApply')) 'updater schedules the launcher replacement after startup exits'
     $PendingHelper = Get-Content -LiteralPath (Join-Path $Root 'scripts/apply-pending-launcher.ps1') -Raw

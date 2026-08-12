@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.124-beta]
+
+- Fixed the standalone Windows TUI menu not responding to keyboard or mouse input. OpenTUI now explicitly starts its render/input loop after `createCliRenderer()` instead of remaining in the idle state.
+- Applied the same explicit renderer start to the native OpenTUI smoke test, while keeping the official Jarock icon build and baseline CPU target.
+- Changed the generated Windows icon to a multi-resolution legacy DIB ICO (256, 128, 64, 48, 32 and 16px), with the official 256px Jarock frame first for Bun's resource embedding.
+
 ## [0.0.123-beta]
 
 - Fixed the GitHub Actions baseline TUI build on Windows runners by moving the isolated Bun compilation workspace to `C:\\jarock-tui-build`. Bun's baseline runtime download and cache now stay on the same volume, avoiding the known cross-device rename (`XDEV`) failure.
