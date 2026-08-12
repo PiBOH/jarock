@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.132-beta]
+
+- Fixed the Windows TUI autorelease workspace copy: the workflow now creates `C:\\jarock-tui-build\\tui` explicitly and copies the TUI project contents into it before running Bun. The previous copy placed the project at the workspace root while the install step looked for a missing `tui` subdirectory, causing `bun install` to fail immediately.
+- Added pre-install checks for `package.json` and `bun.lock` so an incorrect workspace layout produces a clear diagnostic instead of a generic Bun failure. The supplied TUI icons and dependency lockfile remain unchanged.
+
 ## [0.0.131-beta]
 
 - Included all supplied icon assets under `tui/icons/` in the repository so the autorelease Windows runner can actually copy `icon48.ico` during checkout. The files are committed byte-for-byte; no ICO or PNG asset was regenerated or modified.

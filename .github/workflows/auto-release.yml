@@ -44,13 +44,25 @@ jobs:
         run: |
           $buildRoot = 'C:\jarock-tui-build'
           if (Test-Path -LiteralPath $buildRoot) { Remove-Item -LiteralPath $buildRoot -Recurse -Force }
-          Copy-Item -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'tui') -Destination $buildRoot -Recurse -Force
+          $tuiSource = Join-Path $env:GITHUB_WORKSPACE 'tui'
+          $tuiRoot = Join-Path $buildRoot 'tui'
+          New-Item -ItemType Directory -Path $tuiRoot -Force | Out-Null
+          Copy-Item -Path (Join-Path $tuiSource '*') -Destination $tuiRoot -Recurse -Force
+          if (-not (Test-Path -LiteralPath (Join-Path $tuiRoot 'package.json') -PathType Leaf)) {
+            throw "The isolated TUI workspace was copied incorrectly; package.json is missing from $tuiRoot."
+          }
+          if (-not (Test-Path -LiteralPath (Join-Path $tuiRoot 'bun.lock') -PathType Leaf)) {
+            throw "The isolated TUI workspace was copied incorrectly; bun.lock is missing from $tuiRoot."
+          }
           "JAROCK_TUI_BUILD_ROOT=$buildRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          Write-Host "Prepared TUI build workspace on $buildRoot so Bun's baseline cache rename stays on the C: volume."
+          Write-Host "Prepared TUI build workspace on $tuiRoot so Bun's baseline cache rename stays on the C: volume."
       - name: Install TUI dependencies
         shell: pwsh
         run: |
           $tuiRoot = Join-Path $env:JAROCK_TUI_BUILD_ROOT 'tui'
+          if (-not (Test-Path -LiteralPath (Join-Path $tuiRoot 'package.json') -PathType Leaf)) {
+            throw "Cannot install TUI dependencies because package.json is missing from $tuiRoot."
+          }
           bun install --cwd $tuiRoot --frozen-lockfile
       - name: Verify OpenTUI Tree-sitter asset
         shell: pwsh
