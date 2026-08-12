@@ -87,10 +87,28 @@ function selectMouseMove(this: any, event: any): void {
   this.focus()
 }
 
+function getSelectedActionOption(select: any): any {
+  const selected = select.getSelectedOption?.()
+  if (selected) return selected
+  const index = Number(select.getSelectedIndex?.() ?? select.selectedIndex ?? 0)
+  return select.options?.[index]
+}
+
+function invokeAction(activate: ((selected: any) => void) | undefined, option: any): void {
+  if (!activate || !option) return
+  try {
+    activate(option)
+  } catch (error) {
+    status.content = `Action failed: ${error instanceof Error ? error.message : String(error)}`
+    menu.visible = true
+    menu.focus()
+  }
+}
+
 function activateBoundSelect(select: any): void {
-  const option = select.getSelectedOption?.()
+  const option = getSelectedActionOption(select)
   const activate = select.__jarockActivate as ((selected: any) => void) | undefined
-  if (option && activate) activate(option)
+  invokeAction(activate, option)
 }
 
 function selectMouseDown(this: any, event: any): void {
@@ -99,9 +117,25 @@ function selectMouseDown(this: any, event: any): void {
   if (index === null) return
   this.setSelectedIndex(index)
   this.focus()
+  this.__jarockMouseDownIndex = index
   event.preventDefault()
   event.stopPropagation()
-  activateBoundSelect(this)
+}
+
+function selectMouseUp(this: any, event: any): void {
+  if (event.button !== 0) return
+  const index = selectIndexAt(this, event)
+  const downIndex = this.__jarockMouseDownIndex
+  this.__jarockMouseDownIndex = undefined
+  if (index === null) return
+  this.setSelectedIndex(index)
+  this.focus()
+  event.preventDefault()
+  event.stopPropagation()
+  // Activate only on release. This prevents a drag or a screen transition
+  // during mouse-down from executing an action twice or on the wrong row.
+  // Hosts that provide mouse-up without mouse-down are supported as well.
+  if (downIndex === undefined || downIndex === index) activateBoundSelect(this)
 }
 
 function createActionSelect(options: any[], settings: Record<string, any>, activate: (option: any) => void): any {
@@ -110,13 +144,14 @@ function createActionSelect(options: any[], settings: Record<string, any>, activ
     options,
     onMouseMove: selectMouseMove,
     onMouseDown: selectMouseDown,
+    onMouseUp: selectMouseUp,
   })
   // SelectRenderable's native key bindings handle Return/Linefeed and emit
   // ITEM_SELECTED. Listening to that official event works across cmd.exe,
   // PowerShell and ConPTY, unlike relying on a renderer-level key callback
   // that may not be invoked by every standalone Bun console host.
-  select.on(SelectRenderableEvents.ITEM_SELECTED, (_index: number, option: any) => {
-    if (option) activate(option)
+  select.on(SelectRenderableEvents.ITEM_SELECTED, () => {
+    invokeAction(activate, getSelectedActionOption(select))
   })
   select.__jarockActivate = activate
   return select

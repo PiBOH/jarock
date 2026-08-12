@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.138-beta]
+
+- Hardened TUI action activation across Windows console hosts: Enter now resolves the selected option directly from the Select state instead of depending on event payload ordering, while mouse-down only selects and mouse-up performs one definitive click activation.
+- Hardened action errors and child batch launching: callback exceptions are shown in the TUI status line, while updater, cleanup and parameter-manager windows retain Windows-safe separated cmd.exe arguments for paths containing spaces.
+- Added regression assertions for action-state resolution, mouse-up fallback, visible callback errors and robust batch quoting.
+
 ## [0.0.137-beta]
 
 - Fixed the TUI mouse path: restored the missing click activation helper, enabled OpenTUI mouse-movement reporting and added hover-to-selection handling so the highlighted action follows the pointer.
