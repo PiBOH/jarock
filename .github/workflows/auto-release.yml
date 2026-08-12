@@ -57,7 +57,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
           Push-Location tui
           try {
-            bun build --compile --target=bun-windows-x64 --windows-icon=..\jarock-tui.ico index.ts --outfile ..\jarock-tui.exe
+            bun build --compile --target=bun-windows-x64-baseline --windows-icon=..\jarock-tui.ico index.ts --outfile ..\jarock-tui.exe
             if ($LASTEXITCODE -ne 0) { throw "Bun failed to compile the Windows TUI (exit code $LASTEXITCODE)." }
           }
           finally { Pop-Location }
@@ -74,7 +74,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
           Push-Location tui
           try {
-            bun build --compile --target=bun-windows-x64 --windows-icon=..\jarock-tui.ico smoke.ts --outfile ..\jarock-tui-smoke.exe
+            bun build --compile --target=bun-windows-x64-baseline --windows-icon=..\jarock-tui.ico smoke.ts --outfile ..\jarock-tui-smoke.exe
             if ($LASTEXITCODE -ne 0) { throw "Bun failed to compile the native OpenTUI smoke test (exit code $LASTEXITCODE)." }
           }
           finally { Pop-Location }

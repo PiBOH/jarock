@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.119-beta]
+
+- Changed both Windows TUI compilations to Bun's `bun-windows-x64-baseline` target, avoiding AVX2-dependent `0xC000001D` Illegal Instruction crashes on older or less capable x64 CPUs.
+- Kept the Jarock application icon and native OpenTUI smoke-test build on the compatibility target.
+
 ## [0.0.118-beta]
 
 - Updated the Windows TUI build to use the official Jarock `icon.png` as the `jarock-tui.exe` application icon through Bun's `--windows-icon` option.
