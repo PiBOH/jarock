@@ -122,6 +122,75 @@ try {
         $StableMotd = $Stable -split "`r?`n" | Where-Object { $_ -match '^motd=' }
         Assert (($StableMotd -join '') -eq $MotdText) 'Repeated rewrites do not corrupt the motd'
 
+        # 7) A motd double-encoded by pre-0.0.147 Jarock must be healed. The old
+        #    code read the UTF-8 file as CP1252 and wrote it back as UTF-8, so
+        #    "Caff[e-acute]" became the permanent mojibake "Caff[A-tilde][diaeresis]"
+        #    in the file. The module must detect that signature, invert the
+        #    transform and write a correct UTF-8 motd, while keeping every other
+        #    line byte-identical. Characters are built with [char] escapes so the
+        #    script stays 7-bit ASCII (the release workflow rejects non-ASCII
+        #    PowerShell and Windows PowerShell 5.1 would mis-parse the literals).
+        $Utf8Strict = New-Object Text.UTF8Encoding($false, $true)
+        $Cp1252 = [Text.Encoding]::GetEncoding(1252)
+        $OriginalMojibakeMotd = 'Caff' + [char]0x00E8 + ' Jarock ' + [char]0x00A7 + 'aVerde'
+        $MojibakeBytes = $Utf8Strict.GetBytes($Cp1252.GetString($Utf8Strict.GetBytes($OriginalMojibakeMotd)))
+        $MojibakeFile = @(('motd=' + $Utf8Strict.GetString($MojibakeBytes)), 'level-name=world', 'max-players=20', 'online-mode=true') -join "`r`n"
+        [IO.File]::WriteAllText($Path, $MojibakeFile + "`r`n", (New-Object Text.UTF8Encoding($false)))
+        $BeforeHeal = [IO.File]::ReadAllBytes($Path)
+        Set-ServerOnlineMode -Path $Path -Value 'false'
+        $HealedBytes = [IO.File]::ReadAllBytes($Path)
+        $HealedText = $Utf8Strict.GetString($HealedBytes)
+        $HealedMotd = ($HealedText -split "`r?`n" | Where-Object { $_ -match '^motd=' }) -join ''
+        Assert ($HealedMotd -eq 'motd=' + $OriginalMojibakeMotd) 'Mojibake: the double-encoded motd is healed to the original text'
+        $HealedOnline = ($HealedText -split "`r?`n" | Where-Object { $_ -match '^online-mode=' }) -join ''
+        Assert ($HealedOnline -eq 'online-mode=false') 'Mojibake: online-mode is still updated during the heal'
+        # Every line except motd and online-mode must stay byte-identical
+        # (Latin-1 view is 1:1). The motd line is healed and the online-mode
+        # line is updated by design; every other line must not drift.
+        $BeforeHealLines = @($Latin1.GetString($BeforeHeal) -split "`r?`n")
+        $HealedLines = @($Latin1.GetString($HealedBytes) -split "`r?`n")
+        $OtherLinesSame = $BeforeHealLines.Count -eq $HealedLines.Count
+        if ($OtherLinesSame) {
+            for ($Index = 0; $Index -lt $BeforeHealLines.Count; $Index++) {
+                $SkipBefore = ($BeforeHealLines[$Index] -match '^motd=') -or ($BeforeHealLines[$Index] -match '^online-mode=')
+                $SkipAfter = ($HealedLines[$Index] -match '^motd=') -or ($HealedLines[$Index] -match '^online-mode=')
+                if ($SkipBefore -and $SkipAfter) { continue }
+                if (-not $SkipBefore -and -not $SkipAfter) {
+                    if ($BeforeHealLines[$Index] -ne $HealedLines[$Index]) { $OtherLinesSame = $false; break }
+                }
+                else { $OtherLinesSame = $false; break }
+            }
+        }
+        Assert $OtherLinesSame 'Mojibake: only the motd and online-mode lines change during the heal'
+
+        # 8) A healed motd stays healed on the next restart (no re-corruption).
+        Set-ServerOnlineMode -Path $Path -Value 'true'
+        $StillHealed = $Utf8Strict.GetString([IO.File]::ReadAllBytes($Path))
+        $StillHealedMotd = ($StillHealed -split "`r?`n" | Where-Object { $_ -match '^motd=' }) -join ''
+        Assert ($StillHealedMotd -eq 'motd=' + $OriginalMojibakeMotd) 'Mojibake: a healed motd stays correct on the next restart'
+
+        # 9) Legitimate non-ASCII text is never touched: a correct UTF-8 motd
+        #    with accents, the section sign, a real arrow and an emoji must stay
+        #    byte-for-byte identical (only online-mode changes).
+        $RichMotd = 'motd=Caff' + [char]0x00E8 + ' Jarock ' + [char]0x00A7 + 'aVerde ' + [char]0x2192 + ' ' + [char]0x2764
+        $RichBody = @($RichMotd, 'level-name=world', 'max-players=20', 'online-mode=true') -join "`r`n"
+        [IO.File]::WriteAllText($Path, $RichBody + "`r`n", (New-Object Text.UTF8Encoding($false)))
+        $BeforeRich = [IO.File]::ReadAllBytes($Path)
+        Set-ServerOnlineMode -Path $Path -Value 'false'
+        $AfterRich = [IO.File]::ReadAllBytes($Path)
+        Assert-OnlyOnlineModeChanged $BeforeRich $AfterRich 'Legit UTF-8: accented motd with arrow/emoji is not touched'
+
+        # 10) A legitimate French a-circumflex (which shares the mojibake marker
+        #     letter) must not be "repaired": the strict inverse transform fails,
+        #     so the file stays byte-for-byte unchanged apart from online-mode.
+        $FrenchMotd = 'motd=Voil' + [char]0x00E0 + ' Gr' + [char]0x00E2 + 'fica'
+        $FrenchBody = @($FrenchMotd, 'level-name=world', 'online-mode=true') -join "`r`n"
+        [IO.File]::WriteAllText($Path, $FrenchBody + "`r`n", (New-Object Text.UTF8Encoding($false)))
+        $BeforeFrench = [IO.File]::ReadAllBytes($Path)
+        Set-ServerOnlineMode -Path $Path -Value 'false'
+        $AfterFrench = [IO.File]::ReadAllBytes($Path)
+        Assert-OnlyOnlineModeChanged $BeforeFrench $AfterFrench 'Legit UTF-8: French a-circumflex motd is not falsely healed'
+
         Write-Host ''
         Write-Host "Test summary: $Pass passed, $Fail failed." -ForegroundColor Cyan
         if ($Fail -gt 0) { exit 1 }

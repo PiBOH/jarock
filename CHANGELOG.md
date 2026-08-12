@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.150-beta]
+
+### Fixed
+
+- Fixed a custom `motd` staying corrupted on every restart. Pre-0.0.147 Jarock read `server.properties` as ANSI and rewrote it as UTF-8, which double-encoded a UTF-8 `motd` once into permanent mojibake (for example "Caffè" became "CaffÃ¨"). The current code is byte-preserving so it never re-corrupts, but it also never repaired the old damage, which is why the corrupted text kept coming back on every restart. `scripts/server-properties.ps1` now runs a `Repair-MotdMojibake` step inside `Set-ServerOnlineMode` that detects the exact double-encoding signature, inverts it through a strict CP1252-to-UTF-8 round-trip with exception fallbacks, and writes the correct UTF-8 `motd` once while leaving every other line byte-identical. Legitimate non-ASCII text (plain accents, the section sign, arrow, emoji and the French a-circumflex that shares the marker letter) is never touched.
+- Extended `scripts/test-server-properties.ps1` (now 21 checks) with mojibake-heal cases: a double-encoded `motd` is healed to the original text, a healed `motd` stays correct on the next restart, only the `motd` and `online-mode` lines change during the heal, and legitimate accented `motd`s are never falsely repaired.
+
 ## [0.0.149-beta]
 
 ### Fixed
