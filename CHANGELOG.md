@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.117-beta]
+
+- Fixed `start-server.bat` losing control after the startup update check by calling its isolated runner explicitly. Unexpected TUI exits now remain visible with an actionable error and pause instead of closing the console silently.
+- Added the same visible failure handling to the TUI parameter manager and extended the startup-update regression checks.
+
 ## [0.0.116-beta]
 
 - Fixed automatic release packaging so `jarock-tui-full` includes both bundled Java prerequisite installers, matching `jarock-cli-full`. Lite packages continue to exclude the installers.

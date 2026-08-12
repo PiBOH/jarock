@@ -25,7 +25,7 @@ if exist "%ROOT%\.cache\start-server-runner.bat" del /q "%ROOT%\.cache\start-ser
 copy /y "%~f0" "%ROOT%\.cache\start-server-runner.bat" >nul 2>&1
 if not exist "%ROOT%\.cache\start-server-runner.bat" goto :runner_fallback
 set "_JAROCK_RUNNER_ROOT=%ROOT%"
-"%ROOT%\.cache\start-server-runner.bat" %*
+call "%ROOT%\.cache\start-server-runner.bat" %*
 set "RUNNER_EXIT_CODE=%errorlevel%"
 exit /b %RUNNER_EXIT_CODE%
 
@@ -218,6 +218,12 @@ if not exist "%TUI_EXE%" (
 set "JAROCK_ROOT=%ROOT%"
 "%TUI_EXE%" %*
 set "TUI_EXIT_CODE=%errorlevel%"
+if not "%TUI_EXIT_CODE%"=="0" (
+    echo.
+    echo ERROR: The Jarock TUI exited unexpectedly with code %TUI_EXIT_CODE%.
+    echo Suggested fix: verify that this is a complete TUI release package and inspect the TUI error above.
+    pause
+)
 exit /b %TUI_EXIT_CODE%
 
 :startup_update_install

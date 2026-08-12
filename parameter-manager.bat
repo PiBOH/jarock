@@ -485,6 +485,12 @@ if not exist "%TUI_EXE%" (
 set "JAROCK_ROOT=%ROOT%"
 "%TUI_EXE%" --parameters %*
 set "TUI_EXIT_CODE=%errorlevel%"
+if not "%TUI_EXIT_CODE%"=="0" (
+    echo.
+    echo ERROR: The Jarock TUI parameter manager exited unexpectedly with code %TUI_EXIT_CODE%.
+    echo Suggested fix: verify that this is a complete TUI release package and inspect the TUI error above.
+    pause
+)
 exit /b %TUI_EXIT_CODE%
 
 :read_menu_values
