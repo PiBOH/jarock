@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.128-beta]
+
+- Fixed TUI menu activation in standalone Windows builds: `Enter` is now handled by the focused OpenTUI `Select` through its `onKeyDown` path, including Windows backends that report the key as `enter`, `return` or `linefeed`.
+- Fixed mouse activation by binding every TUI selection screen to a direct action callback. A left-click now selects the visible row, accounts for the current scroll offset and executes the associated action instead of only highlighting it.
+- Removed the unreliable global `renderer.keyInput` fallback that could bypass OpenTUI's focused-control dispatch and leave menu actions unexecuted. Added regression assertions for the direct keyboard and mouse activation paths.
+
 ## [0.0.127-beta]
 
 - Recreated `icon.png` with a high-contrast, simplified composition for 16x16 Explorer thumbnails: a clearly visible Java coffee cup with red/orange steam sits in front of a broad blue Bedrock-style background; the existing README `logo.png` is preserved.

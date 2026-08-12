@@ -3,7 +3,6 @@ import {
   Input,
   InputRenderableEvents,
   Select,
-  SelectRenderableEvents,
   Text,
   createCliRenderer,
 } from "@opentui/core"
@@ -37,17 +36,17 @@ const main = Box({ width: "100%", height: "100%", flexDirection: "column", paddi
 const title = Text({ content: "Jarock TUI", fg: "#00d7ff" })
 const subtitle = Text({ content: "Windows terminal menu | DedicatedPower keeps the server window", fg: "#888888" })
 const status = Text({ content: "Use Up/Down and Enter to choose an action. Ctrl+C exits.", fg: "#ffffff" })
-const menu = Select({
+const menu = createActionSelect([
+  { name: "Start server", description: "Open the server console and return here after it exits.", value: "start" },
+  { name: "Check / install updates", description: "Run the verified updater for this installed edition.", value: "update" },
+  { name: "Import / export world", description: "Configure safe world transfer operations.", value: "world" },
+  { name: "Open parameter manager", description: "Edit Jarock settings in this TUI.", value: "parameters" },
+  { name: "Clean runtime", description: "Run the existing cleanup confirmation flow.", value: "clean" },
+  { name: "Exit", description: "Close the Jarock TUI.", value: "exit" },
+], {
   id: "jarock-menu", width: "100%", height: 12, wrapSelection: true,
-  options: [
-    { name: "Start server", description: "Open the server console and return here after it exits.", value: "start" },
-    { name: "Check / install updates", description: "Run the verified updater for this installed edition.", value: "update" },
-    { name: "Import / export world", description: "Configure safe world transfer operations.", value: "world" },
-    { name: "Open parameter manager", description: "Edit Jarock settings in this TUI.", value: "parameters" },
-    { name: "Clean runtime", description: "Run the existing cleanup confirmation flow.", value: "clean" },
-    { name: "Exit", description: "Close the Jarock TUI.", value: "exit" },
-  ], selectedBackgroundColor: "#145a72", selectedTextColor: "#ffffff", showDescription: true, onMouseDown: selectMouseDown,
-})
+  selectedBackgroundColor: "#145a72", selectedTextColor: "#ffffff", showDescription: true,
+}, (option) => activateMainMenuOption(option.value))
 main.add(title); main.add(subtitle); main.add(status); main.add(menu); renderer.root.add(main)
 menu.focus()
 // Bun standalone builds can leave stdin paused even though OpenTUI has put the
@@ -65,35 +64,48 @@ try {
 // processed in standalone Windows builds as well as during development.
 renderer.start()
 
-function selectMouseDown(this: any, event: any): void {
-  if (event.button !== 0) return
-  const row = Math.floor(event.y - this.screenY)
-  const lineHeight = this.showDescription ? 2 : 1
-  const visibleCount = Math.max(1, Math.floor(this.height / lineHeight))
-  const maxOffset = Math.max(0, this.options.length - visibleCount)
-  const selectedIndex = this.getSelectedIndex()
-  const offset = Math.max(0, Math.min(selectedIndex - Math.floor(visibleCount / 2), maxOffset))
-  const index = offset + Math.floor(row / lineHeight)
-  if (row < 0 || index < 0 || index >= this.options.length || Math.floor(row / lineHeight) >= visibleCount) return
-  this.setSelectedIndex(index)
-  this.selectCurrent()
-  event.preventDefault()
-  event.stopPropagation()
+function isSelectConfirmKey(key: any): boolean {
+  return key?.name === "return" || key?.name === "enter" || key?.name === "linefeed" || key?.sequence === "\r" || key?.sequence === "\n"
 }
 
-// OpenTUI normally forwards key events from the focused renderable. In a
-// compiled Bun/Windows console that forwarding can be lost while the global
-// parser still receives the key. Dispatch once from the public key handler as
-// a compatibility fallback, then prevent the normal path from handling it a
-// second time.
-renderer.keyInput.on("keypress", (key: any) => {
-  const focused: any = renderer.currentFocusedRenderable
-  if (!focused || typeof focused.handleKeyPress !== "function" || key.defaultPrevented) return
-  focused.onKeyDown?.(key)
-  if (key.defaultPrevented) return
-  focused.handleKeyPress(key)
+function activateBoundSelect(select: any): void {
+  const option = select.getSelectedOption?.()
+  const activate = select.__jarockActivate as ((selected: any) => void) | undefined
+  if (option && activate) activate(option)
+}
+
+function selectKeyDown(this: any, key: any): void {
+  if (!isSelectConfirmKey(key)) return
   key.preventDefault()
-})
+  key.stopPropagation()
+  activateBoundSelect(this)
+}
+
+function selectMouseDown(this: any, event: any): void {
+  if (event.button !== 0) return
+  const lineHeight = Math.max(1, Number(this.linesPerItem ?? (this.showDescription ? 2 : 1)))
+  const visibleCount = Math.max(1, Number(this.maxVisibleItems ?? Math.floor(this.height / lineHeight)))
+  const row = Math.floor(event.y - this.screenY)
+  const visibleRow = Math.floor(row / lineHeight)
+  const offset = Math.max(0, Number(this.scrollOffset ?? 0))
+  const index = offset + visibleRow
+  if (row < 0 || visibleRow < 0 || visibleRow >= visibleCount || index < 0 || index >= this.options.length) return
+  this.setSelectedIndex(index)
+  event.preventDefault()
+  event.stopPropagation()
+  activateBoundSelect(this)
+}
+
+function createActionSelect(options: any[], settings: Record<string, any>, activate: (option: any) => void): any {
+  const select: any = Select({
+    ...settings,
+    options,
+    onMouseDown: selectMouseDown,
+    onKeyDown: selectKeyDown,
+  })
+  select.__jarockActivate = activate
+  return select
+}
 
 function entry(name: string): string { return join(root, name) }
 function readSettings(): Map<string, string> {
@@ -160,16 +172,18 @@ function openCliParameterManager(): void {
 }
 function showWorldSettingsScreen(): void {
   menu.visible = false
-  const worldMenu = Select({
-    width: "100%", height: 8, wrapSelection: true, showDescription: true, selectedBackgroundColor: "#145a72", onMouseDown: selectMouseDown,
-    options: [
-      { name: "Import world", description: `Source: ${value("WORLD_IMPORT_SOURCE", "none")}`, value: "import" },
-      { name: "Export world", description: `Destination: ${value("WORLD_EXPORT_DEST", "none")}`, value: "export" },
-      { name: "Back", description: "Return to the parameter menu.", value: "back" },
-    ],
-  })
+  let worldMenu: any
+  worldMenu = createActionSelect([
+    { name: "Import world", description: `Source: ${value("WORLD_IMPORT_SOURCE", "none")}`, value: "import" },
+    { name: "Export world", description: `Destination: ${value("WORLD_EXPORT_DEST", "none")}`, value: "export" },
+    { name: "Back", description: "Return to the parameter menu.", value: "back" },
+  ], {
+    width: "100%", height: 8, wrapSelection: true, showDescription: true, selectedBackgroundColor: "#145a72",
+  }, (option) => activateWorldMenuOption(option, worldMenu))
   main.add(worldMenu); worldMenu.focus()
-  worldMenu.on(SelectRenderableEvents.ITEM_SELECTED, (_index, option) => {
+}
+
+function activateWorldMenuOption(option: any, worldMenu: any): void {
     worldMenu.destroy()
     if (option.value === "back") { menu.visible = true; menu.focus(); return }
     if (option.value === "export") {
@@ -189,29 +203,26 @@ function showWorldSettingsScreen(): void {
         else { status.content = "World import source cleared."; showWorldSettingsScreen() }
       } else showWorldSettingsScreen()
     })
-  })
 }
 function showRememberWorldScreen(): void {
   menu.visible = false
-  const rememberMenu = Select({
-    width: "100%", height: 6, wrapSelection: true, selectedBackgroundColor: "#145a72", onMouseDown: selectMouseDown,
-    options: [
-      { name: "Remember this world (default)", description: "Reuse it only if the configured world is later deleted.", value: "true" },
-      { name: "Use once only", description: "Clear the source after the next successful import.", value: "false" },
-    ],
-  })
-  main.add(rememberMenu); rememberMenu.focus()
-  rememberMenu.on(SelectRenderableEvents.ITEM_SELECTED, (_index, option) => {
+  let rememberMenu: any
+  rememberMenu = createActionSelect([
+    { name: "Remember this world (default)", description: "Reuse it only if the configured world is later deleted.", value: "true" },
+    { name: "Use once only", description: "Clear the source after the next successful import.", value: "false" },
+  ], {
+    width: "100%", height: 6, wrapSelection: true, selectedBackgroundColor: "#145a72",
+  }, (option) => {
     rememberMenu.destroy()
     if (updateSetting("WORLD_IMPORT_REMEMBER", String(option.value))) status.content = "World import remember setting saved."
     showWorldSettingsScreen()
   })
+  main.add(rememberMenu); rememberMenu.focus()
 }
 function showSettingsScreen(): void {
   menu.visible = false
-  const settingsMenu = Select({
-    width: "100%", height: 16, wrapSelection: true, showDescription: true, selectedBackgroundColor: "#145a72", onMouseDown: selectMouseDown,
-    options: [
+  let settingsMenu: any
+  settingsMenu = createActionSelect([
       { name: `Loader [${value("LOADER_TYPE", "none")}]`, description: "Switch between Fabric and NeoForge.", value: "loader" },
       { name: `RAM [${value("RAM_INITIAL", "4G")} / ${value("RAM_MAX", "4G")}]`, description: "Use the validated CLI editor for RAM values.", value: "ram" },
       { name: `Server mode [${value("GUI_MODE", "nogui")}]`, description: "Toggle between console and GUI server mode.", value: "mode" },
@@ -223,10 +234,9 @@ function showSettingsScreen(): void {
       { name: "World import/export", description: "Configure source, destination and remembered-world behavior.", value: "world" },
       { name: "Open full CLI manager", description: "Use the existing validated parameter-manager screens.", value: "cli" },
       { name: "Back", description: "Return to the main menu.", value: "back" },
-    ],
-  })
-  main.add(settingsMenu); settingsMenu.focus()
-  settingsMenu.on(SelectRenderableEvents.ITEM_SELECTED, (_index, option) => {
+    ], {
+      width: "100%", height: 16, wrapSelection: true, showDescription: true, selectedBackgroundColor: "#145a72",
+    }, (option) => {
     settingsMenu.destroy()
     if (option.value === "back") { menu.visible = true; menu.focus(); return }
     // The existing CLI manager remains the authoritative validated editor for
@@ -262,8 +272,8 @@ function showSettingsScreen(): void {
   })
 }
 
-menu.on(SelectRenderableEvents.ITEM_SELECTED, (_index, option) => {
-  switch (option.value) {
+function activateMainMenuOption(value: string): void {
+  switch (value) {
     case "start": runClassicConsoleBatch(entry("start-server.bat")); break
     case "update": runClassicConsoleBatch(entry(join("scripts", "update-jarock.bat"))); break
     case "world": showSettingsScreen(); break
@@ -271,7 +281,7 @@ menu.on(SelectRenderableEvents.ITEM_SELECTED, (_index, option) => {
     case "clean": runClassicConsoleBatch(entry("clean-server-runtime.bat")); break
     case "exit": renderer.destroy(); break
   }
-})
+}
 if (process.argv.includes("--parameters")) showSettingsScreen()
 if (smokeMode) setTimeout(() => renderer.destroy(), 250)
 process.on("SIGINT", () => renderer.destroy())
