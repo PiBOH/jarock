@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.144-beta]
+
+- Updated the Jarock website to match the interface support policy: the CLI is strongly recommended and maintained, while TUI downloads remain available but are clearly labeled unmaintained/as-is.
+- Added the support-status notice to the website home page, Downloads page, Documentation page and About page without changing TUI release discovery or download links.
+- Added website regression assertions and synchronized version metadata to 0.0.144-beta.
+
 ## [0.0.143-beta]
 
 - Marked the TUI as **unmaintained** and provided as-is. The TUI packages and standalone executable will continue to be included in future releases, but no active compatibility or bug-fix guarantee is provided.
