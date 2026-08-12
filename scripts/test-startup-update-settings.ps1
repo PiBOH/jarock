@@ -71,6 +71,10 @@ try {
     Assert ($BootstrapScript.Contains('Start-InClassicConsole')) 'the bootstrap opens the parameter manager through the classic-console helper'
     Assert ($BootstrapScript.Contains('{B23D10C0-E52E-411E-9D5B-C09FDF709C7D}')) 'the bootstrap pins the classic console CLSID'
     Assert ($Batch.Contains('-NonInteractive -StartupUpdate')) 'startup updates use deferred launcher replacement mode'
+    $AutoRelease = Get-Content -LiteralPath (Join-Path $Root '.github/workflows/auto-release.yml') -Raw
+    Assert ($AutoRelease.Contains("bun-version: '1.3.14'")) 'auto-release pins the Bun version required by baseline TUI compilation'
+    Assert ($AutoRelease.Contains("requires Bun 1.3.14 for baseline Windows compilation")) 'auto-release verifies the installed Bun version before compiling'
+    Assert ($AutoRelease.Contains('--target=bun-windows-x64-baseline')) 'auto-release keeps the CPU-compatible Windows baseline target'
     $Updater = Get-Content -LiteralPath (Join-Path $Root 'scripts/update-jarock.ps1') -Raw
     Assert ($Updater.Contains('Schedule-DeferredLauncherApply')) 'updater schedules the launcher replacement after startup exits'
     $PendingHelper = Get-Content -LiteralPath (Join-Path $Root 'scripts/apply-pending-launcher.ps1') -Raw

@@ -32,7 +32,13 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: '1.3.0'
+          bun-version: '1.3.14'
+      - name: Verify Bun version
+        shell: pwsh
+        run: |
+          $version = (bun --version).Trim()
+          if ($version -ne '1.3.14') { throw "The workflow requires Bun 1.3.14 for baseline Windows compilation, but found Bun $version." }
+          Write-Host "Using Bun $version for bun-windows-x64-baseline compilation."
       - name: Install TUI dependencies
         shell: pwsh
         run: bun install --cwd tui --frozen-lockfile

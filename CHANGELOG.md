@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.122-beta]
+
+- Updated the Windows TUI release build from Bun 1.3.0 to Bun 1.3.14. Bun 1.3.0 successfully built the modern Windows target but failed consistently when compiling the `bun-windows-x64-baseline` target required by older CPUs.
+- Kept `bun-windows-x64-baseline`, so TUI packages remain suitable for CPUs without AVX2, including Intel Westmere-era processors.
+
 ## [0.0.121-beta]
 
 - Added readable TUI diagnostics alongside numeric Windows exit codes. The launchers now explain common failures such as `STATUS_ILLEGAL_INSTRUCTION` (`0xC000001D`, usually an incompatible CPU target) and missing native DLLs (`0xC0000135`) for both the server and parameter-manager TUI.
