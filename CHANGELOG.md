@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.151-beta]
+
+### Changed
+
+- Branded the default server `motd` in `server/server.properties.template` with a color-coded two-line Jarock message: `§3>>> §6§lJa§9§lrock§r Minecraft 26.2 Server (stef) §r` on the first line and `Visit §3piboh.github.io/jarock§r for more information.` on the second. The value is stored as UTF-8 (no BOM) with `\n` as the Java-properties newline escape so it renders on two lines.
+
 ## [0.0.150-beta]
 
 ### Fixed
