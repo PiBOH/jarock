@@ -6,6 +6,8 @@ name: test-update.yml
     paths:
       - 'scripts/update-jarock.ps1'
       - 'scripts/update-jarock.bat'
+      - 'scripts/server-properties.ps1'
+      - 'scripts/run-server.ps1'
       - 'scripts/version.txt'
       - 'server/config/welcomemessage.json5.jarock'
       - 'start-server.bat'
@@ -44,15 +46,36 @@ jobs:
           $LegacyRevision = $null
           foreach ($Revision in $VersionRevisions) {
               & git cat-file -e "${Revision}:server/config/welcomemessage.json5.template-jarock" 2>$null
-              if ($LASTEXITCODE -eq 0) { $LegacyRevision = $Revision; break }
+              if ($LASTEXITCODE -ne 0) { continue }
+              # The migration target must predate the server-properties module
+              # (added in 0.0.147), otherwise the delivery precondition below
+              # cannot hold and the simulation would not test real delivery.
+              & git cat-file -e "${Revision}:scripts/server-properties.ps1" 2>$null
+              if ($LASTEXITCODE -ne 0) { $LegacyRevision = $Revision; break }
           }
-          if ([string]::IsNullOrWhiteSpace($LegacyRevision)) { throw 'Could not find a historical Jarock revision containing the legacy Welcome Message template.' }
+          if ([string]::IsNullOrWhiteSpace($LegacyRevision)) { throw 'Could not find a historical Jarock revision containing the legacy Welcome Message template and predating the server-properties module.' }
           $OldVersion = (& git show "${LegacyRevision}:scripts/version.txt").Trim()
           $Port = 18080
           $HttpProcess = $null
 
           function Assert-Condition([bool]$Condition, [string]$Message) {
               if (-not $Condition) { throw "ASSERTION FAILED: $Message" }
+          }
+
+          # Project-file content is compared after normalizing line endings. The
+          # updater copies package bytes verbatim and the package bytes depend on
+          # the host's core.autocrlf / .gitattributes settings (README.md may be
+          # LF while .ps1 files are CRLF even inside one checkout), so a byte-exact
+          # hash comparison would fail on hosts whose EOL layout differs from the
+          # checkout that produced the expected hash. The test asserts that the
+          # correct content was delivered, not that EOL bytes match.
+          function Get-NormalizedSha256([string]$Path) {
+              $Text = [IO.File]::ReadAllText($Path)
+              $Normalized = $Text.Replace("`r`n", "`n")
+              $Bytes = [Text.Encoding]::UTF8.GetBytes($Normalized)
+              $Sha = [Security.Cryptography.SHA256]::Create()
+              try { return (([BitConverter]::ToString($Sha.ComputeHash($Bytes))).Replace('-', '')).ToLowerInvariant() }
+              finally { $Sha.Dispose() }
           }
 
           function Copy-LiteTrackedFiles([string]$Destination, [string]$Revision) {
@@ -69,12 +92,12 @@ jobs:
               try {
                   $Files = @(Get-ChildItem -LiteralPath $ArchiveRoot -File -Recurse)
                   foreach ($File in $Files) {
-                      $Relative = $File.FullName.Substring($ArchiveRoot.Length).TrimStart('\\','/').Replace('\\','/')
+                      $Relative = $File.FullName.Substring($ArchiveRoot.Length).TrimStart('\','/').Replace('\','/')
                       if ([string]::IsNullOrWhiteSpace($Relative)) { continue }
                       if ($Relative -like '.github/*' -or $Relative -like '.website/*' -or
                           $Relative -eq '.gitattributes' -or $Relative -eq '.gitignore' -or
                           $Relative -like 'prerequisites/*') { continue }
-                      $Target = Join-Path $Destination ($Relative.Replace('/', '\\'))
+                      $Target = Join-Path $Destination ($Relative.Replace('/', '\'))
                       New-Item -ItemType Directory -Force -Path (Split-Path -Parent $Target) | Out-Null
                       Copy-Item -LiteralPath $File.FullName -Destination $Target -Force
                   }
@@ -206,10 +229,16 @@ jobs:
               # so the updater must CREATE it from the current package instead of
               # mistaking it for protected runtime configuration.
               Remove-Item -LiteralPath $WelcomeTemplatePath -Force -ErrorAction SilentlyContinue
-              $ExpectedReadmeHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'README.md')).Hash
-              $ExpectedWelcomeTemplateHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'server/config/welcomemessage.json5.jarock')).Hash
+              # The migration target must also predate the server-properties module
+              # (added in 0.0.147): the update must deliver it, otherwise the updated
+              # run-server.ps1 would fail to dot-source it on the next start.
+              Assert-Condition (-not (Test-Path -LiteralPath (Join-Path $InstallRoot 'scripts/server-properties.ps1') -PathType Leaf)) 'The older installation predates the server-properties module (delivery precondition).'
+              $ExpectedReadmeHash = Get-NormalizedSha256 (Join-Path $RepositoryRoot 'README.md')
+              $ExpectedWelcomeTemplateHash = Get-NormalizedSha256 (Join-Path $RepositoryRoot 'server/config/welcomemessage.json5.jarock')
               $ExpectedLegacyWelcomeTemplateHash = $ExpectedWelcomeTemplateHash
-              $ExpectedUpdaterHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $RepositoryRoot 'scripts/update-jarock.ps1')).Hash
+              $ExpectedUpdaterHash = Get-NormalizedSha256 (Join-Path $RepositoryRoot 'scripts/update-jarock.ps1')
+              $ExpectedServerPropertiesHash = Get-NormalizedSha256 (Join-Path $RepositoryRoot 'scripts/server-properties.ps1')
+              $ExpectedRunServerHash = Get-NormalizedSha256 (Join-Path $RepositoryRoot 'scripts/run-server.ps1')
 
               Write-Host "Older isolated installation: $OldVersion" -ForegroundColor Cyan
               Write-Host "Target release: $CurrentVersion" -ForegroundColor Cyan
@@ -222,15 +251,39 @@ jobs:
 
               $InstalledVersion = (Get-Content -LiteralPath (Join-Path $InstallRoot 'scripts/version.txt') -Raw).Trim()
               Assert-Condition ($InstalledVersion -eq $CurrentVersion) "Expected version $CurrentVersion after update, found $InstalledVersion."
-              Assert-Condition ((Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $InstallRoot 'README.md')).Hash -eq $ExpectedReadmeHash) 'The current project files were not applied from the update package.'
-              Assert-Condition ((Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $InstallRoot 'scripts/update-jarock.ps1')).Hash -eq $ExpectedUpdaterHash) 'The current updater was not retained after the update.'
+              Assert-Condition ((Get-NormalizedSha256 (Join-Path $InstallRoot 'README.md')) -eq $ExpectedReadmeHash) 'The current project files were not applied from the update package.'
+              Assert-Condition ((Get-NormalizedSha256 (Join-Path $InstallRoot 'scripts/update-jarock.ps1')) -eq $ExpectedUpdaterHash) 'The current updater was not retained after the update.'
               Assert-Condition ((Get-Content -LiteralPath $WorldPath -Raw).Trim() -eq 'WORLD DATA MUST SURVIVE') 'World data was not preserved.'
               Assert-Condition ((Get-Content -LiteralPath $PropertiesPath -Raw).Trim() -like '*server-port=25565*') 'server.properties was not preserved.'
               Assert-Condition ((Get-Content -LiteralPath $GeyserConfigPath -Raw).Trim() -eq 'auth-type: floodgate') 'The Geyser configuration was not preserved.'
               Assert-Condition (-not (Test-Path -LiteralPath $WelcomeTemplatePath -PathType Leaf)) 'The legacy updater unexpectedly treated the new Welcome Message filename as a project file.'
-              Assert-Condition ((Get-FileHash -Algorithm SHA256 -LiteralPath $LegacyWelcomeTemplatePath).Hash -eq $ExpectedLegacyWelcomeTemplateHash) 'The legacy Welcome Message compatibility alias was not accepted by the old updater.'
+              Assert-Condition ((Get-NormalizedSha256 $LegacyWelcomeTemplatePath) -eq $ExpectedLegacyWelcomeTemplateHash) 'The legacy Welcome Message compatibility alias was not accepted by the old updater.'
               Assert-Condition ((Get-Content -LiteralPath $SettingsPath -Raw).Trim() -like '*LOADER_TYPE=fabric*') 'Local launch settings were not preserved.'
-              Write-Host 'PASS: the legacy updater accepted the compatibility alias, applied the Lite update, verified its checksum, and preserved runtime/settings/world data.' -ForegroundColor Green
+
+              # The server-properties module must be delivered by the update: the old
+              # revision predates it, and the updated run-server.ps1 dot-sources it.
+              $InstalledServerProperties = Join-Path $InstallRoot 'scripts/server-properties.ps1'
+              Assert-Condition (Test-Path -LiteralPath $InstalledServerProperties -PathType Leaf) 'The updated installation received scripts/server-properties.ps1 from the package.'
+              Assert-Condition ((Get-NormalizedSha256 $InstalledServerProperties) -eq $ExpectedServerPropertiesHash) 'The delivered server-properties.ps1 matches the current tracked module.'
+              Assert-Condition ((Get-NormalizedSha256 (Join-Path $InstallRoot 'scripts/run-server.ps1')) -eq $ExpectedRunServerHash) 'The updated run-server.ps1 is delivered from the current package.'
+              # Functional check: the delivered module must run on Windows PowerShell
+              # 5.1 and preserve a UTF-8 motd while switching online-mode.
+              . $InstalledServerProperties
+              $FunctionalProps = Join-Path $TestRoot 'functional-server.properties'
+              $FunctionalMotd = 'motd=Caf' + [char]0x00E9 + ' server'
+              [IO.File]::WriteAllText($FunctionalProps, ($FunctionalMotd + "`r`nonline-mode=true`r`n"), (New-Object Text.UTF8Encoding($false)))
+              Set-ServerOnlineMode -Path $FunctionalProps -Value 'false'
+              $FunctionalBytes = [IO.File]::ReadAllBytes($FunctionalProps)
+              $ExpectedMotdBytes = [Text.Encoding]::UTF8.GetBytes($FunctionalMotd)
+              $MotdPreserved = $FunctionalBytes.Length -ge $ExpectedMotdBytes.Length
+              if ($MotdPreserved) {
+                  for ($ByteIndex = 0; $ByteIndex -lt $ExpectedMotdBytes.Length; $ByteIndex++) {
+                      if ($FunctionalBytes[$ByteIndex] -ne $ExpectedMotdBytes[$ByteIndex]) { $MotdPreserved = $false; break }
+                  }
+              }
+              Assert-Condition $MotdPreserved 'The delivered server-properties.ps1 preserves the UTF-8 motd bytes on Windows PowerShell 5.1.'
+              Assert-Condition (([Text.Encoding]::ASCII.GetString($FunctionalBytes)) -match '(?m)^online-mode=false') 'The delivered server-properties.ps1 still updates online-mode.'
+              Write-Host 'PASS: the legacy updater accepted the compatibility alias, applied the Lite update, verified its checksum, preserved runtime/settings/world data, and delivered the server-properties module.' -ForegroundColor Green
           }
           finally {
               if ($null -ne $HttpProcess -and -not $HttpProcess.HasExited) {
