@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.137-beta]
+
+- Fixed the TUI mouse path: restored the missing click activation helper, enabled OpenTUI mouse-movement reporting and added hover-to-selection handling so the highlighted action follows the pointer.
+- Fixed keyboard focus being lost after renderer startup by disabling automatic focus reassignment and explicitly focusing the active Select menu. This restores arrow-key navigation and Enter activation in standalone Windows builds.
+- Added regression assertions for mouse movement, coordinate-to-option conversion, click activation and explicit focus ownership.
+
 ## [0.0.136-beta]
 
 - Stopped generating and publishing the obsolete `jarock-full-*` and `jarock-lite-*` compatibility aliases in future releases. New releases now publish only the current `jarock-cli-*`, `jarock-tui-*` and standalone `jarock-tui.exe` assets.

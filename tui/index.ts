@@ -27,7 +27,8 @@ const renderer = await createCliRenderer({
   exitOnCtrlC: true,
   clearOnShutdown: true,
   useMouse: true,
-  autoFocus: true,
+  enableMouseMovement: true,
+  autoFocus: false,
   // Kitty keyboard escape sequences are not handled consistently by the
   // classic Windows Console Host and older ConPTY implementations. Legacy
   // key sequences keep arrows and Enter usable on cmd.exe and PowerShell.
@@ -68,16 +69,36 @@ renderer.start()
 // rendered but outside the active focus chain.
 menu.focus()
 
+function selectIndexAt(select: any, event: any): number | null {
+  const lineHeight = Math.max(1, Number(select.linesPerItem ?? (select.showDescription ? 2 : 1)))
+  const visibleCount = Math.max(1, Number(select.maxVisibleItems ?? Math.floor(select.height / lineHeight)))
+  const row = Math.floor(event.y - select.screenY)
+  const visibleRow = Math.floor(row / lineHeight)
+  const offset = Math.max(0, Number(select.scrollOffset ?? 0))
+  const index = offset + visibleRow
+  if (row < 0 || visibleRow < 0 || visibleRow >= visibleCount || index < 0 || index >= select.options.length) return null
+  return index
+}
+
+function selectMouseMove(this: any, event: any): void {
+  const index = selectIndexAt(this, event)
+  if (index === null) return
+  if (this.getSelectedIndex?.() !== index) this.setSelectedIndex(index)
+  this.focus()
+}
+
+function activateBoundSelect(select: any): void {
+  const option = select.getSelectedOption?.()
+  const activate = select.__jarockActivate as ((selected: any) => void) | undefined
+  if (option && activate) activate(option)
+}
+
 function selectMouseDown(this: any, event: any): void {
   if (event.button !== 0) return
-  const lineHeight = Math.max(1, Number(this.linesPerItem ?? (this.showDescription ? 2 : 1)))
-  const visibleCount = Math.max(1, Number(this.maxVisibleItems ?? Math.floor(this.height / lineHeight)))
-  const row = Math.floor(event.y - this.screenY)
-  const visibleRow = Math.floor(row / lineHeight)
-  const offset = Math.max(0, Number(this.scrollOffset ?? 0))
-  const index = offset + visibleRow
-  if (row < 0 || visibleRow < 0 || visibleRow >= visibleCount || index < 0 || index >= this.options.length) return
+  const index = selectIndexAt(this, event)
+  if (index === null) return
   this.setSelectedIndex(index)
+  this.focus()
   event.preventDefault()
   event.stopPropagation()
   activateBoundSelect(this)
@@ -87,6 +108,7 @@ function createActionSelect(options: any[], settings: Record<string, any>, activ
   const select: any = Select({
     ...settings,
     options,
+    onMouseMove: selectMouseMove,
     onMouseDown: selectMouseDown,
   })
   // SelectRenderable's native key bindings handle Return/Linefeed and emit
