@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.121-beta]
+
+- Added readable TUI diagnostics alongside numeric Windows exit codes. The launchers now explain common failures such as `STATUS_ILLEGAL_INSTRUCTION` (`0xC000001D`, usually an incompatible CPU target) and missing native DLLs (`0xC0000135`) for both the server and parameter-manager TUI.
+- Added reason and command context to Windows CI build and smoke-test failures so a failed TUI release run is easier to diagnose from the workflow summary.
+
 ## [0.0.120-beta]
 
 - Fixed the Windows TUI icon build by generating a legacy BGRA/DIB ICO instead of a PNG-in-ICO wrapper. Bun can now embed the official Jarock icon reliably while compiling the baseline Windows executable for older CPUs.

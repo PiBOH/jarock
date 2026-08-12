@@ -217,14 +217,37 @@ if not exist "%TUI_EXE%" (
 )
 set "JAROCK_ROOT=%ROOT%"
 "%TUI_EXE%" %*
-set "TUI_EXIT_CODE=%errorlevel%"
-if not "%TUI_EXIT_CODE%"=="0" (
-    echo.
+set "TUI_EXIT_CODE=%errorlevel%"if not "%TUI_EXIT_CODE%"=="0" (
+echo.
     echo ERROR: The Jarock TUI exited unexpectedly with code %TUI_EXIT_CODE%.
+    call :explain_tui_exit "%TUI_EXIT_CODE%"
     echo Suggested fix: verify that this is a complete TUI release package and inspect the TUI error above.
     pause
 )
 exit /b %TUI_EXIT_CODE%
+
+:explain_tui_exit
+set "TUI_DIAGNOSTIC_CODE=%~1"
+if "%TUI_DIAGNOSTIC_CODE%"=="-1073741795" (
+    echo Reason: Windows reported STATUS_ILLEGAL_INSTRUCTION (0xC000001D).
+    echo The TUI executable tried to use a CPU instruction that this computer does not support.
+    echo This can happen with a non-baseline or damaged executable; download the latest TUI package built for older CPUs.
+    exit /b 0
+)
+if "%TUI_DIAGNOSTIC_CODE%"=="-1073741515" (
+    echo Reason: Windows could not find a required native DLL (0xC0000135).
+    echo The TUI package may be incomplete or its OpenTUI native backend may be missing.
+    echo Download the complete TUI package again and keep jarock-tui.exe with its release files.
+    exit /b 0
+)
+if "%TUI_DIAGNOSTIC_CODE%"=="-1073741819" (
+    echo Reason: Windows reported an access violation (0xC0000005).
+    echo The executable or a native OpenTUI component crashed while starting.
+    echo Verify the package, then inspect the TUI build and native-backend version.
+    exit /b 0
+)
+echo Reason: the TUI returned an unclassified Windows exit code; the code may indicate a package, native-backend or runtime failure.
+exit /b 0
 
 :startup_update_install
 echo.

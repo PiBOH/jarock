@@ -32,12 +32,18 @@ try {
     Assert ($Batch.Contains('start-server-runner.bat')) 'start-server.bat uses a temporary runner copy'
     Assert ($Batch.Contains('call "%ROOT%\.cache\start-server-runner.bat" %*')) 'start-server.bat calls the isolated runner so control returns safely'
     Assert ($Batch.Contains('The Jarock TUI exited unexpectedly')) 'start-server.bat keeps unexpected TUI exits visible'
+    Assert ($Batch.Contains('STATUS_ILLEGAL_INSTRUCTION')) 'start-server.bat explains illegal-instruction TUI failures'
+    Assert ($Batch.Contains('0xC000001D')) 'start-server.bat shows the illegal-instruction Windows status code'
+    Assert ($Batch.Contains('required native DLL')) 'start-server.bat explains missing native DLL failures'
     $ParameterManager = Get-Content -LiteralPath (Join-Path $Root 'parameter-manager.bat') -Raw
     $TuiEntry = Get-Content -LiteralPath (Join-Path $Root 'tui/index.ts') -Raw
     Assert ($TuiEntry.Contains('JAROCK_TUI_BYPASS: "1"')) 'TUI bypasses the outer interface when opening a classic-console operation'
     Assert ($TuiEntry.Contains('_JAROCK_CLASSIC_CONSOLE: "1"')) 'TUI marks classic-console operations as already inside the classic console'
     Assert ($ParameterManager.Contains('_JAROCK_PARAMETER_MANAGER_ROOT')) 'parameter-manager.bat isolates execution for safe self-updates'
     Assert ($ParameterManager.Contains('The Jarock TUI parameter manager exited unexpectedly')) 'parameter-manager.bat keeps unexpected TUI exits visible'
+    Assert ($ParameterManager.Contains('STATUS_ILLEGAL_INSTRUCTION')) 'parameter-manager.bat explains illegal-instruction TUI failures'
+    Assert ($ParameterManager.Contains('0xC000001D')) 'parameter-manager.bat shows the illegal-instruction Windows status code'
+    Assert ($ParameterManager.Contains('required native DLL')) 'parameter-manager.bat explains missing native DLL failures'
     Assert ($ParameterManager.Contains('parameter-manager-runner.bat')) 'parameter-manager.bat uses a temporary runner copy'
     Assert ($ParameterManager.Contains('call "%ROOT%\.cache\parameter-manager-runner.bat" %*')) 'parameter-manager.bat returns from the isolated runner safely'
     Assert ($ParameterManager.Contains('del /q "%ROOT%\.cache\parameter-manager-runner.bat"')) 'parameter-manager.bat cleans up the isolated runner after exit'
