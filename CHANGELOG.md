@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.114-beta]
+
+- Fixed the standalone Windows TUI build by declaring OpenTUI's `web-tree-sitter@0.25.10` peer dependency explicitly, allowing Bun to resolve and embed `web-tree-sitter/tree-sitter.wasm` during compilation.
+- Added a CI preflight that verifies the Tree-sitter WASM asset is installed before either standalone TUI compilation.
+- Synchronized the TUI package version and lockfile with the release version.
+
 ## [0.0.113-beta]
 
 - Fixed the Windows TUI release build by explicitly bundling OpenTUI's `@opentui/core-win32-x64` native backend in both the main executable and renderer smoke test.

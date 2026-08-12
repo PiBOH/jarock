@@ -36,6 +36,14 @@ jobs:
       - name: Install TUI dependencies
         shell: pwsh
         run: bun install --cwd tui --frozen-lockfile
+      - name: Verify OpenTUI Tree-sitter asset
+        shell: pwsh
+        run: |
+          $asset = Join-Path $PWD 'tui/node_modules/web-tree-sitter/tree-sitter.wasm'
+          if (-not (Test-Path -LiteralPath $asset -PathType Leaf)) {
+            throw "The web-tree-sitter WASM asset is missing after installation: $asset"
+          }
+          Write-Host "Tree-sitter WASM asset found: $asset"
       - name: Compile standalone Windows TUI
         shell: pwsh
         run: |

@@ -5,7 +5,8 @@
     "": {
       "name": "jarock-tui",
       "dependencies": {
-        "@opentui/core": "0.5.1"
+        "@opentui/core": "0.5.1",
+        "web-tree-sitter": "0.25.10"
       },
       "optionalDependencies": {
         "@opentui/core-win32-x64": "0.5.1"
@@ -19,6 +20,7 @@
     "marked": ["marked@17.0.1", "", {}, ""],
     "string-width": ["string-width@7.2.0", "", {}, ""],
     "strip-ansi": ["strip-ansi@7.1.2", "", {}, ""],
+    "web-tree-sitter": ["web-tree-sitter@0.25.10", "", {}, ""],
     "@opentui/core-win32-arm64": ["@opentui/core-win32-arm64@0.5.1", "", {"os":"win32","cpu":"arm64"}, ""],
     "@opentui/core-win32-x64": ["@opentui/core-win32-x64@0.5.1", "", {"os":"win32","cpu":"x64"}, ""]
   }
