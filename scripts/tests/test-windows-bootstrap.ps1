@@ -102,8 +102,8 @@ function Restore-Java {
     $env:Path = $Saved.ProcessPath
 }
 
-$SettingsPath = Join-Path $PSScriptRoot 'server-launch-settings.ini'
-$SettingsTemplate = Join-Path $PSScriptRoot 'server-launch-settings.ini.template'
+$SettingsPath = Join-Path $PSScriptRoot 'jarock.ini'
+$SettingsTemplate = Join-Path $PSScriptRoot 'scripts/jarock.ini'
 $WelcomeMessageTestConfigPath = Join-Path $Root 'server\config\welcomemessage.json5'
 $WelcomeMessageTestMarkerPath = Join-Path $Root 'server\config\.jarock-welcomemessage-configured'
 $WelcomeMessageOriginalConfigExists = $false
@@ -118,10 +118,10 @@ try {
 
     # 1. Local settings must exist and select Fabric so the bootstrap never prompts.
     if (-not (Test-Path -LiteralPath $SettingsPath -PathType Leaf)) {
-        if (Test-Path -LiteralPath (Join-Path $Root 'server-launch-settings.ini') -PathType Leaf) {
-            Move-Item -LiteralPath (Join-Path $Root 'server-launch-settings.ini') -Destination $SettingsPath
+        if (Test-Path -LiteralPath (Join-Path $Root 'jarock.ini') -PathType Leaf) {
+            Move-Item -LiteralPath (Join-Path $Root 'jarock.ini') -Destination $SettingsPath
         }
-        elseif (-not (Test-Path -LiteralPath $SettingsTemplate -PathType Leaf)) { throw 'scripts/server-launch-settings.ini.template is missing.' }
+        elseif (-not (Test-Path -LiteralPath $SettingsTemplate -PathType Leaf)) { throw 'scripts/jarock.ini is missing.' }
         else { Copy-Item -LiteralPath $SettingsTemplate -Destination $SettingsPath }
     }
     & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'update-launch-setting.ps1') -SettingsPath $SettingsPath -Name LOADER_TYPE -Value fabric

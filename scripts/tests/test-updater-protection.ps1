@@ -50,11 +50,11 @@ $script:Tracked = @()
 Assert-T (-not (Invoke-Protected 'server/config/welcomemessage.json5.jarock')) 'No-Git install: Welcome Message template is updatable'
 
 # 1b. Old Git checkout (pre-0.0.95, template not tracked yet): still updatable.
-$script:Tracked = @('scripts/version.txt', 'server/mods-manifest.ps1', 'start-server.bat')
+$script:Tracked = @('scripts/jarock.ini', 'server/mods-manifest.ps1', 'start-server.bat')
 Assert-T (-not (Invoke-Protected 'server/config/welcomemessage.json5.jarock')) 'Old Git checkout: Welcome Message template is updatable'
 
 # 1c. Current Git checkout (template tracked): still updatable.
-$script:Tracked = @('scripts/version.txt', 'server/config/welcomemessage.json5.jarock', 'server/mods-manifest.ps1')
+$script:Tracked = @('scripts/jarock.ini', 'server/config/welcomemessage.json5.jarock', 'server/mods-manifest.ps1')
 Assert-T (-not (Invoke-Protected 'server/config/welcomemessage.json5.jarock')) 'Current Git checkout: Welcome Message template is updatable'
 
 # 1d. Generated runtime configuration must remain protected.
@@ -85,9 +85,9 @@ if ($FallbackMatch.Success) {
 }
 
 # --- 3. Test-Package must require the Welcome Message template in the package ---
-# The version is derived from the real scripts/version.txt so the test stays
+# The version is derived from the real scripts/jarock.ini so the test stays
 # honest across version bumps instead of relying on a magic constant.
-$PackageVersionText = (Get-Content -LiteralPath (Join-Path $Root 'scripts/version.txt') -Raw).Trim()
+$PackageVersionText = (Get-Content -LiteralPath (Join-Path $Root 'scripts/jarock.ini') -Raw).Trim()
 $TokenB = $null
 $ErrorB = $null
 $AstB = [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $Root 'scripts/update-jarock.ps1'), [ref]$TokenB, [ref]$ErrorB)
@@ -120,7 +120,7 @@ function New-TestPackage([string]$Dir, [switch]$WithoutTemplate) {
     Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
     $Zip = [IO.Compression.ZipFile]::Open($ZipPath, [IO.Compression.ZipArchiveMode]::Create)
     try {
-        foreach ($Rel in @('scripts/version.txt', 'start-server.bat', 'scripts/update-jarock.ps1', 'scripts/update-jarock.bat', 'scripts/apply-pending-launcher.ps1', 'scripts/jarock-edition.ini')) {
+        foreach ($Rel in @('scripts/jarock.ini', 'start-server.bat', 'scripts/update-jarock.ps1', 'scripts/update-jarock.bat', 'scripts/apply-pending-launcher.ps1', 'scripts/jarock-edition.ini')) {
             $Entry = $Zip.CreateEntry($Rel)
             $Writer = New-Object IO.StreamWriter($Entry.Open())
             try { $Writer.Write((Get-Content -LiteralPath (Join-Path $Dir $Rel) -Raw)) } finally { $Writer.Dispose() }

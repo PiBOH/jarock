@@ -195,7 +195,7 @@ try {
     Assert ($Updater.Contains('status --porcelain=v1 -z')) 'the updater uses unambiguous Git status records'
     Assert ($Updater.Contains('function Test-LocalSettingsChange')) 'the updater filters local settings changes separately'
     Assert ($Updater.Contains('A rename involving any project file must remain blocking')) 'the updater keeps project-file renames blocking'
-    Assert ($Updater.Contains('local scripts/server-launch-settings.ini file is preserved')) 'the updater explains that local settings do not block updates'
+    Assert ($Updater.Contains('local scripts/jarock.ini file is preserved')) 'the updater explains that local settings do not block updates'
     Assert ($Updater.Contains('IsNullOrWhiteSpace($_)')) 'the updater ignores empty NUL-separated Git status records'
 
     New-Item -ItemType Directory -Force -Path $TempRoot | Out-Null

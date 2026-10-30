@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param()
 
-# Regression test for the server-launch-settings.ini rewrite chain. The file is
+# Regression test for the jarock.ini rewrite chain. The file is
 # UTF-8: the TUI writes it with Node utf8 (no BOM), Windows PowerShell 5.1 used
 # to write UTF-8 with BOM, and its values include user paths that may contain
 # non-ASCII characters (for example WORLD_IMPORT_SOURCE). Every reader must
