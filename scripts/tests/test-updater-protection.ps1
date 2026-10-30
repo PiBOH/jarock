@@ -16,7 +16,7 @@ param()
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
-$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
 $Pass = 0
 $Fail = 0
 function Assert-T([bool]$Condition, [string]$Name) {
@@ -87,26 +87,26 @@ if ($FallbackMatch.Success) {
 # --- 3. Test-Package must require the Welcome Message template in the package ---
 # The version is derived from the real scripts/jarock.ini so the test stays
 # honest across version bumps instead of relying on a magic constant.
-$PackageVersionText = (Get-Content -LiteralPath (Join-Path $Root 'scripts/jarock.ini') -Raw).Trim()
+$PackageVersionText = ((Select-String -LiteralPath (Join-Path $Root 'scripts/jarock.ini') -Pattern '^JAROCK_VERSION=(.+)$' | Select-Object -First 1).Matches[0].Groups[1].Value).Trim()
 $TokenB = $null
 $ErrorB = $null
 $AstB = [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $Root 'scripts/update-jarock.ps1'), [ref]$TokenB, [ref]$ErrorB)
 if ($ErrorB -and $ErrorB.Count -gt 0) { throw 'scripts/update-jarock.ps1 failed to parse (second pass).' }
 
 $PackageFns = @{}
-foreach ($Name in @('Parse-SemVer', 'Compare-SemVer', 'Test-Package')) {
+foreach ($Name in @('Parse-SemVer', 'Compare-SemVer', 'Get-JarockVersionLine', 'Test-Package')) {
     foreach ($Node in $AstB.FindAll({ param($N) $true }, $true)) {
         if ($Node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $Node.Name -eq $Name) { $PackageFns[$Name] = $Node.Extent.Text; break }
     }
     if (-not $PackageFns.ContainsKey($Name)) { throw "$Name was not found in scripts/update-jarock.ps1." }
 }
-$PackageModule = New-Module -Name "jarock-package-$PID" -ScriptBlock ([scriptblock]::Create(($PackageFns.Values -join [Environment]::NewLine))) -Function @('Parse-SemVer', 'Compare-SemVer', 'Test-Package')
+$PackageModule = New-Module -Name "jarock-package-$PID" -ScriptBlock ([scriptblock]::Create(($PackageFns.Values -join [Environment]::NewLine))) -Function @('Parse-SemVer', 'Compare-SemVer', 'Get-JarockVersionLine', 'Test-Package')
 
 function New-TestPackage([string]$Dir, [switch]$WithoutTemplate) {
     $Scripts = Join-Path $Dir 'scripts'
     New-Item -ItemType Directory -Force -Path $Scripts | Out-Null
     New-Item -ItemType Directory -Force -Path (Join-Path $Dir 'server/config') | Out-Null
-    Set-Content -LiteralPath (Join-Path $Scripts 'version.txt') -Value $PackageVersionText -NoNewline -Encoding Ascii
+    Set-Content -LiteralPath (Join-Path $Scripts 'jarock.ini') -Value "JAROCK_VERSION=$PackageVersionText" -NoNewline -Encoding Ascii
     Set-Content -LiteralPath (Join-Path $Dir 'start-server.bat') -Value '@echo off' -Encoding Ascii
     Set-Content -LiteralPath (Join-Path $Scripts 'update-jarock.ps1') -Value '# updater' -Encoding Ascii
     Set-Content -LiteralPath (Join-Path $Scripts 'update-jarock.bat') -Value '@echo off' -Encoding Ascii

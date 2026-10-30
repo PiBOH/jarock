@@ -4,7 +4,7 @@ param()
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
 $BatchPath = Join-Path $Root 'start-server.bat'
 $TempRoot = Join-Path ([IO.Path]::GetTempPath()) ('Jarock-startup-update-test-' + [guid]::NewGuid().ToString('N'))
 $Pass = 0

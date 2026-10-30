@@ -8,7 +8,7 @@ param()
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
 $Pass = 0
 $Fail = 0
 function Assert([bool]$Condition, [string]$Name) {
@@ -17,7 +17,7 @@ function Assert([bool]$Condition, [string]$Name) {
 }
 
 try {
-    . (Join-Path $PSScriptRoot 'world-transfer.ps1')
+    . (Join-Path $Root 'scripts/world-transfer.ps1')
 
     $env:JAROCK_WORLD_TRANSFER_ASSUME_YES = '1'
     $TestDir = Join-Path ([IO.Path]::GetTempPath()) ('jarock-world-transfer-' + [IO.Path]::GetRandomFileName())

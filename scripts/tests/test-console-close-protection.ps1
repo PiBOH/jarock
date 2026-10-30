@@ -2,9 +2,10 @@
 param()
 
 $ErrorActionPreference = 'Stop'
+$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
 Set-StrictMode -Version Latest
 
-$ProtectionPath = Join-Path $PSScriptRoot 'console-close-protection.ps1'
+$ProtectionPath = Join-Path $Root 'scripts/console-close-protection.ps1'
 $Pass = 0
 $Fail = 0
 

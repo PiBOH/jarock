@@ -4,13 +4,14 @@ param()
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
+$RepoRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
 $Root = Join-Path ([IO.Path]::GetTempPath()) ('Jarock-clean-cache-test-' + [guid]::NewGuid().ToString('N'))
 $Scripts = Join-Path $Root 'scripts'
 $Cache = Join-Path $Root '.cache'
 
 try {
     New-Item -ItemType Directory -Force -Path $Scripts, $Cache | Out-Null
-    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'clean-cache.ps1') -Destination (Join-Path $Scripts 'clean-cache.ps1')
+    Copy-Item -LiteralPath (Join-Path $RepoRoot 'scripts/clean-cache.ps1') -Destination (Join-Path $Scripts 'clean-cache.ps1')
     Set-Content -LiteralPath (Join-Path $Cache 'stale-update.zip') -Value 'stale' -Encoding ascii
     Set-Content -LiteralPath (Join-Path $Cache 'start-server-runner.bat') -Value '@echo off' -Encoding ascii
     Set-Content -LiteralPath (Join-Path $Cache 'parameter-manager-runner.bat') -Value '@echo off' -Encoding ascii

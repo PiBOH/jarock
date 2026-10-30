@@ -4,7 +4,7 @@ param()
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
 $Pass = 0
 $Fail = 0
 function Assert([bool]$Condition, [string]$Name) {

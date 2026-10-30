@@ -13,7 +13,7 @@ param()
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
 $Pass = 0
 $Fail = 0
 function Assert([bool]$Condition, [string]$Name) {
@@ -61,7 +61,7 @@ function Assert-SettingsRoundTrip([string]$Path, [string]$ExpectedSourceLine) {
 }
 
 try {
-    . (Join-Path $PSScriptRoot 'world-transfer.ps1')
+    . (Join-Path $Root 'scripts/world-transfer.ps1')
 
     $TestDir = Join-Path ([IO.Path]::GetTempPath()) ('jarock-settings-encoding-' + [IO.Path]::GetRandomFileName())
     New-Item -ItemType Directory -Force -Path $TestDir | Out-Null
@@ -87,7 +87,7 @@ try {
         #    parameter-manager.bat invokes it.
         $Path3 = Join-Path $TestDir 'settings3.ini'
         Write-FullSettings $Path3 $false $SourceLine
-        $Helper3 = Join-Path $PSScriptRoot 'update-launch-setting.ps1'
+        $Helper3 = Join-Path $Root 'scripts/update-launch-setting.ps1'
         $Output3 = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $Helper3 -SettingsPath $Path3 -Name WORLD_IMPORT_REMEMBER -Value true 2>&1)
         $Code3 = $LASTEXITCODE
         Assert ($Code3 -eq 0) 'update-launch-setting.ps1 exits successfully'
@@ -98,7 +98,7 @@ try {
         #    value while rewriting the RAM keys.
         $Path4 = Join-Path $TestDir 'settings4.ini'
         Write-FullSettings $Path4 $false $SourceLine
-        $Helper4 = Join-Path $PSScriptRoot 'update-launch-settings.ps1'
+        $Helper4 = Join-Path $Root 'scripts/update-launch-settings.ps1'
         $Output4 = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $Helper4 -SettingsPath $Path4 -InitialMemory 2G -MaximumMemory 6G 2>&1)
         $Code4 = $LASTEXITCODE
         Assert ($Code4 -eq 0) 'update-launch-settings.ps1 exits successfully'
@@ -108,7 +108,7 @@ try {
         # 5) The validator reads the accented value correctly from a no-BOM file.
         $Path5 = Join-Path $TestDir 'settings5.ini'
         Write-FullSettings $Path5 $false $SourceLine
-        $Helper5 = Join-Path $PSScriptRoot 'validate-launch-settings.ps1'
+        $Helper5 = Join-Path $Root 'scripts/validate-launch-settings.ps1'
         $Output5 = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $Helper5 -SettingsPath $Path5 2>&1)
         $Code5 = $LASTEXITCODE
         Assert ($Code5 -eq 0) 'validate-launch-settings.ps1 accepts the accented settings'

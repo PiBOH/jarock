@@ -15,7 +15,7 @@ param()
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
 $Pass = 0
 $Fail = 0
 function Assert([bool]$Condition, [string]$Name) {
@@ -124,26 +124,26 @@ try {
         elseif (-not (Test-Path -LiteralPath $SettingsTemplate -PathType Leaf)) { throw 'scripts/jarock.ini is missing.' }
         else { Copy-Item -LiteralPath $SettingsTemplate -Destination $SettingsPath }
     }
-    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'update-launch-setting.ps1') -SettingsPath $SettingsPath -Name LOADER_TYPE -Value fabric
+    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'scripts/update-launch-setting.ps1') -SettingsPath $SettingsPath -Name LOADER_TYPE -Value fabric
     if ($LASTEXITCODE -ne 0) { throw 'Could not set LOADER_TYPE=fabric for the test.' }
 
     # 2. The bundled installers must be present (the workflow checks out with Git LFS).
     Assert (Test-Path -LiteralPath (Join-Path $Root 'prerequisites\jre-8-windows-x64.exe') -PathType Leaf) 'The bundled JRE 8 installer is present'
     Assert (Test-Path -LiteralPath (Join-Path $Root 'prerequisites\OpenJDK25U-jdk_x64_windows_hotspot.msi') -PathType Leaf) 'The bundled Temurin JDK 25 MSI is present'
-    $BootstrapScript = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'bootstrap-server.ps1') -Raw
+    $BootstrapScript = Get-Content -LiteralPath (Join-Path $Root 'scripts/bootstrap-server.ps1') -Raw
     Assert ($BootstrapScript.Contains('Start-InClassicConsole')) 'bootstrap defines the classic-console spawn helper'
     Assert ($BootstrapScript.Contains('DelegationConsole')) 'bootstrap uses the documented default-terminal registry value'
 
     # 3. Mask every Java source, then confirm the discovery finds nothing.
     Mask-Java
-    . (Join-Path $PSScriptRoot 'java-runtime.ps1')
+    . (Join-Path $Root 'scripts/java-runtime.ps1')
     $Result = Find-CompatibleJava -MinimumMajor 25
     Assert ($null -eq $Result.Selected) 'Java discovery finds nothing after masking (simulated fresh PC)'
 
     # 4. Run the real bootstrap with the dry-run flag: it must detect the missing Java,
     #    simulate the installer sequence (JRE first, then the MSI) and stop with guidance.
     $env:JAROCK_PREREQ_DRY_RUN = '1'
-    $BootOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'bootstrap-server.ps1') 2>&1)
+    $BootOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'scripts/bootstrap-server.ps1') 2>&1)
     $BootCode = $LASTEXITCODE
     Remove-Item Env:JAROCK_PREREQ_DRY_RUN -ErrorAction SilentlyContinue
     $BootText = $BootOutput -join "`n"
@@ -174,7 +174,7 @@ try {
     Remove-Item -LiteralPath $WelcomeMessageMarkerPath -Force -ErrorAction SilentlyContinue
     Restore-Java
     Write-Host '==> Java environment restored; running the real bootstrap' -ForegroundColor Cyan
-    $RealOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'bootstrap-server.ps1') 2>&1)
+    $RealOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'scripts/bootstrap-server.ps1') 2>&1)
     $RealCode = $LASTEXITCODE
     $RealText = $RealOutput -join "`n"
     Write-Host ''
@@ -324,7 +324,7 @@ try {
     if (Test-Path -LiteralPath $WelcomeMessageTemplatePath -PathType Leaf) {
         Move-Item -LiteralPath $WelcomeMessageTemplatePath -Destination $LegacyWelcomeMessageTemplatePath -Force
     }
-    $SecondBootstrapOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'bootstrap-server.ps1') 2>&1)
+    $SecondBootstrapOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'scripts/bootstrap-server.ps1') 2>&1)
     $SecondBootstrapCode = $LASTEXITCODE
     Assert ($SecondBootstrapCode -eq 0) 'A second bootstrap remains idempotent'
     Assert (Test-Path -LiteralPath $WelcomeMessageTemplatePath -PathType Leaf) 'Bootstrap migrates/restores the Welcome Message template'
@@ -335,7 +335,7 @@ try {
         $WelcomeMessageCustomizedText = $WelcomeMessageConfigText -replace '"messageOneText": "Welcome to the Jarock server!"', '"messageOneText": "My customized Jarock welcome!"'
         [IO.File]::WriteAllText($WelcomeMessageConfigPath, $WelcomeMessageCustomizedText, (New-Object Text.UTF8Encoding($false)))
         $WelcomeMessageCustomHash = Get-Sha512 $WelcomeMessageConfigPath
-        $ThirdBootstrapOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'bootstrap-server.ps1') 2>&1)
+        $ThirdBootstrapOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'scripts/bootstrap-server.ps1') 2>&1)
         $ThirdBootstrapCode = $LASTEXITCODE
         Assert ($ThirdBootstrapCode -eq 0) 'A third bootstrap remains successful after Welcome Message customization'
         Assert ((Get-Sha512 $WelcomeMessageConfigPath) -eq $WelcomeMessageCustomHash) 'Later Welcome Message customization is preserved'
@@ -356,7 +356,7 @@ try {
     Write-Host '==> Starting the Jarock server (nogui); it stops automatically after the ready banner' -ForegroundColor Cyan
     $Psi = New-Object System.Diagnostics.ProcessStartInfo
     $Psi.FileName = 'powershell.exe'
-    $Psi.Arguments = '-NoProfile -ExecutionPolicy Bypass -File "' + (Join-Path $PSScriptRoot 'run-server.ps1') + '" -ServerDirectory "' + (Join-Path $Root 'server') + '" -GuiMode nogui'
+    $Psi.Arguments = '-NoProfile -ExecutionPolicy Bypass -File "' + (Join-Path $Root 'scripts/run-server.ps1') + '" -ServerDirectory "' + (Join-Path $Root 'server') + '" -GuiMode nogui'
     $Psi.WorkingDirectory = $Root
     $Psi.UseShellExecute = $false
     $Psi.RedirectStandardInput = $true

@@ -11,7 +11,7 @@ param()
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
 $Pass = 0
 $Fail = 0
 function Assert([bool]$Condition, [string]$Name) {
@@ -52,7 +52,7 @@ function Assert-BytesIdentical([byte[]]$Before, [byte[]]$After, [string]$Name) {
 }
 
 try {
-    . (Join-Path $PSScriptRoot 'geyser-config.ps1')
+    . (Join-Path $Root 'scripts/geyser-config.ps1')
 
     $TestDir = Join-Path ([IO.Path]::GetTempPath()) ('jarock-geyser-config-' + [IO.Path]::GetRandomFileName())
     New-Item -ItemType Directory -Force -Path $TestDir | Out-Null

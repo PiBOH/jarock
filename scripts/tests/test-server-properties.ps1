@@ -13,7 +13,7 @@ param()
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
 $Pass = 0
 $Fail = 0
 function Assert([bool]$Condition, [string]$Name) {
@@ -44,7 +44,7 @@ function Assert-OnlyOnlineModeChanged([byte[]]$Before, [byte[]]$After, [string]$
 }
 
 try {
-    . (Join-Path $PSScriptRoot 'server-properties.ps1')
+    . (Join-Path $Root 'scripts/server-properties.ps1')
 
     $TestDir = Join-Path ([IO.Path]::GetTempPath()) ('jarock-server-properties-' + [IO.Path]::GetRandomFileName())
     New-Item -ItemType Directory -Force -Path $TestDir | Out-Null
