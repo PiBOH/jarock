@@ -34,7 +34,7 @@ scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
 server/server.properties.template
 server/eula.txt.template
-scripts/version.txt
+scripts/jarock.ini
 CHANGELOG.md
 TODO.md
 ```
@@ -95,7 +95,7 @@ După o eroare, citește `ERROR:` sau `WARNING:` și urmează `Suggested fix:`. 
 
 ## Actualizarea Jarock
 
-> Citiți `scripts/version.txt`, opriți serverul și așteptați `SAFE TO CLOSE`; apoi rulați `scripts/update-jarock.bat`. Caută o versiune mai nouă în același canal beta/stabil, cere confirmare și creează o copie pentru revenire. Lumea, runtime-ul, modurile, bibliotecile și setările locale sunt păstrate; dependențele sunt reparate doar dacă lipsesc sau sunt invalide.
+> Citiți `scripts/jarock.ini`, opriți serverul și așteptați `SAFE TO CLOSE`; apoi rulați `scripts/update-jarock.bat`. Caută o versiune mai nouă în același canal beta/stabil, cere confirmare și creează o copie pentru revenire. Lumea, runtime-ul, modurile, bibliotecile și setările locale sunt păstrate; dependențele sunt reparate doar dacă lipsesc sau sunt invalide.
 
 > Pachetul complet și suma de verificare SHA-512 publicată sunt verificate înainte de instalare.
 

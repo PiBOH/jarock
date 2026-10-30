@@ -8,7 +8,7 @@ name: test-update.yml
       - 'scripts/update-jarock.bat'
       - 'scripts/server-properties.ps1'
       - 'scripts/run-server.ps1'
-      - 'scripts/version.txt'
+      - 'scripts/jarock.ini'
       - 'server/config/welcomemessage.json5.jarock'
       - 'start-server.bat'
       - 'parameter-manager.bat'
@@ -41,8 +41,8 @@ jobs:
           $TestRoot = Join-Path $env:RUNNER_TEMP 'jarock-update-test'
           $MockRoot = Join-Path $TestRoot 'mock-releases'
           $InstallRoot = Join-Path $TestRoot 'older-installation'
-          $CurrentVersion = (Get-Content -LiteralPath (Join-Path $RepositoryRoot 'scripts/version.txt') -Raw).Trim()
-          $VersionRevisions = @(& git rev-list --all -- scripts/version.txt)
+          $CurrentVersion = ((Select-String -LiteralPath (Join-Path $RepositoryRoot 'scripts/jarock.ini') -Pattern '^JAROCK_VERSION=(.+)$' | Select-Object -First 1).Matches[0].Groups[1].Value).Trim()
+          $VersionRevisions = @(& git rev-list --all -- scripts/jarock.ini)
           $LegacyRevision = $null
           foreach ($Revision in $VersionRevisions) {
               & git cat-file -e "${Revision}:server/config/welcomemessage.json5.template-jarock" 2>$null
@@ -54,7 +54,7 @@ jobs:
               if ($LASTEXITCODE -ne 0) { $LegacyRevision = $Revision; break }
           }
           if ([string]::IsNullOrWhiteSpace($LegacyRevision)) { throw 'Could not find a historical Jarock revision containing the legacy Welcome Message template and predating the server-properties module.' }
-          $OldVersion = (& git show "${LegacyRevision}:scripts/version.txt").Trim()
+          $OldVersion = (& git show "${LegacyRevision}:scripts/jarock.ini").Trim()
           $Port = 18080
           $HttpProcess = $null
 
@@ -210,7 +210,7 @@ jobs:
 
               # Add runtime-only files and an old project marker. The updater must
               # replace the project file but preserve every generated runtime file.
-              $OldVersionPath = Join-Path $InstallRoot 'scripts/version.txt'
+              $OldVersionPath = Join-Path $InstallRoot 'scripts/jarock.ini'
               [IO.File]::WriteAllText($OldVersionPath, "$OldVersion`r`n", (New-Object Text.UTF8Encoding($false)))
               [IO.File]::WriteAllText((Join-Path $InstallRoot 'README.md'), 'OLD INSTALLATION MARKER', (New-Object Text.UTF8Encoding($false)))
               $WorldPath = Join-Path $InstallRoot 'server/world/level.dat'
@@ -218,7 +218,7 @@ jobs:
               $GeyserConfigPath = Join-Path $InstallRoot 'server/config/Geyser-Fabric/config.yml'
               $WelcomeTemplatePath = Join-Path $InstallRoot 'server/config/welcomemessage.json5.jarock'
               $LegacyWelcomeTemplatePath = Join-Path $InstallRoot 'server/config/welcomemessage.json5.template-jarock'
-              $SettingsPath = Join-Path $InstallRoot 'scripts/server-launch-settings.ini'
+              $SettingsPath = Join-Path $InstallRoot 'scripts/jarock.ini'
               New-Item -ItemType Directory -Force -Path (Split-Path -Parent $WorldPath), (Split-Path -Parent $PropertiesPath), (Split-Path -Parent $GeyserConfigPath), (Split-Path -Parent $WelcomeTemplatePath), (Split-Path -Parent $LegacyWelcomeTemplatePath), (Split-Path -Parent $SettingsPath) | Out-Null
               Set-Content -LiteralPath $WorldPath -Value 'WORLD DATA MUST SURVIVE' -Encoding ascii
               Set-Content -LiteralPath $PropertiesPath -Value @('server-port=25565', 'online-mode=true') -Encoding ascii
@@ -249,7 +249,7 @@ jobs:
               $UpdaterOutput | ForEach-Object { Write-Host $_ }
               Assert-Condition ($UpdaterExitCode -eq 0) "The updater exited with code $UpdaterExitCode."
 
-              $InstalledVersion = (Get-Content -LiteralPath (Join-Path $InstallRoot 'scripts/version.txt') -Raw).Trim()
+              $InstalledVersion = ((Select-String -LiteralPath (Join-Path $InstallRoot 'scripts/jarock.ini') -Pattern '^JAROCK_VERSION=(.+)$' | Select-Object -First 1).Matches[0].Groups[1].Value).Trim()
               Assert-Condition ($InstalledVersion -eq $CurrentVersion) "Expected version $CurrentVersion after update, found $InstalledVersion."
               Assert-Condition ((Get-NormalizedSha256 (Join-Path $InstallRoot 'README.md')) -eq $ExpectedReadmeHash) 'The current project files were not applied from the update package.'
               Assert-Condition ((Get-NormalizedSha256 (Join-Path $InstallRoot 'scripts/update-jarock.ps1')) -eq $ExpectedUpdaterHash) 'The current updater was not retained after the update.'

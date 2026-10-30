@@ -1,3 +1,4 @@
 # Read https://www.minecraft.net/eula before changing this file.
-# The bootstrap will not overwrite this value.
-eula=false
+# Jarock keeps eula=true so that a fresh installation can start without a manual
+# edit; the bootstrap rewrites the value when this template is copied.
+eula=true

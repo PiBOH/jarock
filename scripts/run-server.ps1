@@ -17,6 +17,10 @@ $WorldTransferScript = Join-Path $PSScriptRoot 'world-transfer.ps1'
 . $WorldTransferScript
 $ServerPropertiesScript = Join-Path $PSScriptRoot 'server-properties.ps1'
 . $ServerPropertiesScript
+$ConfigScript = Join-Path $PSScriptRoot 'jarock-config.ps1'
+. $ConfigScript
+$ConsoleInterpreterScript = Join-Path $PSScriptRoot 'console-interpreter.ps1'
+. $ConsoleInterpreterScript
 $CloseProtectionScript = Join-Path $PSScriptRoot 'console-close-protection.ps1'
 $CloseProtectionEnabled = $false
 $CloseProtectionLoaded = $false
@@ -34,10 +38,8 @@ function Assert-MemoryValue([string]$Name, [string]$Value) {
     return $Mb
 }
 function Read-Settings {
-    $Values=@{}
-    $Path=Join-Path $PSScriptRoot 'server-launch-settings.ini'
-    if (Test-Path -LiteralPath $Path -PathType Leaf) { foreach($Line in Get-Content -LiteralPath $Path -Encoding UTF8) { if($Line -match '^\s*([A-Z_]+)=(.*?)\s*$'){$Values[$Matches[1]]=$Matches[2]} } }
-    return $Values
+    # scripts/jarock.ini is the only settings source; jarock-config.ps1 parses it.
+    return Read-JarockConfig
 }
 function Get-LanIPv4 {
     try {
@@ -120,7 +122,7 @@ function Read-NbtPayload([System.IO.BinaryReader]$Reader, [int]$Type, [string[]]
         3 { [void](Read-NbtInt32 $Reader); return }
         4 {
             $Value = Read-NbtInt64 $Reader
-            # Minecraft 26.2 stores the world seed in world_gen_settings.dat under
+            # Minecraft stores the world seed in world_gen_settings.dat under
             # data.seed; legacy worlds keep it in level.dat under Data.WorldGenSettings.seed.
             if ($Path.Count -gt 0 -and $Path[-1] -ieq 'seed' -and ($Path -contains 'WorldGenSettings' -or $Path[0] -ieq 'data')) {
                 $script:DetectedSeed = [string]$Value
@@ -175,7 +177,7 @@ function Get-NbtSeedValue([string]$Path) {
     }
 }
 function Get-WorldSeed([string]$ServerDirectory, [string]$LevelName) {
-    # Minecraft 26.2 moved the world generation settings out of level.dat into
+    # Minecraft moved the world generation settings out of level.dat into
     # world/data/minecraft/world_gen_settings.dat (data.seed). Legacy worlds keep
     # the seed in level.dat under Data.WorldGenSettings.seed.
     $LevelDir = Join-Path $ServerDirectory $LevelName
@@ -244,6 +246,7 @@ function Show-ReadyStatus([bool]$ShowBanner, [object[]]$ReadyBanner) {
         Write-Host '  Bedrock Edition:       unavailable (Geyser is not installed)' -ForegroundColor Yellow
     }
     Write-Host '  Public access requires manual router/firewall or tunnel configuration.' -ForegroundColor DarkGray
+    Write-Host '  Console: type commands without a namespace, for example give @p oak_button (sent as minecraft:oak_button).' -ForegroundColor DarkGray
     if($GuiMode -eq 'gui'){
         Write-Host '  GUI mode: type "stop" in the Minecraft GUI window (or use its Stop button); this console does not read commands in GUI mode.' -ForegroundColor Yellow
     }
@@ -257,6 +260,102 @@ function Set-NeoForgeJvmArgs([string]$Path,[string]$Xms,[string]$Xmx,[string]$Gc
     $Filtered=@($Lines | Where-Object {$_ -notmatch '^\s*-Xms' -and $_ -notmatch '^\s*-Xmx' -and $_ -notmatch '^\s*-XX:\+UseG1GC' -and $_ -notmatch '^\s*-XX:MaxGCPauseMillis='})
     $Output=@($Filtered + $Managed)
     [IO.File]::WriteAllLines($Path,$Output,(New-Object Text.UTF8Encoding($false)))
+}
+function Invoke-JarockServerLine([string]$Line) {
+    # One place for every server output line: the ready banner, the detected seed
+    # and the trusted shutdown sequence all hang off this handler.
+    if ([string]::IsNullOrWhiteSpace($Line)) { return }
+    Write-Host $Line
+    if ($Line -match '(?i)\bseed\s*:\s*\[?(-?\d+)\]?') { $script:WorldSeed = $Matches[1] }
+    if (Test-ShutdownStarted $Line) {
+        # Only an explicit server-stop message starts the trusted shutdown
+        # sequence. Autosaves/manual saves never authorize SAFE TO CLOSE.
+        $script:ShutdownStarted = $true
+        $script:WorldSaveComplete = $false
+        if (-not $script:ShutdownNoticeShown) {
+            $script:ShutdownNoticeShown = $true
+            Write-Host 'Jarock: the server is shutting down and saving the world. Do not close this window until the final SAFE TO CLOSE message.' -ForegroundColor Yellow
+        }
+    }
+    if ($script:ShutdownStarted -and (Test-WorldSaveComplete $Line)) { $script:WorldSaveComplete = $true }
+    if (-not $script:BannerShown) {
+        $ReadyLine = $false
+        if ($script:GeyserPresent) { $ReadyLine = Test-GeyserReadyLine $Line }
+        else { $ReadyLine = $Line -match 'Done \(\d+\.\d+s\)' }
+        if ($ReadyLine) {
+            $NbtSeed = Get-WorldSeed $ServerDirectory (Get-ConfiguredLevelName $Properties)
+            if ($NbtSeed -ne 'unavailable') { $script:WorldSeed = $NbtSeed }
+            $script:BannerShown = $true
+            Show-ReadyStatus $ShowBanner $script:ReadyBanner
+        }
+    }
+}
+function ConvertTo-ArgumentLine([string[]]$ArgumentList) {
+    # Paths such as C:\Program Files\...\server.jar must reach the process quoted.
+    return (($ArgumentList | ForEach-Object {
+        $Value = [string]$_
+        if ($Value -match '\s') { '"' + ($Value -replace '"', '\"') + '"' } else { $Value }
+    }) -join ' ')
+}
+function Invoke-JarockServerProcess([string]$FilePath, [string]$ArgumentLine) {
+    # Start the server with a redirected stdin so a typed command can be rewritten
+    # before Minecraft reads it, and pump both directions from this single thread.
+    # The console interpreter only adds a namespace to known registry ids; every
+    # other character, including the command itself, is passed through untouched.
+    $StartInfo = New-Object System.Diagnostics.ProcessStartInfo
+    $StartInfo.FileName = $FilePath
+    $StartInfo.Arguments = $ArgumentLine
+    $StartInfo.WorkingDirectory = (Get-Location).Path
+    $StartInfo.UseShellExecute = $false
+    $StartInfo.CreateNoWindow = $true
+    $StartInfo.RedirectStandardInput = $true
+    $StartInfo.RedirectStandardOutput = $true
+    $StartInfo.RedirectStandardError = $true
+    $Process = New-Object System.Diagnostics.Process
+    $Process.StartInfo = $StartInfo
+    if (-not $Process.Start()) { throw "Could not start the server process: $FilePath" }
+    try {
+        $OutTask = $Process.StandardOutput.ReadLineAsync()
+        $ErrTask = $Process.StandardError.ReadLineAsync()
+        $InTask = $null
+        if ($GuiMode -eq 'nogui') {
+            try { $InTask = [Console]::In.ReadLineAsync() } catch { $InTask = $null }
+        }
+        while ($true) {
+            $Progress = $false
+            if ($null -ne $OutTask -and $OutTask.IsCompleted) {
+                $Line = $null
+                try { $Line = $OutTask.Result } catch { $Line = $null }
+                if ($null -eq $Line) { $OutTask = $null }
+                else { Invoke-JarockServerLine $Line; $OutTask = $Process.StandardOutput.ReadLineAsync() }
+                $Progress = $true
+            }
+            if ($null -ne $ErrTask -and $ErrTask.IsCompleted) {
+                $Line = $null
+                try { $Line = $ErrTask.Result } catch { $Line = $null }
+                if ($null -eq $Line) { $ErrTask = $null }
+                else { Invoke-JarockServerLine $Line; $ErrTask = $Process.StandardError.ReadLineAsync() }
+                $Progress = $true
+            }
+            if ($null -ne $InTask -and $InTask.IsCompleted) {
+                $Typed = $null
+                try { $Typed = $InTask.Result } catch { $Typed = $null }
+                if ($null -eq $Typed) { $InTask = $null }
+                else {
+                    $Translated = ConvertTo-NamespacedCommand $Typed
+                    if ($Translated -ne $Typed) { Write-Host "Jarock: sent $Translated" -ForegroundColor DarkGray }
+                    try { $Process.StandardInput.WriteLine($Translated); $Process.StandardInput.Flush() } catch { }
+                    try { $InTask = [Console]::In.ReadLineAsync() } catch { $InTask = $null }
+                }
+                $Progress = $true
+            }
+            if ($Process.HasExited -and $null -eq $OutTask -and $null -eq $ErrTask) { break }
+            if (-not $Progress) { Start-Sleep -Milliseconds 15 }
+        }
+        $Process.WaitForExit()
+        return $Process.ExitCode
+    }
+    finally { $Process.Dispose() }
 }
 try {
     $ServerDirectory=[IO.Path]::GetFullPath($ServerDirectory)
@@ -326,40 +425,8 @@ try {
             if($GcProfile -eq 'low-pause'){$Args+=@('-XX:+UseG1GC','-XX:MaxGCPauseMillis=200')}
             $Args+=@('-jar',$Launcher);if($GuiMode -eq 'nogui'){$Args+='nogui'}
             $PreviousEap=$ErrorActionPreference; $ErrorActionPreference='Continue'
-            try {
-                & $Runtime.Path @Args 2>&1 | ForEach-Object {
-                    if($_ -is [System.Management.Automation.ErrorRecord]){
-                        $Line=[string]$_.Exception.Message
-                        if([string]::IsNullOrWhiteSpace($Line)){return}
-                    } else { $Line=[string]$_ }
-                    Write-Host $Line
-                    if($Line -match '(?i)\bseed\s*:\s*\[?(-?\d+)\]?'){$script:WorldSeed=$Matches[1]}
-                    if(Test-ShutdownStarted $Line){
-                        # Only an explicit server-stop message starts the trusted
-                        # shutdown sequence. Autosaves/manual saves never authorize
-                        # SAFE TO CLOSE.
-                        $script:ShutdownStarted=$true
-                        $script:WorldSaveComplete=$false
-                        if(-not $script:ShutdownNoticeShown){
-                            $script:ShutdownNoticeShown=$true
-                            Write-Host 'Jarock: the server is shutting down and saving the world. Do not close this window until the final SAFE TO CLOSE message.' -ForegroundColor Yellow
-                        }
-                    }
-                    if($script:ShutdownStarted -and (Test-WorldSaveComplete $Line)){$script:WorldSaveComplete=$true}
-                    if(-not $script:BannerShown){
-                        $ReadyLine=$false
-                        if($script:GeyserPresent){$ReadyLine=Test-GeyserReadyLine $Line}
-                        else{$ReadyLine=$Line -match 'Done \(\d+\.\d+s\)'}
-                        if($ReadyLine){
-                            $NbtSeed=Get-WorldSeed $ServerDirectory (Get-ConfiguredLevelName $Properties)
-                            if($NbtSeed -ne 'unavailable'){$script:WorldSeed=$NbtSeed}
-                            $script:BannerShown=$true
-                            Show-ReadyStatus $ShowBanner $script:ReadyBanner
-                        }
-                    }
-                }
-                $ExitCode=$LASTEXITCODE
-            } finally { $ErrorActionPreference=$PreviousEap }
+            try { $ExitCode = Invoke-JarockServerProcess -FilePath $Runtime.Path -ArgumentLine (ConvertTo-ArgumentLine $Args) }
+            finally { $ErrorActionPreference=$PreviousEap }
         } else {
             $RunBat=Join-Path $ServerDirectory 'run.bat'; if(-not(Test-Path -LiteralPath $RunBat -PathType Leaf)){throw 'The generated NeoForge run.bat was not found. Run start-server.bat again.'}
             Set-NeoForgeJvmArgs (Join-Path $ServerDirectory 'user_jvm_args.txt') $InitialMemory $MaximumMemory $GcProfile
@@ -367,40 +434,8 @@ try {
             $Command = 'call "run.bat"'
             if ($Args.Count -gt 0) { $Command += ' ' + ($Args -join ' ') }
             $PreviousEap=$ErrorActionPreference; $ErrorActionPreference='Continue'
-            try {
-                & cmd.exe /d /c $Command 2>&1 | ForEach-Object {
-                    if($_ -is [System.Management.Automation.ErrorRecord]){
-                        $Line=[string]$_.Exception.Message
-                        if([string]::IsNullOrWhiteSpace($Line)){return}
-                    } else { $Line=[string]$_ }
-                    Write-Host $Line
-                    if($Line -match '(?i)\bseed\s*:\s*\[?(-?\d+)\]?'){$script:WorldSeed=$Matches[1]}
-                    if(Test-ShutdownStarted $Line){
-                        # Only an explicit server-stop message starts the trusted
-                        # shutdown sequence. Autosaves/manual saves never authorize
-                        # SAFE TO CLOSE.
-                        $script:ShutdownStarted=$true
-                        $script:WorldSaveComplete=$false
-                        if(-not $script:ShutdownNoticeShown){
-                            $script:ShutdownNoticeShown=$true
-                            Write-Host 'Jarock: the server is shutting down and saving the world. Do not close this window until the final SAFE TO CLOSE message.' -ForegroundColor Yellow
-                        }
-                    }
-                    if($script:ShutdownStarted -and (Test-WorldSaveComplete $Line)){$script:WorldSaveComplete=$true}
-                    if(-not $script:BannerShown){
-                        $ReadyLine=$false
-                        if($script:GeyserPresent){$ReadyLine=Test-GeyserReadyLine $Line}
-                        else{$ReadyLine=$Line -match 'Done \(\d+\.\d+s\)'}
-                        if($ReadyLine){
-                            $NbtSeed=Get-WorldSeed $ServerDirectory (Get-ConfiguredLevelName $Properties)
-                            if($NbtSeed -ne 'unavailable'){$script:WorldSeed=$NbtSeed}
-                            $script:BannerShown=$true
-                            Show-ReadyStatus $ShowBanner $script:ReadyBanner
-                        }
-                    }
-                }
-                $ExitCode=$LASTEXITCODE
-            } finally { $ErrorActionPreference=$PreviousEap }
+            try { $ExitCode = Invoke-JarockServerProcess -FilePath 'cmd.exe' -ArgumentLine ('/d /c ' + $Command) }
+            finally { $ErrorActionPreference=$PreviousEap }
         }
     } finally { Pop-Location }
     $FinalExitCode=$ExitCode

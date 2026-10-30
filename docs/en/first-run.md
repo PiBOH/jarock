@@ -17,7 +17,7 @@ This guide explains exactly what happens the first time you use a freshly downlo
 
 Double-click `start-server.bat`.
 
-The launcher checks the repository path, Windows long-path support, Java, and the local settings in `scripts/server-launch-settings.ini`. On an older installation it automatically migrates the old root settings file to the new `scripts/` location. It does not open router ports, change firewall rules, or configure port forwarding.
+The launcher checks the repository path, Windows long-path support, Java, and the local settings in `scripts/jarock.ini`. On an older installation it automatically migrates the old root settings file to the new `scripts/` location. It does not open router ports, change firewall rules, or configure port forwarding.
 
 If Java 25 cannot be found and the bundled installers are available, Jarock asks Windows to run `prerequisites/jre-8-windows-x64.exe` first and the Temurin JDK 25 MSI second. Accept the UAC prompts and let each installer finish. Java 25 is the runtime required by Minecraft 26.2; Java 8 is only a legacy prerequisite and is not used to run the server.
 
@@ -29,7 +29,7 @@ If no loader is configured, Jarock displays this choice:
 2. **NeoForge** — fallback when a required mod is not available for Fabric.
 3. **Forge** — currently unavailable for the verified official Minecraft 26.2 server build; it is not installed silently.
 
-Jarock saves the selected loader in `scripts/server-launch-settings.ini`. Do not mix Fabric and NeoForge runtimes or mods. If you change loader later, make a world backup and use `clean-server-runtime.bat` first.
+Jarock saves the selected loader in `scripts/jarock.ini`. Do not mix Fabric and NeoForge runtimes or mods. If you change loader later, make a world backup and use `clean-server-runtime.bat` first.
 
 ## Step 3: configure optional settings
 

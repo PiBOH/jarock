@@ -4,7 +4,7 @@
 
 ## Loader kiválasztása
 
-Telepíts 64 bites Java 25 vagy újabb JDK-t, a Temurin telepítőben engedélyezd a JAVA_HOME beállítást, majd nyisd meg újra a terminált. Mindig a gyökérben lévő `start-server.bat` en `scripts/server-launch-settings.ini` fájlt futtasd, és ne nyisd meg közvetlenül a `server/server.jar` fájlt.
+Telepíts 64 bites Java 25 vagy újabb JDK-t, a Temurin telepítőben engedélyezd a JAVA_HOME beállítást, majd nyisd meg újra a terminált. Mindig a gyökérben lévő `start-server.bat` en `scripts/jarock.ini` fájlt futtasd, és ne nyisd meg közvetlenül a `server/server.jar` fájlt.
 
 ## Telepítés és EULA
 

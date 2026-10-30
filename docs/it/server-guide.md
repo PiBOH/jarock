@@ -111,7 +111,7 @@ In questo repository non devi creare manualmente `start.bat`. Avvia `parameter-m
 - configurazione automatica dell'ambiente Java dell'utente;
 - banner di fine caricamento del server: mostra o nasconde l'avviso ASCII-art quando il server ha terminato l'avvio (opzione "Show ready banner").
 
-Le impostazioni vengono salvate in `scripts/server-launch-settings.ini`, un file locale ignorato da Git. Essential Commands 0.41.0 e il componente obbligatorio `ec-core` 1.3.0 vengono installati per Fabric 26.2. InvView 1.4.21 viene installata per Fabric e permette agli operatori autorizzati di gestire inventari e bauli dell'End dei giocatori online o offline. OfflineCommands 1.0.3 viene installata per Fabric e permette di eseguire i comandi supportati sui giocatori offline. Anche se il nome del file verificato contiene `26.1-rc-3`, i metadati Modrinth includono esplicitamente Minecraft 26.2. Poiché può modificare i dati dei giocatori offline, limita l'accesso agli operatori fidati e verifica i permessi prima dell'uso pubblico. Non esistono build NeoForge 26.2 compatibili per queste tre mod, quindi NeoForge non le installa. No Chat Reports viene installata automaticamente dal manifest del loader selezionato; non viene modificato `enforce-secure-profile`, quindi il comportamento deve essere verificato con i client che userai.
+Le impostazioni vengono salvate in `scripts/jarock.ini`, un file locale ignorato da Git. Essential Commands 0.41.0 e il componente obbligatorio `ec-core` 1.3.0 vengono installati per Fabric 26.2. InvView 1.4.21 viene installata per Fabric e permette agli operatori autorizzati di gestire inventari e bauli dell'End dei giocatori online o offline. OfflineCommands 1.0.3 viene installata per Fabric e permette di eseguire i comandi supportati sui giocatori offline. Anche se il nome del file verificato contiene `26.1-rc-3`, i metadati Modrinth includono esplicitamente Minecraft 26.2. Poiché può modificare i dati dei giocatori offline, limita l'accesso agli operatori fidati e verifica i permessi prima dell'uso pubblico. Non esistono build NeoForge 26.2 compatibili per queste tre mod, quindi NeoForge non le installa. No Chat Reports viene installata automaticamente dal manifest del loader selezionato; non viene modificato `enforce-secure-profile`, quindi il comportamento deve essere verificato con i client che userai.
  Il programma controlla che la RAM sia valida, che sia almeno `1G`, che la RAM iniziale non superi quella massima e che non superi la memoria fisica rilevata.
 
 Dopo aver salvato, scegli **Save and start the server** oppure esegui `start-server.bat`. Jarock trova automaticamente un Java 25 a 64 bit compatibile e usa quel percorso, anche se Java 8 è il primo elemento del `PATH`.
@@ -321,7 +321,7 @@ Jarock può importare ed esportare i mondi da `parameter-manager.bat`.
 
 **Esportare un mondo** (`E. Export world`): incolla il percorso completo di una cartella di destinazione fuori da `server/`, oppure lascia vuoto il campo e premi Invio per aprire il selettore di cartelle; digita `CLEAR` per rimuovere la richiesta. Dopo ogni arresto pulito (`stop` e la conferma finale `SAFE TO CLOSE`) Jarock copia il mondo corrente in quella cartella di destinazione, sovrascrivendola. La destinazione deve restare fuori da `server/`: una cartella mondo dentro la cartella del server verrebbe rilevata come possibile dato di un mondo precedente al successivo avvio. L'esportazione avviene solo dopo un arresto pulito, mai dopo un crash o una chiusura forzata.
 
-Entrambi i percorsi sono salvati localmente in `scripts/server-launch-settings.ini` (`WORLD_IMPORT_SOURCE` e `WORLD_EXPORT_DEST`) e sono ignorati da Git. La scelta di ricordare il mondo viene salvata in `WORLD_IMPORT_REMEMBER`; `WORLD_IMPORT_APPLIED` è un indicatore interno gestito da Jarock.
+Entrambi i percorsi sono salvati localmente in `scripts/jarock.ini` (`WORLD_IMPORT_SOURCE` e `WORLD_EXPORT_DEST`) e sono ignorati da Git. La scelta di ricordare il mondo viene salvata in `WORLD_IMPORT_REMEMBER`; `WORLD_IMPORT_APPLIED` è un indicatore interno gestito da Jarock.
 
 <!-- jarock-world-transfer -->
 
@@ -416,7 +416,7 @@ Technical note: after startup, Jarock prints the local LAN IPv4 address. Java pl
 
 ## Aggiornare Jarock
 
-> Leggi `scripts/version.txt`, arresta il server e attendi `SAFE TO CLOSE`; poi esegui `scripts/update-jarock.bat`. Cerca una release più recente nello stesso canale beta/stabile, chiede conferma e crea un backup per il rollback. Mondo, runtime, mod, librerie e impostazioni locali vengono preservati; le dipendenze vengono riscaricate solo se mancanti o non valide.
+> Leggi `scripts/jarock.ini`, arresta il server e attendi `SAFE TO CLOSE`; poi esegui `scripts/update-jarock.bat`. Cerca una release più recente nello stesso canale beta/stabile, chiede conferma e crea un backup per il rollback. Mondo, runtime, mod, librerie e impostazioni locali vengono preservati; le dipendenze vengono riscaricate solo se mancanti o non valide.
 
 > Il pacchetto completo e il relativo checksum SHA-512 pubblicato vengono verificati prima dell'installazione.
 

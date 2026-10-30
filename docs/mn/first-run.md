@@ -4,7 +4,7 @@
 
 ## Loader сонгох
 
-64 битийн Java 25 буюу түүнээс шинэ JDK суулгаж, Temurin суулгагчид JAVA_HOME-г идэвхжүүлээд терминалыг дахин нээнэ үү. Үргэлж root дахь `start-server.bat` en `scripts/server-launch-settings.ini`-г ажиллуулж, `server/server.jar`-г шууд нээхгүй.
+64 битийн Java 25 буюу түүнээс шинэ JDK суулгаж, Temurin суулгагчид JAVA_HOME-г идэвхжүүлээд терминалыг дахин нээнэ үү. Үргэлж root дахь `start-server.bat` en `scripts/jarock.ini`-г ажиллуулж, `server/server.jar`-г шууд нээхгүй.
 
 ## Суулгалт ба EULA
 

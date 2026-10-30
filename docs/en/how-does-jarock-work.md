@@ -7,7 +7,7 @@
 **Main platform:** Windows 10/11
 ** language:** English
 
-This document explains what happens after someone downloads the Jarock repository. It describes the real files and scripts in this repository, not an imaginary installer. The current Jarock project version is stored only in the `scripts/version.txt` file.
+This document explains what happens after someone downloads the Jarock repository. It describes the real files and scripts in this repository, not an imaginary installer. The current Jarock project version is stored only in the `scripts/jarock.ini` file.
 
 > **Interface status:** The CLI is strongly recommended and maintained. TUI packages continue to be published, but the TUI is unmaintained and provided as-is without an active compatibility-fix guarantee.
 
@@ -38,7 +38,7 @@ The router, firewall and port forwarding are **not** configured by Jarock. Alway
 
 ## 2. The parameter manager
 
-`parameter-manager.bat` is a safe beginner-friendly menu. It edits a temporary copy of the settings first and stores changes in `scripts/server-launch-settings.ini`, which is ignored by Git, only when the user chooses Save and exit or Save and start. The menu also provides Exit without saving; this deletes the temporary copy and leaves the existing settings unchanged.
+`parameter-manager.bat` is a safe beginner-friendly menu. It edits a temporary copy of the settings first and stores changes in `scripts/jarock.ini`, which is ignored by Git, only when the user chooses Save and exit or Save and start. The menu also provides Exit without saving; this deletes the temporary copy and leaves the existing settings unchanged.
 
 It can configure:
 
@@ -89,16 +89,16 @@ scripts/configure-geyser.ps1
 scripts/enable-long-paths.ps1
 scripts/update-jarock.bat
 scripts/validate-eula.ps1
-scripts/server-launch-settings.ini.template
+scripts/jarock.ini
 server/mods-manifest.ps1
 server/server.properties.template
 server/eula.txt.template
-scripts/version.txt
+scripts/jarock.ini
 CHANGELOG.md
 TODO.md
 ```
 
-The generated runtime is placed below `server/`. Generated files such as the world, logs, downloaded `.jar` files, libraries, private keys, local player lists and `scripts/server-launch-settings.ini` are ignored by Git.
+The generated runtime is placed below `server/`. Generated files such as the world, logs, downloaded `.jar` files, libraries, private keys, local player lists and `scripts/jarock.ini` are ignored by Git.
 
 ---
 

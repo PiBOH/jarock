@@ -10,11 +10,11 @@ on:
       - 'scripts/run-server.ps1'
       - 'scripts/update-launch-setting.ps1'
       - 'scripts/validate-launch-settings.ps1'
-      - 'scripts/server-launch-settings.ini.template'
+      - 'scripts/jarock.ini'
       - 'parameter-manager.bat'
       - '.github/workflows/test-world-transfer.yml'
       - 'CHANGELOG.md'
-      - 'scripts/version.txt'
+      - 'scripts/jarock.ini'
   workflow_dispatch:
 
 permissions:

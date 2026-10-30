@@ -34,7 +34,7 @@ scripts/enable-long-paths.ps1
 server/mods-manifest.ps1
 server/server.properties.template
 server/eula.txt.template
-scripts/version.txt
+scripts/jarock.ini
 CHANGELOG.md
 TODO.md
 ```
@@ -95,7 +95,7 @@ Java 通常使用 TCP `25565`，Bedrock 通常使用 UDP `19132`。Jarock 不会
 
 ## 更新 Jarock
 
-> 读取 `scripts/version.txt`，停止服务器并等待 `SAFE TO CLOSE`；然后运行 `scripts/update-jarock.bat`。它会在相同的 beta/稳定频道中寻找更新，请求确认并创建回滚备份。世界、运行时、模组、库和本地设置都会保留；只有依赖缺失或无效时才会修复。
+> 读取 `scripts/jarock.ini`，停止服务器并等待 `SAFE TO CLOSE`；然后运行 `scripts/update-jarock.bat`。它会在相同的 beta/稳定频道中寻找更新，请求确认并创建回滚备份。世界、运行时、模组、库和本地设置都会保留；只有依赖缺失或无效时才会修复。
 
 > 完整软件包及其发布的 SHA-512 校验和会在安装前进行验证。
 

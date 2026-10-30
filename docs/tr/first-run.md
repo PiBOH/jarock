@@ -4,7 +4,7 @@
 
 ## Başlamadan önce
 
-64 bit Java 25 veya daha yeni bir JDK kurun, Temurin yükleyicisinde JAVA_HOME seçeneğini etkinleştirin ve terminali yeniden açın. Yalnızca kökteki `start-server.bat` dosyasını çalıştırın; yerel ayarlar `scripts/server-launch-settings.ini` dosyasında tutulur ve `server/server.jar` dosyasını doğrudan açmayın.
+64 bit Java 25 veya daha yeni bir JDK kurun, Temurin yükleyicisinde JAVA_HOME seçeneğini etkinleştirin ve terminali yeniden açın. Yalnızca kökteki `start-server.bat` dosyasını çalıştırın; yerel ayarlar `scripts/jarock.ini` dosyasında tutulur ve `server/server.jar` dosyasını doğrudan açmayın.
 
 ## Loader seçimi
 

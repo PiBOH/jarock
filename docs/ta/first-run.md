@@ -4,7 +4,7 @@
 
 ## தொடங்குவதற்கு முன்
 
-64-பிட் Java 25 அல்லது புதிய JDK-ஐ நிறுவி, Temurin நிறுவியில் JAVA_HOME-ஐ இயக்கி, terminal-ஐ மீண்டும் திறக்கவும். Root-இல் உள்ள `start-server.bat`-ஐ மட்டும் இயக்கவும்; உள்ளூர் அமைப்புகள் `scripts/server-launch-settings.ini`-ல் சேமிக்கப்படும். `server/server.jar`-ஐ நேரடியாகத் திறக்க வேண்டாம்.
+64-பிட் Java 25 அல்லது புதிய JDK-ஐ நிறுவி, Temurin நிறுவியில் JAVA_HOME-ஐ இயக்கி, terminal-ஐ மீண்டும் திறக்கவும். Root-இல் உள்ள `start-server.bat`-ஐ மட்டும் இயக்கவும்; உள்ளூர் அமைப்புகள் `scripts/jarock.ini`-ல் சேமிக்கப்படும். `server/server.jar`-ஐ நேரடியாகத் திறக்க வேண்டாம்.
 
 ## Loader-ஐத் தேர்ந்தெடுத்தல்
 

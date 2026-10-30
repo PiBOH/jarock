@@ -4,7 +4,7 @@
 
 ## Loader izvēle
 
-Instalējiet 64 bitu Java 25 vai jaunāku JDK, Temurin instalētājā ieslēdziet JAVA_HOME un no jauna atveriet termināli. Vienmēr palaidiet saknes `start-server.bat` en `scripts/server-launch-settings.ini` un neatveriet `server/server.jar` tieši.
+Instalējiet 64 bitu Java 25 vai jaunāku JDK, Temurin instalētājā ieslēdziet JAVA_HOME un no jauna atveriet termināli. Vienmēr palaidiet saknes `start-server.bat` en `scripts/jarock.ini` un neatveriet `server/server.jar` tieši.
 
 ## Instalēšana un EULA
 

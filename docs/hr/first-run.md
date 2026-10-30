@@ -4,7 +4,7 @@
 
 ## Odabir loadera
 
-Instaliraj 64-bitni JDK Java 25 ili noviji, uključi JAVA_HOME u Temurin instalaciji i ponovno otvori terminal. Uvijek pokreni korijenski `start-server.bat` en `scripts/server-launch-settings.ini` i ne otvaraj izravno `server/server.jar`.
+Instaliraj 64-bitni JDK Java 25 ili noviji, uključi JAVA_HOME u Temurin instalaciji i ponovno otvori terminal. Uvijek pokreni korijenski `start-server.bat` en `scripts/jarock.ini` i ne otvaraj izravno `server/server.jar`.
 
 ## Instalacija i EULA
 

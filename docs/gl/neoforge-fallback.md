@@ -18,7 +18,7 @@ Consulta a guía completa en inglés: [../en/neoforge-fallback.md](../en/neoforg
 
 ## Actualizar Jarock
 
-> Le `scripts/version.txt`, detén o servidor e agarda por `SAFE TO CLOSE`; despois executa `scripts/update-jarock.bat`. Busca unha versión máis nova da mesma canle beta/estable, pide confirmación e crea unha copia de recuperación. Conserva o mundo, runtime, mods, bibliotecas e configuración local; só repara dependencias ausentes ou inválidas.
+> Le `scripts/jarock.ini`, detén o servidor e agarda por `SAFE TO CLOSE`; despois executa `scripts/update-jarock.bat`. Busca unha versión máis nova da mesma canle beta/estable, pide confirmación e crea unha copia de recuperación. Conserva o mundo, runtime, mods, bibliotecas e configuración local; só repara dependencias ausentes ou inválidas.
 
 > O paquete completo e a súa suma de comprobación SHA-512 publicada verifícanse antes da instalación.
 

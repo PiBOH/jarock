@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.minecraft.net/en-us/article/minecraft-java-edition-26-2"><img src="https://img.shields.io/badge/Minecraft-26.2-00AA00" alt="Minecraft 26.2"></a>
+  <a href="https://www.minecraft.net/en-us/article/minecraft-java-edition-26-3"><img src="https://img.shields.io/badge/Minecraft-26.3-00AA00" alt="Minecraft 26.3"></a>
   <a href="https://openjdk.org/projects/jdk/25/"><img src="https://img.shields.io/badge/Java-25-ED8B00" alt="Java 25"></a>
   <a href="https://geysermc.org/"><img src="https://img.shields.io/badge/Java%20%2B%20Bedrock%20cross--play-Geyser-6F42C1" alt="Java and Bedrock cross-play"></a>
   <a href="https://fabricmc.net/"><img src="https://img.shields.io/badge/Loader-Fabric-4B8BBE" alt="Fabric loader"></a>
@@ -27,7 +27,7 @@
   <a href="https://github.com/PiBOH/jarock/actions/workflows/test-startup-updates.yml"><img src="https://github.com/PiBOH/jarock/actions/workflows/test-startup-updates.yml/badge.svg" alt="Startup update test"></a>
 </p>
 
-Beginner-friendly template and documentation for a professional Minecraft Java 26.2 server.
+Beginner-friendly template and documentation for a professional Minecraft Java 26.3 server.
 
 > **Interface support status:** The CLI is **strongly recommended** and is the maintained, supported interface. The TUI remains available in future release packages, but it is **unmaintained**, provided as-is, and may not receive fixes for input or compatibility problems.
 
@@ -35,7 +35,7 @@ Beginner-friendly template and documentation for a professional Minecraft Java 2
 
 ### First choice: Fabric
 
-- Fabric Server for Minecraft Java 26.2
+- Fabric Server for Minecraft Java 26.3
 - Fabric API
 - Geyser-Fabric for Java/Bedrock cross-play
 - Floodgate-Fabric for Bedrock authentication
@@ -48,11 +48,11 @@ If `LOADER_TYPE=none` in the local settings, the first `start-server.bat` run as
 
 - **Fabric:** recommended; the Fabric launcher is renamed to the local runtime `server/server.jar`, while the vanilla engine is retained as `server/vanilla-server.jar`. Jarock maintains Fabric's launcher metadata so it points to the vanilla jar rather than the launcher itself.
 - **NeoForge:** fallback; the official installer generates `run.bat`, libraries and `user_jvm_args.txt`, which Jarock starts without inventing a fragile wrapper jar. NeoForge therefore does not use a portable `server.jar` entry point.
-- **Forge:** shown for clarity but currently unavailable because no official Minecraft 26.2 server build has been verified. It is not silently installed.
+- **Forge:** shown for clarity but currently unavailable because no official Minecraft 26.3 server build has been verified. It is not silently installed.
 
 ### Fallback: NeoForge
 
-If an essential mod or modpack is not available for Fabric, use **NeoForge** for Minecraft 26.2:
+If an essential mod or modpack is not available for Fabric, use **NeoForge** for Minecraft 26.3:
 
 - NeoForge Server
 - Geyser-NeoForge
@@ -60,16 +60,16 @@ If an essential mod or modpack is not available for Fabric, use **NeoForge** for
 - Native NeoForge mods only
 - Java 25 runtime, unless the current official tooling states otherwise
 
-**Forge and NeoForge are separate loaders.** For modern Minecraft 26.2, NeoForge is the practical choice; Forge mods are not automatically compatible with NeoForge.
+**Forge and NeoForge are separate loaders.** For modern Minecraft 26.3, NeoForge is the practical choice; Forge mods are not automatically compatible with NeoForge.
 
 Neither Fabric nor NeoForge automatically runs Bukkit/Spigot/Paper plugins. If the main requirement is a large collection of mature Bukkit plugins, use a plugin-first Paper/Spigot architecture instead. Hybrid projects should be considered only when an exact 26.2 build exists and has been tested separately.
 
 ## Quick start
 
-1. Download one of the four release editions: `jarock-cli-full`, `jarock-cli-lite`, `jarock-tui-full` or `jarock-tui-lite`. **CLI editions are strongly recommended and maintained.** TUI editions remain available with the compiled Windows terminal menu for `start-server.bat` and `parameter-manager.bat`, but the TUI is **unmaintained** and provided as-is. Full editions include Java installers; Lite editions do not. The selected edition is preserved by automatic updates. Then install a supported 64-bit Java 25 runtime for Minecraft 26.2. A direct installer link is available in the guide. **If you use the Eclipse Temurin installer:** during setup, enable the "Set JAVA_HOME variable" option (click the red X and select "Will be installed on local hard drive"). Without `JAVA_HOME`, Jarock may not find Java.
+1. Download one of the four release editions: `jarock-cli-full`, `jarock-cli-lite`, `jarock-tui-full` or `jarock-tui-lite`. **CLI editions are strongly recommended and maintained.** TUI editions remain available with the compiled Windows terminal menu for `start-server.bat` and `parameter-manager.bat`, but the TUI is **unmaintained** and provided as-is. Full editions include Java installers; Lite editions do not. The selected edition is preserved by automatic updates. Then install a supported 64-bit Java 25 runtime for Minecraft 26.3. A direct installer link is available in the guide. **If you use the Eclipse Temurin installer:** during setup, enable the "Set JAVA_HOME variable" option (click the red X and select "Will be installed on local hard drive"). Without `JAVA_HOME`, Jarock may not find Java.
 2. Clone or download this repository.
 3. Double-click `start-server.bat` once; if no loader is configured, choose Fabric, Forge or NeoForge. You can optionally open `parameter-manager.bat` during this flow. If you choose `Exit without saving`, setup is cancelled cleanly and the server is not started.
-4. The bootstrap installs the selected loader and downloads only the matching pinned mods. The Fabric and NeoForge stacks include the verified server-side No Chat Reports build for Minecraft 26.2. Fabric also includes Essential Commands 0.41.0 with its required `ec-core` 1.3.0 component, InvView 1.4.21 for server-side inventory and ender-chest administration, OfflineCommands 1.0.3 for running commands on offline players (the reviewed artifact filename includes `26.1-rc-3` but its Modrinth metadata explicitly includes 26.2), plus Links In Chat for clickable chat URLs and `/link`/`/linkwhisper`, and Welcome Message with its required Collective library for configurable join messages; clients do not need to install these server mods. Essential Commands, InvView and OfflineCommands are Fabric-only because no compatible NeoForge 26.2 builds are available; Welcome Message and Collective support Fabric and NeoForge 26.2.
+4. The bootstrap installs the selected loader and downloads only the matching pinned mods. The Fabric and NeoForge stacks include the verified server-side No Chat Reports build for Minecraft 26.3. Fabric also includes Essential Commands 0.41.0 with its required `ec-core` 1.3.0 component, InvView 1.4.21 for server-side inventory and ender-chest administration, OfflineCommands 1.0.3 for running commands on offline players (the reviewed artifact filename includes `26.1-rc-3` but its Modrinth metadata explicitly includes 26.2), plus Links In Chat for clickable chat URLs and `/link`/`/linkwhisper`, and Welcome Message with its required Collective library for configurable join messages; clients do not need to install these server mods. Essential Commands, InvView and OfflineCommands are Fabric-only because no compatible NeoForge 26.2 builds are available; Welcome Message and Collective support Fabric and NeoForge 26.2.
 - **Async:** experimental server-side entity-processing optimization for Fabric and NeoForge 26.2; it may cause crashes or incompatibilities, so test with a backup and remove/disable it if the server becomes unstable.
 5. On the first Jarock-managed startup, the configured `server/config/welcomemessage.json5.jarock` replaces Welcome Message's generic `welcomemessage.json5` with the Jarock welcome text and links. Later starts preserve the operator's edits. The template is preserved by `clean-server-runtime.bat` and updated by verified Lite-package updates.
 6. Read the generated `server/eula.txt` and, if you accept the Minecraft EULA, change `eula=false` to `eula=true`.
@@ -83,9 +83,9 @@ Always use `start-server.bat` to launch this repository. It repairs Fabric's loc
 
 Startup update modes: `AUTO_UPDATE_MODE=install` checks for a compatible release and installs the verified package for the installed CLI/TUI and Full/Lite edition automatically; `AUTO_UPDATE_MODE=check` checks for updates only and never installs; `AUTO_UPDATE_MODE=never` does not check for updates and does not install updates. The default is `AUTO_UPDATE_MODE=install`; choose `check` or `never` in `parameter-manager.bat` to override it.
 
-The bootstrap calculates its root from the location of the repository, so it does not depend on a fixed drive or folder. It supports spaces, Unicode names and ordinary deeply nested paths. If the Windows path is long enough to risk the legacy 260-character limit, it checks `LongPathsEnabled` and requests administrator permission to enable it; the script prints whether the change succeeded. It cannot bypass folders for which Windows denies access, unavailable drives, network shares that do not support long paths, or legacy applications that are not long-path-aware. The bootstrap downloads generated runtime files into `server/`, which is ignored by Git. The selected loader manifest includes No Chat Reports for Minecraft 26.2; it disables chat-reporting signatures server-side, but clients may still show vanilla unsigned-chat warnings unless they also use a compatible client-side setup. Jarock does not alter `enforce-secure-profile` automatically. It does **not** open router ports, change firewall rules, configure port forwarding, or expose the server publicly. Configure those items manually only after completing [TODO.md](TODO.md).
+The bootstrap calculates its root from the location of the repository, so it does not depend on a fixed drive or folder. It supports spaces, Unicode names and ordinary deeply nested paths. If the Windows path is long enough to risk the legacy 260-character limit, it checks `LongPathsEnabled` and requests administrator permission to enable it; the script prints whether the change succeeded. It cannot bypass folders for which Windows denies access, unavailable drives, network shares that do not support long paths, or legacy applications that are not long-path-aware. The bootstrap downloads generated runtime files into `server/`, which is ignored by Git. The selected loader manifest includes No Chat Reports for Minecraft 26.3; it disables chat-reporting signatures server-side, but clients may still show vanilla unsigned-chat warnings unless they also use a compatible client-side setup. Jarock does not alter `enforce-secure-profile` automatically. It does **not** open router ports, change firewall rules, configure port forwarding, or expose the server publicly. Configure those items manually only after completing [TODO.md](TODO.md).
 
-Fabric is the default stack and NeoForge is the fallback. Each loader receives only its own pinned mods; Forge is currently unavailable for the official 26.2 build. Fabric renames its loader launcher to the local `server/server.jar`, while NeoForge starts through its official `run.bat`. Neither loader installs or runs arbitrary Bukkit/Spigot/Paper plugins. Add a Fabric-native mod only after verifying Minecraft 26.2 compatibility and its server-side support. The bootstrap does not blindly use the first Java on `PATH`: it searches for a 64-bit Java 25+ runtime, reports the selected executable, saves it in the ignored local file `server/java-path.txt`, and reuses that exact path. If Java 25 is installed in a custom or unregistered location, put its JDK folder or `bin\java.exe` path in the local `java-home.txt` file at the repository root, or set `JAROCK_JAVA_HOME`. If only Java 8 or Java 21 is installed, it lists the detected candidates and points to the Windows x64 Java 25 JDK installer. Therefore an older Java 8 installation can remain on the computer without blocking Jarock. If a failure occurs, the launcher prints an actionable suggested fix; inspect `server/logs/latest.log` and `server/crash-reports/` when the Java process exits with an error.
+Fabric is the default stack and NeoForge is the fallback. Each loader receives only its own pinned mods; Forge is currently unavailable for the official 26.2 build. Fabric renames its loader launcher to the local `server/server.jar`, while NeoForge starts through its official `run.bat`. Neither loader installs or runs arbitrary Bukkit/Spigot/Paper plugins. Add a Fabric-native mod only after verifying Minecraft 26.3 compatibility and its server-side support. The bootstrap does not blindly use the first Java on `PATH`: it searches for a 64-bit Java 25+ runtime, reports the selected executable, saves it in the ignored local file `server/java-path.txt`, and reuses that exact path. If Java 25 is installed in a custom or unregistered location, put its JDK folder or `bin\java.exe` path in the local `java-home.txt` file at the repository root, or set `JAROCK_JAVA_HOME`. If only Java 8 or Java 21 is installed, it lists the detected candidates and points to the Windows x64 Java 25 JDK installer. Therefore an older Java 8 installation can remain on the computer without blocking Jarock. If a failure occurs, the launcher prints an actionable suggested fix; inspect `server/logs/latest.log` and `server/crash-reports/` when the Java process exits with an error.
 
 ## Guides
 

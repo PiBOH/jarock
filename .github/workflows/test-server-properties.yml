@@ -9,7 +9,7 @@ on:
       - 'scripts/run-server.ps1'
       - '.github/workflows/test-server-properties.yml'
       - 'CHANGELOG.md'
-      - 'scripts/version.txt'
+      - 'scripts/jarock.ini'
   workflow_dispatch:
 
 permissions:

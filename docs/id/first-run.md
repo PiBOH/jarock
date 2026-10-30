@@ -4,7 +4,7 @@
 
 ## Memilih loader
 
-Pasang JDK Java 25+ 64-bit, aktifkan JAVA_HOME di installer Temurin, lalu buka kembali terminal. Selalu jalankan `start-server.bat` en `scripts/server-launch-settings.ini` di root dan jangan membuka `server/server.jar` secara langsung.
+Pasang JDK Java 25+ 64-bit, aktifkan JAVA_HOME di installer Temurin, lalu buka kembali terminal. Selalu jalankan `start-server.bat` en `scripts/jarock.ini` di root dan jangan membuka `server/server.jar` secara langsung.
 
 ## Instalasi dan EULA
 

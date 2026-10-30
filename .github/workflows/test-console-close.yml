@@ -10,7 +10,7 @@ name: test-console-close
       - 'start-server.bat'
       - '.github/workflows/test-console-close.yml'
       - 'CHANGELOG.md'
-      - 'scripts/version.txt'
+      - 'scripts/jarock.ini'
   workflow_dispatch:
 
 permissions:

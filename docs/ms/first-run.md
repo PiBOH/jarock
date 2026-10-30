@@ -4,7 +4,7 @@
 
 ## Memilih loader
 
-Pasang JDK Java 25+ 64-bit, aktifkan JAVA_HOME dalam pemasang Temurin dan buka semula terminal. Sentiasa jalankan `start-server.bat` en `scripts/server-launch-settings.ini` di root dan jangan buka `server/server.jar` secara terus.
+Pasang JDK Java 25+ 64-bit, aktifkan JAVA_HOME dalam pemasang Temurin dan buka semula terminal. Sentiasa jalankan `start-server.bat` en `scripts/jarock.ini` di root dan jangan buka `server/server.jar` secara terus.
 
 ## Pemasangan dan EULA
 

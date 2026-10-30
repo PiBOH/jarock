@@ -19,7 +19,7 @@ $Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $CacheRoot = Join-Path $Root '.cache'
 $DownloadRoot = Join-Path $CacheRoot 'updates'
 $BackupRoot = Join-Path $CacheRoot 'update-backups'
-$VersionPath = Join-Path $PSScriptRoot 'version.txt'
+$VersionPath = Join-Path $PSScriptRoot 'jarock.ini'
 $UserAgent = 'Jarock-updater'
 $script:TrackedFilesCache = $null
 $script:DeferredLauncherPath = Join-Path $CacheRoot 'pending-start-server.bat'
@@ -90,9 +90,18 @@ function Compare-SemVer($Left, $Right) {
     return 0
 }
 
+function Get-JarockVersionLine([string]$Text) {
+    foreach ($Line in ($Text -split "`r?`n")) {
+        if ($Line -match '^JAROCK_VERSION=(.+)$') { return $Matches[1].Trim() }
+    }
+    return $null
+}
+
 function Get-LocalVersion {
-    if (-not (Test-Path -LiteralPath $VersionPath -PathType Leaf)) { throw 'scripts/version.txt is missing.' }
-    return Parse-SemVer (Get-Content -LiteralPath $VersionPath -Raw)
+    if (-not (Test-Path -LiteralPath $VersionPath -PathType Leaf)) { throw 'scripts/jarock.ini is missing.' }
+    $Version = Get-JarockVersionLine (Get-Content -LiteralPath $VersionPath -Raw)
+    if ([string]::IsNullOrWhiteSpace($Version)) { throw 'scripts/jarock.ini has no JAROCK_VERSION line.' }
+    return Parse-SemVer $Version
 }
 
 function Get-InstalledEdition {
@@ -220,7 +229,7 @@ function Get-GitExecutable {
 }
 function Test-LocalSettingsPath([string]$Path) {
     $Relative = ([string]$Path).Replace('\\','/')
-    return $Relative -ieq 'scripts/server-launch-settings.ini'
+    return $Relative -ieq 'scripts/jarock.ini'
 }
 
 function Get-GitStatusRecords([string]$GitPath) {
@@ -258,7 +267,7 @@ function Assert-GitTreeSafe {
     if ($null -eq $GitPath) { return }
     $StatusRecords = @(Get-GitStatusRecords $GitPath)
     if ($StatusRecords.Count -gt 0 -and -not (Test-LocalSettingsChange $StatusRecords)) {
-        throw 'The repository contains uncommitted project changes. The updater will not overwrite them automatically. The local scripts/server-launch-settings.ini file is preserved and does not block updates; commit or stash other changes, or rerun with -AllowLocalChanges after making a backup.'
+        throw 'The repository contains uncommitted project changes. The updater will not overwrite them automatically. The local settings inside scripts/jarock.ini are preserved and do not block updates; commit or stash other changes, or rerun with -AllowLocalChanges after making a backup.'
     }
 }
 function Get-TrackedFiles {
@@ -278,7 +287,7 @@ function Test-Package([string]$ZipPath, $ExpectedVersion, $Edition) {
     Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
     $Archive = [IO.Compression.ZipFile]::OpenRead($ZipPath)
     try {
-        $VersionEntry = $Archive.GetEntry('scripts/version.txt')
+        $VersionEntry = $Archive.GetEntry('scripts/jarock.ini')
         $StartEntry = $Archive.GetEntry('start-server.bat')
         $UpdateEntry = $Archive.GetEntry('scripts/update-jarock.ps1')
         $UpdateLauncherEntry = $Archive.GetEntry('scripts/update-jarock.bat')
@@ -296,7 +305,8 @@ function Test-Package([string]$ZipPath, $ExpectedVersion, $Edition) {
         try { $EditionText = $EditionReader.ReadToEnd() } finally { $EditionReader.Dispose() }
         if ($EditionText -notmatch '(?m)^JAROCK_INTERFACE=' + [regex]::Escape($Edition.Interface) + '\s*$' -or $EditionText -notmatch '(?m)^JAROCK_PACKAGE_TIER=' + [regex]::Escape($Edition.Tier) + '\s*$') { throw "The package edition marker does not match the installed $($Edition.Interface)-$($Edition.Tier) edition." }
         $Reader = New-Object IO.StreamReader($VersionEntry.Open())
-        try { $PackageVersion = Parse-SemVer $Reader.ReadToEnd() } finally { $Reader.Dispose() }
+        try { $PackageVersionText = $Reader.ReadToEnd() } finally { $Reader.Dispose() }
+        $PackageVersion = Parse-SemVer (Get-JarockVersionLine $PackageVersionText)
         if ((Compare-SemVer $PackageVersion $ExpectedVersion) -ne 0) { throw "The package version ($($PackageVersion.Text)) does not match the release version ($($ExpectedVersion.Text))." }
         foreach ($Entry in $Archive.Entries) {
             $Name = ([string]$Entry.FullName).Replace('\','/')
@@ -330,7 +340,7 @@ function Test-ProtectedProjectPath([string]$Relative) {
     $Comparable = $Normalized.ToLowerInvariant()
     $Top = $Comparable.Split('/')[0]
     if (@('.git', '.github', '.website', '.cache', 'prerequisites') -contains $Top) { return $true }
-    if ($Comparable -in @('.gitignore', '.gitattributes', 'scripts/server-launch-settings.ini', 'java-home.txt')) { return $true }
+    if ($Comparable -in @('.gitignore', '.gitattributes', 'scripts/jarock.ini', 'java-home.txt')) { return $true }
     if ($Top -ne 'server') { return $false }
 
     # Committed project templates and manifests below server/ must ALWAYS be
@@ -349,6 +359,35 @@ function Test-ProtectedProjectPath([string]$Relative) {
     if ($Comparable -match '^server/(server\.jar|vanilla-server\.jar|run\.bat|user_jvm_args\.txt|fabric-server-launcher\.properties|jarock-loader\.txt|eula\.txt|server\.properties|java-path\.txt)$') { return $true }
     if ($Comparable -match '^server/.*\.(jar|log|pem|key)$') { return $true }
     return $false
+}
+
+function Update-JarockConfigFromPackage([string]$Stage) {
+    # scripts/jarock.ini is protected during the copy because it also holds the
+    # operator's local settings. Only JAROCK_VERSION is taken from the package;
+    # every other value, and any new key the package introduces, is merged in
+    # without losing the local edits.
+    $PackageIni = Join-Path $Stage 'scripts/jarock.ini'
+    if (-not (Test-Path -LiteralPath $PackageIni -PathType Leaf)) { throw 'The package does not contain scripts/jarock.ini.' }
+    $PackageLines = @(Get-Content -LiteralPath $PackageIni -Encoding UTF8)
+    $PackageVersion = Get-JarockVersionLine ($PackageLines -join "`n")
+    if ([string]::IsNullOrWhiteSpace($PackageVersion)) { throw 'The package jarock.ini has no JAROCK_VERSION line.' }
+    $LocalPath = Join-Path $PSScriptRoot 'jarock.ini'
+    $LocalValues = @{}
+    foreach ($Line in @(Get-Content -LiteralPath $LocalPath -Encoding UTF8)) {
+        if ($Line -match '^([A-Z_]+)=(.*)$') { $LocalValues[$Matches[1]] = $Matches[2] }
+    }
+    $Merged = @()
+    foreach ($Line in $PackageLines) {
+        if ($Line -match '^([A-Z_]+)=(.*)$') {
+            $Key = $Matches[1]
+            if ($Key -eq 'JAROCK_VERSION') { $Merged += "JAROCK_VERSION=$PackageVersion" }
+            elseif ($LocalValues.ContainsKey($Key)) { $Merged += "$Key=$($LocalValues[$Key])" }
+            else { $Merged += $Line }
+        }
+        else { $Merged += $Line }
+    }
+    [IO.File]::WriteAllLines($LocalPath, $Merged, (New-Object Text.UTF8Encoding($false)))
+    Write-Host "scripts/jarock.ini merged: JAROCK_VERSION=$PackageVersion with the local settings preserved." -ForegroundColor Green
 }
 
 function Schedule-DeferredLauncherApply {
@@ -479,6 +518,7 @@ try {
     $Stage = Get-Stage $ZipPath
     try {
         $Backup = Backup-AndApply $Stage $Candidate.Version
+        Update-JarockConfigFromPackage $Stage
         # Defensive safety net: the Welcome Message template must exist after
         # the update even if the destination never had it (e.g. updating from a
         # version created before the template existed). Test-Package above

@@ -18,14 +18,33 @@ $ServerDir = Join-Path $Root 'server'
 $ModsDir = Join-Path $ServerDir 'mods'
 $ConfigDir = Join-Path $ServerDir 'config'
 $DatapacksManifestPath = Join-Path $ServerDir 'datapacks-manifest.ps1'
-$SettingsPath = Join-Path $PSScriptRoot 'server-launch-settings.ini'
-$MinecraftVersion = '26.2'
+$SettingsPath = Join-Path $PSScriptRoot 'jarock.ini'
+$ConfigScript = Join-Path $PSScriptRoot 'jarock-config.ps1'
+. $ConfigScript
+# Resolved at startup from scripts/jarock.ini; asked once when it is still empty.
+$MinecraftVersion = ''
+$SupportedMinecraftVersions = @('26.3', '26.2')
 $JavaMinimum = 25
 $FabricInstallerUrl = 'https://maven.fabricmc.net/net/fabricmc/fabric-installer/1.1.2/fabric-installer-1.1.2.jar'
 $FabricInstallerSha512 = '3cbe7b69498c44d814fc95e71cd9ce9c12c45a9e1dcf01085cb3e9aaf6fe63134b701065167be1fa6e4c2df19dfa5400bc5b6b1b7fb5e99e334d24dcdca55c20'
-$FabricLoaderVersion = '0.19.3'
-$NeoForgeInstallerUrl = 'https://maven.neoforged.net/releases/net/neoforged/neoforge/26.2.0.48-beta/neoforge-26.2.0.48-beta-installer.jar'
-$NeoForgeInstallerSha512 = '336b2010e133639b576a2848bf667a59e64e744bfce527d9262059819dcfb0957f0b3d24e35847df056ebe865c3913ec4df61e72bae3f673311c4f42a626d8e7'
+# Fabric loader builds are pinned per Minecraft line.
+$FabricLoaderVersions = @{
+    '26.2' = '0.19.3'
+    '26.3' = '0.20.1'
+}
+# Official NeoForge installers, one reviewed build per Minecraft line.
+$NeoForgeInstallers = @{
+    '26.2' = @{
+        Url = 'https://maven.neoforged.net/releases/net/neoforged/neoforge/26.2.0.48-beta/neoforge-26.2.0.48-beta-installer.jar'
+        Sha512 = '336b2010e133639b576a2848bf667a59e64e744bfce527d9262059819dcfb0957f0b3d24e35847df056ebe865c3913ec4df61e72bae3f673311c4f42a626d8e7'
+        File = 'neoforge-26.2.0.48-beta-installer.jar'
+    }
+    '26.3' = @{
+        Url = 'https://maven.neoforged.net/releases/net/neoforged/neoforge/26.3.0.99/neoforge-26.3.0.99-installer.jar'
+        Sha512 = 'da02a70933e0a492c8940aea276fbbf1840e6f25c0ccc8d308b30dbf1e15d75f7657d4f9cba9d647c2d298623f4effd5699f3ca4b5d3d74974d7ff88b513539f'
+        File = 'neoforge-26.3.0.99-installer.jar'
+    }
+}
 $LoaderMarkerPath = Join-Path $ServerDir 'jarock-loader.txt'
 $JavaRuntimeScript = Join-Path $PSScriptRoot 'java-runtime.ps1'
 . $JavaRuntimeScript
@@ -40,13 +59,59 @@ function Stop-WithGuidance([string]$Message, [string]$Action) {
     exit 1
 }
 function Read-Settings {
-    $Values = @{}
-    if (Test-Path -LiteralPath $SettingsPath -PathType Leaf) {
-        foreach ($Line in Get-Content -LiteralPath $SettingsPath -Encoding UTF8) {
-            if ($Line -match '^\s*([A-Z_]+)=(.*?)\s*$') { $Values[$Matches[1]] = $Matches[2] }
-        }
+    # scripts/jarock.ini is the only settings source; jarock-config.ps1 parses it.
+    return Read-JarockConfig
+}
+function Resolve-MinecraftVersion {
+    # The Minecraft line lives in scripts/jarock.ini. It is asked once, on the
+    # first start, and every later start reuses the stored value.
+    $Configured = (Get-JarockMinecraftVersion).Trim()
+    if ($Configured -and $SupportedMinecraftVersions -notcontains $Configured) {
+        Stop-WithGuidance "MINECRAFT_VERSION '$Configured' is not supported by this Jarock build." ("Supported versions: " + ($SupportedMinecraftVersions -join ', ') + '. Edit scripts\jarock.ini or answer the first-start question again.')
     }
-    return $Values
+    if ($Configured) { return $Configured }
+    $Default = $SupportedMinecraftVersions[0]
+    # A redirected stdin (CI, automated tests, a script) cannot answer a prompt.
+    if ([Console]::IsInputRedirected) {
+        Set-JarockSetting 'MINECRAFT_VERSION' $Default
+        Write-Host "MINECRAFT_VERSION was empty; using Minecraft $Default for this non-interactive start." -ForegroundColor Cyan
+        return $Default
+    }
+    Write-Host ''
+    Write-Host 'Which Minecraft version should this server run?' -ForegroundColor Yellow
+    for ($Index = 0; $Index -lt $SupportedMinecraftVersions.Count; $Index++) {
+        $Label = if ($Index -eq 0) { ' (recommended)' } else { '' }
+        Write-Host ("{0}. Minecraft {1}{2}" -f ($Index + 1), $SupportedMinecraftVersions[$Index], $Label)
+    }
+    $Choice = Read-Host ('Choose a Minecraft version (1-' + $SupportedMinecraftVersions.Count + ')')
+    $Selected = $null
+    if ($Choice -match '^\d+$' -and [int]$Choice -ge 1 -and [int]$Choice -le $SupportedMinecraftVersions.Count) {
+        $Selected = $SupportedMinecraftVersions[[int]$Choice - 1]
+    }
+    if ($null -eq $Selected) { Stop-WithGuidance "Invalid Minecraft version choice '$Choice'." 'Run start-server.bat again and choose one of the listed versions.' }
+    Set-JarockSetting 'MINECRAFT_VERSION' $Selected
+    Write-Host "Minecraft $Selected selected and stored in scripts\jarock.ini." -ForegroundColor Green
+    return $Selected
+}
+function Confirm-MinecraftVersionChange {
+    # Two Minecraft lines never share one server folder: the installed engine and
+    # mod set belong to the version that was installed. Switching lines therefore
+    # requires the explicit cleanup the loader change already requires.
+    $MarkerPath = Join-Path $ConfigDir '.jarock-minecraft-version'
+    $Marker = ''
+    if (Test-Path -LiteralPath $MarkerPath -PathType Leaf) { $Marker = (Get-Content -LiteralPath $MarkerPath -Raw).Trim() }
+    if ($Marker -eq $MinecraftVersion) { return }
+    $RuntimeArtifacts = @(
+        (Join-Path $ServerDir 'server.jar'),
+        (Join-Path $ServerDir 'run.bat'),
+        (Join-Path $ServerDir 'libraries')
+    )
+    $HasRuntime = @($RuntimeArtifacts | Where-Object { Test-Path -LiteralPath $_ }).Count -gt 0
+    if ($Marker -and $HasRuntime) {
+        Stop-WithGuidance "This server folder runs Minecraft $Marker, not $MinecraftVersion." "Back up the world, run clean-server-runtime.bat to remove the $Marker runtime, then run start-server.bat again. Jarock never mixes two Minecraft lines in one server folder."
+    }
+    New-Item -ItemType Directory -Force -Path $ConfigDir | Out-Null
+    [IO.File]::WriteAllText($MarkerPath, $MinecraftVersion, (New-Object Text.UTF8Encoding($false)))
 }
 function Start-InClassicConsole {
     # Windows Terminal hosts newly created console windows when it is the default
@@ -100,8 +165,8 @@ function Select-Loader {
     Write-Host ''
     Write-Host 'No server loader is configured yet.' -ForegroundColor Yellow
     Write-Host '1. Fabric (recommended first choice)'
-    Write-Host '2. NeoForge (fallback; official 26.2 beta installer)'
-    Write-Host '3. Forge (not available for Minecraft 26.2 from the official source currently)'
+    Write-Host "2. NeoForge (fallback; official $MinecraftVersion installer)"
+    Write-Host "3. Forge (not available for Minecraft $MinecraftVersion from the official source currently)"
     $Choice = Read-Host 'Choose a loader (1/2/3)'
     switch ($Choice) {
         '1' { $Loader = 'fabric' }
@@ -276,6 +341,16 @@ function Confirm-LoaderChange([string]$Loader) {
     }
 }
 function Write-LoaderMarker([string]$Loader) { [IO.File]::WriteAllText($LoaderMarkerPath,$Loader,(New-Object Text.UTF8Encoding($false))) }
+function Set-EulaAccepted([string]$Path) {
+    # Jarock accepts the Minecraft EULA for the operator and keeps eula=true so a
+    # fresh installation can start. Read https://www.minecraft.net/eula first.
+    $Content = if (Test-Path -LiteralPath $Path -PathType Leaf) { Get-Content -LiteralPath $Path -Raw } else { '' }
+    if ($Content -match '(?m)^\s*eula\s*=\s*true\s*$') { return }
+    if ($Content -match '(?m)^\s*eula\s*=') { $Content = [regex]::Replace($Content, '(?m)^\s*eula\s*=.*$', 'eula=true') }
+    else { $Content = $Content.TrimEnd("`r", "`n") + "`r`neula=true`r`n" }
+    [IO.File]::WriteAllText($Path, $Content, (New-Object Text.UTF8Encoding($false)))
+    Write-Host 'Accepted the Minecraft EULA in server/eula.txt (eula=true).' -ForegroundColor Yellow
+}
 function Ensure-LocalTemplates {
     $EulaPath = Join-Path $ServerDir 'eula.txt'
     $EulaTemplate = Join-Path $ServerDir 'eula.txt.template'
@@ -284,6 +359,7 @@ function Ensure-LocalTemplates {
         Copy-Item -LiteralPath $EulaTemplate -Destination $EulaPath
         Write-Host 'Created server/eula.txt from the tracked template.' -ForegroundColor Green
     }
+    Set-EulaAccepted $EulaPath
     $PropertiesPath = Join-Path $ServerDir 'server.properties'
     $PropertiesTemplate = Join-Path $ServerDir 'server.properties.template'
     if (-not (Test-Path -LiteralPath $PropertiesPath -PathType Leaf)) {
@@ -447,7 +523,7 @@ function Install-Fabric($Java) {
     Download-AndVerify $FabricInstallerUrl $Installer $FabricInstallerSha512
     if (-not (Test-Path -LiteralPath (Join-Path $ServerDir 'fabric-server-launch.jar') -PathType Leaf)) {
         Push-Location $ServerDir
-        try { & $Java.Path -jar $Installer server -mcversion $MinecraftVersion -loader $FabricLoaderVersion -downloadMinecraft } finally { Pop-Location }
+        try { & $Java.Path -jar $Installer server -mcversion $MinecraftVersion -loader $FabricLoaderVersions[$MinecraftVersion] -downloadMinecraft } finally { Pop-Location }
         if ($LASTEXITCODE -ne 0) { Stop-WithGuidance "Fabric installer exited with code $LASTEXITCODE." 'Confirm Java 25, Internet access and free disk space, then run start-server.bat again.' }
     }
     $VanillaJar = Join-Path $ServerDir 'server.jar'
@@ -466,8 +542,12 @@ function Install-Fabric($Java) {
     Write-Host 'Fabric runtime installed. The Fabric launcher was renamed to server.jar; vanilla-server.jar is retained as the local vanilla engine.' -ForegroundColor Green
 }
 function Install-NeoForge($Java) {
-    $Installer = Join-Path $ServerDir 'neoforge-26.2.0.48-beta-installer.jar'
-    Download-AndVerify $NeoForgeInstallerUrl $Installer $NeoForgeInstallerSha512
+    if (-not $NeoForgeInstallers.ContainsKey($MinecraftVersion)) {
+        Stop-WithGuidance "No official NeoForge installer is pinned for Minecraft $MinecraftVersion." 'Choose Fabric, or add a reviewed NeoForge installer for this Minecraft line to the bootstrap first.'
+    }
+    $Pinned = $NeoForgeInstallers[$MinecraftVersion]
+    $Installer = Join-Path $ServerDir $Pinned.File
+    Download-AndVerify $Pinned.Url $Installer $Pinned.Sha512
     if (-not (Test-Path -LiteralPath (Join-Path $ServerDir 'run.bat') -PathType Leaf)) {
         Push-Location $ServerDir
         try { & $Java.Path -jar $Installer --installServer } finally { Pop-Location }
@@ -477,6 +557,11 @@ function Install-NeoForge($Java) {
     Write-Host 'NeoForge runtime installed. NeoForge uses its generated run.bat and libraries; it does not have a portable single loader jar to rename safely.' -ForegroundColor Green
 }
 function Get-ManifestPath([string]$Loader) {
+    # Each Minecraft line keeps its own reviewed manifest. 26.2 still uses the
+    # original file names so existing installations keep working unchanged.
+    if ($MinecraftVersion -ne '26.2') {
+        return (Join-Path $ServerDir ("mods-manifest-$MinecraftVersion-$Loader.ps1"))
+    }
     if ($Loader -eq 'fabric') { return (Join-Path $ServerDir 'mods-manifest.ps1') }
     if ($Loader -eq 'neoforge') { return (Join-Path $ServerDir 'mods-manifest-neoforge.ps1') }
     return $null
@@ -494,10 +579,89 @@ function Install-Mods([string]$Loader) {
         Remove-Item -LiteralPath $LegacyWelcomeAwa -Force
         Write-Host 'Removed the replaced Welcome AWA artifact; Welcome Message will be used instead.' -ForegroundColor Yellow
     }
+    $Marker = Read-ModMarker
     foreach ($Mod in $Mods) {
+        $Project = if ($Mod.PSObject.Properties.Name -contains 'Project') { [string]$Mod.Project } else { '' }
         $Destination = Join-Path $ModsDir $Mod.Name
-        Download-AndVerify $Mod.Url $Destination $Mod.Sha512
+        $AlreadyInstalled = $Project -and $Marker.ContainsKey($Project) -and $Marker[$Project].Name -eq $Mod.Name -and (Test-Path -LiteralPath $Destination -PathType Leaf) -and (Get-Sha512 $Destination) -eq $Mod.Sha512.ToLowerInvariant()
+        if (-not $AlreadyInstalled) { Download-AndVerify $Mod.Url $Destination $Mod.Sha512 }
         Write-Host "Verified $($Mod.Name) [$($Mod.Purpose)]" -ForegroundColor Green
+        if ($Project) { $Marker[$Project] = @{ Name = $Mod.Name; Hash = $Mod.Sha512.ToLowerInvariant() } }
+    }
+    Write-ModMarker $Marker
+    Update-InstalledMods $Loader
+}
+function Get-ModMarkerPath { return (Join-Path $ConfigDir '.jarock-mods') }
+function Read-ModMarker {
+    # Records the mods Jarock installed itself, so a later start can refresh only
+    # those files and leave every hand-added jar alone.
+    $Entries = @{}
+    $MarkerPath = Get-ModMarkerPath
+    if (Test-Path -LiteralPath $MarkerPath -PathType Leaf) {
+        foreach ($Line in Get-Content -LiteralPath $MarkerPath -Encoding UTF8) {
+            if ($Line -match '^([^|]+)\|([^|]+)\|([0-9a-fA-F]{128})\s*$') { $Entries[$Matches[1]] = @{ Name = $Matches[2]; Hash = $Matches[3].ToLowerInvariant() } }
+        }
+    }
+    return $Entries
+}
+function Write-ModMarker($Entries) {
+    New-Item -ItemType Directory -Force -Path $ConfigDir | Out-Null
+    $Lines = @()
+    foreach ($Project in ($Entries.Keys | Sort-Object)) { $Lines += ('{0}|{1}|{2}' -f $Project, $Entries[$Project].Name, $Entries[$Project].Hash) }
+    [IO.File]::WriteAllLines((Get-ModMarkerPath), $Lines, (New-Object Text.UTF8Encoding($false)))
+}
+function Get-ArtifactPrefix([string]$FileName) {
+    # ec-core-1.3.0-mc26.3.jar -> ec-core-. One Modrinth project can publish
+    # several artifacts per version, so a newer build is matched on this prefix.
+    $Parts = [regex]::Split($FileName, '\d')
+    if ($Parts.Count -gt 0 -and $Parts[0]) { return $Parts[0] }
+    return $FileName
+}
+function Get-LatestModrinthVersion([string]$Project, [string]$Loader) {
+    $Query = 'https://api.modrinth.com/v2/project/' + $Project + '/version?game_versions=%5B%22' + $MinecraftVersion + '%22%5D&loaders=%5B%22' + $Loader + '%22%5D'
+    $Versions = @(Invoke-RestMethod -Uri $Query -Headers @{ 'User-Agent' = 'Jarock-loader-bootstrap' } -TimeoutSec 30)
+    if ($Versions.Count -eq 0) { return $null }
+    return $Versions[0]
+}
+function Update-InstalledMods([string]$Loader) {
+    # Refresh only the mods Jarock installed itself, and only while the installed
+    # file still matches the hash Jarock wrote. A jar the operator replaced or
+    # added by hand is never updated or removed.
+    $Flag = Get-JarockSetting 'AUTO_UPDATE_MODS' 'true'
+    if ($Flag -notmatch '^(?i:true|yes|1)$') { return }
+    $Marker = Read-ModMarker
+    if ($Marker.Count -eq 0) { return }
+    foreach ($Project in @($Marker.Keys)) {
+        $Known = $Marker[$Project]
+        $InstalledPath = Join-Path $ModsDir $Known.Name
+        if (-not (Test-Path -LiteralPath $InstalledPath -PathType Leaf)) { continue }
+        if ((Get-Sha512 $InstalledPath) -ne $Known.Hash) {
+            Write-Host "Keeping $($Known.Name): it no longer matches the file Jarock installed, so it is treated as a manual change." -ForegroundColor Cyan
+            continue
+        }
+        $Latest = $null
+        try { $Latest = Get-LatestModrinthVersion $Project $Loader }
+        catch { Write-Host "WARNING: Could not check $Project for a newer build: $($_.Exception.Message)" -ForegroundColor Yellow; continue }
+        if ($null -eq $Latest) { continue }
+        $Prefix = Get-ArtifactPrefix $Known.Name
+        $File = @($Latest.files | Where-Object { (Get-ArtifactPrefix $_.filename) -eq $Prefix } | Select-Object -First 1)
+        if ($File.Count -eq 0) { continue }
+        $File = $File[0]
+        $NewHash = ([string]$File.hashes.sha512).ToLowerInvariant()
+        if ($NewHash -eq $Known.Hash) { continue }
+        $Destination = Join-Path $ModsDir $File.filename
+        Write-Host "Updating $($Known.Name) to $($File.filename) ..." -ForegroundColor Cyan
+        try {
+            Download-AndVerify $File.url $Destination $NewHash
+            Remove-Item -LiteralPath $InstalledPath -Force -ErrorAction SilentlyContinue
+            $Marker[$Project] = @{ Name = $File.filename; Hash = $NewHash }
+            Write-ModMarker $Marker
+            Write-Host "Updated $($File.filename) [newer build for Minecraft $MinecraftVersion]" -ForegroundColor Green
+        }
+        catch {
+            Remove-Item -LiteralPath $Destination -Force -ErrorAction SilentlyContinue
+            Write-Host "WARNING: The update of $Project could not be verified and was discarded: $($_.Exception.Message)" -ForegroundColor Yellow
+        }
     }
 }
 function Get-ConfiguredLevelName([string]$PropertiesPath) {
@@ -651,10 +815,12 @@ function Install-DedicatedPower {
 try {
     Write-Step 'Checking repository and loader configuration'
     New-Item -ItemType Directory -Force -Path $ServerDir | Out-Null
-    if (-not (Test-Path -LiteralPath $SettingsPath -PathType Leaf)) { Stop-WithGuidance 'scripts\server-launch-settings.ini is missing.' 'Run start-server.bat again so it can restore the settings template.' }
+    if (-not (Test-Path -LiteralPath $SettingsPath -PathType Leaf)) { Stop-WithGuidance 'scripts\jarock.ini is missing.' 'Restore scripts\jarock.ini from the repository, then run start-server.bat again.' }
+    $MinecraftVersion = Resolve-MinecraftVersion
+    Confirm-MinecraftVersionChange
     $Loader = Select-Loader
     Confirm-LoaderChange $Loader
-    if ($Loader -eq 'forge') { Stop-WithGuidance 'Forge currently has no official Minecraft 26.2 server build available to this bootstrap.' 'Choose Fabric or NeoForge in parameter-manager.bat. Forge will be enabled only after an official 26.2 installer and compatible mods are verified.' }
+    if ($Loader -eq 'forge') { Stop-WithGuidance "Forge currently has no official Minecraft $MinecraftVersion server build available to this bootstrap." "Choose Fabric or NeoForge in parameter-manager.bat. Forge will be enabled only after an official $MinecraftVersion installer and compatible mods are verified." }
     Write-Step 'Checking prerequisites'
     $Java = Get-SelectedJava
     Write-Step "Installing $Loader for Minecraft $MinecraftVersion"
@@ -671,6 +837,7 @@ try {
     Write-LoaderMarker $Loader
     Write-Step 'Bootstrap complete'
     Write-Host "Loader: $Loader" -ForegroundColor Green
+    Write-Host "Minecraft: $MinecraftVersion" -ForegroundColor Green
     Write-Host 'No router, firewall, port-forwarding, or public-network changes were performed.' -ForegroundColor Yellow
 }
 catch { Stop-WithGuidance $_.Exception.Message 'Read the specific message above, apply its suggested fix, and run start-server.bat again.' }

@@ -4,7 +4,7 @@
 
 ## loader 선택
 
-64비트 Java 25 이상 JDK를 설치하고 Temurin 설치 프로그램에서 JAVA_HOME을 활성화한 뒤 터미널을 다시 여세요. 항상 루트의 `start-server.bat` en `scripts/server-launch-settings.ini`을 실행하고 `server/server.jar`을 직접 열지 마세요.
+64비트 Java 25 이상 JDK를 설치하고 Temurin 설치 프로그램에서 JAVA_HOME을 활성화한 뒤 터미널을 다시 여세요. 항상 루트의 `start-server.bat` en `scripts/jarock.ini`을 실행하고 `server/server.jar`을 직접 열지 마세요.
 
 ## 설치 및 EULA
 

@@ -8,7 +8,7 @@ name: test-startup-updates.yml
       - 'scripts/test-startup-update-settings.ps1'
       - '.github/workflows/test-startup-updates.yml'
       - 'parameter-manager.bat'
-      - 'scripts/server-launch-settings.ini.template'
+      - 'scripts/jarock.ini'
   workflow_dispatch:
 
 permissions:

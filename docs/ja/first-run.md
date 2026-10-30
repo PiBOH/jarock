@@ -4,7 +4,7 @@
 
 ## loader の選択
 
-64 ビット版 Java 25 以降の JDK をインストールし、Temurin のインストーラーで JAVA_HOME を有効にして、ターミナルを再起動してください。必ずルートの `start-server.bat` en `scripts/server-launch-settings.ini` を実行し、`server/server.jar` を直接開かないでください。
+64 ビット版 Java 25 以降の JDK をインストールし、Temurin のインストーラーで JAVA_HOME を有効にして、ターミナルを再起動してください。必ずルートの `start-server.bat` en `scripts/jarock.ini` を実行し、`server/server.jar` を直接開かないでください。
 
 ## インストールと EULA
 

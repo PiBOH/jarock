@@ -7,10 +7,10 @@ on:
       - 'scripts/**'
       - 'prerequisites/**'
       - '*.bat'
-      - 'scripts/server-launch-settings.ini.template'
+      - 'scripts/jarock.ini'
       - 'server/eula.txt.template'
       - 'server/server.properties.template'
-      - 'scripts/version.txt'
+      - 'scripts/jarock.ini'
       - 'CHANGELOG.md'
       - '.github/workflows/**'
   workflow_dispatch:

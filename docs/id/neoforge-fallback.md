@@ -18,7 +18,7 @@ Baca panduan lengkap bahasa Inggris: [../en/neoforge-fallback.md](../en/neoforge
 
 ## Memperbarui Jarock
 
-> Baca `scripts/version.txt`, hentikan server dan tunggu `SAFE TO CLOSE`; lalu jalankan `scripts/update-jarock.bat`. Program mencari rilis yang lebih baru di kanal beta/stabil yang sama, meminta konfirmasi, dan membuat cadangan rollback. Dunia, runtime, mod, pustaka, dan pengaturan lokal dipertahankan; dependensi hanya diperbaiki jika hilang atau tidak valid.
+> Baca `scripts/jarock.ini`, hentikan server dan tunggu `SAFE TO CLOSE`; lalu jalankan `scripts/update-jarock.bat`. Program mencari rilis yang lebih baru di kanal beta/stabil yang sama, meminta konfirmasi, dan membuat cadangan rollback. Dunia, runtime, mod, pustaka, dan pengaturan lokal dipertahankan; dependensi hanya diperbaiki jika hilang atau tidak valid.
 
 > Paket lengkap dan checksum SHA-512 yang dipublikasikan diverifikasi sebelum pemasangan.
 

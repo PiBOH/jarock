@@ -39,8 +39,7 @@ exit /b 1
 if defined _JAROCK_PARAMETER_MANAGER_ROOT set "ROOT=%_JAROCK_PARAMETER_MANAGER_ROOT%"
 call :read_edition_marker
 if /i "%JAROCK_INTERFACE%"=="tui" if not defined JAROCK_TUI_BYPASS goto :run_tui_parameter_manager
-set "SETTINGS=%ROOT%\scripts\server-launch-settings.ini"
-set "TEMPLATE=%ROOT%\scripts\server-launch-settings.ini.template"
+set "SETTINGS=%ROOT%\scripts\jarock.ini"
 set "TEMP_SETTINGS=%TEMP%\Jarock-parameter-manager-%RANDOM%-%RANDOM%.ini"
 set "CONFIG_ONLY=false"
 if /i "%~1"=="/configure-only" set "CONFIG_ONLY=true"
@@ -53,28 +52,14 @@ if errorlevel 1 (
     exit /b 1
 )
 
-if not exist "%SETTINGS%" if exist "%ROOT%\server-launch-settings.ini" (
-    echo Migrating local launch settings to scripts\server-launch-settings.ini ...
-    move /y "%ROOT%\server-launch-settings.ini" "%SETTINGS%" >nul
-    if errorlevel 1 (
-        echo ERROR: Could not migrate the existing local launch settings.
-        echo Suggested fix: close editors or antivirus scans using the file, check permissions, and run parameter-manager.bat again.
-        pause
-        exit /b 1
-    )
-)
-if not exist "%SETTINGS%" if not exist "%TEMPLATE%" (
-    echo ERROR: The launch-settings template is missing.
-    echo Suggested fix: restore scripts\server-launch-settings.ini.template from the repository.
+if not exist "%SETTINGS%" (
+    echo ERROR: The Jarock configuration file is missing: scripts\jarock.ini
+    echo Suggested fix: restore scripts\jarock.ini from the repository or release package.
     pause
     exit /b 1
 )
 
-if exist "%SETTINGS%" (
-    copy /y "%SETTINGS%" "%TEMP_SETTINGS%" >nul
-) else (
-    copy /y "%TEMPLATE%" "%TEMP_SETTINGS%" >nul
-)
+copy /y "%SETTINGS%" "%TEMP_SETTINGS%" >nul
 if errorlevel 1 (
     echo ERROR: Could not create a temporary settings copy.
     echo Suggested fix: check the Windows temporary folder and repository permissions, then run this file again.
@@ -132,15 +117,15 @@ goto menu
 :loader_menu
 cls
 echo 1. Fabric (recommended first choice)
-echo 2. NeoForge (fallback; official 26.2 beta installer)
-echo 3. Forge (currently unavailable for official Minecraft 26.2)
+echo 2. NeoForge (fallback; official installer for the configured Minecraft version)
+echo 3. Forge (currently unavailable for the official Minecraft builds)
 echo.
 choice /c 123 /n /m "Choose loader: "
 if errorlevel 3 goto loader_forge
 if errorlevel 2 goto loader_neoforge
 if errorlevel 1 goto loader_fabric
 :loader_forge
-echo Forge is currently unavailable because no official Minecraft 26.2 server build is published for this bootstrap.
+echo Forge is currently unavailable because no official Minecraft server build is published for this bootstrap.
 echo Choose Fabric or NeoForge instead.
 pause
 goto menu
@@ -428,12 +413,18 @@ pause
 goto menu
 
 :reset
-copy /y "%TEMPLATE%" "%TEMP_SETTINGS%" >nul
+copy /y "%SETTINGS%" "%TEMP_SETTINGS%" >nul
 if errorlevel 1 (
-    echo ERROR: Could not restore safe defaults in the temporary settings copy.
-    echo Suggested fix: check the template and temporary-folder permissions, then try again.
+    echo ERROR: Could not prepare the temporary settings copy.
+    echo Suggested fix: check the settings file and temporary-folder permissions, then try again.
     pause
     goto menu
+)
+rem scripts/jarock.ini is the only settings file, so the defaults are written back
+rem key by key instead of copying a second template over the operator's values.
+rem The version lines (JAROCK_VERSION, MINECRAFT_VERSION) are never reset.
+for %%D in ("LOADER_TYPE=none" "RAM_INITIAL=4G" "RAM_MAX=4G" "GUI_MODE=nogui" "GC_PROFILE=default" "AUTO_CONFIGURE_JAVA=true" "ONLINE_MODE=true" "SHOW_READY_BANNER=true" "AUTO_UPDATE_MODE=install" "WORLD_IMPORT_SOURCE=" "WORLD_IMPORT_REMEMBER=false" "WORLD_IMPORT_APPLIED=false" "WORLD_EXPORT_DEST=") do (
+    for /f "tokens=1,* delims==" %%A in (%%D) do powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name %%A -Value "%%B" >nul
 )
 echo Safe defaults restored. Choose Save and exit or Save and start to keep them.
 pause

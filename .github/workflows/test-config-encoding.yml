@@ -17,7 +17,7 @@ on:
       - 'scripts/test-settings-encoding.ps1'
       - '.github/workflows/test-config-encoding.yml'
       - 'CHANGELOG.md'
-      - 'scripts/version.txt'
+      - 'scripts/jarock.ini'
   workflow_dispatch:
 
 permissions:

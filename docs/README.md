@@ -21,13 +21,13 @@ The CLI is strongly recommended and maintained. TUI packages continue to be publ
 - [How does Jarock work?](en/how-does-jarock-work.md)
 - [First run guide](en/first-run.md)
 
-The English guides are the source of truth for the technical procedure. The current project version is stored only in the `scripts/version.txt` file.
+The English guides are the source of truth for the technical procedure. The current project version is stored only in the `scripts/jarock.ini` file.
 
 ## Runtime and launch configuration
 
 - `parameter-manager.bat` configures the loader, RAM, GUI/console mode, a conservative GC profile, online-mode, the ready banner, world import/export (`I` imports a world folder or `.zip` on the next start and asks `Remember this world for future starts? (Y/n)`; `E` exports the world to a destination folder after every clean shutdown), the optional interactive startup update check and user-scoped Java environment setup. A remembered source is imported again at every start with confirmation and a backup of the existing world; an incomplete world folder is replaced the same way after confirmation. It edits a temporary copy and includes `Exit without saving` to discard all pending changes.
-- `scripts/server-launch-settings.ini.template` is the tracked safe default.
-- `scripts/server-launch-settings.ini` is local and ignored by Git.
+- `scripts/jarock.ini` is the tracked safe default.
+- `scripts/jarock.ini` is local and ignored by Git.
 - `java-home.txt` is an optional local override for a custom JDK folder and is ignored by Git; `JAROCK_JAVA_HOME` is the advanced equivalent.
 - `scripts/java-runtime.ps1` finds a compatible 64-bit Java 25+ runtime even when Java 8 or Java 21 appears first on `PATH`; if none is available and the bundled installers are present in `prerequisites/`, `start-server.bat` runs them automatically (legacy Java 8 first, then the Temurin JDK 25 MSI); otherwise it lists the detected incompatible candidates and gives a Java 25 installation link.
 - `scripts/configure-java-environment.ps1` updates only the current user's `JAVA_HOME` and `PATH`, preserving unrelated entries.

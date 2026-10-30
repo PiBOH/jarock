@@ -20,7 +20,7 @@ Instal·la Java 25 de 64 bits, executa `start-server. (enable "Set JAVA_HOME var
 
 ## Actualitzar Jarock
 
-> Llegeix `scripts/version.txt`, atura el servidor i espera `SAFE TO CLOSE`; després executa `scripts/update-jarock.bat`. Cerca una versió més nova del mateix canal beta/estable, demana confirmació i crea una còpia de retorn. Conserva el món, el runtime, els mods, les biblioteques i la configuració local; només repara dependències absents o invàlides.
+> Llegeix `scripts/jarock.ini`, atura el servidor i espera `SAFE TO CLOSE`; després executa `scripts/update-jarock.bat`. Cerca una versió més nova del mateix canal beta/estable, demana confirmació i crea una còpia de retorn. Conserva el món, el runtime, els mods, les biblioteques i la configuració local; només repara dependències absents o invàlides.
 
 > El paquet complet i la seva suma de verificació SHA-512 publicada es comproven abans de la instal·lació.
 

@@ -4,7 +4,7 @@
 
 ## Antes de comezar
 
-Instala Java 25 ou posterior de 64 bits, activa JAVA_HOME no instalador Temurin e reabre o terminal. Usa sempre o `start-server.bat` situado na raíz; as configuracións locais gárdanse en `scripts/server-launch-settings.ini`. Non abras directamente `server/server.jar`.
+Instala Java 25 ou posterior de 64 bits, activa JAVA_HOME no instalador Temurin e reabre o terminal. Usa sempre o `start-server.bat` situado na raíz; as configuracións locais gárdanse en `scripts/jarock.ini`. Non abras directamente `server/server.jar`.
 
 ## Selección do loader
 

@@ -49,26 +49,12 @@ if errorlevel 1 (
     exit /b 1
 )
 
-set "SETTINGS=%ROOT%\scripts\server-launch-settings.ini"
-set "TEMPLATE=%ROOT%\scripts\server-launch-settings.ini.template"
-if not exist "%SETTINGS%" if exist "%ROOT%\server-launch-settings.ini" (
-    echo Migrating local launch settings to scripts\server-launch-settings.ini ...
-    move /y "%ROOT%\server-launch-settings.ini" "%SETTINGS%" >nul
-    if errorlevel 1 (
-        echo ERROR: Could not migrate the existing local launch settings.
-        echo Suggested fix: close editors or antivirus scans using the file, check permissions, and run start-server.bat again.
-        pause
-        exit /b 1
-    )
-)
+set "SETTINGS=%ROOT%\scripts\jarock.ini"
 if not exist "%SETTINGS%" (
-    if not exist "%TEMPLATE%" (
-        echo ERROR: The launch-settings template is missing.
-        echo Suggested fix: restore scripts\server-launch-settings.ini.template from the repository.
-        pause
-        exit /b 1
-    )
-    copy /y "%TEMPLATE%" "%SETTINGS%" >nul
+    echo ERROR: The Jarock configuration file is missing: scripts\jarock.ini
+    echo Suggested fix: restore scripts\jarock.ini from the repository or release package.
+    pause
+    exit /b 1
 )
 
 rem Read the setting value through FOR /F so CRLF and LF files behave identically.
@@ -201,7 +187,7 @@ exit /b 0
 rem TUI editions keep the same startup update behavior as CLI editions, but the
 rem central menu itself is opened only after this optional check completes.
 set "TUI_STARTUP_MODE=install"
-for /f "tokens=1,* delims==" %%A in ('findstr /i /b /c:"AUTO_UPDATE_MODE=" "%ROOT%\scripts\server-launch-settings.ini" 2^>nul') do if /i "%%A"=="AUTO_UPDATE_MODE" set "TUI_STARTUP_MODE=%%B"
+for /f "tokens=1,* delims==" %%A in ('findstr /i /b /c:"AUTO_UPDATE_MODE=" "%ROOT%\scripts\jarock.ini" 2^>nul') do if /i "%%A"=="AUTO_UPDATE_MODE" set "TUI_STARTUP_MODE=%%B"
 if /i "%TUI_STARTUP_MODE%"=="install" call :startup_update_install
 if /i "%TUI_STARTUP_MODE%"=="check" call :startup_update_check_only
 if /i "%TUI_STARTUP_MODE%"=="never" call :startup_update_never

@@ -18,7 +18,7 @@ Se den fullständiga engelska guiden: [../en/neoforge-fallback.md](../en/neoforg
 
 ## Uppdatera Jarock
 
-> Läs `scripts/version.txt`, stoppa servern och vänta på `SAFE TO CLOSE`; kör sedan `scripts/update-jarock.bat`. Den söker efter en nyare version i samma beta/stabila kanal, frågar efter bekräftelse och skapar en återställningskopia. Värld, runtime, moddar, bibliotek och lokala inställningar bevaras; beroenden repareras bara om de saknas eller är ogiltiga.
+> Läs `scripts/jarock.ini`, stoppa servern och vänta på `SAFE TO CLOSE`; kör sedan `scripts/update-jarock.bat`. Den söker efter en nyare version i samma beta/stabila kanal, frågar efter bekräftelse och skapar en återställningskopia. Värld, runtime, moddar, bibliotek och lokala inställningar bevaras; beroenden repareras bara om de saknas eller är ogiltiga.
 
 > Hela paketet och dess publicerade SHA-512-kontrollsumma verifieras före installationen.
 

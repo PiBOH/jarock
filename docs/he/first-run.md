@@ -4,7 +4,7 @@
 
 ## בחירת loader
 
-התקן JDK ‏64 סיביות של Java 25 ומעלה, הפעל JAVA_HOME במתקין Temurin ופתח מחדש את הטרמינל. השתמש תמיד ב-`start-server.bat` en `scripts/server-launch-settings.ini` שבשורש ואל תפתח ישירות את `server/server.jar`.
+התקן JDK ‏64 סיביות של Java 25 ומעלה, הפעל JAVA_HOME במתקין Temurin ופתח מחדש את הטרמינל. השתמש תמיד ב-`start-server.bat` en `scripts/jarock.ini` שבשורש ואל תפתח ישירות את `server/server.jar`.
 
 ## התקנה ו-EULA
 

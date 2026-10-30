@@ -4,7 +4,7 @@
 
 ## 開始之前
 
-安裝 64 位元 Java 25 或更新版本的 JDK，在 Temurin 安裝程式中啟用 JAVA_HOME，然後重新開啟終端機。請一律執行根目錄的 `start-server.bat`；本機設定儲存在 `scripts/server-launch-settings.ini`，不要直接開啟 `server/server.jar`。
+安裝 64 位元 Java 25 或更新版本的 JDK，在 Temurin 安裝程式中啟用 JAVA_HOME，然後重新開啟終端機。請一律執行根目錄的 `start-server.bat`；本機設定儲存在 `scripts/jarock.ini`，不要直接開啟 `server/server.jar`。
 
 ## 選擇 loader
 

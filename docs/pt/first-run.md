@@ -4,7 +4,7 @@
 
 ## Escolher o loader
 
-Instale um JDK Java 25+ de 64 bits, ative JAVA_HOME no instalador Temurin e reabra o terminal. Use sempre o `start-server.bat` en `scripts/server-launch-settings.ini` da raiz e não abra diretamente `server/server.jar`.
+Instale um JDK Java 25+ de 64 bits, ative JAVA_HOME no instalador Temurin e reabra o terminal. Use sempre o `start-server.bat` en `scripts/jarock.ini` da raiz e não abra diretamente `server/server.jar`.
 
 ## Instalação e EULA
 

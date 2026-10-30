@@ -4,7 +4,7 @@
 
 ## Выбор loader
 
-Установите 64-разрядный JDK Java 25 или новее, включите JAVA_HOME в установщике Temurin и заново откройте терминал. Всегда запускайте корневой `start-server.bat` en `scripts/server-launch-settings.ini` и не открывайте `server/server.jar` напрямую.
+Установите 64-разрядный JDK Java 25 или новее, включите JAVA_HOME в установщике Temurin и заново откройте терминал. Всегда запускайте корневой `start-server.bat` en `scripts/jarock.ini` и не открывайте `server/server.jar` напрямую.
 
 ## Установка и EULA
 

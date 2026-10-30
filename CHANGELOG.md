@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.1.0-beta]
+
+### Added
+
+- `scripts/jarock.ini` is now the single source for both the project version and every launch setting. `JAROCK_VERSION` replaces `scripts/version.txt`, the launch settings replace `scripts/server-launch-settings.ini`, and `scripts/jarock-config.ps1` is the one parser every script goes through. The updater keeps the operator's values and only takes the new version from the package.
+- `MINECRAFT_VERSION` lives in `scripts/jarock.ini` next to the supported lines (`26.2`, `26.3`). It is asked once on the first start, stored in the same file, and a change of line requires `clean-server-runtime.bat` so two Minecraft versions never share one server folder.
+- Aternos-style console input: `scripts/console-interpreter.ps1` sends a typed command argument that is a known registry id as `minecraft:<id>`, so `give @p oak_button` reaches the server as `give @p minecraft:oak_button`. Only ids from `scripts/registry-ids.txt` are qualified; the command name, selectors, numbers and free text are never changed.
+- `AUTO_UPDATE_MODS=true` in `scripts/jarock.ini`: the bootstrap refreshes the mods it installed itself when Modrinth publishes a newer build for the same Minecraft line and loader. The jar it wrote is recorded in `server/config/.jarock-mods`, and a file whose hash no longer matches is treated as a manual change and left alone.
+- `AGENTS.md` documents the architecture, the branch and release policy, the versioning rules and the behaviour that must not regress.
+
+### Changed
+
+- The server now targets Minecraft 26.3 by default: Fabric loader 0.20.1 and the official NeoForge 26.3.0.99 installer. `server/mods-manifest-26.3-fabric.ps1` (17 mods) and `server/mods-manifest-26.3-neoforge.ps1` (10 mods) are generated from the official Modrinth API with pinned SHA-512 hashes; the 26.2 manifests are unchanged for the older line.
+- `server/eula.txt` is written with `eula=true` by the bootstrap and the template ships accepted, so a fresh installation no longer stops on the EULA prompt. The operator is still responsible for reading the Minecraft EULA.
+- `auto-release.yml` follows the DedicatedPower release model: only `main` publishes, only a commit whose subject starts with `v` releases, the version is read from `JAROCK_VERSION` in `scripts/jarock.ini`, and a release commit must change that line.
+- `parameter-manager.bat` writes the safe defaults back key by key instead of copying a second template, because there is no second settings file anymore.
+
+### Removed
+
+- `scripts/version.txt` and `scripts/server-launch-settings.ini` (and its template) are merged into `scripts/jarock.ini`.
+- TUI packages and `jarock-tui.exe` are no longer published. The TUI sources are removed from `main`; `mc-26.2` keeps them for reference.
+
+## [0.0.151-beta]
 ## [0.0.151-beta]
 
 ### Changed

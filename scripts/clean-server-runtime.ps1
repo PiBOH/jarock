@@ -43,7 +43,7 @@ try {
     $ServerDirectory = [IO.Path]::GetFullPath($ServerDirectory).TrimEnd('\')
     $RepositoryRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..')).TrimEnd('\')
     $ExpectedServerDirectory = [IO.Path]::GetFullPath((Join-Path $RepositoryRoot 'server')).TrimEnd('\')
-    $SettingsPath = Join-Path $PSScriptRoot 'server-launch-settings.ini'
+    $SettingsPath = Join-Path $PSScriptRoot 'jarock.ini'
 
     if ($ServerDirectory -ine $ExpectedServerDirectory) {
         throw "Refusing to clean an unexpected directory: $ServerDirectory"
@@ -73,6 +73,8 @@ try {
         'README.md',
         'mods-manifest.ps1',
         'mods-manifest-neoforge.ps1',
+        'mods-manifest-26.3-fabric.ps1',
+        'mods-manifest-26.3-neoforge.ps1',
         'datapacks-manifest.ps1',
         'jarock-loader.txt.template',
         'eula.txt.template',

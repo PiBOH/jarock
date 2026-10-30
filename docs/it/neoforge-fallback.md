@@ -291,7 +291,7 @@ Se una mod viene rifiutata, probabilmente è per Fabric, Forge classico, un'altr
 
 ## Aggiornare Jarock
 
-> Leggi `scripts/version.txt`, arresta il server e attendi `SAFE TO CLOSE`; poi esegui `scripts/update-jarock.bat`. Cerca una release più recente nello stesso canale beta/stabile, chiede conferma e crea un backup per il rollback. Mondo, runtime, mod, librerie e impostazioni locali vengono preservati; le dipendenze vengono riscaricate solo se mancanti o non valide.
+> Leggi `scripts/jarock.ini`, arresta il server e attendi `SAFE TO CLOSE`; poi esegui `scripts/update-jarock.bat`. Cerca una release più recente nello stesso canale beta/stabile, chiede conferma e crea un backup per il rollback. Mondo, runtime, mod, librerie e impostazioni locali vengono preservati; le dipendenze vengono riscaricate solo se mancanti o non valide.
 
 > Il pacchetto completo e il relativo checksum SHA-512 pubblicato vengono verificati prima dell'installazione.
 

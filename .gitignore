@@ -1,15 +1,19 @@
-# Generated Minecraft runtime
+# Jarock - Windows bootstrap for a modded Minecraft Java server
+#
+# Generated Minecraft runtime (everything the bootstrap downloads or the server writes)
 /server/*
 !/server/.gitkeep
-!/server/mods-manifest.ps1
-!/server/mods-manifest-neoforge.ps1
-!/server/jarock-loader.txt.template
+!/server/README.md
+!/server/icon.png
+!/server/server-icon.png
 !/server/server.properties.template
 !/server/eula.txt.template
-!/server/README.md
-!/server/server-icon.png
-!/server/icon.png
-!/server/config/
+!/server/jarock-loader.txt.template
+!/server/datapacks-manifest.ps1
+!/server/mods-manifest.ps1
+!/server/mods-manifest-neoforge.ps1
+!/server/mods-manifest-26.3-fabric.ps1
+!/server/mods-manifest-26.3-neoforge.ps1
 /server/config/*
 !/server/config/Geyser-Fabric/
 /server/config/Geyser-Fabric/*
@@ -45,9 +49,7 @@
 **/run.bat
 **/run.sh
 **/java-path.txt
-/scripts/server-launch-settings.ini
 /scripts/java-home.txt
-/server-launch-settings.ini
 /java-home.txt
 
 # Runtime secrets and local configuration
@@ -58,8 +60,22 @@
 **/banned-players.json
 **/banned-ips.json
 
+# Agent-local tooling, scratch files and community skills
+.agents/
+.claude/
+agent/
+skills-lock.json
+.ignore/
+
+# Python cache (repository scripts)
+__pycache__/
+*.pyc
+
 # OS/editor files
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+
+# Legacy local settings file, merged into scripts/jarock.ini and never tracked
+/scripts/server-launch-settings.ini

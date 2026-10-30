@@ -20,7 +20,7 @@ Nainstalujte 64bitovou Javu 25, spusťte `start-server.bat` a dokončete `TODO.m
 
 ## Aktualizace Jarock
 
-> Přečtěte `scripts/version.txt`, zastavte server a počkejte na `SAFE TO CLOSE`; potom spusťte `scripts/update-jarock.bat`. Vyhledá novější verzi ve stejném beta/stabilním kanálu, vyžádá potvrzení a vytvoří zálohu pro návrat. Svět, runtime, mody, knihovny a místní nastavení zůstanou zachovány; závislosti se obnoví jen při chybění nebo neplatnosti.
+> Přečtěte `scripts/jarock.ini`, zastavte server a počkejte na `SAFE TO CLOSE`; potom spusťte `scripts/update-jarock.bat`. Vyhledá novější verzi ve stejném beta/stabilním kanálu, vyžádá potvrzení a vytvoří zálohu pro návrat. Svět, runtime, mody, knihovny a místní nastavení zůstanou zachovány; závislosti se obnoví jen při chybění nebo neplatnosti.
 
 > Úplný balíček a jeho zveřejněný kontrolní součet SHA-512 se před instalací ověří.
 

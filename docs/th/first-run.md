@@ -4,7 +4,7 @@
 
 ## ก่อนเริ่มต้น
 
-ติดตั้ง JDK Java 25 ขึ้นไปแบบ 64 บิต เปิดใช้งาน JAVA_HOME ในตัวติดตั้ง Temurin แล้วเปิด terminal ใหม่ ใช้ `start-server.bat` ที่ root เท่านั้น การตั้งค่าในเครื่องจะอยู่ที่ `scripts/server-launch-settings.ini` และอย่าเปิด `server/server.jar` โดยตรง
+ติดตั้ง JDK Java 25 ขึ้นไปแบบ 64 บิต เปิดใช้งาน JAVA_HOME ในตัวติดตั้ง Temurin แล้วเปิด terminal ใหม่ ใช้ `start-server.bat` ที่ root เท่านั้น การตั้งค่าในเครื่องจะอยู่ที่ `scripts/jarock.ini` และอย่าเปิด `server/server.jar` โดยตรง
 
 ## เลือก loader
 
