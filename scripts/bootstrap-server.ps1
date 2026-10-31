@@ -448,8 +448,17 @@ function Ensure-WelcomeMessageConfig {
         [IO.File]::WriteAllText($MarkerPath, 'Jarock Welcome Message configuration checked once.', (New-Object Text.UTF8Encoding($false)))
     }
     elseif (-not (Test-Path -LiteralPath $ConfigPath -PathType Leaf)) {
-        Copy-Item -LiteralPath $TemplatePath -Destination $ConfigPath
-        Write-Host 'Restored the missing Welcome Message configuration from the Jarock template.' -ForegroundColor Yellow
+        # Welcome Message 2.9 (Collective DuskConfig) imports the Jarock template on its
+        # first start into config/serilum/welcomemessage.json and leaves the JSON5 file
+        # gone. Once that file exists it is the operator's configuration, so the old
+        # file must not be recreated at every start.
+        $MigratedConfigPath = Join-Path $ConfigDir 'serilum\welcomemessage.json'
+        if (Test-Path -LiteralPath $MigratedConfigPath -PathType Leaf) {
+            Write-Host 'Preserved the existing server/config/serilum/welcomemessage.json Welcome Message configuration.' -ForegroundColor Cyan
+        } else {
+            Copy-Item -LiteralPath $TemplatePath -Destination $ConfigPath
+            Write-Host 'Restored the missing Welcome Message configuration from the Jarock template.' -ForegroundColor Yellow
+        }
     }
     else {
         Write-Host 'Preserved the existing server/config/welcomemessage.json5 Welcome Message configuration.' -ForegroundColor Cyan

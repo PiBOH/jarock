@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.2.0-beta]
+
+### Added
+
+- `parameter-manager.bat` can now pick the Minecraft line itself: `M. Choose Minecraft version` offers 26.3 and 26.2, shows the configured line (or `asked on first start`), and writes `MINECRAFT_VERSION` in `scripts/jarock.ini`, the same setting the first start asks for. Switching the line reinstalls the matching loader, mods and datapack on the next start and never replaces the world.
+- `scripts/validate-launch-settings.ps1` validates `MINECRAFT_VERSION` (26.3, 26.2, or empty to ask on the first start), so a hand-edited line cannot reach the bootstrap unsupported.
+
+### Changed
+
+- The default `motd` in `server/server.properties.template` no longer names a Minecraft version, because one template ships with every supported line. `scripts/tests/test-server-properties.ps1` now asserts that the template keeps exactly one, version-neutral `motd`.
+- The documentation in every language now describes Minecraft 26.3 (Fabric loader 0.20.1) and the current mod, datapack and library builds, and the single `scripts/jarock.ini` configuration.
+- Fixed the first start hanging right after `Loading Minecraft`: `scripts/run-server.ps1` now reads the console through a `StreamReader` over the standard input instead of `[Console]::In.ReadLineAsync()`, which blocked the output pump and starved the server until its log appender could no longer write. `scripts/tests/test-windows-bootstrap.ps1` also drains the server output in bursts instead of one line per second and waits up to 60 minutes for a slow first boot.
+- Both 26.3 manifests pin Collective 26.3.0-8.70 instead of 8.69, so a fresh installation no longer needs the managed auto-update on its first start. `scripts/tests/test-windows-bootstrap.ps1` now accepts a mod that `AUTO_UPDATE_MODS` replaced with a newer build recorded in `server/config/.jarock-mods`, and verifies that build's SHA-512 instead of failing on the old file name.
+- A typed console command no longer reaches Minecraft 26.3 as an unparsable line: `scripts/run-server.ps1` sets a preamble-free UTF-8 console encoding before starting the server and writes the console input as raw bytes, because `Process.StandardInput` inherited Windows PowerShell's UTF-8 byte-order mark and every first command failed with `Unknown or incomplete command`. A typed `stop` now reaches the server and a full shutdown is possible from the console.
+- The safe-close check understands Minecraft 26.3. That version no longer prints `All dimensions are saved`, so `scripts/run-server.ps1` also treats the per-dimension `Saving chunks for level` lines followed by a clean exit as a completed world save (never when the server reported a failure while stopping), and the console prints `SAFE TO CLOSE` again after a normal `stop`.
+- Welcome Message 2.9 (Collective DuskConfig) now imports Jarock's `server/config/welcomemessage.json5` template into its own live configuration at `server/config/serilum/welcomemessage.json`. The bootstrap keeps that file as the operator's configuration instead of recreating the old JSON5 file at every start, `scripts/tests/test-windows-bootstrap.ps1` verifies the migrated Jarock messages and links, and every language's server guide documents the new path.
+
 ## [0.1.0-beta]
 
 ### Added
@@ -22,7 +39,6 @@
 - `scripts/version.txt` and `scripts/server-launch-settings.ini` (and its template) are merged into `scripts/jarock.ini`.
 - TUI packages and `jarock-tui.exe` are no longer published. The TUI sources are removed from `main`; `mc-26.2` keeps them for reference.
 
-## [0.0.151-beta]
 ## [0.0.151-beta]
 
 ### Changed

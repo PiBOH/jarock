@@ -73,6 +73,11 @@ try {
         if (-not $Values.ContainsKey($OptionalName)) { $Values[$OptionalName] = ''; continue }
         if ($Values[$OptionalName] -match '[\r\n]') { throw "$OptionalName must be a single-line path." }
     }
+    if ($Values.ContainsKey('MINECRAFT_VERSION')) {
+        # Empty means "ask on the first start"; otherwise the line must be supported.
+        $MinecraftVersion = [string]$Values['MINECRAFT_VERSION']
+        if ($MinecraftVersion -and $MinecraftVersion -notin @('26.3','26.2')) { throw "MINECRAFT_VERSION must be 26.3, 26.2 or empty, not '$MinecraftVersion'." }
+    }
     Write-Host 'Launch settings are valid.' -ForegroundColor Green
     exit 0
 }

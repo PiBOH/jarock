@@ -1,8 +1,10 @@
 # Jarock server template for Fabric or NeoForge
 # Copy this file to server/server.properties on first setup, then edit the values marked CONFIGURE.
 # This template does not open router or firewall ports.
+# The motd is deliberately version-neutral: the same template serves every
+# supported Minecraft line, which the operator picks on the first start.
 
-motd=§3>>> §6§lJa§9§lrock§r Minecraft 26.2 Server (stef) §r\nVisit §3piboh.github.io/jarock§r for more information.
+motd=§3>>> §6§lJa§9§lrock§r Minecraft Server (stef) §r\nVisit §3piboh.github.io/jarock§r for more information.
 level-name=world
 gamemode=survival
 difficulty=normal

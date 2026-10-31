@@ -1,4 +1,4 @@
-> Technical note: Async is an experimental server-side Minecraft 26.2 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
+> Technical note: Async is an experimental server-side Minecraft 26.3 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
 
 # Primo avvio di Jarock
 
@@ -38,3 +38,23 @@ Technical note: after startup, Jarock prints the local LAN IPv4 address. Java pl
 <!-- jarock-console-close-protection -->
 
 > **Protezione dalla chiusura della console Windows:** While Jarock is running, the classic Windows console may show a warning when X is clicked. Digita stop e attendi SAFE TO CLOSE. Non forzare la chiusura durante il salvataggio del mondo. Jarock relaunches its launchers in the classic Windows Console Host when they are started from Windows Terminal, so the close-event protection works there; other pseudo-terminals without a marker (for example Alacritty) are not auto-detected, and Windows can still force-terminate a console process after its short handler timeout.
+
+## Scegliere la versione di Minecraft
+
+Jarock chiede la versione di Minecraft al primo avvio e salva la risposta in
+`MINECRAFT_VERSION` dentro `scripts/jarock.ini`. Puoi cambiarla in seguito senza
+avviare il server: lancia `parameter-manager.bat` e scegli
+`M. Choose Minecraft version` (26.3 o 26.2), oppure modifica quella riga a mano.
+
+`scripts/jarock.ini` è l'unico file di configurazione: contiene la versione del
+progetto (`JAROCK_VERSION`) e tutte le impostazioni di lancio, quindi non c'è
+nient'altro da modificare. Cambiando la linea di Minecraft, all'avvio successivo
+vengono reinstallati loader, mod e datapack corrispondenti; il mondo e le altre
+impostazioni non vengono mai sostituiti, ma fai un backup del mondo prima.
+Jarock rifiuta di mescolare due linee di Minecraft nella stessa cartella server:
+se la cartella esegue già un'altra linea, lancia prima
+`clean-server-runtime.bat`.
+
+Jarock accetta anche l'EULA di Minecraft per te: al primo avvio
+`server/eula.txt` viene creato con `eula=true`. Leggi
+https://www.minecraft.net/eula prima di tenere il server online.

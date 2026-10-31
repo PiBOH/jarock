@@ -116,9 +116,9 @@ $Mods = @(
         Project = 'klpvLefw'
     }
     [pscustomobject]@{
-        Name = 'collective-26.3.0-8.69.jar'
-        Url = 'https://cdn.modrinth.com/data/e0M1UDsY/versions/2DTjTmUO/collective-26.3.0-8.69.jar'
-        Sha512 = '91a35293faa7e2ab8a2f763bac527cca8f80f18760c3ca6baae899b73b2c8cde7205f66fe3b89fd724ae60701f2974766258c57352a8e017aba19a44e0a0ad69'
+        Name = 'collective-26.3.0-8.70.jar'
+        Url = 'https://cdn.modrinth.com/data/e0M1UDsY/versions/sJPRBKdS/collective-26.3.0-8.70.jar'
+        Sha512 = '6e19d0ef9583bd4af3fc79967bcff92044ea27445d0126104a5012ee912cdfb3bcf304a97419363ad2f0b6060e72f07c484a32023ecf9247dfe685a2c8060d77'
         Required = $true
         Purpose = 'Required Collective library for Welcome Message'
         Project = 'e0M1UDsY'

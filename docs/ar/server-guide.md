@@ -10,9 +10,9 @@ Jarock never moves, renames, deletes or replaces an existing world automatically
 > Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > The whitelist is disabled by default (white-list=false, enforce-whitelist=false in server.properties). Before opening the server to the public, set both to true and add players with: whitelist add <name>.
 > The parameter manager also has a "Show ready banner" option: it shows or hides the ASCII-art banner printed when the server finishes loading. See the [full English guide](../en/server-guide.md).
-> Technical fallback note: Links In Chat is included in the pinned Fabric 26.2 server stack. It makes URLs in server chat clickable and adds `/link` and `/linkwhisper`; clients do not need to install it. Welcome Message 2.8 with its required Collective library is included as a verified server-side Minecraft 26.2 mod for Fabric and NeoForge; it sends configurable join messages. On the first Jarock-managed startup, Jarock applies its configured `welcomemessage.json5` template once and preserves later operator edits. إذا كان القالب مفقودًا (مثلًا بعد التحديث من نسخة أقدم)، يستعيده برنامج الإقلاع (bootstrap) تلقائيًا عند التشغيل. يحافظ برنامج التنظيف على القالب المتتبع، وتقوم تحديثات حزمة Lite الموثقة بتحديثه. تتطلب تحديثات الحزمة الخفيفة الموثقة القالب وتقوم بتثبيته من الحزمة حتى عندما لا يكون موجوداً بين ملفات الخادم المثبتة.
+> Technical fallback note: Links In Chat is included in the pinned Fabric 26.3 server stack. It makes URLs in server chat clickable and adds `/link` and `/linkwhisper`; clients do not need to install it. Welcome Message 2.9 with its required Collective library is included as a verified server-side Minecraft 26.3 mod for Fabric and NeoForge; it sends configurable join messages. On the first Jarock-managed startup, Jarock applies its configured `welcomemessage.json5` template once and preserves later operator edits. Welcome Message 2.9 (Collective DuskConfig) then keeps the live configuration in `server/config/serilum/welcomemessage.json`; Jarock's template is imported once on the first start and later edits are preserved. إذا كان القالب مفقودًا (مثلًا بعد التحديث من نسخة أقدم)، يستعيده برنامج الإقلاع (bootstrap) تلقائيًا عند التشغيل. يحافظ برنامج التنظيف على القالب المتتبع، وتقوم تحديثات حزمة Lite الموثقة بتحديثه. تتطلب تحديثات الحزمة الخفيفة الموثقة القالب وتقوم بتثبيته من الحزمة حتى عندما لا يكون موجوداً بين ملفات الخادم المثبتة.
 > If no compatible Java 25+ is found, start-server.bat launches the bundled Java installers in order: the legacy Java 8 runtime (jre-8-windows-x64.exe) first, then the Eclipse Temurin JDK 25 MSI (OpenJDK25U-jdk_x64_windows_hotspot.msi). Accept each UAC prompt and let the installers finish.
-> **ملاحظة تقنية: استخدم دائماً `start-server.bat` الموجود في جذر repository. لا تنقر نقراً مزدوجاً على `server.jar`؛ فقد يستخدم Windows Java 8 أو Java 21، بينما يتطلب Minecraft 26.2 إصدار Java 25+ ‏64-bit. راجع [الشرح الإنجليزي الكامل](../en/server-guide.md).**
+> **ملاحظة تقنية: استخدم دائماً `start-server.bat` الموجود في جذر repository. لا تنقر نقراً مزدوجاً على `server.jar`؛ فقد يستخدم Windows Java 8 أو Java 21، بينما يتطلب Minecraft 26.3 إصدار Java 25+ ‏64-bit. راجع [الشرح الإنجليزي الكامل](../en/server-guide.md).**
 
 
 
@@ -22,17 +22,17 @@ Jarock never moves, renames, deletes or replaces an existing world automatically
 
 Technical note: after startup, Jarock prints the local LAN IPv4 address. Java players use server-port over TCP; Bedrock players use Geyser bedrock.port over UDP. If Geyser is absent, Bedrock is unavailable. The addresses are still printed when the ASCII ready banner is disabled. Public access requires separate manual router and firewall configuration.
 
-> Better Multiplayer Sleep is a verified Minecraft 26.2 datapack. Jarock installs it into the configured world's `datapacks` folder for Fabric and NeoForge without replacing the world or other datapacks; use `/reload` after manual changes.
+> Better Multiplayer Sleep is a verified Minecraft 26.3 datapack. Jarock installs it into the configured world's `datapacks` folder for Fabric and NeoForge without replacing the world or other datapacks; use `/reload` after manual changes.
 
-> No Chat Reports is a verified Minecraft 26.2 server-side mod for Fabric and NeoForge. It prevents the server from forwarding signed chat-reporting data; vanilla clients may still show unsigned-chat warnings, and Jarock does not automatically change `enforce-secure-profile`.
+> No Chat Reports is a verified Minecraft 26.3 server-side mod for Fabric and NeoForge. It prevents the server from forwarding signed chat-reporting data; vanilla clients may still show unsigned-chat warnings, and Jarock does not automatically change `enforce-secure-profile`.
 
-> Essential Commands 0.41.0 with its required `ec-core` 1.3.0 component is verified for Minecraft 26.2 on Fabric only. It adds useful server commands; no compatible NeoForge 26.2 build is available, so NeoForge does not install it.
+> Essential Commands 0.42.0 with its required `ec-core` 1.3.0 component is verified for Minecraft 26.3 on Fabric only. It adds useful server commands; no compatible NeoForge 26.3 build is available, so NeoForge does not install it.
 
-> InvView 1.4.21 is a verified Minecraft 26.2 server-side Fabric mod. It requires Fabric API and lets authorized operators inspect and manage online or offline player inventories and ender chests; no compatible NeoForge 26.2 build is available, so NeoForge does not install it.
+> InvView 1.4.22 is a verified Minecraft 26.3 server-side Fabric mod. It requires Fabric API and lets authorized operators inspect and manage online or offline player inventories and ender chests; no compatible NeoForge 26.3 build is available, so NeoForge does not install it.
 
-> OfflineCommands 1.0.3 is a verified Minecraft 26.2 server-side Fabric mod for running commands on offline players. No compatible NeoForge 26.2 build is available, so NeoForge does not install it.
+> OfflineCommands 1.0.3 is a verified Minecraft 26.3 server-side Fabric mod for running commands on offline players. No compatible NeoForge 26.3 build is available, so NeoForge does not install it.
 
-> Technical note: Async is an experimental server-side Minecraft 26.2 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
+> Technical note: Async is an experimental server-side Minecraft 26.3 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
 
 <!-- jarock-safe-shutdown -->
 

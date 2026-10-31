@@ -46,12 +46,18 @@ function Assert-OnlyOnlineModeChanged([byte[]]$Before, [byte[]]$After, [string]$
 try {
     . (Join-Path $Root 'scripts/server-properties.ps1')
 
+    # The shipped template must stay version-neutral: the same file is packaged for
+    # every supported Minecraft line and the operator may switch line later.
+    $TemplateMotd = @(Get-Content -LiteralPath (Join-Path $Root 'server/server.properties.template') | Where-Object { $_ -match '^motd=' })
+    Assert ($TemplateMotd.Count -eq 1) 'The template ships exactly one motd line'
+    Assert (($TemplateMotd -join '') -notmatch 'Minecraft\s+\d') 'The template motd does not hardcode a Minecraft version'
+
     $TestDir = Join-Path ([IO.Path]::GetTempPath()) ('jarock-server-properties-' + [IO.Path]::GetRandomFileName())
     New-Item -ItemType Directory -Force -Path $TestDir | Out-Null
     try {
         $Path = Join-Path $TestDir 'server.properties'
         $Latin1 = [Text.Encoding]::GetEncoding(28591)
-        $MotdText = 'motd=Jarock server di prova: Sezione ' + [char]0x00E8 + ' 26.2'
+        $MotdText = 'motd=Jarock server di prova: Sezione ' + [char]0x00E8
         $Body = @($MotdText, 'level-name=world', 'max-players=20', 'online-mode=true') -join "`r`n"
 
         # 1) Latin-1 source file (classic Java properties encoding). The accented

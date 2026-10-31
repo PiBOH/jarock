@@ -85,6 +85,7 @@ echo   %OPTI%%PAD:~0,35%[%IMPORT_SHOW%]
 echo   Import remembered?%PAD:~0,32%[%IMPORT_REMEMBER_SHOW%]
 echo   %OPTE%%PAD:~0,35%[%EXPORT_SHOW%]
 echo   %OPTY%%PAD:~0,21%[%AUTO_UPDATE_MODE%]
+echo   %OPTM%%PAD:~0,2%[%MC_VERSION_SHOW%]
 echo   %OPTU%%PAD:~0,23%[checks GitHub now]
 echo   %OPTC%%PAD:~0,23%[cleans inactive .cache files]
 echo.
@@ -95,7 +96,8 @@ echo   %OPTX%%PAD:~0,28%[restores defaults]
 echo.
 if /i "%ONLINE_MODE%"=="false" echo  WARNING: online-mode=false disables Mojang authentication. Keep it for private testing only.
 echo.
-choice /c 1234567890XYIEUC /n /m "Choose an option: "
+choice /c 1234567890XYIEUCM /n /m "Choose an option: "
+if errorlevel 17 goto minecraft_version_menu
 if errorlevel 16 goto clean_cache_menu
 if errorlevel 15 goto manual_update_check
 if errorlevel 14 goto export_world_menu
@@ -136,6 +138,30 @@ goto menu
 :loader_fabric
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name LOADER_TYPE -Value fabric
 if errorlevel 1 pause
+goto menu
+
+:minecraft_version_menu
+cls
+call :read_value MINECRAFT_VERSION ""
+if defined MINECRAFT_VERSION (echo Current Minecraft version: [%MINECRAFT_VERSION%]) else (echo Current Minecraft version: [not chosen yet])
+echo.
+echo 1. Minecraft 26.3 (current line)
+echo 2. Minecraft 26.2 (previous line)
+echo.
+echo Switching the line reinstalls the loader, mods and datapack on the next start.
+echo The world and your other settings are never replaced; back the world up first.
+echo.
+choice /c 12 /n /m "Choose Minecraft version: "
+if errorlevel 2 goto minecraft_version_save_262
+set "NEW_MC_VERSION=26.3"
+goto minecraft_version_save
+:minecraft_version_save_262
+set "NEW_MC_VERSION=26.2"
+:minecraft_version_save
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%\scripts\update-launch-setting.ps1" -SettingsPath "%TEMP_SETTINGS%" -Name MINECRAFT_VERSION -Value "%NEW_MC_VERSION%"
+if errorlevel 1 pause
+echo Minecraft %NEW_MC_VERSION% selected; Save and start applies it.
+pause
 goto menu
 
 :ram_menu
@@ -566,6 +592,7 @@ set "OPT9=9. Save and exit"
 set "OPT0=0. Exit without saving"
 set "OPTX=X. Reset safe defaults"
 set "OPTY=Y. Choose startup update mode"
+set "OPTM=M. Choose Minecraft version"
 set "OPTU=U. Check for Jarock updates"
 set "OPTC=C. Clean Jarock cache"
 set "WORLD_IMPORT_SOURCE="
@@ -591,6 +618,8 @@ call :read_value WORLD_IMPORT_APPLIED false
 call :read_value WORLD_EXPORT_DEST ""
 if defined WORLD_IMPORT_SOURCE (set "IMPORT_SHOW=%WORLD_IMPORT_SOURCE%") else (set "IMPORT_SHOW=none")
 set "IMPORT_REMEMBER_SHOW=%WORLD_IMPORT_REMEMBER%"
+set "MC_VERSION_SHOW=%MINECRAFT_VERSION%"
+if not defined MINECRAFT_VERSION set "MC_VERSION_SHOW=asked on first start"
 if defined WORLD_EXPORT_DEST (set "EXPORT_SHOW=%WORLD_EXPORT_DEST%") else (set "EXPORT_SHOW=none")
 if /i "%HAS_AUTO_UPDATE_MODE%"=="false" (
     if /i "%HAS_AUTO_UPDATE_CHECK%"=="true" if /i "%AUTO_UPDATE_CHECK%"=="true" set "AUTO_UPDATE_MODE=install"

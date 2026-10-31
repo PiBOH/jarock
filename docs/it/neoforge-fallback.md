@@ -1,10 +1,10 @@
-# Fallback NeoForge per Minecraft Java 26.2
+# Fallback NeoForge per Minecraft Java 26.3
 
 ## Quando Fabric non è adatto
 
-**Obiettivo:** server Minecraft Java 26.2 con NeoForge, mod tecniche e accesso Java/Bedrock.
+**Obiettivo:** server Minecraft Java 26.3 con NeoForge, mod tecniche e accesso Java/Bedrock.
 
-> Per la versione 26.2 usa **NeoForge**, non la procedura del vecchio Forge classico. Forge e NeoForge sono loader distinti e le loro mod non sono automaticamente intercambiabili.
+> Per la versione 26.3 usa **NeoForge**, non la procedura del vecchio Forge classico. Forge e NeoForge sono loader distinti e le loro mod non sono automaticamente intercambiabili.
 
 La guida completa in inglese è qui: [NeoForge fallback — English](../en/neoforge-fallback.md).
 
@@ -30,7 +30,7 @@ NeoForge è un **loader per mod**, non un server Bukkit/Spigot/Paper. Installare
 | Mod Fabric e gioco tecnico | Fabric + mod Fabric native + Geyser-Fabric |
 | Mod o modpack NeoForge | NeoForge + mod NeoForge native + Geyser-NeoForge |
 | Molti plugin Bukkit maturi | Paper/Spigot + Geyser, senza mod NeoForge |
-| Modpack e plugin specifici insieme | Solo un progetto ibrido con build esatta per 26.2, dopo test in un server separato |
+| Modpack e plugin specifici insieme | Solo un progetto ibrido con build esatta per 26.3, dopo test in un server separato |
 
 Non installare un vecchio Mohist, Magma o Arclight soltanto perché contiene la parola Forge. Un server ibrido può causare crash, incompatibilità, lag e problemi ai mondi.
 
@@ -44,7 +44,7 @@ Nel repository Fabric il file `parameter-manager.bat` configura RAM e modalità 
 
 1. Crea una cartella semplice, per esempio `C:\MinecraftServer`.
 2. Apri il sito ufficiale: <https://neoforged.net/>.
-3. Seleziona la versione NeoForge per Minecraft **26.2**.
+3. Seleziona la versione NeoForge per Minecraft **26.3**.
 4. Scarica l'installer `.jar` ufficiale.
 5. Mettilo in `C:\MinecraftServer`.
 6. Apri il Prompt dei comandi ed esegui:
@@ -98,7 +98,7 @@ C:\MinecraftServer\mods
 
 Scarica soltanto mod che dichiarano esplicitamente:
 
-- Minecraft 26.2;
+- Minecraft 26.3;
 - NeoForge, non soltanto Forge o Fabric;
 - supporto server-side, se richiesto;
 - dipendenze corrette.
@@ -113,13 +113,13 @@ Aggiungi una mod alla volta, avvia `run.bat`, controlla `logs/latest.log` e prov
 
 ## 6. Installare Geyser-NeoForge
 
-La documentazione ufficiale Geyser indica **Geyser-NeoForge** per server NeoForge Minecraft 26.2:
+La documentazione ufficiale Geyser indica **Geyser-NeoForge** per server NeoForge Minecraft 26.3:
 
 - Download: <https://geysermc.org/download>
 - Guida server modded: <https://geysermc.org/wiki/geyser/setup/self/modded-servers/>
 - Versioni supportate: <https://geysermc.org/wiki/geyser/supported-versions/>
 
-Scarica la build NeoForge che supporta esplicitamente Minecraft 26.2 e mettila in:
+Scarica la build NeoForge che supporta esplicitamente Minecraft 26.3 e mettila in:
 
 ```text
 C:\MinecraftServer\mods
@@ -148,7 +148,7 @@ Mantieni l'indentazione YAML. Se l'hosting assegna una porta diversa, usa quella
 
 Floodgate è opzionale, ma permette agli utenti Bedrock autenticati di entrare senza possedere Minecraft Java.
 
-Dalla pagina ufficiale dei download seleziona la build **Floodgate-NeoForge** compatibile con 26.2 e mettila in:
+Dalla pagina ufficiale dei download seleziona la build **Floodgate-NeoForge** compatibile con 26.3 e mettila in:
 
 ```text
 C:\MinecraftServer\mods
@@ -240,7 +240,7 @@ Se un plugin è indispensabile, puoi:
 
 1. cercare una mod NeoForge equivalente;
 2. scegliere un server Paper/Spigot se la priorità sono i plugin;
-3. valutare un ibrido con build esatta per Minecraft 26.2, in un mondo di test separato.
+3. valutare un ibrido con build esatta per Minecraft 26.3, in un mondo di test separato.
 
 Non usare un ibrido casuale in produzione.
 
@@ -277,7 +277,7 @@ Se una mod viene rifiutata, probabilmente è per Fabric, Forge classico, un'altr
 - <https://geysermc.org/wiki/floodgate/setup/>
 - <https://www.minecraft.net/eula>
 
-> Technical note: Async is an experimental server-side Minecraft 26.2 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
+> Technical note: Async is an experimental server-side Minecraft 26.3 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
 
 <!-- jarock-safe-shutdown -->
 

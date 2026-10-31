@@ -128,7 +128,7 @@ body:
       options:
         - "Fabric"
         - "NeoForge"
-        - "Forge (currently unavailable for the verified 26.2 build)"
+        - "Forge (currently unavailable for the verified 26.3 build)"
         - "No loader selected yet"
     validations:
       required: true

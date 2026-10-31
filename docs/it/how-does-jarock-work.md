@@ -2,7 +2,7 @@
 
 ## Spiegazione semplice del server
 
-**Minecraft:** Java Edition `26.2`
+**Minecraft:** Java Edition `26.3`
 **Loader:** Fabric
 **Piattaforma principale:** Windows 10/11
 
@@ -19,7 +19,7 @@ L'utente deve:
 5. PowerShell controlla Java, il percorso e i file del repository.
 6. Se necessario, viene richiesto di abilitare i percorsi lunghi di Windows.
 7. Vengono scaricati Fabric e le mod bloccate nel manifest.
-8. Ogni download bloccato nel manifest viene verificato con SHA-512. DedicatedPower è l'eccezione: è una mod solo per Fabric, aggiornata automaticamente all'ultima release GitHub e dimensione e checksum vengono verificati dopo il download. Essential Commands 0.41.0 e il componente obbligatorio `ec-core` 1.3.0 sono bloccati sulla versione Fabric 26.2 verificata da Modrinth con i relativi checksum; anche InvView 1.4.21 e OfflineCommands 1.0.3 sono bloccate sui rispettivi artefatti Fabric 26.2 verificati da Modrinth e sui relativi checksum. Il nome dell'artefatto verificato di OfflineCommands contiene `26.1-rc-3`, ma i metadati Modrinth includono esplicitamente Minecraft 26.2; limita la mod agli operatori fidati perché può modificare dati dei giocatori offline. Non esistono build NeoForge 26.2 compatibili per queste tre mod. Links In Chat, Welcome Message, Collective e No Chat Reports sono bloccate sulle rispettive versioni verificate da Modrinth con i relativi checksum. Jarock verifica anche Better Multiplayer Sleep 1.1.0 e lo installa come datapack nella cartella `datapacks` del mondo configurato, sia con Fabric sia con NeoForge, senza sostituire mondi o datapack esistenti.
+8. Ogni download bloccato nel manifest viene verificato con SHA-512. DedicatedPower è l'eccezione: è una mod solo per Fabric, aggiornata automaticamente all'ultima release GitHub e dimensione e checksum vengono verificati dopo il download. Essential Commands 0.42.0 e il componente obbligatorio `ec-core` 1.3.0 sono bloccati sulla versione Fabric 26.3 verificata da Modrinth con i relativi checksum; anche InvView 1.4.22 e OfflineCommands 1.0.3 sono bloccate sui rispettivi artefatti Fabric 26.3 verificati da Modrinth e sui relativi checksum. Il nome dell'artefatto verificato di OfflineCommands contiene `26.1-rc-3`, ma i metadati Modrinth includono esplicitamente Minecraft 26.3; limita la mod agli operatori fidati perché può modificare dati dei giocatori offline. Non esistono build NeoForge 26.3 compatibili per queste tre mod. Links In Chat, Welcome Message, Collective e No Chat Reports sono bloccate sulle rispettive versioni verificate da Modrinth con i relativi checksum. Jarock verifica anche Better Multiplayer Sleep 1.1.0 e lo installa come datapack nella cartella `datapacks` del mondo configurato, sia con Fabric sia con NeoForge, senza sostituire mondi o datapack esistenti.
 9. Fabric crea il runtime in `server/`.
 10. Il primo avvio crea `server/eula.txt` e si ferma.
 11. Dopo aver impostato `eula=true`, un nuovo avvio parte normalmente.
@@ -77,9 +77,9 @@ HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled
 
 Se non vale `1`, può chiedere privilegi amministrativi ed eseguire `scripts\enable-long-paths.ps1`. Il cambiamento è globale per la macchina e può richiedere un riavvio.
 
-Controlla quindi i candidati Java con `java -version`, richiedendo Java 25+ a 64 bit, carica `server\mods-manifest.ps1`, installa Fabric 26.2 con Loader `0.19.3`, scarica le mod in `server\mods\` e verifica ogni SHA-512 (l'eccezione è DedicatedPower, mod solo per Fabric, presa sempre dall'ultima release GitHub). I file esistenti vengono verificati e le configurazioni locali non vengono sovrascritte. Java 8 può restare installato senza bloccare il progetto.
+Controlla quindi i candidati Java con `java -version`, richiedendo Java 25+ a 64 bit, carica `server\mods-manifest.ps1`, installa Fabric 26.3 con Loader `0.20.1`, scarica le mod in `server\mods\` e verifica ogni SHA-512 (l'eccezione è DedicatedPower, mod solo per Fabric, presa sempre dall'ultima release GitHub). I file esistenti vengono verificati e le configurazioni locali non vengono sovrascritte. Java 8 può restare installato senza bloccare il progetto.
 
-La configurazione Fabric predefinita include Fabric API, Geyser-Fabric, Floodgate-Fabric, Lithium, FerriteCore, Krypton, ServerCore, Fabric Carpet, Essential Commands con `ec-core`, InvView, OfflineCommands, Links In Chat, Welcome Message con Collective, No Chat Reports e DedicatedPower. Essential Commands aggiunge comandi utili per il server, mentre InvView permette agli operatori autorizzati di visualizzare e gestire gli inventari e i bauli dell'End dei giocatori online o offline. Essential Commands, InvView e OfflineCommands sono disponibili solo per Fabric 26.2, perché non esistono build NeoForge compatibili. Better Multiplayer Sleep è un datapack separato e neutrale rispetto al loader, installato nel mondo configurato; dopo modifiche manuali usa `/reload`. Links In Chat è una mod server-side che rende cliccabili gli URL nella chat e aggiunge i comandi `/link` e `/linkwhisper`. Welcome Message invia messaggi configurabili all'ingresso e Collective fornisce la gestione condivisa della configurazione; i client non devono installare queste mod. Non installa plugin Bukkit/Spigot/Paper.
+La configurazione Fabric predefinita include Fabric API, Geyser-Fabric, Floodgate-Fabric, Lithium, FerriteCore, Krypton, ServerCore, Fabric Carpet, Essential Commands con `ec-core`, InvView, OfflineCommands, Links In Chat, Welcome Message con Collective, No Chat Reports e DedicatedPower. Essential Commands aggiunge comandi utili per il server, mentre InvView permette agli operatori autorizzati di visualizzare e gestire gli inventari e i bauli dell'End dei giocatori online o offline. Essential Commands, InvView e OfflineCommands sono disponibili solo per Fabric 26.3, perché non esistono build NeoForge compatibili. Better Multiplayer Sleep è un datapack separato e neutrale rispetto al loader, installato nel mondo configurato; dopo modifiche manuali usa `/reload`. Links In Chat è una mod server-side che rende cliccabili gli URL nella chat e aggiunge i comandi `/link` e `/linkwhisper`. Welcome Message invia messaggi configurabili all'ingresso e Collective fornisce la gestione condivisa della configurazione; i client non devono installare queste mod. Non installa plugin Bukkit/Spigot/Paper.
 
 ## 5. Perché servono due avvii
 
@@ -125,7 +125,7 @@ Dopo ogni errore leggere `ERROR:` o `WARNING:` e seguire `Suggested fix:`. Se il
 
 Jarock non modifica router, firewall, port forwarding, IP pubblico, permessi operatori o repository GitHub. Le attività mancanti sono in `TODO.md`.
 
-> Technical note: Async is an experimental server-side Minecraft 26.2 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
+> Technical note: Async is an experimental server-side Minecraft 26.3 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
 
 <!-- jarock-safe-shutdown -->
 

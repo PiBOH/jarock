@@ -2,14 +2,14 @@
 
 ## 서버 작동 방식 쉽게 이해하기
 
-**Minecraft:** Java Edition `26.2` (enable "Set JAVA_HOME variable" in the Temurin installer)
+**Minecraft:** Java Edition `26.3` (enable "Set JAVA_HOME variable" in the Temurin installer)
 **로더:** Fabric
 **주요 플랫폼:** Windows 10/11
 
 이 문서는 Jarock을 다운로드한 뒤 실제로 어떤 일이 일어나는지 설명합니다.
 
 
-> Technical fallback note: DedicatedPower is a Fabric-only mod: it is updated automatically from its latest GitHub release, while the other server mods are pinned and verified with SHA-512. Links In Chat is also included as a verified server-side Fabric 26.2 mod; it makes chat URLs clickable and adds `/link` and `/linkwhisper`, without requiring client installation. Welcome Message 2.8 with its required Collective library is included as a verified server-side Minecraft 26.2 mod for Fabric and NeoForge; it sends configurable join messages.
+> Technical fallback note: DedicatedPower is a Fabric-only mod: it is updated automatically from its latest GitHub release, while the other server mods are pinned and verified with SHA-512. Links In Chat is also included as a verified server-side Fabric 26.3 mod; it makes chat URLs clickable and adds `/link` and `/linkwhisper`, without requiring client installation. Welcome Message 2.9 with its required Collective library is included as a verified server-side Minecraft 26.3 mod for Fabric and NeoForge; it sends configurable join messages.
 
 > Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **유지 관리 참고:** 실행기는 `PATH`의 첫 번째 `java.exe`만 사용하지 않고 호환되는 64비트 Java 25 이상 런타임을 검색합니다. `scripts/java-runtime.ps1`을 사용하고 선택한 실행 파일을 `server/java-path.txt`에 저장하며 시작 전에 다시 확인합니다. Java 8은 설치된 상태로 둘 수 있습니다.
@@ -67,19 +67,19 @@ Java는 보통 TCP `25565`, Bedrock은 UDP `19132`를 사용합니다. Jarock은
 
 오류가 발생하면 `ERROR:` 또는 `WARNING:`을 읽고 `Suggested fix:`를 따르세요. Java가 종료되면 `server\logs\latest.log` 또는 `server\crash-reports\`에서 첫 번째 `Caused by:`를 확인하세요. 남은 작업은 `TODO.md`에 있습니다.
 
-> **기술 참고: 항상 저장소 루트의 `start-server.bat`을 사용하세요. `server.jar`를 두 번 클릭하지 마세요. Windows가 Java 8 또는 Java 21을 사용할 수 있지만 Minecraft 26.2에는 64비트 Java 25 이상이 필요합니다. [전체 영어 안내서](../en/how-does-jarock-work.md)를 참조하세요.**
+> **기술 참고: 항상 저장소 루트의 `start-server.bat`을 사용하세요. `server.jar`를 두 번 클릭하지 마세요. Windows가 Java 8 또는 Java 21을 사용할 수 있지만 Minecraft 26.3에는 64비트 Java 25 이상이 필요합니다. [전체 영어 안내서](../en/how-does-jarock-work.md)를 참조하세요.**
 
-> Better Multiplayer Sleep is a verified Minecraft 26.2 datapack. Jarock installs it into the configured world's `datapacks` folder for Fabric and NeoForge without replacing the world or other datapacks; use `/reload` after manual changes.
+> Better Multiplayer Sleep is a verified Minecraft 26.3 datapack. Jarock installs it into the configured world's `datapacks` folder for Fabric and NeoForge without replacing the world or other datapacks; use `/reload` after manual changes.
 
-> No Chat Reports is a verified Minecraft 26.2 server-side mod for Fabric and NeoForge. It prevents the server from forwarding signed chat-reporting data; vanilla clients may still show unsigned-chat warnings, and Jarock does not automatically change `enforce-secure-profile`.
+> No Chat Reports is a verified Minecraft 26.3 server-side mod for Fabric and NeoForge. It prevents the server from forwarding signed chat-reporting data; vanilla clients may still show unsigned-chat warnings, and Jarock does not automatically change `enforce-secure-profile`.
 
-> Essential Commands 0.41.0 with its required `ec-core` 1.3.0 component is verified for Minecraft 26.2 on Fabric only. It adds useful server commands; no compatible NeoForge 26.2 build is available, so NeoForge does not install it.
+> Essential Commands 0.42.0 with its required `ec-core` 1.3.0 component is verified for Minecraft 26.3 on Fabric only. It adds useful server commands; no compatible NeoForge 26.3 build is available, so NeoForge does not install it.
 
-> InvView 1.4.21 is a verified Minecraft 26.2 server-side Fabric mod. It requires Fabric API and lets authorized operators inspect and manage online or offline player inventories and ender chests; no compatible NeoForge 26.2 build is available, so NeoForge does not install it.
+> InvView 1.4.22 is a verified Minecraft 26.3 server-side Fabric mod. It requires Fabric API and lets authorized operators inspect and manage online or offline player inventories and ender chests; no compatible NeoForge 26.3 build is available, so NeoForge does not install it.
 
-> OfflineCommands 1.0.3 is a verified Minecraft 26.2 server-side Fabric mod for running commands on offline players. No compatible NeoForge 26.2 build is available, so NeoForge does not install it.
+> OfflineCommands 1.0.3 is a verified Minecraft 26.3 server-side Fabric mod for running commands on offline players. No compatible NeoForge 26.3 build is available, so NeoForge does not install it.
 
-> Technical note: Async is an experimental server-side Minecraft 26.2 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
+> Technical note: Async is an experimental server-side Minecraft 26.3 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
 
 <!-- jarock-safe-shutdown -->
 

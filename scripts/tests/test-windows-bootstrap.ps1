@@ -102,8 +102,10 @@ function Restore-Java {
     $env:Path = $Saved.ProcessPath
 }
 
-$SettingsPath = Join-Path $PSScriptRoot 'jarock.ini'
-$SettingsTemplate = Join-Path $PSScriptRoot 'scripts/jarock.ini'
+# scripts/jarock.ini is the only settings file, so the test borrows it: the
+# original bytes are restored in the finally block.
+$SettingsPath = Join-Path $Root 'scripts/jarock.ini'
+$SettingsBackupPath = Join-Path $Root 'scripts/jarock.ini.jarock-test-backup'
 $WelcomeMessageTestConfigPath = Join-Path $Root 'server\config\welcomemessage.json5'
 $WelcomeMessageTestMarkerPath = Join-Path $Root 'server\config\.jarock-welcomemessage-configured'
 $WelcomeMessageOriginalConfigExists = $false
@@ -116,14 +118,14 @@ $WelcomeMessageConfigText = ''
 try {
     Write-Host '==> Simulating a Windows PC that does not have the Java prerequisites installed' -ForegroundColor Cyan
 
-    # 1. Local settings must exist and select Fabric so the bootstrap never prompts.
-    if (-not (Test-Path -LiteralPath $SettingsPath -PathType Leaf)) {
-        if (Test-Path -LiteralPath (Join-Path $Root 'jarock.ini') -PathType Leaf) {
-            Move-Item -LiteralPath (Join-Path $Root 'jarock.ini') -Destination $SettingsPath
-        }
-        elseif (-not (Test-Path -LiteralPath $SettingsTemplate -PathType Leaf)) { throw 'scripts/jarock.ini is missing.' }
-        else { Copy-Item -LiteralPath $SettingsTemplate -Destination $SettingsPath }
-    }
+    # Jarock never replaces an existing world icon, so the "default icon"
+    # check below only makes sense on a fresh world.
+    $WorldExistedBefore = Test-Path -LiteralPath (Join-Path $Root 'server\world')
+
+    # 1. scripts/jarock.ini must exist and select Fabric so the bootstrap never prompts.
+    if (-not (Test-Path -LiteralPath $SettingsPath -PathType Leaf)) { throw 'scripts/jarock.ini is missing.' }
+    if (Test-Path -LiteralPath $SettingsBackupPath -PathType Leaf) { Remove-Item -LiteralPath $SettingsBackupPath -Force }
+    Copy-Item -LiteralPath $SettingsPath -Destination $SettingsBackupPath
     & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'scripts/update-launch-setting.ps1') -SettingsPath $SettingsPath -Name LOADER_TYPE -Value fabric
     if ($LASTEXITCODE -ne 0) { throw 'Could not set LOADER_TYPE=fabric for the test.' }
 
@@ -135,26 +137,35 @@ try {
     Assert ($BootstrapScript.Contains('DelegationConsole')) 'bootstrap uses the documented default-terminal registry value'
 
     # 3. Mask every Java source, then confirm the discovery finds nothing.
-    Mask-Java
     . (Join-Path $Root 'scripts/java-runtime.ps1')
+    # A JDK installed under Program Files or registered in the registry cannot be masked
+    # from a non-elevated test, and the bootstrap would legitimately find it. Detect that
+    # case first and skip the fresh-PC simulation instead of reporting a false failure.
+    $MachineWideJava = Find-CompatibleJava -MinimumMajor 25
+    Mask-Java
     $Result = Find-CompatibleJava -MinimumMajor 25
-    Assert ($null -eq $Result.Selected) 'Java discovery finds nothing after masking (simulated fresh PC)'
+    if ($null -ne $MachineWideJava.Selected) {
+        Write-Host "SKIP: this machine has a JDK 25 outside the environment variables ($($MachineWideJava.Selected)); the fresh-PC simulation needs a runner without one." -ForegroundColor Yellow
+    }
+    else {
+        Assert ($null -eq $Result.Selected) 'Java discovery finds nothing after masking (simulated fresh PC)'
 
-    # 4. Run the real bootstrap with the dry-run flag: it must detect the missing Java,
-    #    simulate the installer sequence (JRE first, then the MSI) and stop with guidance.
-    $env:JAROCK_PREREQ_DRY_RUN = '1'
-    $BootOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'scripts/bootstrap-server.ps1') 2>&1)
-    $BootCode = $LASTEXITCODE
-    Remove-Item Env:JAROCK_PREREQ_DRY_RUN -ErrorAction SilentlyContinue
-    $BootText = $BootOutput -join "`n"
-    Write-Host ''
-    Write-Host '--- bootstrap output (no Java, dry-run) ---'
-    $BootOutput | ForEach-Object { Write-Host $_ }
-    Write-Host '--------------------------------------------'
-    Assert ($BootText -match 'No compatible 64-bit Java 25\+ runtime was found') 'Bootstrap reports that no compatible Java is installed'
-    Assert ($BootText -match 'Simulated launch 1: jre-8-windows-x64.exe') 'Dry run simulates the JRE 8 installer first'
-    Assert ($BootText -match 'Simulated launch 2: msiexec /i OpenJDK25U-jdk_x64_windows_hotspot.msi') 'Dry run simulates the Temurin JDK 25 MSI second'
-    Assert ($BootCode -eq 1) 'Bootstrap stops cleanly with exit code 1 after the simulated install'
+        # 4. Run the real bootstrap with the dry-run flag: it must detect the missing Java,
+        #    simulate the installer sequence (JRE first, then the MSI) and stop with guidance.
+        $env:JAROCK_PREREQ_DRY_RUN = '1'
+        $BootOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'scripts/bootstrap-server.ps1') 2>&1)
+        $BootCode = $LASTEXITCODE
+        Remove-Item Env:JAROCK_PREREQ_DRY_RUN -ErrorAction SilentlyContinue
+        $BootText = $BootOutput -join "`n"
+        Write-Host ''
+        Write-Host '--- bootstrap output (no Java, dry-run) ---'
+        $BootOutput | ForEach-Object { Write-Host $_ }
+        Write-Host '--------------------------------------------'
+        Assert ($BootText -match 'No compatible 64-bit Java 25\+ runtime was found') 'Bootstrap reports that no compatible Java is installed'
+        Assert ($BootText -match 'Simulated launch 1: jre-8-windows-x64.exe') 'Dry run simulates the JRE 8 installer first'
+        Assert ($BootText -match 'Simulated launch 2: msiexec /i OpenJDK25U-jdk_x64_windows_hotspot.msi') 'Dry run simulates the Temurin JDK 25 MSI second'
+        Assert ($BootCode -eq 1) 'Bootstrap stops cleanly with exit code 1 after the simulated install'
+    }
 
     # 5. Restore Java and run the REAL bootstrap: the loader and the mods must install.
     # Seed the known replaced welcome artifact so the bootstrap's migration cleanup is tested.
@@ -191,8 +202,11 @@ try {
         Assert ((Get-Sha512 $ServerRuntimeIconPath) -eq (Get-Sha512 $ServerIconPath)) 'Runtime icon matches the server-list icon'
     }
     $DefaultWorldIconPath = Join-Path $Root 'server\world\icon.png'
-    Assert (Test-Path -LiteralPath $DefaultWorldIconPath -PathType Leaf) 'Default Jarock icon was applied to the world'
-    if ((Test-Path -LiteralPath $DefaultWorldIconPath -PathType Leaf) -and (Test-Path -LiteralPath (Join-Path $Root 'icon.png') -PathType Leaf)) {
+    Assert (Test-Path -LiteralPath $DefaultWorldIconPath -PathType Leaf) 'The world has an icon'
+    if ($WorldExistedBefore) {
+        Write-Host 'SKIP: the world already existed, so Jarock keeps its icon instead of applying the default one.' -ForegroundColor Yellow
+    }
+    else {
         Assert ((Get-Sha512 $DefaultWorldIconPath) -eq (Get-Sha512 (Join-Path $Root 'icon.png'))) 'World icon matches the root Jarock icon'
     }
     # A world supplied by the operator may have its own icon. The next bootstrap must
@@ -202,113 +216,76 @@ try {
     $CustomWorldIconHash = Get-Sha512 $DefaultWorldIconPath
     Assert (Test-Path -LiteralPath $DefaultWorldIconPath -PathType Leaf) 'Custom world icon test fixture was created'
     Assert (Test-Path -LiteralPath (Join-Path $Root 'server\java-path.txt') -PathType Leaf) 'Selected Java executable was stored'
-    $FabricManifest = Get-Content -LiteralPath (Join-Path $Root 'server\mods-manifest.ps1') -Raw
-    Assert ($FabricManifest -match 'OfflineCommands-1\.0\.3\+26\.1-rc-3\.jar') 'Fabric manifest contains OfflineCommands for Minecraft 26.2'
-    Assert ($FabricManifest -match '735f64794ea53a995d804d85d2c924fa76e882f469b76b57dafb23379c80d97c533cb83e56da0d878350b0e4e149efc500c3d4f000934b3606349a6768214ec9') 'OfflineCommands SHA-512 is pinned'
-    $OfflineCommandsPath = Join-Path $Root 'server\\mods\\OfflineCommands-1.0.3+26.1-rc-3.jar'
-    Assert (Test-Path -LiteralPath $OfflineCommandsPath -PathType Leaf) 'OfflineCommands was downloaded into server/mods'
-    if (Test-Path -LiteralPath $OfflineCommandsPath -PathType Leaf) {
-        Assert ((Get-Sha512 $OfflineCommandsPath) -eq '735f64794ea53a995d804d85d2c924fa76e882f469b76b57dafb23379c80d97c533cb83e56da0d878350b0e4e149efc500c3d4f000934b3606349a6768214ec9') 'Downloaded OfflineCommands SHA-512 matches the pinned hash'
+    # The bootstrap installs the manifest that matches the configured Minecraft
+    # line, so the 26.3 manifests are the source of truth for this check: every
+    # pinned entry must exist in server\mods with exactly the pinned bytes.
+    $FabricManifestPath = Join-Path $Root 'server\mods-manifest-26.3-fabric.ps1'
+    Assert (Test-Path -LiteralPath $FabricManifestPath -PathType Leaf) 'Fabric 26.3 manifest is present'
+    $FabricMods = @(& { . $FabricManifestPath; $Mods })
+    Assert ($FabricMods.Count -gt 0) 'Fabric 26.3 manifest pins at least one mod'
+    # AUTO_UPDATE_MODS is on, so a managed mod that Modrinth published a newer build
+    # for is stored under the new file name and recorded in the marker. The pinned
+    # bytes are still the fallback; accept either the pin or the managed update.
+    $ModMarkerPath = Join-Path $Root 'server\config\.jarock-mods'
+    $ModMarker = @{}
+    if (Test-Path -LiteralPath $ModMarkerPath -PathType Leaf) {
+        foreach ($MarkerLine in (Get-Content -LiteralPath $ModMarkerPath -Encoding UTF8)) {
+            $MarkerParts = ([string]$MarkerLine).Trim() -split '\|'
+            if ($MarkerParts.Count -eq 3 -and $MarkerParts[0]) {
+                $ModMarker[$MarkerParts[0]] = [pscustomobject]@{ Name = $MarkerParts[1]; Sha512 = $MarkerParts[2] }
+            }
+        }
     }
-    Assert ($FabricManifest -match 'InvView-1\.4\.21-26\.2\+\.jar') 'Fabric manifest contains InvView for Minecraft 26.2'
-    Assert ($FabricManifest -match '6eec7e7831316f9768b42daa441af83442ec9d30cfe2a963b51d77339805e4c8cdd8283ae758ec73ce4bfbce2a6454c0a6389683e830acb6ff1fb0dcef2534ea') 'InvView SHA-512 is pinned'
-    $InvViewPath = Join-Path $Root 'server\\mods\\InvView-1.4.21-26.2+.jar'
-    Assert (Test-Path -LiteralPath $InvViewPath -PathType Leaf) 'InvView was downloaded into server/mods'
-    if (Test-Path -LiteralPath $InvViewPath -PathType Leaf) {
-        Assert ((Get-Sha512 $InvViewPath) -eq '6eec7e7831316f9768b42daa441af83442ec9d30cfe2a963b51d77339805e4c8cdd8283ae758ec73ce4bfbce2a6454c0a6389683e830acb6ff1fb0dcef2534ea') 'Downloaded InvView SHA-512 matches the pinned hash'
+    foreach ($PinnedMod in $FabricMods) {
+        $PinnedPath = Join-Path $Root ('server\mods\' + $PinnedMod.Name)
+        if (Test-Path -LiteralPath $PinnedPath -PathType Leaf) {
+            Assert ((Get-Sha512 $PinnedPath) -eq $PinnedMod.Sha512) "$($PinnedMod.Name) SHA-512 matches the pinned hash"
+            continue
+        }
+        $Managed = if ($PinnedMod.PSObject.Properties.Name -contains 'Project' -and $ModMarker.ContainsKey([string]$PinnedMod.Project)) { $ModMarker[[string]$PinnedMod.Project] } else { $null }
+        $ManagedPath = if ($null -ne $Managed) { Join-Path $Root ('server\mods\' + $Managed.Name) } else { '' }
+        Assert ($null -ne $Managed -and (Test-Path -LiteralPath $ManagedPath -PathType Leaf)) "$($PinnedMod.Name) was downloaded into server/mods (or updated to a newer managed build)"
+        if ($null -ne $Managed -and (Test-Path -LiteralPath $ManagedPath -PathType Leaf)) {
+            Assert ((Get-Sha512 $ManagedPath) -eq $Managed.Sha512) "$($Managed.Name) SHA-512 matches the managed update marker"
+        }
     }
-    Assert ($FabricManifest -match 'linksinchat-1\.3\.1\+26\.2\.jar') 'Fabric manifest contains Links In Chat for Minecraft 26.2'
-    Assert ($FabricManifest -match '9cbd4eb2b26b518920a2df78c22c95c998ded2f36b6a524881f96f22a2f1a111790791283d32613db8eb71f48e71b30625114c3eaf9d134cd57b776163290067') 'Links In Chat SHA-512 is pinned'
-    $LinksInChatPath = Join-Path $Root 'server\mods\linksinchat-1.3.1+26.2.jar'
-    Assert (Test-Path -LiteralPath $LinksInChatPath -PathType Leaf) 'Links In Chat was downloaded into server/mods'
-    if (Test-Path -LiteralPath $LinksInChatPath -PathType Leaf) {
-        $LinksInChatHash = Get-Sha512 $LinksInChatPath
-        Assert ($LinksInChatHash -eq '9cbd4eb2b26b518920a2df78c22c95c998ded2f36b6a524881f96f22a2f1a111790791283d32613db8eb71f48e71b30625114c3eaf9d134cd57b776163290067') 'Downloaded Links In Chat SHA-512 matches the pinned hash'
-    }
-    Assert ($FabricManifest -match 'collective-26\.2\.0-8\.39\.jar') 'Fabric manifest contains Collective for Minecraft 26.2'
-    Assert ($FabricManifest -match 'e27620080ae53460b00cabacaff409a960e0d6c6811b7e3519d5461cb62654e0016161eed914352171af56191b70a97c79320b3ef29c0636b74a0471c2398055') 'Collective SHA-512 is pinned'
-    $CollectivePath = Join-Path $Root 'server\\mods\\collective-26.2.0-8.39.jar'
-    Assert (Test-Path -LiteralPath $CollectivePath -PathType Leaf) 'Collective was downloaded into server/mods'
-    if (Test-Path -LiteralPath $CollectivePath -PathType Leaf) {
-        Assert ((Get-Sha512 $CollectivePath) -eq 'e27620080ae53460b00cabacaff409a960e0d6c6811b7e3519d5461cb62654e0016161eed914352171af56191b70a97c79320b3ef29c0636b74a0471c2398055') 'Downloaded Collective SHA-512 matches the pinned hash'
-    }
-    Assert ($FabricManifest -match 'welcomemessage-26\.2\.0-2\.8\.jar') 'Fabric manifest contains Welcome Message for Minecraft 26.2'
     Assert (-not (Test-Path -LiteralPath $LegacyWelcomePath -PathType Leaf)) 'Replaced welcome artifact was removed during bootstrap'
-    Assert ($FabricManifest -match 'c4e6aca35e5da10f1a3a7e9432a1946bc0e5c8e36c8357bd6c7cbb66cb0c7d99402bb55a9679828223d0353b356ec05ee998e6035c165b03318fe93a6fe3d113') 'Welcome Message SHA-512 is pinned'
-    $WelcomeMessagePath = Join-Path $Root 'server\\mods\\welcomemessage-26.2.0-2.8.jar'
-    Assert (Test-Path -LiteralPath $WelcomeMessagePath -PathType Leaf) 'Welcome Message was downloaded into server/mods'
-    if (Test-Path -LiteralPath $WelcomeMessagePath -PathType Leaf) {
-        Assert ((Get-Sha512 $WelcomeMessagePath) -eq 'c4e6aca35e5da10f1a3a7e9432a1946bc0e5c8e36c8357bd6c7cbb66cb0c7d99402bb55a9679828223d0353b356ec05ee998e6035c165b03318fe93a6fe3d113') 'Downloaded Welcome Message SHA-512 matches the pinned hash'
+    Assert (Test-Path -LiteralPath (Join-Path $Root 'server\config\welcomemessage.json5.jarock') -PathType Leaf) 'The welcome template ships with the package'
+    $NeoForgeManifestPath = Join-Path $Root 'server\mods-manifest-26.3-neoforge.ps1'
+    $NeoForgeManifest = Get-Content -LiteralPath $NeoForgeManifestPath -Raw
+    $NeoForgeMods = @(& { . $NeoForgeManifestPath; $Mods })
+    Assert ($NeoForgeMods.Count -gt 0) 'NeoForge 26.3 manifest pins at least one mod'
+    Assert ($NeoForgeManifest -notmatch '(?i)essential_commands|ec-core|offlinecommands|InvView') 'NeoForge manifest excludes Fabric-only Essential Commands, InvView and OfflineCommands'
+    foreach ($PinnedMod in $NeoForgeMods) {
+        Assert ($PinnedMod.Sha512 -match '^[0-9a-f]{128}$') "$($PinnedMod.Name) pins a full SHA-512"
+        Assert ($PinnedMod.Url -match '^https://cdn\.modrinth\.com/data/') "$($PinnedMod.Name) downloads from Modrinth"
     }
-    Assert ($FabricManifest -match 'essential_commands-0\.41\.0-mc26\.2\.jar') 'Fabric manifest contains Essential Commands for Minecraft 26.2'
-    Assert ($FabricManifest -match 'ec-core-1\.3\.0-mc26\.2\.jar') 'Fabric manifest contains the Essential Commands core dependency'
-    Assert ($FabricManifest -match 'e70b62784e5dd0e41477cd0d9184a6da11c62f9f53899dd5309742a43ccf6c0abd4faddbc942799e94edb37daf88d09a0af66f99202c8e199ee465f98732c919') 'Essential Commands SHA-512 is pinned'
-    $EssentialCommandsPath = Join-Path $Root 'server\\mods\\essential_commands-0.41.0-mc26.2.jar'
-    Assert (Test-Path -LiteralPath $EssentialCommandsPath -PathType Leaf) 'Essential Commands was downloaded into server/mods'
-    if (Test-Path -LiteralPath $EssentialCommandsPath -PathType Leaf) {
-        Assert ((Get-Sha512 $EssentialCommandsPath) -eq 'e70b62784e5dd0e41477cd0d9184a6da11c62f9f53899dd5309742a43ccf6c0abd4faddbc942799e94edb37daf88d09a0af66f99202c8e199ee465f98732c919') 'Downloaded Essential Commands SHA-512 matches the pinned hash'
+    # One real NeoForge download proves that the pinned URL and hash still resolve.
+    $NeoForgeProbe = $NeoForgeMods[0]
+    $NeoForgeTemp = Join-Path ([IO.Path]::GetTempPath()) ("jarock-neoforge-probe-$PID.jar")
+    try {
+        Invoke-TestDownload -Url $NeoForgeProbe.Url -Path $NeoForgeTemp
+        Assert (Test-Path -LiteralPath $NeoForgeTemp -PathType Leaf) 'NeoForge probe artifact downloaded to an isolated temporary path'
+        if (Test-Path -LiteralPath $NeoForgeTemp -PathType Leaf) {
+            Assert ((Get-Sha512 $NeoForgeTemp) -eq $NeoForgeProbe.Sha512) "$($NeoForgeProbe.Name) SHA-512 matches the pinned hash"
+        }
+    } finally {
+        Remove-Item -LiteralPath $NeoForgeTemp -Force -ErrorAction SilentlyContinue
     }
-    $EcCorePath = Join-Path $Root 'server\\mods\\ec-core-1.3.0-mc26.2.jar'
-    Assert (Test-Path -LiteralPath $EcCorePath -PathType Leaf) 'Essential Commands core dependency was downloaded into server/mods'
-    if (Test-Path -LiteralPath $EcCorePath -PathType Leaf) {
-        Assert ((Get-Sha512 $EcCorePath) -eq '44c7b74e07050334b5b2b9a3448232dcc2eb94ecf9769827e64b0fc290a54b47ef7edd623d2546cf636e554e6406e77ab0b84e546ae253543a26a7692d2a945f') 'Downloaded Essential Commands core SHA-512 matches the pinned hash'
+    # The loader-neutral datapack manifest is verified the same way as the mod ones.
+    $DatapackManifestPath = Join-Path $Root 'server\datapacks-manifest.ps1'
+    $DatapackManifest = Get-Content -LiteralPath $DatapackManifestPath -Raw
+    $Datapacks = @(& { . $DatapackManifestPath; $Datapacks })
+    Assert ($Datapacks.Count -gt 0) 'The datapack manifest pins at least one datapack'
+    foreach ($PinnedDatapack in $Datapacks) {
+        Assert ($PinnedDatapack.Sha512 -match '^[0-9a-f]{128}$') "$($PinnedDatapack.Name) pins a full SHA-512"
     }
-    Assert ($FabricManifest -match 'NoChatReports-FABRIC-26\.2-v2\.20\.1\.jar') 'Fabric manifest contains No Chat Reports for Minecraft 26.2'
-    Assert ($FabricManifest -match '139dd09e04cc66fe4745264ddfbe3249be6e956326c931eb9707f9a640bbc011a4f1fd5684d04ca90e1b473be55772b0279e5c2f935c2f2e85d054e2ab0a6923') 'Fabric No Chat Reports SHA-512 is pinned'
-    $NoChatReportsFabricPath = Join-Path $Root 'server\\mods\\NoChatReports-FABRIC-26.2-v2.20.1.jar'
-    Assert (Test-Path -LiteralPath $NoChatReportsFabricPath -PathType Leaf) 'Fabric No Chat Reports was downloaded into server/mods'
-    if (Test-Path -LiteralPath $NoChatReportsFabricPath -PathType Leaf) {
-        Assert ((Get-Sha512 $NoChatReportsFabricPath) -eq '139dd09e04cc66fe4745264ddfbe3249be6e956326c931eb9707f9a640bbc011a4f1fd5684d04ca90e1b473be55772b0279e5c2f935c2f2e85d054e2ab0a6923') 'Downloaded Fabric No Chat Reports SHA-512 matches the pinned hash'
-    }
-    Assert ($FabricManifest -match 'async-fabric-0\.2\.4\+alpha-26\.2\.jar') 'Fabric manifest contains Async for Minecraft 26.2'
-    Assert ($FabricManifest -match '72111329b268954d2c05c80a066e9c9c57ddbe8c9595e0f569cf3d45c70ba03c488ff31159deed0ae6b15a1352b91f9a15de3786fe570f77bc26fff8ed050d7a') 'Fabric Async SHA-512 is pinned'
-    $AsyncFabricPath = Join-Path $Root 'server\\mods\\async-fabric-0.2.4+alpha-26.2.jar'
-    Assert (Test-Path -LiteralPath $AsyncFabricPath -PathType Leaf) 'Async Fabric was downloaded into server/mods'
-    if (Test-Path -LiteralPath $AsyncFabricPath -PathType Leaf) {
-        Assert ((Get-Sha512 $AsyncFabricPath) -eq '72111329b268954d2c05c80a066e9c9c57ddbe8c9595e0f569cf3d45c70ba03c488ff31159deed0ae6b15a1352b91f9a15de3786fe570f77bc26fff8ed050d7a') 'Downloaded Fabric Async SHA-512 matches the pinned hash'
-    }
-    $DatapackManifest = Get-Content -LiteralPath (Join-Path $Root 'server\\datapacks-manifest.ps1') -Raw
-    Assert ($DatapackManifest -match 'BetterMultiplayerSleep-1\.1\.0-1\.21\.11\+\.zip') 'Datapack manifest contains Better Multiplayer Sleep for Minecraft 26.2'
-    Assert ($DatapackManifest -match '8ecadc28a73bbe12dade19d5dfa0840dc8d28b2bd80c0ef154779063375fb5c96cc7c877c55c627909f2aea2907a30b2a8f2038769d269443f0e1689f7f3017a') 'Better Multiplayer Sleep SHA-512 is pinned'
-    $DatapackPath = Join-Path $Root 'server\\world\\datapacks\\BetterMultiplayerSleep-1.1.0-1.21.11+.zip'
-    Assert (Test-Path -LiteralPath $DatapackPath -PathType Leaf) 'Better Multiplayer Sleep was installed in the configured world/datapacks folder'
+    $DatapackPath = Join-Path $Root ('server\world\datapacks\' + $Datapacks[0].Name)
+    Assert (Test-Path -LiteralPath $DatapackPath -PathType Leaf) 'The managed datapack was installed in the configured world/datapacks folder'
     if (Test-Path -LiteralPath $DatapackPath -PathType Leaf) {
-        $DatapackHash = Get-Sha512 $DatapackPath
-        Assert ($DatapackHash -eq '8ecadc28a73bbe12dade19d5dfa0840dc8d28b2bd80c0ef154779063375fb5c96cc7c877c55c627909f2aea2907a30b2a8f2038769d269443f0e1689f7f3017a') 'Downloaded Better Multiplayer Sleep SHA-512 matches the pinned hash'
+        Assert ((Get-Sha512 $DatapackPath) -eq $Datapacks[0].Sha512) 'Downloaded datapack SHA-512 matches the pinned hash'
     }
     Assert ($RealText -match 'datapacks|BetterMultiplayerSleep') 'Bootstrap reports configured datapack installation support'
-    $NeoForgeManifest = Get-Content -LiteralPath (Join-Path $Root 'server\\mods-manifest-neoforge.ps1') -Raw
-    Assert ($NeoForgeManifest -notmatch '(?i)essential_commands|ec-core|offlinecommands|InvView') 'NeoForge manifest excludes Fabric-only Essential Commands, InvView and OfflineCommands'
-    Assert ($NeoForgeManifest -match 'collective-26\.2\.0-8\.39\.jar') 'NeoForge manifest contains Collective for Minecraft 26.2'
-    Assert ($NeoForgeManifest -match 'e27620080ae53460b00cabacaff409a960e0d6c6811b7e3519d5461cb62654e0016161eed914352171af56191b70a97c79320b3ef29c0636b74a0471c2398055') 'NeoForge Collective SHA-512 is pinned'
-    Assert ($NeoForgeManifest -match 'welcomemessage-26\.2\.0-2\.8\.jar') 'NeoForge manifest contains Welcome Message for Minecraft 26.2'
-    Assert ($NeoForgeManifest -match 'c4e6aca35e5da10f1a3a7e9432a1946bc0e5c8e36c8357bd6c7cbb66cb0c7d99402bb55a9679828223d0353b356ec05ee998e6035c165b03318fe93a6fe3d113') 'NeoForge Welcome Message SHA-512 is pinned'
-    Assert ($NeoForgeManifest -match 'async-neoforge-0\.2\.4\+alpha-26\.2\.jar') 'NeoForge manifest contains Async for Minecraft 26.2'
-    Assert ($NeoForgeManifest -match '8940c6746b2b399863c540a4c6c88c3a32caeb698f375e4ce086dab1ecad548f4a66c8b891dd48f02d4e90eaf3ec30c72653d5e66dff87ad04c858ca0c7b8c8d') 'NeoForge Async SHA-512 is pinned'
-    $AsyncNeoForgeTemp = Join-Path ([IO.Path]::GetTempPath()) ("jarock-Async-NEOFORGE-26.2-$PID.jar")
-    try {
-        Invoke-TestDownload -Url 'https://cdn.modrinth.com/data/vEC2jm6I/versions/RLPdO4sl/async-neoforge-0.2.4%2Balpha-26.2.jar' -Path $AsyncNeoForgeTemp
-        Assert (Test-Path -LiteralPath $AsyncNeoForgeTemp -PathType Leaf) 'NeoForge Async downloaded to an isolated temporary path'
-        if (Test-Path -LiteralPath $AsyncNeoForgeTemp -PathType Leaf) {
-            Assert ((Get-Item -LiteralPath $AsyncNeoForgeTemp).Length -eq 356252) 'NeoForge Async size matches the pinned artifact'
-            Assert ((Get-Sha512 $AsyncNeoForgeTemp) -eq '8940c6746b2b399863c540a4c6c88c3a32caeb698f375e4ce086dab1ecad548f4a66c8b891dd48f02d4e90eaf3ec30c72653d5e66dff87ad04c858ca0c7b8c8d') 'Downloaded NeoForge Async SHA-512 matches the pinned hash'
-        }
-    } finally {
-        Remove-Item -LiteralPath $AsyncNeoForgeTemp -Force -ErrorAction SilentlyContinue
-    }
-    Assert ($NeoForgeManifest -match 'NoChatReports-NEOFORGE-26\.2-v2\.20\.1\.jar') 'NeoForge manifest contains No Chat Reports for Minecraft 26.2'
-    Assert ($NeoForgeManifest -match '782b4b081c5d8bdd19139894feacc9c48b6fb025856e904c2bb9ee84438734de96eb5540f471e57830ecb92df8f18f6da20a1b619c4806b16f06780250999d03') 'NeoForge No Chat Reports SHA-512 is pinned'
-    $NoChatReportsNeoForgeTemp = Join-Path ([IO.Path]::GetTempPath()) ("jarock-NoChatReports-NEOFORGE-26.2-v2.20.1-$PID.jar")
-    try {
-        Invoke-TestDownload -Url 'https://cdn.modrinth.com/data/qQyHxfxd/versions/k9fqrSE6/NoChatReports-NEOFORGE-26.2-v2.20.1.jar' -Path $NoChatReportsNeoForgeTemp
-        Assert (Test-Path -LiteralPath $NoChatReportsNeoForgeTemp -PathType Leaf) 'NeoForge No Chat Reports downloaded to an isolated temporary path'
-        if (Test-Path -LiteralPath $NoChatReportsNeoForgeTemp -PathType Leaf) {
-            Assert ((Get-Item -LiteralPath $NoChatReportsNeoForgeTemp).Length -eq 237914) 'NeoForge No Chat Reports size matches the pinned artifact'
-            Assert ((Get-Sha512 $NoChatReportsNeoForgeTemp) -eq '782b4b081c5d8bdd19139894feacc9c48b6fb025856e904c2bb9ee84438734de96eb5540f471e57830ecb92df8f18f6da20a1b619c4806b16f06780250999d03') 'Downloaded NeoForge No Chat Reports SHA-512 matches the pinned hash'
-        }
-    } finally {
-        Remove-Item -LiteralPath $NoChatReportsNeoForgeTemp -Force -ErrorAction SilentlyContinue
-    }
     $DatapackConfigRoot = Join-Path $Root 'server\\config'
     $DatapackMarkerPath = Join-Path $DatapackConfigRoot '.jarock-datapacks'
     Assert (Test-Path -LiteralPath $DatapackMarkerPath -PathType Leaf) 'Jarock datapack marker was created'
@@ -331,27 +308,14 @@ try {
     Assert ((Get-Sha512 $WelcomeMessageTemplatePath) -eq $WelcomeMessageTemplateHash) 'Bootstrap preserves the migrated Welcome Message template content'
     Assert (-not (Test-Path -LiteralPath $LegacyWelcomeMessageTemplatePath -PathType Leaf)) 'Bootstrap removes the legacy Welcome Message template alias'
     Assert ((Test-Path -LiteralPath $DefaultWorldIconPath -PathType Leaf) -and ((Get-Sha512 $DefaultWorldIconPath) -eq $CustomWorldIconHash)) 'Second bootstrap preserves a custom world icon'
-    if ($WelcomeMessageWasValidated) {
-        $WelcomeMessageCustomizedText = $WelcomeMessageConfigText -replace '"messageOneText": "Welcome to the Jarock server!"', '"messageOneText": "My customized Jarock welcome!"'
-        [IO.File]::WriteAllText($WelcomeMessageConfigPath, $WelcomeMessageCustomizedText, (New-Object Text.UTF8Encoding($false)))
-        $WelcomeMessageCustomHash = Get-Sha512 $WelcomeMessageConfigPath
-        $ThirdBootstrapOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'scripts/bootstrap-server.ps1') 2>&1)
-        $ThirdBootstrapCode = $LASTEXITCODE
-        Assert ($ThirdBootstrapCode -eq 0) 'A third bootstrap remains successful after Welcome Message customization'
-        Assert ((Get-Sha512 $WelcomeMessageConfigPath) -eq $WelcomeMessageCustomHash) 'Later Welcome Message customization is preserved'
-        Assert ((Get-Content -LiteralPath $WelcomeMessageConfigPath -Raw) -match '"messageOneText": "My customized Jarock welcome!"') 'Customized Welcome Message text remains unchanged'
-    } else {
-        Assert $false 'Welcome Message customization could not be tested because the migrated config was unavailable'
-    }
     Assert ((Test-Path -LiteralPath $DatapackPath -PathType Leaf) -and ((Get-Item -LiteralPath $DatapackPath).FullName -eq $DatapackPathBefore)) 'Second bootstrap preserves the managed datapack path'
     Assert ((Get-Content -LiteralPath $DatapackMarkerPath -Raw) -eq $DatapackMarkerBefore) 'Second bootstrap preserves the datapack marker'
 
     # 6. Accept the EULA and boot the real server; stop it automatically after the ready banner.
     $EulaPath = Join-Path $Root 'server\eula.txt'
-    if (Test-Path -LiteralPath $EulaPath -PathType Leaf) {
-        (Get-Content -LiteralPath $EulaPath -Raw) -replace 'eula=false', 'eula=true' | Set-Content -LiteralPath $EulaPath -NoNewline
-    }
-    else { throw 'server/eula.txt was not created by the bootstrap.' }
+    Assert (Test-Path -LiteralPath $EulaPath -PathType Leaf) 'The bootstrap created server/eula.txt'
+    $EulaText = if (Test-Path -LiteralPath $EulaPath -PathType Leaf) { Get-Content -LiteralPath $EulaPath -Raw } else { '' }
+    Assert ($EulaText -match '(?m)^\s*eula\s*=\s*true\s*$') 'The bootstrap accepts the Minecraft EULA automatically'
 
     Write-Host '==> Starting the Jarock server (nogui); it stops automatically after the ready banner' -ForegroundColor Cyan
     $Psi = New-Object System.Diagnostics.ProcessStartInfo
@@ -373,13 +337,22 @@ try {
     $CollectedOutput = New-Object System.Collections.Generic.List[string]
     $OutTask = $ServerProc.StandardOutput.ReadLineAsync()
     $ErrTask = $ServerProc.StandardError.ReadLineAsync()
-    $Deadline = [DateTime]::UtcNow.AddMinutes(15)
+    # The first boot on a machine downloads the Fabric libraries, scans every mod jar
+    # and generates the world, which can take far longer than a warm start (a slow or
+    # antivirus-scanned disk has been observed taking 30 minutes); allow 60 minutes.
+    $Deadline = [DateTime]::UtcNow.AddMinutes(60)
     # Keep draining both redirected streams after the child exits. A PowerShell
     # parse/runtime failure can close the process before its final error lines have
     # been consumed; stopping at HasExited would hide the useful diagnostic.
     while ((-not $OutEof -or -not $ErrEof) -and -not $TimedOut) {
-        $OutReady = $OutTask.Wait(1000)
-        if ($OutReady) {
+        $Progress = $false
+        # Read every line that is already available before sleeping. A slow reader lets
+        # the OS pipe buffer fill, which blocks the server's console log appender and
+        # then the whole server thread: the boot looks hung for minutes even though the
+        # process is only waiting for this loop to drain its stdout.
+        $Burst = 0
+        while (-not $OutEof -and $Burst -lt 5000 -and $OutTask.Wait(0)) {
+            $Burst++
             # Guard the Result access: if the child hard-crashes and its pipe faults
             # instead of EOF, Result throws; treat it as end of stream.
             try { $Line = $OutTask.Result } catch { $OutEof = $true; $Line = $null }
@@ -395,16 +368,19 @@ try {
             }
             else { $OutEof = $true }
             if (-not $OutEof) { $OutTask = $ServerProc.StandardOutput.ReadLineAsync() }
+            $Progress = $true
         }
-        $ErrReady = $ErrTask.Wait(0)
-        if ($ErrReady) {
+        $Burst = 0
+        while (-not $ErrEof -and $Burst -lt 5000 -and $ErrTask.Wait(0)) {
+            $Burst++
             try { $ErrLine = $ErrTask.Result } catch { $ErrEof = $true; $ErrLine = $null }
             if ($null -ne $ErrLine) { Write-Host $ErrLine }
             else { $ErrEof = $true }
             if (-not $ErrEof) { $ErrTask = $ServerProc.StandardError.ReadLineAsync() }
+            $Progress = $true
         }
         if ([DateTime]::UtcNow -gt $Deadline) { $TimedOut = $true }
-        Start-Sleep -Milliseconds 150
+        if (-not $Progress) { Start-Sleep -Milliseconds 50 }
     }
     if ($TimedOut) { try { $ServerProc.Kill() } catch { } }
     if (-not $ServerProc.HasExited) { $ServerProc.WaitForExit(30000) | Out-Null }
@@ -423,7 +399,10 @@ try {
     Assert ($CollectedText -match '(?m)seed:\s+(-?\d+)') 'The ready status shows the world seed read from world_gen_settings.dat'
     Assert ($CollectedText -match 'shutting down and saving the world') 'The server console warns that the world is being saved when stop is detected'
     Assert ($CollectedText -match 'SAFE TO CLOSE') 'The server console prints the SAFE TO CLOSE confirmation after the world save completes'
-    $WelcomeMessageConfigPath = Join-Path $Root 'server\config\welcomemessage.json5'
+    # Welcome Message 2.9 (Collective DuskConfig) imports the Jarock template on the
+    # first start and keeps its own file at config/serilum/welcomemessage.json, so the
+    # Jarock values must survive that migration.
+    $WelcomeMessageConfigPath = Join-Path $Root 'server\config\serilum\welcomemessage.json'
     Assert (Test-Path -LiteralPath $WelcomeMessageConfigPath -PathType Leaf) 'Welcome Message generated its configuration'
     Assert (Test-Path -LiteralPath $WelcomeMessageTemplatePath -PathType Leaf) 'Jarock Welcome Message template is present'
     Assert (Test-Path -LiteralPath $WelcomeMessageMarkerPath -PathType Leaf) 'Jarock Welcome Message migration marker was created'
@@ -432,10 +411,23 @@ try {
     if ((Test-Path -LiteralPath $WelcomeMessageConfigPath -PathType Leaf) -and (Test-Path -LiteralPath $WelcomeMessageTemplatePath -PathType Leaf)) {
         $WelcomeMessageConfigText = Get-Content -LiteralPath $WelcomeMessageConfigPath -Raw
         $WelcomeMessageWasValidated = $true
-        Assert ($WelcomeMessageConfigText -match '"messageOneText": "Welcome to the Jarock server!"') 'Welcome Message uses the Jarock first message'
-        Assert ($WelcomeMessageConfigText -match '"messageOneOptionalURL": "https://piboh.github.io/jarock/index.html"') 'Welcome Message uses the Jarock website link'
-        Assert ($WelcomeMessageConfigText -match '"messageTwoOptionalURL": "https://piboh.github.io/jarock/downloads.html"') 'Welcome Message uses the Jarock downloads link'
-        Assert ($WelcomeMessageConfigText -match '"messageThreeOptionalURL": "https://github.com/PiBOH/jarock/issues/new/choose"') 'Welcome Message uses the Jarock issue link'
+        Assert ($WelcomeMessageConfigText -match '"value": "Welcome to the Jarock server!"') 'Welcome Message uses the Jarock first message'
+        Assert ($WelcomeMessageConfigText -match '"value": "https://piboh.github.io/jarock/index.html"') 'Welcome Message uses the Jarock website link'
+        Assert ($WelcomeMessageConfigText -match '"value": "https://piboh.github.io/jarock/downloads.html"') 'Welcome Message uses the Jarock downloads link'
+        Assert ($WelcomeMessageConfigText -match '"value": "https://github.com/PiBOH/jarock/issues/new/choose"') 'Welcome Message uses the Jarock issue link'
+    }
+
+    if ($WelcomeMessageWasValidated) {
+        $WelcomeMessageCustomizedText = $WelcomeMessageConfigText -replace '"value": "Welcome to the Jarock server!"', '"value": "My customized Jarock welcome!"'
+        [IO.File]::WriteAllText($WelcomeMessageConfigPath, $WelcomeMessageCustomizedText, (New-Object Text.UTF8Encoding($false)))
+        $WelcomeMessageCustomHash = Get-Sha512 $WelcomeMessageConfigPath
+        $ThirdBootstrapOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'scripts/bootstrap-server.ps1') 2>&1)
+        $ThirdBootstrapCode = $LASTEXITCODE
+        Assert ($ThirdBootstrapCode -eq 0) 'A third bootstrap remains successful after Welcome Message customization'
+        Assert ((Get-Sha512 $WelcomeMessageConfigPath) -eq $WelcomeMessageCustomHash) 'Later Welcome Message customization is preserved'
+        Assert ((Get-Content -LiteralPath $WelcomeMessageConfigPath -Raw) -match '"value": "My customized Jarock welcome!"') 'Customized Welcome Message text remains unchanged'
+    } else {
+        Assert $false 'Welcome Message customization could not be tested because the migrated config was unavailable'
     }
 
     # 7. Summary.
@@ -457,5 +449,6 @@ finally {
     else { Remove-Item -LiteralPath $WelcomeMessageTestConfigPath -Force -ErrorAction SilentlyContinue }
     if ($WelcomeMessageOriginalMarkerExists) { [IO.File]::WriteAllBytes($WelcomeMessageTestMarkerPath, $WelcomeMessageOriginalMarkerBytes) }
     else { Remove-Item -LiteralPath $WelcomeMessageTestMarkerPath -Force -ErrorAction SilentlyContinue }
+    if (Test-Path -LiteralPath $SettingsBackupPath -PathType Leaf) { Move-Item -LiteralPath $SettingsBackupPath -Destination $SettingsPath -Force }
     Restore-Java
 }

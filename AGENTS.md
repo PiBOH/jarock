@@ -65,7 +65,9 @@ Rules:
 workflow reads that line, uses it as the tag and the release title, and refuses
 a release commit that does not change it. `MINECRAFT_VERSION` holds the
 supported Minecraft line (`26.2` or `26.3`), is asked once on the first start,
-and is stored back into the same file.
+and is stored back into the same file; `M. Choose Minecraft version` in
+`parameter-manager.bat` writes the same line later, and
+`scripts/validate-launch-settings.ps1` rejects any other value.
 
 **Do not add a second copy of the version anywhere**, and do not edit the
 package name by hand.

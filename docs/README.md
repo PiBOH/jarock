@@ -131,7 +131,7 @@ Every supported locale has translated visible document titles for the server, ne
 | `he` | [מדריך שרת Fabric](he/server-guide.md) | [מדריך חלופי NeoForge](he/neoforge-fallback.md) | [מדריך רשת, חומת אש ונתב](he/network-and-ports.md) |
 | `hu` | [Fabric szerver útmutató](hu/server-guide.md) | [NeoForge tartalék útmutató](hu/neoforge-fallback.md) | [Hálózati, tűzfal és router útmutató](hu/network-and-ports.md) |
 | `id` | [Panduan server Fabric](id/server-guide.md) | [Panduan cadangan NeoForge](id/neoforge-fallback.md) | [Panduan jaringan, firewall, dan router](id/network-and-ports.md) |
-| `it` | [Server Minecraft Java 26.2 con Fabric](it/server-guide.md) | [Fallback NeoForge per Minecraft Java 26.2](it/neoforge-fallback.md) | [Guida a rete, firewall e router](it/network-and-ports.md) |
+| `it` | [Server Minecraft Java 26.3 con Fabric](it/server-guide.md) | [Fallback NeoForge per Minecraft Java 26.3](it/neoforge-fallback.md) | [Guida a rete, firewall e router](it/network-and-ports.md) |
 | `ja` | [Fabric サーバーガイド](ja/server-guide.md) | [NeoForge フォールバックガイド](ja/neoforge-fallback.md) | [ネットワーク、ファイアウォール、ルーターガイド](ja/network-and-ports.md) |
 | `ko` | [Fabric 서버 안내서](ko/server-guide.md) | [NeoForge 대체 안내서](ko/neoforge-fallback.md) | [네트워크, 방화벽 및 라우터 가이드](ko/network-and-ports.md) |
 | `lv` | [Fabric servera rokasgrāmata](lv/server-guide.md) | [NeoForge rezerves rokasgrāmata](lv/neoforge-fallback.md) | [Tīkla, ugunsmūra un maršrutētāja rokasgrāmata](lv/network-and-ports.md) |
@@ -153,4 +153,4 @@ The English guides remain authoritative for detailed network setup, troubleshoot
 
 ## Loader policy
 
-Fabric is the first choice for native optimization and technical mods. NeoForge is the final loader fallback when a required mod is unavailable or unsuitable on Fabric. Forge is currently displayed as unavailable until an official Minecraft 26.2 server build is verified. Forge and NeoForge are distinct loaders; never install a Forge mod on NeoForge unless the mod author explicitly provides compatibility.
+Fabric is the first choice for native optimization and technical mods. NeoForge is the final loader fallback when a required mod is unavailable or unsuitable on Fabric. Forge is currently displayed as unavailable until an official Minecraft 26.3 server build is verified. Forge and NeoForge are distinct loaders; never install a Forge mod on NeoForge unless the mod author explicitly provides compatibility.

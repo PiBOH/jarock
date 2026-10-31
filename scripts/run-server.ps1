@@ -90,7 +90,18 @@ function Test-ShutdownStarted([string]$Line) {
     return $Line -match '(?i)(Stopping( Minecraft)? server|Stopping the server|Server is stopping|Server shutting down|Shutting down server|Saving players|Saving worlds|Arr\u00eat du serveur|Fermata del server|Deteniendo el servidor|\u041e\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0430|\u30b5\u30fc\u30d0\u30fc\u3092\u505c\u6b62)'
 }
 function Test-WorldSaveComplete([string]$Line) {
+    # Minecraft 26.2 and earlier close the save with this explicit line.
     return $Line -match '(?i)All dimensions are saved'
+}
+function Test-WorldSaveInProgress([string]$Line) {
+    # Minecraft 26.3 dropped the "All dimensions are saved" line: it saves each
+    # dimension and then exits. These per-dimension lines are the 26.3 evidence
+    # that the shutdown is writing the world; the clean exit code still gates the
+    # final SAFE TO CLOSE decision below.
+    return $Line -match '(?i)Saving chunks for level'
+}
+function Test-WorldSaveFailed([string]$Line) {
+    return $Line -match '(?i)(Exception stopping the server|Error while shutting down|Failed to save)'
 }
 function Read-NbtUInt16([System.IO.BinaryReader]$Reader) {
     $High = $Reader.ReadByte()
@@ -272,12 +283,16 @@ function Invoke-JarockServerLine([string]$Line) {
         # sequence. Autosaves/manual saves never authorize SAFE TO CLOSE.
         $script:ShutdownStarted = $true
         $script:WorldSaveComplete = $false
+        $script:ShutdownChunkSaves = 0
+        $script:ShutdownFailed = $false
         if (-not $script:ShutdownNoticeShown) {
             $script:ShutdownNoticeShown = $true
             Write-Host 'Jarock: the server is shutting down and saving the world. Do not close this window until the final SAFE TO CLOSE message.' -ForegroundColor Yellow
         }
     }
     if ($script:ShutdownStarted -and (Test-WorldSaveComplete $Line)) { $script:WorldSaveComplete = $true }
+    if ($script:ShutdownStarted -and (Test-WorldSaveInProgress $Line)) { $script:ShutdownChunkSaves++ }
+    if ($script:ShutdownStarted -and (Test-WorldSaveFailed $Line)) { $script:ShutdownFailed = $true }
     if (-not $script:BannerShown) {
         $ReadyLine = $false
         if ($script:GeyserPresent) { $ReadyLine = Test-GeyserReadyLine $Line }
@@ -311,15 +326,35 @@ function Invoke-JarockServerProcess([string]$FilePath, [string]$ArgumentLine) {
     $StartInfo.RedirectStandardInput = $true
     $StartInfo.RedirectStandardOutput = $true
     $StartInfo.RedirectStandardError = $true
+
     $Process = New-Object System.Diagnostics.Process
     $Process.StartInfo = $StartInfo
+    # Process.StandardInput inherits [Console]::InputEncoding, and Windows PowerShell's
+    # default UTF-8 input encoding carries a byte-order mark. The framework writes that
+    # BOM before the first typed line, and Java 18+ decodes its console as UTF-8, so the
+    # server rejected the whole command as unparsable. A preamble-free encoding keeps the
+    # child console byte-for-byte identical to what was typed.
+    try { [Console]::InputEncoding = New-Object System.Text.UTF8Encoding($false) } catch { }
+    try { [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false) } catch { }
     if (-not $Process.Start()) { throw "Could not start the server process: $FilePath" }
     try {
+        # Write the encoded bytes straight to the pipe so no StreamWriter preamble can
+        # sneak into the server console.
+        $InStream = $null
+        try { $InStream = $Process.StandardInput.BaseStream } catch { $InStream = $null }
         $OutTask = $Process.StandardOutput.ReadLineAsync()
         $ErrTask = $Process.StandardError.ReadLineAsync()
-        $InTask = $null
+        # Read the console with a StreamReader over the raw standard input instead of
+        # [Console]::In.ReadLineAsync(): the Windows PowerShell console reader runs the
+        # read synchronously, so a live stdin pipe (or a console typing nothing yet)
+        # blocks this pump, starves the server output, and freezes the whole boot.
+        $ConsoleInput = $null
         if ($GuiMode -eq 'nogui') {
-            try { $InTask = [Console]::In.ReadLineAsync() } catch { $InTask = $null }
+            try { $ConsoleInput = New-Object System.IO.StreamReader([Console]::OpenStandardInput(), (New-Object System.Text.UTF8Encoding($false)), $false, 4096, $true) } catch { $ConsoleInput = $null }
+        }
+        $InTask = $null
+        if ($null -ne $ConsoleInput) {
+            try { $InTask = $ConsoleInput.ReadLineAsync() } catch { $InTask = $null }
         }
         while ($true) {
             $Progress = $false
@@ -342,10 +377,22 @@ function Invoke-JarockServerProcess([string]$FilePath, [string]$ArgumentLine) {
                 try { $Typed = $InTask.Result } catch { $Typed = $null }
                 if ($null -eq $Typed) { $InTask = $null }
                 else {
+                    # Drop a byte-order mark or a stray CR that a redirected stdin can
+                    # carry; the server would otherwise reject the whole command.
+                    $Typed = ([string]$Typed).Replace([string][char]0xFEFF, '').TrimEnd([char]13)
                     $Translated = ConvertTo-NamespacedCommand $Typed
                     if ($Translated -ne $Typed) { Write-Host "Jarock: sent $Translated" -ForegroundColor DarkGray }
-                    try { $Process.StandardInput.WriteLine($Translated); $Process.StandardInput.Flush() } catch { }
-                    try { $InTask = [Console]::In.ReadLineAsync() } catch { $InTask = $null }
+                    try {
+                        if ($null -ne $InStream) {
+                            $Bytes = [System.Text.Encoding]::UTF8.GetBytes($Translated + "`n")
+                            $InStream.Write($Bytes, 0, $Bytes.Length)
+                            $InStream.Flush()
+                        } else {
+                            $Process.StandardInput.WriteLine($Translated)
+                            $Process.StandardInput.Flush()
+                        }
+                    } catch { }
+                    try { $InTask = $ConsoleInput.ReadLineAsync() } catch { $InTask = $null }
                 }
                 $Progress = $true
             }
@@ -393,6 +440,8 @@ try {
     # complete the world save, and then exit with code 0.
     $script:ShutdownStarted=$false
     $script:WorldSaveComplete=$false
+    $script:ShutdownChunkSaves=0
+    $script:ShutdownFailed=$false
     $script:ShutdownNoticeShown=$false
     $script:GeyserPresent=$false
     $GeyserJar=Get-ChildItem -LiteralPath (Join-Path $ServerDirectory 'mods') -Filter 'Geyser-*.jar' -ErrorAction SilentlyContinue | Select-Object -First 1
@@ -441,6 +490,13 @@ try {
     $FinalExitCode=$ExitCode
     if($null -eq $FinalExitCode){$FinalExitCode=1} # treat an undetectable exit as abnormal
     $ExitCode=$FinalExitCode
+    # Minecraft 26.3 saves every dimension and exits without the older
+    # "All dimensions are saved" line. Treat the shutdown save lines followed by a
+    # clean exit as a completed save, but never when the server reported a failure
+    # while stopping.
+    if (-not $script:WorldSaveComplete -and $script:ShutdownStarted -and -not $script:ShutdownFailed -and $script:ShutdownChunkSaves -gt 0 -and $ExitCode -eq 0) {
+        $script:WorldSaveComplete = $true
+    }
     Write-Host ''
     if($script:ShutdownStarted -and $script:WorldSaveComplete){
         # The completed world save is the authoritative safe-to-close signal: the

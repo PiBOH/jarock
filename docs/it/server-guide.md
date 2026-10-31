@@ -1,12 +1,12 @@
-# Server Minecraft Java 26.2 con Fabric
+# Server Minecraft Java 26.3 con Fabric
 
 ## Guida pratica in italiano
 
 Questa è la guida italiana rapida e operativa. La guida tecnica canonica, mantenuta in inglese, è disponibile qui: [English complete guide](../en/server-guide.md).
 
-**Obiettivo:** creare un server Minecraft Java 26.2 con Fabric, mod per ottimizzazione/redstone, accesso Java e Bedrock tramite Geyser e Floodgate.
+**Obiettivo:** creare un server Minecraft Java 26.3 con Fabric, mod per ottimizzazione/redstone, accesso Java e Bedrock tramite Geyser e Floodgate.
 
-> Minecraft, Fabric, Geyser, Floodgate e le mod vengono aggiornati separatamente. Scarica soltanto file che indicano esplicitamente **Fabric + Minecraft 26.2**. I nomi e le versioni esatte dei file cambiano nel tempo.
+> Minecraft, Fabric, Geyser, Floodgate e le mod vengono aggiornati separatamente. Scarica soltanto file che indicano esplicitamente **Fabric + Minecraft 26.3**. I nomi e le versioni esatte dei file cambiano nel tempo.
 
 ---
 
@@ -14,7 +14,7 @@ Questa è la guida italiana rapida e operativa. La guida tecnica canonica, mante
 
 ```text
 Giocatori Java ─────────────┐
- ├── Fabric Server 26.2 ── mondo
+ ├── Fabric Server 26.3 ── mondo
 Giocatori Bedrock ─ Geyser ─┘ │
  ├── Fabric API
  ├── mod performance
@@ -23,22 +23,22 @@ Giocatori Bedrock ─ Geyser ─┘ │
 
 Componenti:
 
-- **Java 25 a 64 bit:** esegue Minecraft 26.2.
+- **Java 25 a 64 bit:** esegue Minecraft 26.3.
 - **Fabric Server:** carica le mod Fabric.
 - **Fabric API:** dipendenza richiesta da molte mod.
 - **Geyser-Fabric:** traduce il traffico Bedrock in traffico comprensibile dal server Java.
 - **Floodgate-Fabric:** permette agli utenti Bedrock autenticati di entrare senza un account Java a pagamento.
 - **Lithium, FerriteCore, Krypton:** ottimizzazione iniziale consigliata.
 - **Fabric Carpet:** strumenti tecnici, regole e test per redstone.
-- **Essential Commands:** comandi utili per il server, con il componente obbligatorio `ec-core`; disponibile per Fabric 26.2, non per NeoForge.
-- **InvView:** consente agli operatori autorizzati di visualizzare e gestire gli inventari e i bauli dell'End dei giocatori online o offline; disponibile per Fabric 26.2, non per NeoForge.
-- **OfflineCommands:** permette di eseguire i comandi supportati sui giocatori offline; disponibile per Fabric 26.2, non per NeoForge. Il file verificato si chiama `OfflineCommands-1.0.3+26.1-rc-3.jar`, ma i metadati Modrinth includono esplicitamente Minecraft 26.2. Limita l'accesso agli operatori fidati e verifica i permessi prima dell'uso pubblico.
+- **Essential Commands:** comandi utili per il server, con il componente obbligatorio `ec-core`; disponibile per Fabric 26.3, non per NeoForge.
+- **InvView:** consente agli operatori autorizzati di visualizzare e gestire gli inventari e i bauli dell'End dei giocatori online o offline; disponibile per Fabric 26.3, non per NeoForge.
+- **OfflineCommands:** permette di eseguire i comandi supportati sui giocatori offline; disponibile per Fabric 26.3, non per NeoForge. Il file verificato si chiama `OfflineCommands-1.0.3+26.1-rc-3.jar`, ma i metadati Modrinth includono esplicitamente Minecraft 26.3. Limita l'accesso agli operatori fidati e verifica i permessi prima dell'uso pubblico.
 - **Links In Chat:** mod server-side che rende cliccabili gli URL nella chat e aggiunge i comandi `/link` e `/linkwhisper`; i client non devono installarla.
-- **Welcome Message:** mod server-side che invia messaggi configurabili quando entra un giocatore; richiede la libreria Collective ed è disponibile per Fabric e NeoForge 26.2. Al primo avvio gestito da Jarock viene applicato `server/config/welcomemessage.json5.jarock` come `server/config/welcomemessage.json5`; gli avvii successivi conservano le tue modifiche. Il template viene preservato da clean-server-runtime.bat e aggiornato dagli update Lite verificati. Se il template manca (ad esempio dopo un aggiornamento da una versione piu vecchia), il bootstrap lo ripristina automaticamente all'avvio. Gli update Lite verificati richiedono il template e lo installano dal pacchetto anche quando non e presente tra i file del server installato.
+- **Welcome Message:** mod server-side che invia messaggi configurabili quando entra un giocatore; richiede la libreria Collective ed è disponibile per Fabric e NeoForge 26.3. Al primo avvio gestito da Jarock viene applicato `server/config/welcomemessage.json5.jarock` come `server/config/welcomemessage.json5` e Welcome Message 2.9 (Collective DuskConfig) lo importa una sola volta nella propria configurazione attiva, `server/config/serilum/welcomemessage.json`; gli avvii successivi conservano le tue modifiche. Il template viene preservato da clean-server-runtime.bat e aggiornato dagli update Lite verificati. Se il template manca (ad esempio dopo un aggiornamento da una versione piu vecchia), il bootstrap lo ripristina automaticamente all'avvio. Gli update Lite verificati richiedono il template e lo installano dal pacchetto anche quando non e presente tra i file del server installato.
 
-- **No Chat Reports:** mod server-side inclusa per Fabric e NeoForge 26.2 che impedisce al server di inoltrare dati firmati per la segnalazione della chat. I client vanilla possono comunque mostrare l'avviso dei messaggi non firmati.
+- **No Chat Reports:** mod server-side inclusa per Fabric e NeoForge 26.3 che impedisce al server di inoltrare dati firmati per la segnalazione della chat. I client vanilla possono comunque mostrare l'avviso dei messaggi non firmati.
 - **Better Multiplayer Sleep:** datapack verificato che permette a un solo giocatore di dormire per saltare la notte; viene installato nella cartella `datapacks` del mondo configurato, sia con Fabric sia con NeoForge.
-- **ServerCore, Carpet Extra e Carpet TIS Addition:** opzionali; installali solo se esiste una build compatibile con 26.2.
+- **ServerCore, Carpet Extra e Carpet TIS Addition:** opzionali; installali solo se esiste una build compatibile con 26.3.
 
 ### Cosa non installare sul server
 
@@ -48,7 +48,7 @@ Componenti:
 
 ### Perché non Cardboard all'inizio
 
-Cardboard cerca di fornire le API Bukkit/Spigot/Paper su Fabric. Può caricare alcuni plugin, ma la compatibilità non è totale e aggiunge un livello di compatibilità fragile. Per un server professionale basato su mod Fabric, usa mod Fabric native. Valuta Cardboard soltanto se hai un plugin Bukkit indispensabile, dopo aver verificato il ramo 26.2 e aver testato tutto su una copia del mondo.
+Cardboard cerca di fornire le API Bukkit/Spigot/Paper su Fabric. Può caricare alcuni plugin, ma la compatibilità non è totale e aggiunge un livello di compatibilità fragile. Per un server professionale basato su mod Fabric, usa mod Fabric native. Valuta Cardboard soltanto se hai un plugin Bukkit indispensabile, dopo aver verificato il ramo 26.3 e aver testato tutto su una copia del mondo.
 
 ---
 
@@ -111,7 +111,7 @@ In questo repository non devi creare manualmente `start.bat`. Avvia `parameter-m
 - configurazione automatica dell'ambiente Java dell'utente;
 - banner di fine caricamento del server: mostra o nasconde l'avviso ASCII-art quando il server ha terminato l'avvio (opzione "Show ready banner").
 
-Le impostazioni vengono salvate in `scripts/jarock.ini`, un file locale ignorato da Git. Essential Commands 0.41.0 e il componente obbligatorio `ec-core` 1.3.0 vengono installati per Fabric 26.2. InvView 1.4.21 viene installata per Fabric e permette agli operatori autorizzati di gestire inventari e bauli dell'End dei giocatori online o offline. OfflineCommands 1.0.3 viene installata per Fabric e permette di eseguire i comandi supportati sui giocatori offline. Anche se il nome del file verificato contiene `26.1-rc-3`, i metadati Modrinth includono esplicitamente Minecraft 26.2. Poiché può modificare i dati dei giocatori offline, limita l'accesso agli operatori fidati e verifica i permessi prima dell'uso pubblico. Non esistono build NeoForge 26.2 compatibili per queste tre mod, quindi NeoForge non le installa. No Chat Reports viene installata automaticamente dal manifest del loader selezionato; non viene modificato `enforce-secure-profile`, quindi il comportamento deve essere verificato con i client che userai.
+Le impostazioni vengono salvate in `scripts/jarock.ini`, un file locale ignorato da Git. Essential Commands 0.42.0 e il componente obbligatorio `ec-core` 1.3.0 vengono installati per Fabric 26.3. InvView 1.4.22 viene installata per Fabric e permette agli operatori autorizzati di gestire inventari e bauli dell'End dei giocatori online o offline. OfflineCommands 1.0.3 viene installata per Fabric e permette di eseguire i comandi supportati sui giocatori offline. Anche se il nome del file verificato contiene `26.1-rc-3`, i metadati Modrinth includono esplicitamente Minecraft 26.3. Poiché può modificare i dati dei giocatori offline, limita l'accesso agli operatori fidati e verifica i permessi prima dell'uso pubblico. Non esistono build NeoForge 26.3 compatibili per queste tre mod, quindi NeoForge non le installa. No Chat Reports viene installata automaticamente dal manifest del loader selezionato; non viene modificato `enforce-secure-profile`, quindi il comportamento deve essere verificato con i client che userai.
  Il programma controlla che la RAM sia valida, che sia almeno `1G`, che la RAM iniziale non superi quella massima e che non superi la memoria fisica rilevata.
 
 Dopo aver salvato, scegli **Save and start the server** oppure esegui `start-server.bat`. Jarock trova automaticamente un Java 25 a 64 bit compatibile e usa quel percorso, anche se Java 8 è il primo elemento del `PATH`.
@@ -148,7 +148,7 @@ stop
 Ferma il server e apri `server.properties` con Notepad. Come base sicura usa o controlla:
 
 ```properties
-motd=My Fabric 26.2 Server
+motd=My Fabric 26.3 Server
 online-mode=true
 white-list=false
 enforce-whitelist=false
@@ -190,14 +190,14 @@ Ferma il server e crea:
 C:\MinecraftServer\mods
 ```
 
-Inserisci nella cartella soltanto file `.jar` compatibili con **Fabric e Minecraft 26.2**:
+Inserisci nella cartella soltanto file `.jar` compatibili con **Fabric e Minecraft 26.3**:
 
 ```text
 fabric-api-<compatible-version>.jar
 Geyser-Fabric-<compatible-version>.jar
 floodgate-fabric-<compatible-version>.jar
-collective-26.2.0-8.39.jar
-welcomemessage-26.2.0-2.8.jar
+collective-26.3.0-8.39.jar
+welcomemessage-26.3.0-2.8.jar
 ```
 
 Non scompattare i `.jar` e non usare siti che ricaricano file modificati.
@@ -263,20 +263,20 @@ geyser connectiontest your.public.address 19132
 
 ## 9. Mod di ottimizzazione e redstone
 
-Controlla sempre nella pagina ufficiale della mod: versione **26.2**, loader **Fabric**, lato **server-side** e dipendenze richieste.
+Controlla sempre nella pagina ufficiale della mod: versione **26.3**, loader **Fabric**, lato **server-side** e dipendenze richieste.
 
 | Mod | Uso | Nota |
 |---|---|---|
 | Lithium | Ottimizzazione della logica di gioco | Buona prima scelta |
-| FerriteCore | Riduzione dell'uso di memoria | Verifica la build 26.2 |
+| FerriteCore | Riduzione dell'uso di memoria | Verifica la build 26.3 |
 | Krypton | Ottimizzazione della rete | Testala insieme a Geyser |
 | ServerCore | Controlli aggiuntivi sulle prestazioni | Impostazioni conservative |
 | Fabric Carpet | Regole, diagnostica e strumenti tecnici | Base consigliata per redstone |
-| Essential Commands | Comandi utili per il server e componente `ec-core` | Solo Fabric 26.2 |
-| Welcome Message | Messaggi configurabili all'ingresso | Richiede Collective; Fabric e NeoForge 26.2. Jarock applica `server/config/welcomemessage.json5.jarock` al primo setup e conserva le modifiche successive. |
+| Essential Commands | Comandi utili per il server e componente `ec-core` | Solo Fabric 26.3 |
+| Welcome Message | Messaggi configurabili all'ingresso | Richiede Collective; Fabric e NeoForge 26.3. Jarock applica `server/config/welcomemessage.json5.jarock` al primo setup e conserva le modifiche successive. |
 
 | Carpet Extra | Estensioni di Carpet | Deve corrispondere alla versione di Carpet |
-| Carpet TIS Addition | Strumenti tecnici avanzati | Opzionale, verifica 26.2 |
+| Carpet TIS Addition | Strumenti tecnici avanzati | Opzionale, verifica 26.3 |
 
 Installa una mod alla volta:
 
@@ -287,7 +287,7 @@ Installa una mod alla volta:
 5. Prova un accesso Java e, se possibile, Bedrock.
 6. Se tutto funziona, passa alla mod successiva.
 
-Non installare vecchie build di Starlight, Phosphor o Noisium senza una pagina ufficiale che confermi il supporto a 26.2. Se non esiste una build compatibile, lasciale fuori.
+Non installare vecchie build di Starlight, Phosphor o Noisium senza una pagina ufficiale che confermi il supporto a 26.3. Se non esiste una build compatibile, lasciale fuori.
 
 ---
 
@@ -335,7 +335,7 @@ Installa Java 25 a 64 bit e riapri il Prompt dei comandi.
 
 ### `UnsupportedClassVersionError`
 
-La versione Java è troppo vecchia. Minecraft 26.2 richiede Java 25 o più recente a 64 bit. Non avviare direttamente `server.jar`, perché Windows potrebbe usare Java 8 o Java 21. Installa un JDK Windows x64 Java 25 da <https://adoptium.net/temurin/releases/?version=25&os=windows&arch=x64&package=jdk>, chiudi e riapri il terminale, quindi avvia `start-server.bat` dalla root del repository.
+La versione Java è troppo vecchia. Minecraft 26.3 richiede Java 25 o più recente a 64 bit. Non avviare direttamente `server.jar`, perché Windows potrebbe usare Java 8 o Java 21. Installa un JDK Windows x64 Java 25 da <https://adoptium.net/temurin/releases/?version=25&os=windows&arch=x64&package=jdk>, chiudi e riapri il terminale, quindi avvia `start-server.bat` dalla root del repository.
 
 ### Crash all'avvio
 
@@ -366,15 +366,15 @@ Non installare dieci mod subito. Controlla CPU, entità, generazione dei chunk, 
 ## 12. Checklist finale
 
 - [ ] Java 25 a 64 bit funziona con `java -version`.
-- [ ] Fabric Server è per Minecraft 26.2.
+- [ ] Fabric Server è per Minecraft 26.3.
 - [ ] Hai letto e accettato la EULA.
 - [ ] `online-mode=true` è attivo.
 - [ ] La whitelist è attiva prima dei test pubblici (di default è disabilitata: imposta `white-list=true` e `enforce-whitelist=true`).
-- [ ] Fabric API, Geyser-Fabric e Floodgate-Fabric sono compatibili con 26.2.
+- [ ] Fabric API, Geyser-Fabric e Floodgate-Fabric sono compatibili con 26.3.
 - [ ] `auth-type: floodgate` è configurato.
 - [ ] Porta Java TCP e porta Bedrock UDP sono corrette e diverse.
 - [ ] Nessuna mod client-only è nella cartella server `mods/`.
-- [ ] Essential Commands e `ec-core` sono caricati senza errori quando è selezionato Fabric 26.2.
+- [ ] Essential Commands e `ec-core` sono caricati senza errori quando è selezionato Fabric 26.3.
 - [ ] No Chat Reports è caricata dal loader selezionato senza errori.
 - [ ] Better Multiplayer Sleep è presente nella cartella `datapacks` del mondo configurato e non produce errori.
 - [ ] Esiste un backup.
@@ -400,7 +400,7 @@ Non installare dieci mod subito. Controlla CPU, entità, generazione dei chunk, 
 
 Technical note: after startup, Jarock prints the local LAN IPv4 address. Java players use server-port over TCP; Bedrock players use Geyser bedrock.port over UDP. If Geyser is absent, Bedrock is unavailable. The addresses are still printed when the ASCII ready banner is disabled. Public access requires separate manual router and firewall configuration.
 
-> Technical note: Async is an experimental server-side Minecraft 26.2 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
+> Technical note: Async is an experimental server-side Minecraft 26.3 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
 
 <!-- jarock-safe-shutdown -->
 

@@ -1,4 +1,4 @@
-> Technical note: Async is an experimental server-side Minecraft 26.2 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
+> Technical note: Async is an experimental server-side Minecraft 26.3 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
 
 # Jarock first run
 
@@ -19,7 +19,7 @@ Double-click `start-server.bat`.
 
 The launcher checks the repository path, Windows long-path support, Java, and the local settings in `scripts/jarock.ini`. On an older installation it automatically migrates the old root settings file to the new `scripts/` location. It does not open router ports, change firewall rules, or configure port forwarding.
 
-If Java 25 cannot be found and the bundled installers are available, Jarock asks Windows to run `prerequisites/jre-8-windows-x64.exe` first and the Temurin JDK 25 MSI second. Accept the UAC prompts and let each installer finish. Java 25 is the runtime required by Minecraft 26.2; Java 8 is only a legacy prerequisite and is not used to run the server.
+If Java 25 cannot be found and the bundled installers are available, Jarock asks Windows to run `prerequisites/jre-8-windows-x64.exe` first and the Temurin JDK 25 MSI second. Accept the UAC prompts and let each installer finish. Java 25 is the runtime required by Minecraft 26.3; Java 8 is only a legacy prerequisite and is not used to run the server.
 
 ## Step 2: choose a loader
 
@@ -27,7 +27,7 @@ If no loader is configured, Jarock displays this choice:
 
 1. **Fabric** — recommended first choice for the supplied optimization, redstone, Geyser and technical mods.
 2. **NeoForge** — fallback when a required mod is not available for Fabric.
-3. **Forge** — currently unavailable for the verified official Minecraft 26.2 server build; it is not installed silently.
+3. **Forge** — currently unavailable for the verified official Minecraft 26.3 server build; it is not installed silently.
 
 Jarock saves the selected loader in `scripts/jarock.ini`. Do not mix Fabric and NeoForge runtimes or mods. If you change loader later, make a world backup and use `clean-server-runtime.bat` first.
 
@@ -123,3 +123,22 @@ For a complete explanation of the architecture, read [How does Jarock work?](how
 <!-- jarock-console-close-protection -->
 
 > **Windows console close protection:** While Jarock is running, the classic Windows console may show a warning when X is clicked. Type stop and wait for SAFE TO CLOSE. Never force-close while the world is saving. Jarock relaunches its launchers in the classic Windows Console Host when they are started from Windows Terminal, so the close-event protection works there; other pseudo-terminals without a marker (for example Alacritty) are not auto-detected, and Windows can still force-terminate a console process after its short handler timeout.
+
+## Choosing the Minecraft version
+
+Jarock asks for the Minecraft version on the first start and stores the answer in
+`MINECRAFT_VERSION` inside `scripts/jarock.ini`. You can change it later without
+starting the server: run `parameter-manager.bat` and choose
+`M. Choose Minecraft version` (26.3 or 26.2), or edit that line by hand.
+
+`scripts/jarock.ini` is the single configuration file. It holds the project
+version (`JAROCK_VERSION`) and every launch setting, so there is no other file to
+edit. Switching the Minecraft line makes the next start install the matching
+loader, mods and datapack; the world and your other settings are never replaced,
+but back the world up first. Jarock refuses to mix two Minecraft lines in the
+same server folder: if that folder already runs another line, run
+`clean-server-runtime.bat` first.
+
+Jarock also accepts the Minecraft EULA for you: on the first start
+`server/eula.txt` is written with `eula=true`. Read
+https://www.minecraft.net/eula before you keep the server online.

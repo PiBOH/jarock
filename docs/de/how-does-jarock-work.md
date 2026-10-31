@@ -2,14 +2,14 @@
 
 ## Eine einfache Erklärung des Servers
 
-**Minecraft:** Java Edition `26.2` (enable "Set JAVA_HOME variable" in the Temurin installer)
+**Minecraft:** Java Edition `26.3` (enable "Set JAVA_HOME variable" in the Temurin installer)
 **Loader:** Fabric
 **Hauptplattform:** Windows 10/11
 
 Dieses Dokument beschreibt den tatsächlichen Ablauf nach dem Herunterladen von Jarock.
 
 
-> Technical fallback note: DedicatedPower is a Fabric-only mod: it is updated automatically from its latest GitHub release, while the other server mods are pinned and verified with SHA-512. Links In Chat is also included as a verified server-side Fabric 26.2 mod; it makes chat URLs clickable and adds `/link` and `/linkwhisper`, without requiring client installation. Welcome Message 2.8 with its required Collective library is included as a verified server-side Minecraft 26.2 mod for Fabric and NeoForge; it sends configurable join messages.
+> Technical fallback note: DedicatedPower is a Fabric-only mod: it is updated automatically from its latest GitHub release, while the other server mods are pinned and verified with SHA-512. Links In Chat is also included as a verified server-side Fabric 26.3 mod; it makes chat URLs clickable and adds `/link` and `/linkwhisper`, without requiring client installation. Welcome Message 2.9 with its required Collective library is included as a verified server-side Minecraft 26.3 mod for Fabric and NeoForge; it sends configurable join messages.
 
 > Do not set online-mode=false before the first server startup; let server.properties be created with online-mode=true first.
 > **Wartungshinweis:** Der Launcher sucht jetzt nach einer kompatiblen 64-Bit-Java-25+-Laufzeit, statt nur dem ersten `java.exe` in `PATH` zu vertrauen. Er verwendet `scripts/java-runtime.ps1`, speichert die ausgewählte ausführbare Datei in `server/java-path.txt` und prüft sie vor dem Start. Java 8 darf installiert bleiben.
@@ -68,7 +68,7 @@ HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled
 
 Wenn der Wert nicht `1` ist, fordert Jarock Administratorrechte an und führt `scripts\enable-long-paths.ps1` aus. Die Änderung gilt systemweit; ältere Programme benötigen eventuell einen Neustart.
 
-Danach werden `java -version`, `server\mods-manifest.ps1`, Fabric 26.2 mit Loader `0.19.3`, die Mods in `server\mods\` und alle SHA-512-Hashes geprüft. Vorhandene lokale Konfigurationen werden nicht überschrieben.
+Danach werden `java -version`, `server\mods-manifest.ps1`, Fabric 26.3 mit Loader `0.20.1`, die Mods in `server\mods\` und alle SHA-512-Hashes geprüft. Vorhandene lokale Konfigurationen werden nicht überschrieben.
 
 Enthalten sind Fabric API, Geyser-Fabric, Floodgate-Fabric, Lithium, FerriteCore, Krypton, ServerCore und Fabric Carpet. Beliebige Bukkit/Spigot/Paper-Plugins werden nicht installiert.
 
@@ -96,19 +96,19 @@ Nach jedem Fehler `ERROR:` oder `WARNING:` lesen und `Suggested fix:` befolgen. 
 
 Jarock verändert keinen Router, keine Firewall, kein Port Forwarding und keine öffentliche IP. Die offenen Aufgaben stehen in `TODO.md`. Nicht verfügbare Laufwerke, verweigerte Rechte, ungeeignete Netzwerkfreigaben und alte Anwendungen bleiben Windows-Grenzen.
 
-> **Technischer Hinweis: Verwenden Sie immer `start-server.bat` im Stammverzeichnis des Repositorys. Doppelklicken Sie nicht auf `server.jar`; Windows kann Java 8 oder Java 21 verwenden, während Minecraft 26.2 64-Bit-Java 25+ benötigt. Siehe die [vollständige englische Anleitung](../en/how-does-jarock-work.md).**
+> **Technischer Hinweis: Verwenden Sie immer `start-server.bat` im Stammverzeichnis des Repositorys. Doppelklicken Sie nicht auf `server.jar`; Windows kann Java 8 oder Java 21 verwenden, während Minecraft 26.3 64-Bit-Java 25+ benötigt. Siehe die [vollständige englische Anleitung](../en/how-does-jarock-work.md).**
 
-> Better Multiplayer Sleep is a verified Minecraft 26.2 datapack. Jarock installs it into the configured world's `datapacks` folder for Fabric and NeoForge without replacing the world or other datapacks; use `/reload` after manual changes.
+> Better Multiplayer Sleep is a verified Minecraft 26.3 datapack. Jarock installs it into the configured world's `datapacks` folder for Fabric and NeoForge without replacing the world or other datapacks; use `/reload` after manual changes.
 
-> No Chat Reports is a verified Minecraft 26.2 server-side mod for Fabric and NeoForge. It prevents the server from forwarding signed chat-reporting data; vanilla clients may still show unsigned-chat warnings, and Jarock does not automatically change `enforce-secure-profile`.
+> No Chat Reports is a verified Minecraft 26.3 server-side mod for Fabric and NeoForge. It prevents the server from forwarding signed chat-reporting data; vanilla clients may still show unsigned-chat warnings, and Jarock does not automatically change `enforce-secure-profile`.
 
-> Essential Commands 0.41.0 with its required `ec-core` 1.3.0 component is verified for Minecraft 26.2 on Fabric only. It adds useful server commands; no compatible NeoForge 26.2 build is available, so NeoForge does not install it.
+> Essential Commands 0.42.0 with its required `ec-core` 1.3.0 component is verified for Minecraft 26.3 on Fabric only. It adds useful server commands; no compatible NeoForge 26.3 build is available, so NeoForge does not install it.
 
-> InvView 1.4.21 is a verified Minecraft 26.2 server-side Fabric mod. It requires Fabric API and lets authorized operators inspect and manage online or offline player inventories and ender chests; no compatible NeoForge 26.2 build is available, so NeoForge does not install it.
+> InvView 1.4.22 is a verified Minecraft 26.3 server-side Fabric mod. It requires Fabric API and lets authorized operators inspect and manage online or offline player inventories and ender chests; no compatible NeoForge 26.3 build is available, so NeoForge does not install it.
 
-> OfflineCommands 1.0.3 is a verified Minecraft 26.2 server-side Fabric mod for running commands on offline players. No compatible NeoForge 26.2 build is available, so NeoForge does not install it.
+> OfflineCommands 1.0.3 is a verified Minecraft 26.3 server-side Fabric mod for running commands on offline players. No compatible NeoForge 26.3 build is available, so NeoForge does not install it.
 
-> Technical note: Async is an experimental server-side Minecraft 26.2 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
+> Technical note: Async is an experimental server-side Minecraft 26.3 mod installed for both Fabric and NeoForge. It processes entities in parallel, requires Java 25+, and may cause crashes, incorrect entity behavior or incompatibilities. Test it with a backup before public use; disable or remove its jar if the server becomes unstable.
 
 <!-- jarock-safe-shutdown -->
 
