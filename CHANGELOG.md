@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1-stable]
+
+## Changed
+
+- Cleaned server runtime files accidentaly commited in last release
+- Online mode is now false by default
+- Minecraft version is asked at the first run
+
 ## [0.2.0-beta]
 
 ### Added
