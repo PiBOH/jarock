@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.minecraft.net/en-us/article/minecraft-java-edition-26-3"><img src="https://img.shields.io/badge/Minecraft-26.3-00AA00" alt="Minecraft 26.3"></a>
+  <a href="https://www.minecraft.net/en-us/article"><img src="https://img.shields.io/badge/Minecraft-26.x-00AA00" alt="Minecraft 26.x"></a>
   <a href="https://openjdk.org/projects/jdk/25/"><img src="https://img.shields.io/badge/Java-25-ED8B00" alt="Java 25"></a>
   <a href="https://geysermc.org/"><img src="https://img.shields.io/badge/Java%20%2B%20Bedrock%20cross--play-Geyser-6F42C1" alt="Java and Bedrock cross-play"></a>
   <a href="https://fabricmc.net/"><img src="https://img.shields.io/badge/Loader-Fabric-4B8BBE" alt="Fabric loader"></a>
@@ -29,7 +29,7 @@
 
 Beginner-friendly template and documentation for a professional Minecraft Java 26.3 server.
 
-> **Interface support status:** The CLI is **strongly recommended** and is the maintained, supported interface. The TUI remains available in future release packages, but it is **unmaintained**, provided as-is, and may not receive fixes for input or compatibility problems.
+> **Interface support status:** The CLI is **strongly recommended** and is the maintained, supported interface. if you need a GUI you **must** use fabric loader and if the gui won't start use the `/opengui` command in the cli.
 
 ## Recommended architecture
 
@@ -104,6 +104,6 @@ CLI editions are the strongly recommended and maintained path, using the origina
 ## License
 
 This project is released under the [MIT License](LICENSE).
-<!-- jarock-console-close-protection -->
+<!-- jarock-console-close-protection 
 
 > **Windows console close protection:** While Jarock is running, the classic Windows console shows a warning MsgBox if you click `X`, telling you to type `stop` (or close the Minecraft GUI normally) and wait for `SAFE TO CLOSE`. Jarock relaunches its launchers in the classic Windows Console Host when they are started from Windows Terminal, so the close-event protection works there; other pseudo-terminals without a marker (for example Alacritty) are not auto-detected, and Windows can still force-terminate a console process after its control-handler timeout. Always use `stop` and wait for `SAFE TO CLOSE`; never force-close while the world is saving.
